@@ -1,0 +1,13 @@
+<map id="replace.cc" name="replace.cc">
+<area shape="rect" id="node1" title="Implementation of replace(), replace_inplace()." alt="" coords="98,5,181,32"/>
+<area shape="rect" id="node2" href="$replace_8h.html" title="Declarations of replace(), replace_inplace()." alt="" coords="84,80,195,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,229,60,256"/>
+<area shape="rect" id="node4" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="84,229,195,256"/>
+<area shape="rect" id="node5" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="281,155,413,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="219,229,284,256"/>
+<area shape="rect" id="node7" title=" " alt="" coords="308,229,387,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="411,229,486,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="511,229,573,256"/>
+<area shape="rect" id="node10" title=" " alt="" coords="598,229,659,256"/>
+<area shape="rect" id="node11" title=" " alt="" coords="684,229,744,256"/>
+</map>

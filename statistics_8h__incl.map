@@ -1,0 +1,11 @@
+<map id="statistics.h" name="statistics.h">
+<area shape="rect" id="node1" title="Declaration of statistical utility functions and classes for the General Utility Library." alt="" coords="291,5,378,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,80,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="104,80,163,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="187,80,240,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="265,80,333,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="396,155,479,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="408,80,467,107"/>
+<area shape="rect" id="node8" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="527,155,638,181"/>
+<area shape="rect" id="node9" href="$traits_8h.html" title="Some metaprogramming traits for the General Utility Library." alt="" coords="491,80,589,107"/>
+</map>

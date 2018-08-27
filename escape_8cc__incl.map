@@ -1,0 +1,19 @@
+<map id="escape.cc" name="escape.cc">
+<area shape="rect" id="node1" title="Implementation of escape(), unescape()." alt="" coords="311,5,394,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="194,80,247,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="272,80,327,107"/>
+<area shape="rect" id="node4" href="$escape_8h.html" title="Declaration of escape(), unescape()." alt="" coords="351,80,461,107"/>
+<area shape="rect" id="node14" href="$string__util_8h.html" title="Declarations of string utility functions for the General Utility Library." alt="" coords="485,80,609,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="5,229,60,256"/>
+<area shape="rect" id="node6" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="632,229,743,256"/>
+<area shape="rect" id="node7" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="340,155,472,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="84,229,149,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="173,229,252,256"/>
+<area shape="rect" id="node10" title=" " alt="" coords="277,229,351,256"/>
+<area shape="rect" id="node11" title=" " alt="" coords="545,229,608,256"/>
+<area shape="rect" id="node12" title=" " alt="" coords="375,229,437,256"/>
+<area shape="rect" id="node13" title=" " alt="" coords="461,229,521,256"/>
+<area shape="rect" id="node15" title=" " alt="" coords="598,155,649,181"/>
+<area shape="rect" id="node16" href="$traits_8h.html" title="Some metaprogramming traits for the General Utility Library." alt="" coords="724,155,821,181"/>
+<area shape="rect" id="node17" title=" " alt="" coords="767,229,850,256"/>
+</map>

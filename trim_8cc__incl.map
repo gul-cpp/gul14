@@ -1,0 +1,17 @@
+<map id="trim.cc" name="trim.cc">
+<area shape="rect" id="node1" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="535,5,597,32"/>
+<area shape="rect" id="node2" href="$trim_8h.html" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="521,80,611,107"/>
+<area shape="rect" id="node3" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="632,304,743,331"/>
+<area shape="rect" id="node4" href="$string__util_8h.html" title="Declarations of string utility functions for the General Utility Library." alt="" coords="504,155,628,181"/>
+<area shape="rect" id="node8" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="303,229,435,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="510,229,561,256"/>
+<area shape="rect" id="node6" title=" " alt="" coords="545,304,608,331"/>
+<area shape="rect" id="node7" title=" " alt="" coords="467,304,521,331"/>
+<area shape="rect" id="node14" href="$traits_8h.html" title="Some metaprogramming traits for the General Utility Library." alt="" coords="687,229,784,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="377,304,443,331"/>
+<area shape="rect" id="node10" title=" " alt="" coords="5,304,84,331"/>
+<area shape="rect" id="node11" title=" " alt="" coords="109,304,183,331"/>
+<area shape="rect" id="node12" title=" " alt="" coords="207,304,269,331"/>
+<area shape="rect" id="node13" title=" " alt="" coords="293,304,353,331"/>
+<area shape="rect" id="node15" title=" " alt="" coords="767,304,850,331"/>
+</map>

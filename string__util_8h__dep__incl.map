@@ -1,0 +1,10 @@
+<map id="string_util.h" name="string_util.h">
+<area shape="rect" id="node1" title="Declarations of string utility functions for the General Utility Library." alt="" coords="176,5,266,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="96,155,146,181"/>
+<area shape="rect" id="node3" href="$join__split_8h.html" title="Implementation of join(), split(), and split_sv()." alt="" coords="24,80,108,107"/>
+<area shape="rect" id="node4" href="$tokenize_8h.html" title="Implementation of tokenize(), tokenize_sv()." alt="" coords="133,80,216,107"/>
+<area shape="rect" id="node5" href="$trim_8h.html" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="240,80,295,107"/>
+<area shape="rect" id="node7" href="$escape_8cc.html" title="Implementation of escape(), unescape()." alt="" coords="320,80,402,107"/>
+<area shape="rect" id="node8" href="$string__util_8cc.html" title="Implementation of string utilities for the General Utility Library." alt="" coords="426,80,522,107"/>
+<area shape="rect" id="node6" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="236,155,299,181"/>
+</map>
