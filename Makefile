@@ -20,8 +20,9 @@ LIBRARYHFILES = \
 
 NEEDED_LIBS =
 
-PKGCONFIG = \
-	$(OBJDIR)/gul.pc
+PKGCONFIG =
+# \
+#	$(OBJDIR)/gul.pc
 
 ALLLIBS = \
 	$(OBJDIR)/libgul.$(EXT) \
