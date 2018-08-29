@@ -169,22 +169,22 @@ dirs:
 	@echo $(INTRO) Create dir ${OBJDIR}/tests $(OUTRO)
 	-mkdir -p ${OBJDIR}/tests
 
-#TEST_OBJ = $(OBJDIR)/tests/test_all.o
-#
-#$(OBJDIR)/tests/test_all.o: localinstall $(SRCDIR)/../tests/test_all.cc
-#	@echo $(INTRO) $@ $(OUTRO)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_all.o \
-#	    $(SRCDIR)/../tests/test_all.cc
-#
-#tests/test_all: dirs $(TEST_OBJ)
-#	@echo $(INTRO) $@ $(OUTRO)
-#	$(LINK.cc) $(TEST_OBJ) $(NEEDED_LIBS) -lhlc_test -lgul -o tests/test_all
-#
-#build-tests: tests/test_all
-#	@echo Done.
-#
-#test: export LD_LIBRARY_PATH=$(DOOCSLIBS):$LD_LIBRARY_PATH
-#test: build-tests
-#	tests/test_all
+TEST_OBJ = $(OBJDIR)/tests/test_all.o $(SOURCEOBJ)
+
+$(OBJDIR)/tests/test_all.o: $(SRCDIR)/../tests/test_all.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_all.o \
+	    $(SRCDIR)/../tests/test_all.cc
+
+tests/test_all: dirs $(TEST_OBJ)
+	@echo $(INTRO) $@ $(OUTRO)
+	$(LINK.cc) $(TEST_OBJ) $(NEEDED_LIBS) -lhlc_test -o tests/test_all
+
+build-tests: tests/test_all
+	@echo Done.
+
+test: export LD_LIBRARY_PATH=$(DOOCSLIBS):$LD_LIBRARY_PATH
+test: build-tests
+	tests/test_all
 
 .PHONY: build-tests dirs doc doxygen rmlocalinstall test
