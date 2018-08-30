@@ -11,9 +11,11 @@
 #include "catch.h"
 #include "gul.h"
 
+using namespace std::literals;
+
 TEST_CASE("gul::string_view accepts a string as both char * and std::string, and both "
           "compare equal", "[string_view]")
 {
-    REQUIRE( gul::string_view("Test") == gul::string_view(std::string("Test")) );
-    REQUIRE( gul::string_view("") == gul::string_view(std::string("")) );
+    REQUIRE( gul::string_view{"Test"} == gul::string_view{"Test"s} );
+    REQUIRE( gul::string_view{""} == gul::string_view{""s} );
 }
