@@ -36,7 +36,7 @@
  *  - Exceptions
  *  - Time
  *  - Numerical helpers
- *  - Backports of standard library features that are not yet available on common compilers
+ *  - \ref backports of standard library features that are not yet available on common compilers
  *
  * To keep the library useful for as many users as possible, special-purpose code has no
  * place in it. Specifically, the library includes:
@@ -78,6 +78,17 @@
  * - __Code review:__ Every commit to the library must be signed off by at least two
  *   developers. Every developer must ensure that all of the other quality criteria are
  *   fulfilled.
+ */
+
+/**
+ * \page backports Backports
+ *
+ * The General Utility Library provides a few classes from C++ standard libraries that
+ * are not yet available to users of older compilers. Here's a list:
+ * - gul::string_view  A view to a contiguous sequence of chars. The GUL version is
+ *                     a backport of
+ *                     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ *                     from libc++ for C++17.
  */
 
 #pragma once

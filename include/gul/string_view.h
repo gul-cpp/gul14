@@ -591,9 +591,32 @@ operator<<(std::basic_ostream<charT, traits>& os,
     return os;
 }
 
+/**
+ * A view to a contiguous sequence of chars. This is a backport of
+ * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ * from libc++ for C++17.
+ */
 using string_view = basic_string_view<char, std::char_traits<char>>;
+
+/**
+ * A view to a contiguous sequence of char16_ts. This is a backport of
+ * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ * from libc++ for C++17.
+ */
 using u16string_view = basic_string_view<char16_t, std::char_traits<char16_t>>;
+
+/**
+ * A view to a contiguous sequence of char32_ts. This is a backport of
+ * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ * from libc++ for C++17.
+ */
 using u32string_view = basic_string_view<char32_t, std::char_traits<char32_t>>;
+
+/**
+ * A view to a contiguous sequence of wchar_ts. This is a backport of
+ * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ * from libc++ for C++17.
+ */
 using wstring_view = basic_string_view<wchar_t, std::char_traits<wchar_t>>;
 
 
