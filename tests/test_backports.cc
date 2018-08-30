@@ -1,12 +1,9 @@
 /**
- * \file   test_all.cc
+ * \file   test_backports.cc
  * \author Lars Froehlich
- * \date   Created on August 28, 2018
- * \brief  Test suite for the General Utility Library.
+ * \date   Created on August 30, 2018
+ * \brief  Test suite for standard library backports in the General Utility Library.
  */
-
-// This tells Catch to provide a main() - only do this in one cc file
-#define CATCH_CONFIG_MAIN
 
 #include "catch.h"
 #include "gul.h"

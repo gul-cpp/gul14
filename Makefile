@@ -52,9 +52,9 @@ $(OBJDIR)/.depend depend:
 	    echo ---------- create dir $(OBJDIR) --------------; \
 	    mkdir -p $(OBJDIR) ; \
 	fi
-	for i in $(SRCDIR)/*.cc ;do \
-	    $(CCDEP) $$i ; \
-	done > $(OBJDIR)/.depend_temp
+#	for i in $(SRCDIR)/*.cc ;do \
+#	    $(CCDEP) $$i ; \
+#	done > $(OBJDIR)/.depend_temp
 	cat $(OBJDIR)/.depend_temp | sed -e "/:/s/^/\$$\(OBJDIR\)\//g" > $(OBJDIR)/.depend
 	chmod g+w $(OBJDIR)/.depend*
 
@@ -169,22 +169,28 @@ dirs:
 	@echo $(INTRO) Create dir ${OBJDIR}/tests $(OUTRO)
 	-mkdir -p ${OBJDIR}/tests
 
-TEST_OBJ = $(OBJDIR)/tests/test_all.o $(SOURCEOBJ)
+# TODO: Improve building of tests
+TEST_OBJ = $(OBJDIR)/tests/test_main.o $(OBJDIR)/tests/test_backports.o $(SOURCEOBJ)
 
-$(OBJDIR)/tests/test_all.o: $(SRCDIR)/../tests/test_all.cc
+$(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
 	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_all.o \
-	    $(SRCDIR)/../tests/test_all.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_main.o \
+	    $(SRCDIR)/../tests/test_main.cc
 
-tests/test_all: dirs $(TEST_OBJ)
+$(OBJDIR)/tests/test_backports.o: $(SRCDIR)/../tests/test_backports.cc
 	@echo $(INTRO) $@ $(OUTRO)
-	$(LINK.cc) $(TEST_OBJ) $(NEEDED_LIBS) -lhlc_test -o tests/test_all
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_backports.o \
+	    $(SRCDIR)/../tests/test_backports.cc
 
-build-tests: tests/test_all
+tests/test_main: dirs $(TEST_OBJ)
+	@echo $(INTRO) $@ $(OUTRO)
+	$(LINK.cc) $(TEST_OBJ) $(NEEDED_LIBS) -o tests/test_main
+
+build-tests: tests/test_main
 	@echo Done.
 
 test: export LD_LIBRARY_PATH=$(DOOCSLIBS):$LD_LIBRARY_PATH
 test: build-tests
-	tests/test_all
+	tests/test_main
 
 .PHONY: build-tests dirs doc doxygen rmlocalinstall test
