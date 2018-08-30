@@ -24,7 +24,7 @@
 /**
  * \mainpage
  *
- * \image html desy.png width=300px
+ * \image html desy.png
  *
  * \section introduction Introduction
  * 
