@@ -168,7 +168,8 @@ dirs:
 	-mkdir -p ${OBJDIR}/tests
 
 # TODO: Improve building of tests
-TEST_OBJ = $(OBJDIR)/tests/test_main.o $(OBJDIR)/tests/test_backports.o $(SOURCEOBJ)
+TEST_OBJ = $(OBJDIR)/tests/test_main.o $(OBJDIR)/tests/test_backports.o \
+           $(OBJDIR)/tests/test_cat.o $(LIBRARYOBJ)
 
 $(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
 	@echo $(INTRO) $@ $(OUTRO)
@@ -179,6 +180,11 @@ $(OBJDIR)/tests/test_backports.o: $(SRCDIR)/../tests/test_backports.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_backports.o \
 	    $(SRCDIR)/../tests/test_backports.cc
+
+$(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
+	    $(SRCDIR)/../tests/test_cat.cc
 
 tests/test_main: dirs $(TEST_OBJ)
 	@echo $(INTRO) $@ $(OUTRO)

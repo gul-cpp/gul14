@@ -10,4 +10,6 @@ t1= executable('backports-test',
              #   link_with : libgul))
 	     )
 
+# TODO: Add test_cat (not entirely sure how)
+
 test('Backports test', t1)

@@ -93,6 +93,7 @@
 
 #pragma once
 
+#include "gul/cat.h"
 #include "gul/string_view.h"
 
 /// Namespace gul contains all functions and classes of the General Utility Library.
