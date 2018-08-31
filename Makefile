@@ -9,16 +9,14 @@ SRCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/source
 INCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/include
 DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 
-LIBRARYOBJ = 
-#\
-#	$(OBJDIR)/string_util.o
+LIBRARYOBJ = \
+	$(OBJDIR)/cat.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
 LIBRARYHFILES = \
 	gul.h \
+	gul/cat.h \
 	gul/string_view.h
-
-NEEDED_LIBS =
 
 PKGCONFIG =
 # \
@@ -52,9 +50,9 @@ $(OBJDIR)/.depend depend:
 	    echo ---------- create dir $(OBJDIR) --------------; \
 	    mkdir -p $(OBJDIR) ; \
 	fi
-#	for i in $(SRCDIR)/*.cc ;do \
-#	    $(CCDEP) $$i ; \
-#	done > $(OBJDIR)/.depend_temp
+	for i in $(SRCDIR)/*.cc ;do \
+	    $(CCDEP) $$i ; \
+	done > $(OBJDIR)/.depend_temp
 	cat $(OBJDIR)/.depend_temp | sed -e "/:/s/^/\$$\(OBJDIR\)\//g" > $(OBJDIR)/.depend
 	chmod g+w $(OBJDIR)/.depend*
 
@@ -184,7 +182,7 @@ $(OBJDIR)/tests/test_backports.o: $(SRCDIR)/../tests/test_backports.cc
 
 tests/test_main: dirs $(TEST_OBJ)
 	@echo $(INTRO) $@ $(OUTRO)
-	$(LINK.cc) $(TEST_OBJ) $(NEEDED_LIBS) -o tests/test_main
+	$(LINK.cc) $(TEST_OBJ) -o tests/test_main
 
 build-tests: tests/test_main
 	@echo Done.

@@ -8,7 +8,9 @@ gitversion_cc = vcs_tag(output : 'gitversion.cc',
                         command : ['git', '-C', meson.source_root(), 'describe', '--tags', '--always', '--dirty'],
                         fallback : 'unknown')
 
-libgul_src = [ ]
+libgul_src = [
+    'cat.cc'
+]
 
 inc += include_directories('.')
 
