@@ -18,6 +18,8 @@
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3442.html
  * Updated July 2015 to reflect the Library Fundamentals TS
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4480.html
+ * 
+ * Modified August 2018 for GUL (L. Froehlich)
  */
 
 #pragma once
@@ -51,6 +53,11 @@ public:
 
 } // namespace detail
 
+/**
+ * A view to a contiguous sequence of chars or char-like objects. This is a backport of
+ * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ * from libc++ for C++17.
+ */
 template<typename charT, typename traits = std::char_traits<charT>>
 class basic_string_view {
 public:

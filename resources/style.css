@@ -26,3 +26,7 @@ div.image img[src="desy.png"]{
     margin-left:40px;
     margin-botton:40px;
 }
+
+a + h2.groupheader {
+    display:none;
+}
