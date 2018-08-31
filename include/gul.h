@@ -95,6 +95,7 @@
 
 #include "gul/cat.h"
 #include "gul/string_view.h"
+#include "gul/string_util.h"
 
 /// Namespace gul contains all functions and classes of the General Utility Library.
 namespace gul {}

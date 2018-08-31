@@ -9,7 +9,8 @@ gitversion_cc = vcs_tag(output : 'gitversion.cc',
                         fallback : 'unknown')
 
 libgul_src = [
-    'cat.cc'
+    'cat.cc',
+    'string_util.cc'
 ]
 
 inc += include_directories('.')

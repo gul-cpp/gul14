@@ -21,3 +21,8 @@ t2 = executable('cat-test',
 
 test('Backports test', t1)
 test('Testing cat()', t2)
+test('String escape',
+	executable('test-string-escape',
+		[ 'test_string_escape.cc', catch_main ],
+		include_directories : test_inc,
+		link_with : libgul))
