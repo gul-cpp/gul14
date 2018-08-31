@@ -22,9 +22,9 @@ libgul = both_libraries('gul', libgul_src + [ gitversion_cc ],
 if deb_install
     pkg = import('pkgconfig')
     pkg.generate(libgul,
-                 name : 'dev-doocs-libgul',
+                 name : 'libgul',
                  description : 'General Utility Library',
-                 filebase : 'doocs-libgul',
+                 filebase : 'libgul',
                  install_dir : '/usr/lib/pkgconfig',
                  version: '@0@'.format(LIBGUL_API_VERSION))
 endif
