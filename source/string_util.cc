@@ -1,8 +1,10 @@
 /**
  * \file   string_util.cc
- * \brief  Implementation of string utility functions
+ * \brief  Implementation of string utility functions for the General Utility Library.
+ * \author Soeren Grunewald
+ * \date   Created on 31 August 2018
  *
- * \copyright Copyright 2015-2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
