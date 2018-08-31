@@ -1,7 +1,7 @@
 # Process all the source files into the library
 
 # We want the git version of this build to be available in the
-# server. The server can then show it's git version.
+# library. The library can then be queried to identify its built version.
 gitversion_cc = vcs_tag(output : 'gitversion.cc',
                         input : 'gitversion.cc.in',
                         replace_string : '@VERSION@',
