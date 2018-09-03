@@ -10,7 +10,8 @@ INCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/include
 DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 
 LIBRARYOBJ = \
-	$(OBJDIR)/cat.o
+	$(OBJDIR)/cat.o \
+	$(OBJDIR)/string_util.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
 LIBRARYHFILES = \
@@ -168,8 +169,11 @@ dirs:
 	-mkdir -p ${OBJDIR}/tests
 
 # TODO: Improve building of tests
-TEST_OBJ = $(OBJDIR)/tests/test_main.o $(OBJDIR)/tests/test_backports.o \
-           $(OBJDIR)/tests/test_cat.o $(LIBRARYOBJ)
+TEST_OBJ = $(OBJDIR)/tests/test_main.o \
+           $(OBJDIR)/tests/test_backports.o \
+           $(OBJDIR)/tests/test_cat.o \
+           $(OBJDIR)/tests/test_string_substitute.o \
+           $(LIBRARYOBJ)
 
 $(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
 	@echo $(INTRO) $@ $(OUTRO)
@@ -185,6 +189,11 @@ $(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
 	    $(SRCDIR)/../tests/test_cat.cc
+
+$(OBJDIR)/tests/test_string_substitute.o: $(SRCDIR)/../tests/test_string_substitute.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_substitute.o \
+	    $(SRCDIR)/../tests/test_string_substitute.cc
 
 tests/test_main: dirs $(TEST_OBJ)
 	@echo $(INTRO) $@ $(OUTRO)
