@@ -12,7 +12,8 @@ DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 LIBRARYOBJ = \
 	$(OBJDIR)/cat.o \
 	$(OBJDIR)/join_split.o \
-	$(OBJDIR)/string_util.o
+	$(OBJDIR)/string_util.o \
+	$(OBJDIR)/tokenize.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
 LIBRARYHFILES = \
@@ -20,7 +21,8 @@ LIBRARYHFILES = \
 	gul/cat.h \
 	gul/join_split.h \
 	gul/string_util.h \
-	gul/string_view.h
+	gul/string_view.h \
+	gul/tokenize.h
 
 PKGCONFIG =
 # \
@@ -175,9 +177,10 @@ dirs:
 TEST_OBJ = $(OBJDIR)/tests/test_main.o \
            $(OBJDIR)/tests/test_backports.o \
            $(OBJDIR)/tests/test_cat.o \
+           $(OBJDIR)/tests/test_tokenize.o \
            $(OBJDIR)/tests/test_string_escape.o \
            $(OBJDIR)/tests/test_string_replace.o \
-	   $(OBJDIR)/tests/test_string_split.o \
+           $(OBJDIR)/tests/test_string_split.o \
            $(LIBRARYOBJ)
 
 $(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
@@ -209,6 +212,11 @@ $(OBJDIR)/tests/test_string_split.o: $(SRCDIR)/../tests/test_string_split.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_split.o \
 	    $(SRCDIR)/../tests/test_string_split.cc
+
+$(OBJDIR)/tests/test_tokenize.o: $(SRCDIR)/../tests/test_tokenize.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_tokenize.o \
+	    $(SRCDIR)/../tests/test_tokenize.cc
 
 tests/test_main: dirs $(TEST_OBJ)
 	@echo $(INTRO) $@ $(OUTRO)

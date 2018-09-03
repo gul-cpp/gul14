@@ -34,3 +34,13 @@ test('replace() and replace_inplace()',
 		[ 'test_string_replace.cc', catch_main ],
 		include_directories : test_inc,
 		link_with : libgul))
+
+t3 = executable('tokenize-test',
+                [ 'test_tokenize.cc', catch_main ],
+                include_directories : test_inc,
+                link_with : libgul
+)
+
+# Run the tests
+
+test('Testing tokenize(), tokenize_string_view()', t3)
