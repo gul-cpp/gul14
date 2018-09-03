@@ -80,7 +80,7 @@ private:
  * \code
  * std::string str = gul::cat(13.5, std::string(" quick "), "brown foxes ", "jump over ",
  *                            42, " lazy dogs'", std::string(" heads."));
- * // str == "13.500000 quick brown foxes jump over 42 lazy docs' heads."
+ * // str == "13.500000 quick brown foxes jump over 42 lazy dogs' heads."
  * \endcode
  * \returns a string containing the concatenation of all arguments.
  */

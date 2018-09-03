@@ -32,7 +32,7 @@
  * types that form the foundation for other libraries and programs. The main fields
  * covered by the library are:
  * 
- *  - Strings
+ *  - \ref string_utilities
  *  - Exceptions
  *  - Time
  *  - Numerical helpers
@@ -86,6 +86,11 @@
  * The General Utility Library provides the following functions for dealing with strings:
  * - gul::split(): Separate a string at all occurences of a delimiter
  * - gul::join(): Concatenate string elements of a vector interspaced with glue
+ * - gul::cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
+ *   string_views, or even numbers.
+ *   \code
+ *   std::string str = gul::cat("This might replace ", 1e6, " uses of sprintf() "s, "in our code.");
+ *   \endcode
  */
 
 /**
