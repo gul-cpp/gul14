@@ -26,3 +26,9 @@ test('String escape',
 		[ 'test_string_escape.cc', catch_main ],
 		include_directories : test_inc,
 		link_with : libgul))
+test('String subsititutions',
+	executable('test-string-substitute',
+		[ 'test_string_substitute.cc', catch_main ],
+		include_directories : test_inc,
+		link_with : libgul))
+

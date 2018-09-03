@@ -21,6 +21,7 @@
 #pragma once
 
 #include <string>
+#include "gul/string_view.h"
 
 namespace gul {
 
@@ -35,6 +36,21 @@ namespace gul {
  * \return A new string without non-printables
  */
 std::string escape(const std::string& in);
+
+/**
+ * Replace all occurrences of a string within another string in-place.
+ * This function replaces all occurrences of needle within haystack by hammer and
+ * returns a reference to the modified haystack.
+ *
+ * \param haystack The string where we should search and replace
+ * \param needle What shall be replaced
+ * \param hammer The replacement string
+ *
+ * \return The altered haystack
+ *
+ * \exception An invalid argument exception is thrown if needle is empty
+ */
+std::string& substitute(std::string& haystack, string_view needle, string_view hammer);
 
 } /* namespace gul */
 

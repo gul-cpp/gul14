@@ -23,6 +23,7 @@
 
 #include <iomanip>
 #include <regex>
+#include <stdexcept>
 #include <sstream>
 
 namespace gul {
@@ -71,6 +72,20 @@ std::string escape(const std::string& in)
     buf << "\"";
 
     return buf.str();
+}
+
+std::string& substitute(std::string& haystack, string_view needle, string_view hammer)
+{
+    if (needle.empty())
+        throw std::invalid_argument("needle is empty");
+
+    auto pos = haystack.find(needle.data(), 0, needle.length());
+    while (pos != std::string::npos) {
+        haystack.erase(pos, needle.length());
+        haystack.insert(pos, hammer.data(), hammer.length());
+        pos = haystack.find(needle.data(), pos + hammer.length(), needle.length());
+    }
+    return haystack;
 }
 
 } // namespace gul
