@@ -94,6 +94,13 @@
  *   \code
  *   std::string str = gul::cat("This might replace ", 1e6, " uses of sprintf() "s, "in our code.");
  *   \endcode
+ * - gul::tokenize() Split a string into a vector of tokens at delimiter characters.
+ *   \code
+ *   std::vector<std::string> v = gul::tokenize("Hello World");
+ *   // ...yields a vector with the entries "Hello" and "World"
+ *   \endcode
+ * - gul::tokenize_string_view() Like tokenize(), but returns a vector of string_views
+ *   into the original string.
  *
  * <h3>Classes</h3>
  * - gul::string_view  A view to a contiguous sequence of chars. The GUL version is
