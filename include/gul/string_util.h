@@ -1,7 +1,7 @@
 /**
  * \file   string_util.h
  * \brief  Declarations of string utility functions for the General Utility Library.
- * \author Soeren Grunewald
+ * \author Soeren Grunewald, Lars Froehlich
  * \date   Created on 31 August 2018
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
@@ -53,6 +53,18 @@ std::string escape(const std::string& in);
  * \exception An invalid argument exception is thrown if needle is empty
  */
 std::string& substitute(std::string& haystack, string_view needle, string_view hammer);
+
+/**
+ * Replace all occurrences of a string within another string, returning the result
+ * as a std::string.
+ * Specifically, replace all occurrences of needle within haystack by hammer.
+ *
+ * \param haystack The string in which search&replace should take place.
+ * \param needle   The string to be searched for. If this is an empty string, a copy
+ *                 of haystack is returned.
+ * \param hammer   The replacement string.
+ */
+std::string substitute_copy(string_view haystack, string_view needle, string_view hammer);
 
 } /* namespace gul */
 

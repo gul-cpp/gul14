@@ -56,3 +56,11 @@ TEST_CASE("Replace parts of a string in-place", "[string_util]")
 	REQUIRE(substitute(foo, " ", "\t") == ""s);
 }
 
+TEST_CASE("Replace parts of a string using substitute_copy()", "[string_util]")
+{
+    REQUIRE(substitute_copy("hello lovely helpful world", "he", "KOU") == "KOUllo lovely KOUlpful world");
+    REQUIRE(substitute_copy("hello lovely helpful world", "he", "A") == "Allo lovely Alpful world");
+    REQUIRE(substitute_copy("hello lovely helpful world", "", "AGA") == "hello lovely helpful world");
+    REQUIRE(substitute_copy("hello lovely helpful world", "lo", "y") == "hely yvely helpful world");
+    REQUIRE(substitute_copy("hello lovely helpful world", "l", "") == "heo ovey hepfu word");
+}

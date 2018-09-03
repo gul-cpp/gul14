@@ -90,6 +90,31 @@ std::string& substitute(std::string& haystack, string_view needle, string_view h
     return haystack;
 }
 
+std::string substitute_copy(string_view haystack, string_view needle, string_view hammer)
+{
+    if (needle.empty())
+        return std::string(haystack);
+
+    std::string result;
+
+    result.reserve(haystack.length());
+
+    std::size_t pos = 0;
+    std::size_t last_pos = 0;
+    while ((pos = haystack.find(needle.data(), pos, needle.length())) != std::string::npos)
+    {
+        result.append(haystack.data() + last_pos, pos - last_pos);
+        result.append(hammer.data(), hammer.length());
+        pos += needle.length();
+        last_pos = pos;
+    }
+
+    result.append(haystack.data() + last_pos, haystack.length() - last_pos);
+    result.shrink_to_fit();
+
+    return result;
+}
+
 } // namespace gul
 
 /* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
