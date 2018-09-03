@@ -2,7 +2,8 @@
 
 project('libgul', 'cpp',
     default_options : [ 'cpp_std=c++14' ],
-    version : '0.1')
+    version : '0.1',
+    meson_version : '>=0.46')
 
 # The API version is the major version of the project.
 # Increase the major project version in project() above on API breaking changes.
