@@ -83,14 +83,23 @@
 /**
  * \page string_utilities String Utilities
  *
- * The General Utility Library provides the following functions for dealing with strings:
+ * The General Utility Library provides a number of utility functions and classes to help
+ * with strings.
+ *
+ * <h3>Functions</h3>
  * - gul::split(): Separate a string at all occurences of a delimiter
  * - gul::join(): Concatenate string elements of a vector interspaced with glue
- * - gul::cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
- *   string_views, or even numbers.
+ * - gul::cat() Efficiently concatenate an arbitrary number of std::strings, C strings,
+ *              string_views, or numbers.
  *   \code
  *   std::string str = gul::cat("This might replace ", 1e6, " uses of sprintf() "s, "in our code.");
  *   \endcode
+ *
+ * <h3>Classes</h3>
+ * - gul::string_view  A view to a contiguous sequence of chars. The GUL version is
+ *                     a backport of
+ *                     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ *                     from libc++ for C++17.
  */
 
 /**
