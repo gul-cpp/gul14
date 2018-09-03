@@ -21,3 +21,10 @@ t2 = executable('cat-test',
 
 test('Backports test', t1)
 test('Testing cat()', t2)
+
+test('String split and join',
+	executable('test-string-split',
+		[ 'test_string_split.cc', catch_main ],
+		include_directories : test_inc,
+		link_with : libgul),
+	timeout : 2)

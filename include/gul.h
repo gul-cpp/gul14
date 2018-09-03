@@ -81,6 +81,14 @@
  */
 
 /**
+ * \page string_utilities String Utilities
+ *
+ * The General Utility Library provides the following functions for dealing with strings:
+ * - gul::split(): Separate a string at all occurences of a delimiter
+ * - gul::join(): Concatenate string elements of a vector interspaced with glue
+ */
+
+/**
  * \page backports Backports
  *
  * The General Utility Library provides a few classes from C++ standard libraries that
@@ -95,6 +103,7 @@
 
 #include "gul/cat.h"
 #include "gul/string_view.h"
+#include "gul/join_split.h"
 
 /// Namespace gul contains all functions and classes of the General Utility Library.
 namespace gul {}

@@ -1,0 +1,63 @@
+/**
+ * \file   test_string_split.cc
+ * \author Fini Jastrow
+ * \date   Created on August 31, 2018
+ * \brief  Part of test suite for string utility functions in the General Utility Library.
+ *
+ * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 2.1 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "catch.h"
+#include <gul.h>
+
+#include <iostream>
+
+using namespace std::literals::string_literals;
+
+TEST_CASE("String Split Test", "[string_util]")
+{
+    auto x = gul::split("Testmenoe"s, std::regex{"X"});
+    REQUIRE(x.size() == 1);
+    REQUIRE(x[0] == "Testmenoe"s);
+
+    auto x2 = gul::split("Testmenoe"s, "X"s);
+    REQUIRE(x2.size() == 1);
+    REQUIRE(x2[0] == "Testmenoe"s);
+
+    auto y = gul::split("Test\nme\nnoe"s, std::regex{"[^[:print:]]"});
+    REQUIRE(y.size() == 3);
+    REQUIRE(y[0] == "Test"s);
+    REQUIRE(y[1] == "me"s);
+    REQUIRE(y[2] == "noe"s);
+
+    auto y2 = gul::split("Test\nme\nnoe"s, "\n"s);
+    REQUIRE(y2.size() == 3);
+    REQUIRE(y2[0] == "Test"s);
+    REQUIRE(y2[1] == "me"s);
+    REQUIRE(y2[2] == "noe"s);
+}
+
+TEST_CASE("String Split-Join Test", "[string_util]")
+{
+    REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"z"}), "!") == "TestXm!eXnoeX"s);
+    REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"X"}), "!") == "Test!mze!noe!"s);
+    REQUIRE(gul::join(gul::split("z"s, std::regex{"z"}), "!") == "!"s);
+    REQUIRE(gul::join(gul::split("z "s, std::regex{"z"}), "!") == "! "s);
+    REQUIRE(gul::join(gul::split(" z"s, std::regex{"z"}), "!") == " !"s);
+    REQUIRE(gul::join(gul::split("xyzzy"s, std::regex{"z"}), "!") == "xy!!y"s);
+    auto x = "EinNegerMitGazelleZagtImRegenNie"s;
+    REQUIRE(gul::join(gul::split(x, "e"), "e") == x);
+}
