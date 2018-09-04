@@ -79,7 +79,7 @@ std::string escape(const std::string& in)
 std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer)
 {
     if (needle.empty())
-        throw std::invalid_argument("needle is empty");
+        return haystack;
 
     auto pos = haystack.find(needle.data(), 0, needle.length());
     while (pos != std::string::npos) {
