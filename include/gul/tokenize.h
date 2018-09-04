@@ -30,9 +30,10 @@ namespace gul {
 
 /**
  * Split the given string into a vector of substrings (tokens) delimited by any of the
- * characters in the delimiters string. Delimiters at the beginning and end of the string
- * are ignored. For example, tokenize("   A  B C  ") yields a vector with the three
- * entries "A", "B", and "C".
+ * characters in the delimiters string. Multiple adjacent delimiters are treated like a
+ * single one, and delimiters at the beginning and end of the string are ignored.
+ * For example, tokenize("   A  B C  ") yields a vector with the three entries "A", "B",
+ * and "C".
  * \see gul::tokenize_string_view() returns a vector<string_view> instead.
  * \param str         The string to be split.
  * \param delimiters  String with delimiter characters. Any of the characters in
@@ -46,9 +47,10 @@ std::vector<std::string> tokenize(string_view str,
 
 /**
  * Split the given string into a vector of substrings (tokens) delimited by any of the
- * characters in the delimiters string. Delimiters at the beginning and end of the string
- * are ignored. For example, tokenize("   A  B C  ") yields a vector with the three
- * entries "A", "B", and "C".
+ * characters in the delimiters string. Multiple adjacent delimiters are treated like a
+ * single one, and delimiters at the beginning and end of the string are ignored.
+ * For example, tokenize("   A  B C  ") yields a vector with the three entries "A", "B",
+ * and "C".
  * \see gul::tokenize() returns a vector<string> instead.
  * \param str         The string to be split.
  * \param delimiters  String with delimiter characters. Any of the characters in

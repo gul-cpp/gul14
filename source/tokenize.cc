@@ -24,56 +24,45 @@
 
 namespace gul {
 
-std::vector<std::string> tokenize(string_view str, string_view delimiters)
-{
-    std::vector<std::string> tokens;
+namespace detail {
 
-    std::string::size_type token_start = 0;
-    std::string::size_type token_end = 0;
+template <class StringType>
+std::vector<StringType> tokenize(string_view str, string_view delimiters)
+{
+    std::vector<StringType> tokens;
+
+    string_view::size_type token_start = 0;
+    string_view::size_type token_end = 0;
 
     while (true)
     {
         token_start = str.find_first_not_of(delimiters, token_end);
-        if (token_start == std::string::npos)
+        if (token_start == string_view::npos)
             break;
 
         token_end = str.find_first_of(delimiters, token_start);
-        if (token_end == std::string::npos)
+        if (token_end == string_view::npos)
         {
-            tokens.emplace_back(str.substr(token_start, std::string::npos));
+            tokens.emplace_back(str.data() + token_start, str.length() - token_start);
             break;
         }
         else
-            tokens.emplace_back(str.substr(token_start, token_end - token_start));
+            tokens.emplace_back(str.data() + token_start, token_end - token_start);
     }
 
     return tokens;
 }
 
+} // namespace detail
+
+std::vector<std::string> tokenize(string_view str, string_view delimiters)
+{
+    return detail::tokenize<std::string>(str, delimiters);
+}
+
 std::vector<string_view> tokenize_string_view(string_view str, string_view delimiters)
 {
-    std::vector<string_view> tokens;
-
-    std::string::size_type token_start = 0;
-    std::string::size_type token_end = 0;
-
-    while (true)
-    {
-        token_start = str.find_first_not_of(delimiters, token_end);
-        if (token_start == std::string::npos)
-            break;
-
-        token_end = str.find_first_of(delimiters, token_start);
-        if (token_end == std::string::npos)
-        {
-            tokens.push_back(str.substr(token_start, std::string::npos));
-            break;
-        }
-        else
-            tokens.push_back(str.substr(token_start, token_end - token_start));
-    }
-
-    return tokens;
+    return detail::tokenize<string_view>(str, delimiters);
 }
 
 } // namespace gul

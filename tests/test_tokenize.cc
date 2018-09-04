@@ -24,6 +24,8 @@
 #include "catch.h"
 #include "gul.h"
 
+using namespace std::literals;
+
 using gul::tokenize;
 using gul::tokenize_string_view;
 
@@ -33,7 +35,9 @@ TEST_CASE("gul::tokenize() works with \"Hello World\"", "[tokenize]")
 
     REQUIRE(tokens.size() == 2);
     REQUIRE(tokens[0] == "Hello");
+    REQUIRE(tokens[0].length() == 5);
     REQUIRE(tokens[1] == "World");
+    REQUIRE(tokens[1].length() == 5);
 }
 
 TEST_CASE("gul::tokenize() works with \" Hello World\" with odd whitespace", "[tokenize]")
@@ -45,12 +49,14 @@ TEST_CASE("gul::tokenize() works with \" Hello World\" with odd whitespace", "[t
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize() works with custom delimiters", "[tokenize]")
+TEST_CASE("gul::tokenize() works with custom delimiters and null characters", "[tokenize]")
 {
-    auto tokens = tokenize("\t Hello\n\rWorld\t\t  ", " \t\n\r");
+    const auto input = "\t Hel\0lo\n\rWorld\t\t  "s;
+    auto tokens = tokenize(input, " \t\n\r");
     
     REQUIRE(tokens.size() == 2);
-    REQUIRE(tokens[0] == "Hello");
+    REQUIRE(tokens[0] == "Hel\0lo"s);
+    REQUIRE(tokens[0].length() == 6);
     REQUIRE(tokens[1] == "World");
 }
 
@@ -68,7 +74,9 @@ TEST_CASE("gul::tokenize_string_view() works with \"Hello World\"", "[tokenize]"
 
     REQUIRE(tokens.size() == 2);
     REQUIRE(tokens[0] == "Hello");
+    REQUIRE(tokens[0].length() == 5);
     REQUIRE(tokens[1] == "World");
+    REQUIRE(tokens[1].length() == 5);
 }
 
 TEST_CASE("gul::tokenize_string_view() works with \" Hello World\" with odd whitespace", "[tokenize]")
@@ -80,12 +88,14 @@ TEST_CASE("gul::tokenize_string_view() works with \" Hello World\" with odd whit
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize_string_view() works with custom delimiters", "[tokenize]")
+TEST_CASE("gul::tokenize_string_view() works with custom delimiters and null characters", "[tokenize]")
 {
-    auto tokens = tokenize_string_view("\t Hello\n\rWorld\t\t  ", " \t\n\r");
+    const auto input = "\t Hel\0lo\n\rWorld\t\t  "s;
+    auto tokens = tokenize_string_view(input, " \t\n\r");
 
     REQUIRE(tokens.size() == 2);
-    REQUIRE(tokens[0] == "Hello");
+    REQUIRE(tokens[0] == "Hel\0lo"s);
+    REQUIRE(tokens[0].length() == 6);
     REQUIRE(tokens[1] == "World");
 }
 
