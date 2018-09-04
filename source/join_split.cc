@@ -64,9 +64,10 @@ std::vector<std::string> split(string_view text, string_view delimiter) {
 
 std::string join(std::vector<std::string> parts, string_view glue) {
     auto result = ""s;
-    auto const last = parts.size() - 1;
-    if (last < 0)
-        return result;
+	auto const size = parts.size();
+	if (size < 1)
+		return result;
+    auto const last = size - 1; // last valid index
 
     for (auto i = decltype(last){ 0 }; i < last; ++i) {
         result += parts[i];

@@ -79,6 +79,14 @@ TEST_CASE("String Split Test", "[string_util]")
     REQUIRE(z2[6] == ""s);
 }
 
+TEST_CASE("String Join Test", "[string_util]")
+{
+    REQUIRE(gul::join(std::vector<std::string>{ }, "lalala") == ""s);
+    REQUIRE(gul::join(std::vector<std::string>{ { "" } }, "lalala") == ""s);
+    REQUIRE(gul::join(std::vector<std::string>{ { "xyzzy" } }, "lalala") == "xyzzy"s);
+    //throw(1);
+}
+
 TEST_CASE("String Split-Join Test", "[string_util]")
 {
     REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"z"}), "!") == "TestXm!eXnoeX"s);
