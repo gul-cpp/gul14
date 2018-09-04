@@ -172,6 +172,7 @@ dirs:
 TEST_OBJ = $(OBJDIR)/tests/test_main.o \
            $(OBJDIR)/tests/test_backports.o \
            $(OBJDIR)/tests/test_cat.o \
+           $(OBJDIR)/tests/test_string_escape.o \
            $(OBJDIR)/tests/test_string_replace.o \
            $(LIBRARYOBJ)
 
@@ -190,10 +191,15 @@ $(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
 	    $(SRCDIR)/../tests/test_cat.cc
 
+$(OBJDIR)/tests/test_string_escape.o: $(SRCDIR)/../tests/test_string_escape.cc
+	@echo -e $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_escape.o \
+	    $(SRCDIR)/../tests/test_string_escape.cc
+
 $(OBJDIR)/tests/test_string_replace.o: $(SRCDIR)/../tests/test_string_replace.cc
 	@echo -e $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_replace.o \
-	    $(SRCDIR)/../tests/test_replace.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_replace.o \
+	    $(SRCDIR)/../tests/test_string_replace.cc
 
 tests/test_main: dirs $(TEST_OBJ)
 	@echo $(INTRO) $@ $(OUTRO)
