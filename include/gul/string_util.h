@@ -43,6 +43,11 @@ namespace gul {
  *   \    ->  \\
  *   "    ->  \"
  *
+ * Note: The hexadecimal escape uses always two digits. This is different from
+ * the C(++) standard, where it can be an arbitrary number of digits. The standard's
+ * way makes it impossible to have any hex digit after a hex escape, e.g. "\x200"
+ * is invalid and not " 0" from the standard's point of view.
+ *
  * \param in The input string
  *
  * \return A new string that is the C string literal of the input
