@@ -46,14 +46,19 @@ std::vector<std::string> split(const std::string& text, const std::regex delimit
 
 std::vector<std::string> split(string_view text, string_view delimiter) {
     auto result = std::vector<std::string>{ };
-	auto pos = decltype(text.find(delimiter.data(), 0, 0)){ 0 };
-	auto next = pos;
+	auto search_start = gul::string_view::size_type{ 0 };
+	auto push_start = search_start;
 
-    while ((next = text.find(delimiter.data(), pos, delimiter.size())) != std::string::npos) {
-		result.push_back(text.substr(pos, next - pos).to_string());
-		pos = next + 1;
+	for (;;) {
+		auto const hit = text.find(delimiter.data(), search_start, delimiter.size());
+		if (hit == gul::string_view::npos)
+			break;
+		auto const hit_len = hit - push_start;
+		result.emplace_back(text.substr(push_start, hit_len));
+        search_start += std::max(delimiter.size() + hit_len, decltype(delimiter.size()){1});
+		push_start += delimiter.size() + hit_len;
 	}
-	result.push_back(text.substr(pos, next - pos).to_string());
+	result.emplace_back(text.substr(push_start));
 	return result;
 }
 
