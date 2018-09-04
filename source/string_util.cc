@@ -39,8 +39,6 @@ std::string escape(const std::string& in)
 
     auto buf = std::stringstream{ };
 
-    buf << "\"";
-
     for (; rit != rend; ++rit) {
         last = rit;
         buf << rit->prefix();
@@ -73,8 +71,6 @@ std::string escape(const std::string& in)
         buf << in;
     else
         buf << last->suffix();
-
-    buf << "\"";
 
     return buf.str();
 }
