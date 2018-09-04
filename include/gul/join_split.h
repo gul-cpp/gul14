@@ -30,21 +30,17 @@
 namespace gul {
 
 /**
- * Separate a string at all occurences of the delimiter. The strings between the delimiters
- * are collected and returned in a vector.
+ * Separate a string at all occurences of a delimiter, returning the strings between the
+ * delimiters in a vector.
  *
- * The result has at least one element: If the delimiter is not present in the text the
- * whole text is returned as one.
- * If there are consecutive delimiters the collected string between these is the empty
- * string.
- * If the delimiter is directly at the end of the input the collected string between the
- * end of the input string and the string and is again the empty string.
+ * The result has at least one element. If the delimiter is not present in the text the
+ * whole text is returned as one. If there are consecutive delimiters, the collected
+ * string between them is the empty string. If the delimiter is directly at the end of the
+ * input, the collected string between the end of the input and the delimiter is again the
+ * empty string.
  *
- * Reverse funtion of gul::join()
- * "'Explode' the text at the delimiter into a vector"
- *
- * It is guaranteed that join(split(text, del), del) == text
- * (if del is not a regex).
+ * split() is the reverse funtion of gul::join(). It is guaranteed that
+ * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
  * Note: The regex version does not take string_views, because regexes and string_view are
  * incompatible.
@@ -52,26 +48,24 @@ namespace gul {
  * \param text      The string that is to be deconstructed
  * \param delimiter The delimiting substring
  *
- * \return Array of substrings that where delimited by delimiter
+ * \returns an array of substrings that were separated by delimiter in the original
+ *          string.
  */
 std::vector<std::string> split(string_view text, string_view delimiter);
-std::vector<std::string> split(const std::string& text, const std::regex delimiter);
+std::vector<std::string> split(const std::string& text, std::regex delimiter);
 
 /**
- * Concatenate the strings from the vector parts into one single string. Between each two
- * elements of the vector the delimiter is placed.
+ * Concatenate a vector of strings into one single string, placing a delimiter between
+ * them.
  *
- * Reverse funtion of gul::split()
- * "'Implode' a string array into a single string"
+ * This is the reverse funtion of gul::split(). It is guaranteed that
+ * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
- * It is guaranteed that join(split(text, del), del) == text
- * (if del is not a regex).
- *
- * \param parts Array of Strings that are to be concatenated
+ * \param parts Array of strings that are to be concatenated
  * \param glue  String that is put between each element of parts
  *
- * \return All strings glued together with parameter glue
- * */
+ * \returns all strings glued together with the delimiter glue.
+ */
 std::string join(std::vector<std::string> parts, string_view glue);
 
 } /* namespace gul */
