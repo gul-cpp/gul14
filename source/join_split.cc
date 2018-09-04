@@ -46,33 +46,33 @@ std::vector<std::string> split(const std::string& text, const std::regex delimit
 
 std::vector<std::string> split(string_view text, string_view delimiter) {
     auto result = std::vector<std::string>{ };
-	auto search_start = gul::string_view::size_type{ 0 };
-	auto push_start = search_start;
+    auto search_start = gul::string_view::size_type{ 0 };
+    auto push_start = search_start;
 
-	for (;;) {
-		auto const hit = text.find(delimiter.data(), search_start, delimiter.size());
-		if (hit == gul::string_view::npos)
-			break;
-		auto const hit_len = hit - push_start;
-		result.emplace_back(text.substr(push_start, hit_len));
+    for (;;) {
+        auto const hit = text.find(delimiter.data(), search_start, delimiter.size());
+        if (hit == gul::string_view::npos)
+            break;
+        auto const hit_len = hit - push_start;
+        result.emplace_back(text.substr(push_start, hit_len));
         search_start += std::max(delimiter.size() + hit_len, decltype(delimiter.size()){1});
-		push_start += delimiter.size() + hit_len;
-	}
-	result.emplace_back(text.substr(push_start));
-	return result;
+        push_start += delimiter.size() + hit_len;
+    }
+    result.emplace_back(text.substr(push_start));
+    return result;
 }
 
 std::string join(std::vector<std::string> parts, string_view glue) {
     auto result = ""s;
-	auto const size = parts.size();
-	if (size < 1)
-		return result;
+    auto const size = parts.size();
+    if (size < 1)
+        return result;
     auto const last = size - 1; // last valid index
 
     for (auto i = decltype(last){ 0 }; i < last; ++i) {
         result += parts[i];
-		result.append(glue.data(), glue.size());
-	}
+        result.append(glue.data(), glue.size());
+    }
     result += parts[last];
     return result;
 }
