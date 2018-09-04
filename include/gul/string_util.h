@@ -29,13 +29,23 @@ namespace gul {
 
 
 /**
- * Creates a new string where all all non printable characters in the string
- * have been replaced with corresponding escape sequences. Allowing the
- * string to be printed out, e.g in debug messages.
+ * Create a new string that looks like the C string literal of the input
+ * string. This is achiaved by replacing all non printable characters
+ * with a hex code escape in the form \x01.
+ *
+ * A few special cases are implemented to give more readable representations
+ * for very common control characters, and of course backslash and double quotes
+ * additionally are escaped:
+ *
+ *   CR   ->  \r
+ *   NL   ->  \n
+ *   TAB  ->  \t
+ *   \    ->  \\
+ *   "    ->  \"
  *
  * \param in The input string
  *
- * \return A new string without non-printables
+ * \return A new string that is the C string literal of the input
  */
 std::string escape(const std::string& in);
 
