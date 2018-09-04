@@ -62,7 +62,8 @@ std::string escape(const std::string& in)
             buf << "\\t";
             break;
         default:
-            buf << "\\x" << std::hex << std::setfill('0') << std::setw(2) << c;
+            buf << "\\x" << std::hex << std::setfill('0')
+				<< std::setw(2) << static_cast<unsigned int>(c);
             break;
         }
     }
