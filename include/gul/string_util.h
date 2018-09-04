@@ -52,7 +52,7 @@ std::string escape(const std::string& in);
  *
  * \exception An invalid argument exception is thrown if needle is empty
  */
-std::string& substitute(std::string& haystack, string_view needle, string_view hammer);
+std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer);
 
 /**
  * Replace all occurrences of a string within another string, returning the result
@@ -64,7 +64,7 @@ std::string& substitute(std::string& haystack, string_view needle, string_view h
  *                 of haystack is returned.
  * \param hammer   The replacement string.
  */
-std::string substitute_copy(string_view haystack, string_view needle, string_view hammer);
+std::string replace(string_view haystack, string_view needle, string_view hammer);
 
 } /* namespace gul */
 

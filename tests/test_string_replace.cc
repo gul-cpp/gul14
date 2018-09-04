@@ -32,35 +32,35 @@ TEST_CASE("Replace parts of a string in-place", "[string_util]")
 
 	// should be equal
 	std::string foo = input;
-	REQUIRE(substitute(foo, "foo", "foo") == input); // replace the one with one
+	REQUIRE(replace_inplace(foo, "foo", "foo") == input); // replace the one with one
 
 	foo = input;
-	REQUIRE(substitute(foo, "world", "foo") == input); // no match
+	REQUIRE(replace_inplace(foo, "world", "foo") == input); // no match
 
 	foo = input;
-	REQUIRE(substitute(foo, "foo", "world") == "world bar baz");
+	REQUIRE(replace_inplace(foo, "foo", "world") == "world bar baz");
 
 	foo = input;
-	REQUIRE(substitute(foo, "f", "m") == "moo bar baz"s );
+	REQUIRE(replace_inplace(foo, "f", "m") == "moo bar baz"s );
 
 	foo = input;
-	REQUIRE(substitute(foo, " ", "\t") == "foo\tbar\tbaz"s );
+	REQUIRE(replace_inplace(foo, " ", "\t") == "foo\tbar\tbaz"s );
 
 	try {
-		substitute(foo, "", "\t");
+		replace_inplace(foo, "", "\t");
 	} catch (const std::exception& e) {
 		REQUIRE("needle is empty"s == e.what());
 	}
 
 	foo = "";
-	REQUIRE(substitute(foo, " ", "\t") == ""s);
+	REQUIRE(replace_inplace(foo, " ", "\t") == ""s);
 }
 
-TEST_CASE("Replace parts of a string using substitute_copy()", "[string_util]")
+TEST_CASE("Replace parts of a string using replace()", "[string_util]")
 {
-    REQUIRE(substitute_copy("hello lovely helpful world", "he", "KOU") == "KOUllo lovely KOUlpful world");
-    REQUIRE(substitute_copy("hello lovely helpful world", "he", "A") == "Allo lovely Alpful world");
-    REQUIRE(substitute_copy("hello lovely helpful world", "", "AGA") == "hello lovely helpful world");
-    REQUIRE(substitute_copy("hello lovely helpful world", "lo", "y") == "hely yvely helpful world");
-    REQUIRE(substitute_copy("hello lovely helpful world", "l", "") == "heo ovey hepfu word");
+    REQUIRE(replace("hello lovely helpful world", "he", "KOU") == "KOUllo lovely KOUlpful world");
+    REQUIRE(replace("hello lovely helpful world", "he", "A") == "Allo lovely Alpful world");
+    REQUIRE(replace("hello lovely helpful world", "", "AGA") == "hello lovely helpful world");
+    REQUIRE(replace("hello lovely helpful world", "lo", "y") == "hely yvely helpful world");
+    REQUIRE(replace("hello lovely helpful world", "l", "") == "heo ovey hepfu word");
 }

@@ -76,7 +76,7 @@ std::string escape(const std::string& in)
     return buf.str();
 }
 
-std::string& substitute(std::string& haystack, string_view needle, string_view hammer)
+std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer)
 {
     if (needle.empty())
         throw std::invalid_argument("needle is empty");
@@ -90,7 +90,7 @@ std::string& substitute(std::string& haystack, string_view needle, string_view h
     return haystack;
 }
 
-std::string substitute_copy(string_view haystack, string_view needle, string_view hammer)
+std::string replace(string_view haystack, string_view needle, string_view hammer)
 {
     if (needle.empty())
         return std::string(haystack);
