@@ -28,32 +28,30 @@ using namespace gul;
 
 TEST_CASE("Replace parts of a string in-place", "[string_util]")
 {
-	const std::string input{ "foo bar baz" };
+    const std::string input{ "foo bar baz" };
+    std::string foo = input;
 
-	// should be equal
-	std::string foo = input;
-	REQUIRE(replace_inplace(foo, "foo", "foo") == input); // replace the one with one
-
-	foo = input;
-	REQUIRE(replace_inplace(foo, "world", "foo") == input); // no match
-
-	foo = input;
-	REQUIRE(replace_inplace(foo, "foo", "world") == "world bar baz");
-
-	foo = input;
-	REQUIRE(replace_inplace(foo, "f", "m") == "moo bar baz"s );
-
-	foo = input;
-	REQUIRE(replace_inplace(foo, " ", "\t") == "foo\tbar\tbaz"s );
-
-	try {
-		replace_inplace(foo, "", "\t");
-	} catch (const std::exception& e) {
-		REQUIRE("needle is empty"s == e.what());
+    SECTION("replacing foo by foo") {
+        REQUIRE(replace_inplace(foo, "foo", "foo") == input); // replace the one with one
+    }
+    SECTION("replacing world by foo") {
+        REQUIRE(replace_inplace(foo, "world", "foo") == input); // no match
+    }
+    SECTION("replacing foo by world") {
+        REQUIRE(replace_inplace(foo, "foo", "world") == "world bar baz");
+    }
+    SECTION("replacing f by m") {
+        REQUIRE(replace_inplace(foo, "f", "m") == "moo bar baz"s );
+    }
+    SECTION("replacing spaces by tabs") {
+        REQUIRE(replace_inplace(foo, " ", "\t") == "foo\tbar\tbaz"s );
+    }
+    SECTION("empty needle does nothing") {
+	    REQUIRE(replace_inplace(foo, "", "\t") == input);
 	}
 
 	foo = "";
-	REQUIRE(replace_inplace(foo, " ", "\t") == ""s);
+    REQUIRE(replace_inplace(foo, " ", "\t") == ""s);
 }
 
 TEST_CASE("Replace parts of a string using replace()", "[string_util]")
