@@ -55,6 +55,17 @@ namespace gul {
 std::string escape(const std::string& in);
 
 /**
+ * Evaluate a string with escaped characters to get the original string back.
+ * Does only know the escape sequences used by gul::escape() and can be
+ * used as in inverse function.
+ *
+ * \param in The string with escape sequences
+ *
+ * \return A new string where the sequences have been evaluated
+ */
+std::string unescape(const std::string& in);
+
+/**
  * Replace all occurrences of a string within another string in-place.
  * This function replaces all occurrences of needle within haystack by hammer and
  * returns a reference to the modified haystack.

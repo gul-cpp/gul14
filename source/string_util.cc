@@ -76,6 +76,52 @@ std::string escape(const std::string& in)
     return buf.str();
 }
 
+std::string unescape(const std::string& in)
+{
+    auto re = std::regex{ R"(\\(["\\nrt]|x[[:xdigit:]]{2}))" };
+    auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
+    auto rend = std::regex_iterator<std::string::const_iterator>{ };
+    auto last = rend; // last processed
+
+    auto buf = std::stringstream{ };
+
+    for (; rit != rend; ++rit) {
+        last = rit;
+        buf << rit->prefix();
+        if (rit->empty())
+            continue;
+        const auto c = rit->format("$1");
+        switch (c[0]) {
+        case '\"':
+        case '\\':
+            buf << c;
+            break;
+        case 'n':
+            buf << "\n";
+            break;
+        case 'r':
+            buf << "\r";
+            break;
+        case 't':
+            buf << "\t";
+            break;
+		case 'x':
+            buf << static_cast<unsigned char>(std::stoi(rit->format("$1").substr(1), 0, 16));
+            break;
+		default:
+			buf << rit->str();
+			break;
+        }
+    }
+
+    if (last == rend) // no match
+        buf << in;
+    else
+        buf << last->suffix();
+
+    return buf.str();
+}
+
 std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer)
 {
     if (needle.empty())

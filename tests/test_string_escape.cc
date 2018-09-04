@@ -37,3 +37,16 @@ TEST_CASE("Compare escaped strings", "[string_util]")
 
 	// TODO: add more tests cases...for ACK NAK ENQ REQ STX ETX...
 }
+
+TEST_CASE("Compare unescaped strings", "[string_util]")
+{
+	REQUIRE(gul::unescape("foo bar baz"s) == "foo bar baz"s);
+
+	REQUIRE(gul::unescape(R"(foo\rbar\nfoobar\tbaz\\qux\")"s) ==
+	                        "foo\rbar\nfoobar\tbaz\\qux\""s);
+
+	REQUIRE(gul::unescape(R"(foo\x07bar\x00baz)"s) == "foo\abar\000baz"s);
+
+	auto const s = "foo\abar\000baz"s;
+	REQUIRE(gul::unescape(gul::escape(s)) == s);
+}
