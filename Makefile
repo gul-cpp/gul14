@@ -10,12 +10,14 @@ INCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/include
 DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 
 LIBRARYOBJ = \
-	$(OBJDIR)/cat.o
+	$(OBJDIR)/cat.o \
+	$(OBJDIR)/join_split.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
 LIBRARYHFILES = \
 	gul.h \
 	gul/cat.h \
+	gul/join_split.h \
 	gul/string_view.h
 
 PKGCONFIG =
@@ -169,7 +171,8 @@ dirs:
 
 # TODO: Improve building of tests
 TEST_OBJ = $(OBJDIR)/tests/test_main.o $(OBJDIR)/tests/test_backports.o \
-           $(OBJDIR)/tests/test_cat.o $(LIBRARYOBJ)
+           $(OBJDIR)/tests/test_cat.o $(OBJDIR)/tests/test_string_split.o \
+           $(LIBRARYOBJ)
 
 $(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
 	@echo $(INTRO) $@ $(OUTRO)
@@ -185,6 +188,11 @@ $(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
 	    $(SRCDIR)/../tests/test_cat.cc
+
+$(OBJDIR)/tests/test_string_split.o: $(SRCDIR)/../tests/test_string_split.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_split.o \
+	    $(SRCDIR)/../tests/test_string_split.cc
 
 tests/test_main: dirs $(TEST_OBJ)
 	@echo $(INTRO) $@ $(OUTRO)
