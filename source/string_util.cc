@@ -32,7 +32,7 @@ namespace gul {
 
 std::string escape(const std::string& in)
 {
-    auto re = std::regex{ R"([^[:print:]]|\\|\")" };
+    auto re = std::regex{ R"([^[:print:]]|\\|")" };
     auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
     auto rend = std::regex_iterator<std::string::const_iterator>{ };
     auto last = rend; // last processed

@@ -30,8 +30,8 @@ TEST_CASE("Compare escaped strings", "[string_util]")
 	REQUIRE(gul::escape("foo bar baz"s) == "foo bar baz"s);
 
 	// This shows the design idea quite nice:
-	REQUIRE(gul::escape("foo\rbar\nfoobar\tbaz\\qux"s) ==
-			  R"(foo\rbar\nfoobar\tbaz\\qux)"s);
+	REQUIRE(gul::escape("foo\rbar\nfoobar\tbaz\\qux\""s) ==
+			  R"(foo\rbar\nfoobar\tbaz\\qux\")"s);
 
 	REQUIRE(gul::escape("foo\abar\000baz"s) == R"(foo\x07bar\x00baz)"s);
 
