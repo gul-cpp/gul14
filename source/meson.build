@@ -10,7 +10,8 @@ gitversion_cc = vcs_tag(output : 'gitversion.cc',
 
 libgul_src = [
     'cat.cc',
-    'join_split.cc'
+    'join_split.cc',
+    'string_util.cc'
 ]
 
 inc += include_directories('.')
@@ -31,4 +32,3 @@ if deb_install
                  install_dir : '/usr/lib/pkgconfig',
                  version: '@0@'.format(LIBGUL_API_VERSION))
 endif
-

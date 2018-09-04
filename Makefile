@@ -11,13 +11,15 @@ DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 
 LIBRARYOBJ = \
 	$(OBJDIR)/cat.o \
-	$(OBJDIR)/join_split.o
+	$(OBJDIR)/join_split.o \
+	$(OBJDIR)/string_util.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
 LIBRARYHFILES = \
 	gul.h \
 	gul/cat.h \
 	gul/join_split.h \
+	gul/string_util.h \
 	gul/string_view.h
 
 PKGCONFIG =
@@ -170,8 +172,12 @@ dirs:
 	-mkdir -p ${OBJDIR}/tests
 
 # TODO: Improve building of tests
-TEST_OBJ = $(OBJDIR)/tests/test_main.o $(OBJDIR)/tests/test_backports.o \
-           $(OBJDIR)/tests/test_cat.o $(OBJDIR)/tests/test_string_split.o \
+TEST_OBJ = $(OBJDIR)/tests/test_main.o \
+           $(OBJDIR)/tests/test_backports.o \
+           $(OBJDIR)/tests/test_cat.o \
+           $(OBJDIR)/tests/test_string_escape.o \
+           $(OBJDIR)/tests/test_string_replace.o \
+	   $(OBJDIR)/tests/test_string_split.o \
            $(LIBRARYOBJ)
 
 $(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
@@ -188,6 +194,16 @@ $(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
 	    $(SRCDIR)/../tests/test_cat.cc
+
+$(OBJDIR)/tests/test_string_escape.o: $(SRCDIR)/../tests/test_string_escape.cc
+	@echo -e $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_escape.o \
+	    $(SRCDIR)/../tests/test_string_escape.cc
+
+$(OBJDIR)/tests/test_string_replace.o: $(SRCDIR)/../tests/test_string_replace.cc
+	@echo -e $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_replace.o \
+	    $(SRCDIR)/../tests/test_string_replace.cc
 
 $(OBJDIR)/tests/test_string_split.o: $(SRCDIR)/../tests/test_string_split.cc
 	@echo $(INTRO) $@ $(OUTRO)
