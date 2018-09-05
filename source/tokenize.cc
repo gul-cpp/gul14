@@ -24,7 +24,8 @@
 
 namespace gul {
 
-namespace detail {
+// Anonymous namespace to make the template visible only to this translation unit
+namespace {
 
 template <class StringType>
 std::vector<StringType> tokenize(string_view str, string_view delimiters)
@@ -53,16 +54,16 @@ std::vector<StringType> tokenize(string_view str, string_view delimiters)
     return tokens;
 }
 
-} // namespace detail
+} // anonymous namespace
 
 std::vector<std::string> tokenize(string_view str, string_view delimiters)
 {
-    return detail::tokenize<std::string>(str, delimiters);
+    return tokenize<std::string>(str, delimiters);
 }
 
 std::vector<string_view> tokenize_string_view(string_view str, string_view delimiters)
 {
-    return detail::tokenize<string_view>(str, delimiters);
+    return tokenize<string_view>(str, delimiters);
 }
 
 } // namespace gul
