@@ -33,8 +33,6 @@ if deb_install
     pkg.generate(libraries : libgul,
                  name : 'libgul',
                  description : 'General Utility Library',
-                 filebase : 'libgul',
-                 install_dir : '/usr/lib/pkgconfig',
                  version: '@0@'.format(LIBGUL_API_VERSION))
 endif
 
