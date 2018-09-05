@@ -15,16 +15,22 @@ libgul_src = [
 
 inc += include_directories('.')
 
-libgul = both_libraries('gul', libgul_src + [ gitversion_cc ],
+libgul = shared_library('gul', libgul_src + [ gitversion_cc ],
                         soversion : LIBGUL_API_VERSION,
                         cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(LIBGUL_API_VERSION),
                         include_directories : inc,
                         link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                         install : true)
 
+libgul_s = static_library('gul', libgul_src + [ gitversion_cc ],
+                          cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(LIBGUL_API_VERSION),
+                          include_directories : inc,
+                          link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
+                          install : true)
+
 if deb_install
     pkg = import('pkgconfig')
-    pkg.generate(libgul,
+    pkg.generate(libraries : libgul,
                  name : 'libgul',
                  description : 'General Utility Library',
                  filebase : 'libgul',
