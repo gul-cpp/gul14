@@ -27,7 +27,7 @@ using namespace std::literals::string_literals;
 
 namespace gul {
 
-std::vector<std::string> split(const std::string& text, const std::regex delimiter) {
+std::vector<std::string> split(const std::string& text, const std::regex& delimiter) {
     auto const end = std::sregex_iterator{ };
     auto result = std::vector<std::string>{ };
 
@@ -62,7 +62,7 @@ std::vector<std::string> split(string_view text, string_view delimiter) {
     return result;
 }
 
-std::string join(std::vector<std::string> parts, string_view glue) {
+std::string join(const std::vector<std::string>& parts, string_view glue) {
     auto result = ""s;
     auto const size = parts.size();
     if (size < 1)

@@ -52,7 +52,7 @@ namespace gul {
  *          string.
  */
 std::vector<std::string> split(string_view text, string_view delimiter);
-std::vector<std::string> split(const std::string& text, std::regex delimiter);
+std::vector<std::string> split(const std::string& text, const std::regex& delimiter);
 
 /**
  * Concatenate a vector of strings into one single string, placing a delimiter between
@@ -66,7 +66,7 @@ std::vector<std::string> split(const std::string& text, std::regex delimiter);
  *
  * \returns all strings glued together with the delimiter glue.
  */
-std::string join(std::vector<std::string> parts, string_view glue);
+std::string join(const std::vector<std::string>& parts, string_view glue);
 
 } /* namespace gul */
 
