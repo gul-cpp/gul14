@@ -24,7 +24,7 @@
 /**
  * \mainpage
  *
- * \image html desy.png
+ * \image html gul_big.png
  *
  * \section introduction Introduction
  * 
@@ -53,8 +53,8 @@
  * GUL requires at least C++14. All utility functions and classes are enclosed in the
  * namespace \ref gul.
  *
- * To use the library, include the single header file \link gul.h \endlink and link
- * your code against the library (-lgul).
+ * To use the library, include the single header file \ref gul.h and link your code
+ * against the library (-lgul).
  *
  * \authors Lars Froehlich, Soeren Grunewald, Olaf Hensler, Fini Jastrow, Tobias Tempel,
  *          Josef Wilgen
@@ -87,26 +87,42 @@
  * with strings.
  *
  * <h3>Functions</h3>
- * - gul::split(): Separate a string at all occurences of a delimiter
- * - gul::join(): Concatenate string elements of a vector interspaced with glue
- * - gul::cat() Efficiently concatenate an arbitrary number of std::strings, C strings,
- *              string_views, or numbers.
- *   \code
- *   std::string str = gul::cat("This might replace ", 1e6, " uses of sprintf() "s, "in our code.");
- *   \endcode
- * - gul::tokenize() Split a string into a vector of tokens at delimiter characters.
- *   \code
- *   std::vector<std::string> v = gul::tokenize("Hello World");
- *   // ...yields a vector with the entries "Hello" and "World"
- *   \endcode
- * - gul::tokenize_string_view() Like tokenize(), but returns a vector of string_views
- *   into the original string.
  *
+ * <h4>Splitting & Joining</h4>
+ *
+ * cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
+ *        string_views, or numbers.
+ *
+ * join(): Concatenate a vector of strings, adding some glue in between.
+ *
+ * split(): Separate a string at all occurences of a delimiter string or regular
+ *          expression.
+ *
+ * tokenize(): Split a string into a vector of string tokens at delimiter characters.
+ *
+ * tokenize_string_view(): Split a string into a vector of string_views that point into
+ *                         the original string.
+ *
+ * <h4>Find & Replace</h4>
+ *
+ * replace(): Replace all occurrences of a string in another string.
+ *
+ * replace_inplace(): Replace all occurrences of a string in another string in-place.
+ *
+ * <h4>Dealing with Special Characters</h4>
+ *
+ * escape(): Replace non-printable characters in a string so that it looks like a C string
+ *           literal.
+ *
+ * unescape(): Convert a string with escaped characters back to its original form.
+ *
+ * 
  * <h3>Classes</h3>
- * - gul::string_view  A view to a contiguous sequence of chars. The GUL version is
- *                     a backport of
- *                     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
- *                     from libc++ for C++17.
+ *
+ * \ref gul::string_view "string_view":
+ *     A view to a contiguous sequence of chars. The GUL version is a backport of
+ *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ *     from libc++ for C++17.
  */
 
 /**
@@ -114,10 +130,11 @@
  *
  * The General Utility Library provides a few classes from C++ standard libraries that
  * are not yet available to users of older compilers. Here's a list:
- * - gul::string_view  A view to a contiguous sequence of chars. The GUL version is
- *                     a backport of
- *                     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
- *                     from libc++ for C++17.
+ *
+ * \ref gul::string_view "string_view":
+ *     A view to a contiguous sequence of chars. The GUL version is a backport of
+ *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
+ *     from libc++ for C++17.
  */
 
 #pragma once

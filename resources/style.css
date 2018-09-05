@@ -21,10 +21,16 @@
 */
 
 div.image img[src="desy.png"]{
-    width:240px;
+    width:220px;
     float:right;
     margin-left:40px;
-    margin-botton:40px;
+    margin-bottom:40px;
+}
+div.image img[src="gul_big.png"]{
+    width:220px;
+    float:right;
+    margin-left:40px;
+    margin-bottom:40px;
 }
 
 a + h2.groupheader {

@@ -1,5 +1,5 @@
 /**
- * \file   split_join.h
+ * \file   join_split.h
  * \brief  Declarations of string utility functions for the General Utility Library.
  * \author Soeren Grunewald, Lars Froehlich, et al
  * \date   Created on 31 August 2018
