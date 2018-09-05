@@ -4,31 +4,33 @@
 test_inc = inc + [ include_directories('.') ]
 catch_main = 'test_main.cc'
 
-# Build all the tests
+test('Backports',
+    executable('backports-test',
+            [ 'test_backports.cc', catch_main ],
+            include_directories : test_inc,
+            link_with : libgul))
 
-t1 = executable('backports-test',
-                [ 'test_backports.cc', catch_main ],
-                include_directories : test_inc,
-)
+test('cat()',
+    executable('cat-test',
+            [ 'test_cat.cc', catch_main ],
+            include_directories : test_inc,
+            link_with : libgul))
 
-t2 = executable('cat-test',
-                [ 'test_cat.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul
-)
+test('split() and join()',
+	executable('test-string-split',
+		[ 'test_string_split.cc', catch_main ],
+		include_directories : test_inc,
+		link_with : libgul),
+	timeout : 2)
 
-# Run the tests
-
-test('Backports test', t1)
-test('Testing cat()', t2)
-test('String escape',
+test('escape()',
 	executable('test-string-escape',
 		[ 'test_string_escape.cc', catch_main ],
 		include_directories : test_inc,
 		link_with : libgul))
-test('String subsititutions',
+
+test('replace() and replace_inplace()',
 	executable('test-string-replace',
 		[ 'test_string_replace.cc', catch_main ],
 		include_directories : test_inc,
 		link_with : libgul))
-

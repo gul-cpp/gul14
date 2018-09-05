@@ -10,6 +10,7 @@ gitversion_cc = vcs_tag(output : 'gitversion.cc',
 
 libgul_src = [
     'cat.cc',
+    'join_split.cc',
     'string_util.cc'
 ]
 
@@ -35,4 +36,3 @@ if deb_install
                  description : 'General Utility Library',
                  version: '@0@'.format(LIBGUL_API_VERSION))
 endif
-
