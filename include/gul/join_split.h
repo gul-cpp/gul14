@@ -1,8 +1,8 @@
 /**
- * \file   join_split.h
- * \brief  Declarations of string utility functions for the General Utility Library.
- * \author Soeren Grunewald, Lars Froehlich, et al
- * \date   Created on 31 August 2018
+ * \file    join_split.h
+ * \brief   Declarations of string utility functions for the General Utility Library.
+ * \authors \ref contributors
+ * \date    Created on 31 August 2018
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *

@@ -1,8 +1,8 @@
 /**
- * \file   tokenize.h
- * \author Lars Froehlich
- * \date   Created on September 3, 2018
- * \brief  Declaration of tokenize(), tokenize_string_view().
+ * \file    tokenize.h
+ * \authors \ref contributors
+ * \date    Created on September 3, 2018
+ * \brief   Declaration of tokenize(), tokenize_string_view().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *

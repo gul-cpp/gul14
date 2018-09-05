@@ -1,8 +1,8 @@
 /**
- * \file   cat.cc
- * \author Lars Froehlich
- * \brief  Implementation of cat() for two or more parameters.
- * \date   Created on August 31, 2018
+ * \file    cat.cc
+ * \authors \ref contributors
+ * \brief   Implementation of cat() for two or more parameters.
+ * \date    Created on August 31, 2018
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *

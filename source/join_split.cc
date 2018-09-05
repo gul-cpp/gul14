@@ -1,8 +1,8 @@
 /**
- * \file   split_join.cc
- * \brief  Implementation of string utility functions for the General Utility Library.
- * \author Fini Jastrow
- * \date   Created on 31 August 2018
+ * \file    join_split.cc
+ * \brief   Implementation of string utility functions for the General Utility Library.
+ * \authors \ref contributors
+ * \date    Created on 31 August 2018
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *

@@ -1,6 +1,6 @@
 /**
  * \file   cat.h
- * \author Lars Froehlich
+ * \author \ref contributors
  * \date   Created on August 31, 2018
  * \brief  Declaration of the overload set for cat() and of the associated class
  *         ConvertingStringView.

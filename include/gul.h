@@ -1,9 +1,8 @@
 /**
- * \file   gul.h
- * \author Lars Froehlich, Soeren Grunewald, Olaf Hensler, Fini Jastrow, Tobias Tempel,
- *         Josef Wilgen
- * \date   Created on August 24, 2018
- * \brief  Main include file for the General Utility Library.
+ * \file    gul.h
+ * \authors \ref contributors
+ * \date    Created on August 24, 2018
+ * \brief   Main include file for the General Utility Library.
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -28,15 +27,16 @@
  *
  * \section introduction Introduction
  * 
- * The General Utility Library (short: GUL) contains often-used utility functions and
- * types that form the foundation for other libraries and programs. The main fields
- * covered by the library are:
+ * The General Utility Library (GUL) contains often-used utility functions and types that
+ * form the foundation for other libraries and programs. The main fields covered by the
+ * library are:
  * 
  *  - \ref string_utilities
  *  - Exceptions
  *  - Time
  *  - Numerical helpers
- *  - \ref backports of standard library features that are not yet available on common compilers
+ *  - \ref backports of standard library features that are not yet available on common
+ *    compilers
  *
  * To keep the library useful for as many users as possible, special-purpose code has no
  * place in it. Specifically, the library includes:
@@ -56,8 +56,51 @@
  * To use the library, include the single header file \ref gul.h and link your code
  * against the library (-lgul).
  *
- * \authors Lars Froehlich, Soeren Grunewald, Olaf Hensler, Fini Jastrow, Tobias Tempel,
- *          Josef Wilgen
+ * \authors \ref contributors
+ * \copyright \ref copyright_notice
+ */
+
+/**
+ * \page contributors_and_copyright Contributors & Copyright
+ *
+ * \section contributors General Utility Library Contributors
+ *
+ * The following individuals contributed to the General Utility Library:
+ *
+ * > Lars Fröhlich, Sören Grunewald, Olaf Hensler, Fini Jastrow, Tobias Tempel,
+ * > Josef Wilgen
+ *
+ * Additional code distributed with this library was written by authors listed under
+ * \ref additional_copyright_notices below.
+ *
+ * \section copyright_notice Copyright Notice
+ *
+ * Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 2.1 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * \section additional_copyright_notices Additional Copyright Notices
+ *
+ * This library contains third-party code that is distributed under its own copyright
+ * notice:
+ *
+ * <dl>
+ * <dt>\ref string_view.h</dt>
+ * <dd>Copyright Marshall Clow 2012-2015, copyright Beman Dawes 2015.
+ *     Distributed under the Boost Software License, Version 1.0 (see  \ref string_view.h
+ *     for details).</dd>
+ * </dl>
  */
 
 /**
