@@ -16,6 +16,8 @@ message('Install for debian packaging: @0@'.format(deb_install))
 subdir('include')
 subdir('source')
 
+subdir('resources')
+
 subdir('tests')
 
 # Add debian/* files

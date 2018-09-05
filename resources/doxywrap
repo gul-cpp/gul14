@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# A wrapper for doxygen to add missing basic functionality by adding
+# the following additional parameters
+# - The source root dir    [ originally the current dir where doxygen is run ]
+# - The output root dir    [ originally specified in the config file ]
+# - The config file        [ originally typically the last specified parameter ]
+# Additional parameters are passed to doxygen directly
+
+if [ $# -lt 3 ]; then
+	echo "Usage: `basename "$0"` source_root output_root config_file [doxygen parameters]"
+	echo "Note on the paths:"
+	echo "       source_root can be relative to rundir or absolute"
+	echo "       output_root can be relative to source_root or absolute, may not contain '!'"
+	echo "       config_file can be relative to rundir or absolute"
+	echo "       doxygen parameters may not specify the config file/source"
+	echo ""
+	echo "Not all three mandatory parametes given."
+	exit 1
+fi
+
+# Adjust the source root dir
+RUNDIR=`pwd`
+SOURCEDIR=$1
+
+# The config file can be specified relative to the run-dir
+if [ "${3%%[^/]*}" = "/" ]; then
+	CONF="$3"
+else
+	CONF="$RUNDIR/$3"
+fi
+
+OUTDIR=$2
+
+shift; shift; shift
+cd "$SOURCEDIR" && echo PATH becomes `pwd` && sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ -
