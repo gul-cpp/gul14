@@ -32,5 +32,8 @@ fi
 
 OUTDIR=$2
 
+echo WRAPPER CALL $@
 shift; shift; shift
-cd "$SOURCEDIR" && echo PATH becomes `pwd` && sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ -
+echo "-=> cd \"$SOURCEDIR\" && sed -e \"s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\\\\1$OUTDIR!\" \"${CONF}\" | doxygen $@ -"
+
+cd "$SOURCEDIR" && sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ -
