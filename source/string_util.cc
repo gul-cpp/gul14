@@ -30,50 +30,62 @@
 
 namespace gul {
 
+// anonymous namespace to confine helper functions to this translation unit
+namespace {
+
+static std::array<char, 16> hex_table =
+    { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
+
+char get_last_nibble_as_hex(unsigned int i)
+{
+    return hex_table[i & 0xf];
+}
+
+} // anonymous namespace
+
+
 std::string escape(const std::string& in)
 {
-    auto re = std::regex{ R"([^[:print:]]|\\|")" };
-    auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
-    auto rend = std::regex_iterator<std::string::const_iterator>{ };
-    auto last = rend; // last processed
+    std::string escaped;
 
-    auto buf = std::stringstream{ };
+    escaped.reserve(in.length());
 
-    for (; rit != rend; ++rit) {
-        last = rit;
-        buf << rit->prefix();
-        if (rit->empty())
-            continue;
-        const auto c = rit->str()[0];
-        switch (c) {
-        case '\"':
-            buf << "\\\"";
-            break;
-        case '\\':
-            buf << "\\\\";
-            break;
-        case '\n':
-            buf << "\\n";
-            break;
-        case '\r':
-            buf << "\\r";
-            break;
-        case '\t':
-            buf << "\\t";
-            break;
-        default:
-            buf << "\\x" << std::hex << std::setfill('0')
-				<< std::setw(2) << static_cast<unsigned int>(c);
-            break;
-        }
+    for (char c : in)
+    {
+        unsigned int u = c;
+
+        switch (u)
+        {
+            case '"':
+                escaped += "\\\"";
+                break;
+            case '\\':
+                escaped += "\\\\";
+                break;
+            case '\n':
+                escaped += "\\n";
+                break;
+            case '\r':
+                escaped += "\\r";
+                break;
+            case '\t':
+                escaped += "\\t";
+                break;
+            default:
+                if (u < 32 || u > 127) // TODO: discuss if we want to escape all non-ASCII characters
+                {
+                    escaped += "\\x";
+                    escaped += get_last_nibble_as_hex(u >> 4);
+                    escaped += get_last_nibble_as_hex(u);
+                }
+                else
+                {
+                    escaped += c;
+                }
+        };
     }
 
-    if (last == rend) // no match
-        buf << in;
-    else
-        buf << last->suffix();
-
-    return buf.str();
+    return escaped;
 }
 
 std::string unescape(const std::string& in)
