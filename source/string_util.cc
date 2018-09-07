@@ -70,7 +70,7 @@ std::string escape(const std::string& in)
                 escaped += "\\t";
                 break;
             default:
-                if (c < 32) // TODO: discuss if we want to escape all non-ASCII characters
+                if (c < 32) // This applies also to all non-ASCII characters
                 {
                     escaped += "\\x";
                     escaped += get_last_nibble_as_hex(c >> 4);
