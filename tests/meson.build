@@ -37,7 +37,7 @@ test('escape()',
                 [ 'test_string_escape.cc', catch_main ],
                 include_directories : test_inc,
                 link_with : libgul),
-     timeout : test_time)
+     timeout : 4)
 
 test('replace() and replace_inplace()',
      executable('string-replace-test',
