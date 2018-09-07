@@ -186,6 +186,7 @@
 #include "gul/join_split.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
+#include "gul/time_util.h"
 #include "gul/tokenize.h"
 #include "gul/version.h"
 

@@ -4,6 +4,7 @@ libgul_src = [
     'cat.cc',
     'join_split.cc',
     'string_util.cc',
+    'time_util.cc',
     'tokenize.cc',
 ]
 
