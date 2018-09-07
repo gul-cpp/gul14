@@ -40,6 +40,13 @@ test('replace() and replace_inplace()',
                 link_with : libgul),
      timeout : test_time)
 
+test('Testing time utility functions',
+     executable('time-util-test',
+                [ 'test_time_util.cc', catch_main ],
+                include_directories : test_inc,
+                link_with : libgul),
+     timeout : test_time)
+
 test('Testing tokenize(), tokenize_string_view()',
      executable('tokenize-test',
                 [ 'test_tokenize.cc', catch_main ],

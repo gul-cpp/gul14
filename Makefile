@@ -13,6 +13,7 @@ LIBRARYOBJ = \
 	$(OBJDIR)/cat.o \
 	$(OBJDIR)/join_split.o \
 	$(OBJDIR)/string_util.o \
+	$(OBJDIR)/time_util.o \
 	$(OBJDIR)/tokenize.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
@@ -22,6 +23,7 @@ LIBRARYHFILES = \
 	gul/join_split.h \
 	gul/string_util.h \
 	gul/string_view.h \
+	gul/time_util.h \
 	gul/tokenize.h
 
 PKGCONFIG =
@@ -177,10 +179,11 @@ dirs:
 TEST_OBJ = $(OBJDIR)/tests/test_main.o \
            $(OBJDIR)/tests/test_backports.o \
            $(OBJDIR)/tests/test_cat.o \
-           $(OBJDIR)/tests/test_tokenize.o \
            $(OBJDIR)/tests/test_string_escape.o \
            $(OBJDIR)/tests/test_string_replace.o \
            $(OBJDIR)/tests/test_string_split.o \
+           $(OBJDIR)/tests/test_time_util.o \
+           $(OBJDIR)/tests/test_tokenize.o \
            $(LIBRARYOBJ)
 
 $(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
@@ -212,6 +215,11 @@ $(OBJDIR)/tests/test_string_split.o: $(SRCDIR)/../tests/test_string_split.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_split.o \
 	    $(SRCDIR)/../tests/test_string_split.cc
+
+$(OBJDIR)/tests/test_time_util.o: $(SRCDIR)/../tests/test_time_util.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_time_util.o \
+	    $(SRCDIR)/../tests/test_time_util.cc
 
 $(OBJDIR)/tests/test_tokenize.o: $(SRCDIR)/../tests/test_tokenize.cc
 	@echo $(INTRO) $@ $(OUTRO)
