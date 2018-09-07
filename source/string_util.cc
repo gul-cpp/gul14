@@ -52,9 +52,7 @@ std::string escape(const std::string& in)
 
     for (char c : in)
     {
-        unsigned int u = c;
-
-        switch (u)
+        switch (c)
         {
             case '"':
                 escaped += "\\\"";
@@ -72,11 +70,11 @@ std::string escape(const std::string& in)
                 escaped += "\\t";
                 break;
             default:
-                if (u < 32 || u > 127) // TODO: discuss if we want to escape all non-ASCII characters
+                if (c < 32) // TODO: discuss if we want to escape all non-ASCII characters
                 {
                     escaped += "\\x";
-                    escaped += get_last_nibble_as_hex(u >> 4);
-                    escaped += get_last_nibble_as_hex(u);
+                    escaped += get_last_nibble_as_hex(c >> 4);
+                    escaped += get_last_nibble_as_hex(c);
                 }
                 else
                 {
