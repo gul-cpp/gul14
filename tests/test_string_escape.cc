@@ -60,7 +60,7 @@ TEST_CASE("Check escaping and unescaping with random strings", "[string_util]")
     std::default_random_engine re(r());
     std::uniform_int_distribution<unsigned char> uniform_dist(0, 255);
 
-    for (int len = 0; len < 1000; len++)
+    for (int len = 0; len < 100; len++)
     {
         std::string original(len, ' ');
 
