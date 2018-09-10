@@ -33,7 +33,7 @@
  * 
  *  - \ref string_utilities
  *  - Exceptions
- *  - Time
+ *  - \ref time_utilities
  *  - Numerical helpers
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
@@ -166,6 +166,17 @@
  *     A view to a contiguous sequence of chars. The GUL version is a backport of
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  *     from libc++ for C++17.
+ */
+
+/**
+ * \page time_utilities Time Utilities
+ *
+ * The General Utility Library provides a few time-related utility functions:
+ *
+ * sleep(): Wait for a given amount of time (and be woken up from a different thread, if
+ *          desired).
+ *
+ * tic() & toc(): Measure elapsed time.
  */
 
 /**
