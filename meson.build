@@ -7,7 +7,8 @@ project('libgul', 'cpp',
 
 # The API version is the major version of the project.
 # Increase the major project version in project() above on API breaking changes.
-LIBGUL_API_VERSION = meson.project_version()
+version_parts = meson.project_version().split('.')
+LIBGUL_API_VERSION = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
 # Find out if this is a normal (not local) install (not into prefix/obj/)
 deb_install = get_option('bindir').startswith('obj/') == false
