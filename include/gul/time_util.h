@@ -61,7 +61,7 @@ inline void sleep(std::chrono::duration<double> duration, std::atomic_bool *inte
  * \code
  * auto t0 = tic();
  * // Do some work
- * std::cout << "Elapsed time: " << toc() << " seconds.\n";
+ * std::cout << "Elapsed time: " << toc(t0) << " seconds.\n";
  * \endcode
  *
  * \see toc()
@@ -77,7 +77,7 @@ std::chrono::steady_clock::time_point tic();
  * \code
  * auto t0 = tic();
  * // Do some work
- * std::cout << "Elapsed time: " << toc() << " seconds.\n";
+ * std::cout << "Elapsed time: " << toc(t0) << " seconds.\n";
  * \endcode
  *
  * \see tic()
