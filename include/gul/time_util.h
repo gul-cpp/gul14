@@ -36,7 +36,7 @@ namespace gul {
  * \param interrupt  Pointer to a std::atomic_bool for interrupting the sleep. If a null
  *                   pointer is passed (default), the sleep is not interruptible.
  */
-void sleep(double seconds, std::atomic_bool *interrupt = nullptr);
+void sleep(double seconds, const std::atomic_bool *interrupt = nullptr);
 
 /**
  * Sleep for a given time span.
@@ -47,7 +47,8 @@ void sleep(double seconds, std::atomic_bool *interrupt = nullptr);
  * \param interrupt  Pointer to a std::atomic_bool for interrupting the sleep. If a null
  *                   pointer is passed (default), the sleep is not interruptible.
  */
-inline void sleep(std::chrono::duration<double> duration, std::atomic_bool *interrupt = nullptr)
+inline void sleep(std::chrono::duration<double> duration,
+                  const std::atomic_bool *interrupt = nullptr)
 {
     sleep(duration.count(), interrupt);
 }

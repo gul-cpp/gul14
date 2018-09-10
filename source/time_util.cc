@@ -27,7 +27,7 @@
 namespace gul {
 
     
-void sleep(double seconds, std::atomic_bool *interrupt)
+void sleep(double seconds, const std::atomic_bool *interrupt)
 {
     auto t0 = tic();
     auto seconds_remaining = seconds;
