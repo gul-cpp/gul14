@@ -41,6 +41,8 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
         {
             REQUIRE(toc(t0) > 0.0045);
             REQUIRE(toc(t0) < 0.0055);
+            REQUIRE(toc<std::chrono::microseconds>(t0) > 4500);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 5500);
         }
 
         sleep(0.005);
@@ -49,6 +51,8 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
         {
             REQUIRE(toc(t0) > 0.0095);
             REQUIRE(toc(t0) < 0.0105);
+            REQUIRE(toc<std::chrono::microseconds>(t0) > 9500);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 10500);
         }
     }
 
@@ -60,6 +64,8 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
         {
             REQUIRE(toc(t0) > 0.0195);
             REQUIRE(toc(t0) < 0.0205);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) >= 19);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) <= 21);
         }
     }
 }
@@ -77,6 +83,8 @@ SCENARIO("sleep(..., &interrupt) respects the interrupt flag", "[time]")
         {
             REQUIRE(toc(t0) > 0.0045);
             REQUIRE(toc(t0) < 0.0055);
+            REQUIRE(toc<std::chrono::microseconds>(t0) > 4500);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 5500);
         }
     }
 
@@ -88,6 +96,7 @@ SCENARIO("sleep(..., &interrupt) respects the interrupt flag", "[time]")
         THEN("the elapsed time is very very small")
         {
             REQUIRE(toc(t0) < 0.0001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 100);
         }
     }
 }

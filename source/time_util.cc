@@ -51,16 +51,5 @@ void sleep(double seconds, std::atomic_bool *interrupt)
     }
 }
 
-std::chrono::steady_clock::time_point tic()
-{
-    return std::chrono::steady_clock::now();
-}
-
-double toc(std::chrono::steady_clock::time_point t0)
-{
-    std::chrono::duration<double> delta_t = tic() - t0;
-    return delta_t.count();
-}
-
 
 } // namespace gul

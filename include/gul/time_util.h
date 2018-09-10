@@ -66,22 +66,48 @@ inline void sleep(std::chrono::duration<double> duration, std::atomic_bool *inte
  *
  * \see toc()
  */
-std::chrono::steady_clock::time_point tic();
+inline std::chrono::steady_clock::time_point tic()
+{
+    return std::chrono::steady_clock::now();
+}
 
 /**
- * Return the elapsed seconds since the given time point.
+ * Return the elapsed time in seconds (or a different unit) since the given time point.
  * This function is intended to be used with the sister function tic() to measure elapsed
- * time.
+ * time. toc() is a function template that returns the elapsed seconds as a double value
+ * by default; by specifying a different \c chrono type as a template parameter, it can
+ * also return other time units and other types.
  *
  * <h4>Example</h4>
  * \code
  * auto t0 = tic();
- * // Do some work
+ *
+ * // <do some work>
+ * 
+ * // Default: Return seconds as a double
  * std::cout << "Elapsed time: " << toc(t0) << " seconds.\n";
+ * 
+ * // Custom type: Return milliseconds as an integer
+ * std::cout << "Elapsed time: " << toc<std::chrono::milliseconds>(t0) << " milliseconds.\n";
  * \endcode
+ *
+ * \tparam TimeUnitType  The type to be used for calculating the elapsed time since t0.
+ *     By default, this is std::chrono::duration<double>, which means that the elapsed
+ *     time is returned as a double that represents seconds.
+ *
+ * \param t0  A time point in the past that should be taken with tic().
+ * \returns the elapsed time in the units and base representation of TimeUnitType. By
+ *     default, this is a double that represents elapsed seconds. For a TimeUnitType of
+ *     std::chrono::milliseconds, it would be an integer representing elapsed
+ *     milliseconds.
  *
  * \see tic()
  */
-double toc(std::chrono::steady_clock::time_point t0);
+template<class TimeUnitType = std::chrono::duration<double>>
+auto toc(std::chrono::steady_clock::time_point t0)
+{
+    return std::chrono::duration_cast<TimeUnitType>(tic() - t0).count();
+}
+
 
 } // namespace gul
