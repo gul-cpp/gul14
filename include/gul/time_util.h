@@ -53,6 +53,34 @@ inline void sleep(std::chrono::duration<double> duration,
     sleep(duration.count(), interrupt);
 }
 
+
+////////////////////////
+//
+// Alternative implementation of sleep, without polling
+
+// Wake-connection is not via a std::atomic_bool, but with a SleepData:
+struct SleepData {
+    std::mutex m;
+    std::condition_variable cv;
+    void abort() noexcept {
+        cv.notify_all();
+    }
+};
+
+template< class Rep, class Period >
+void sleep2(const std::chrono::duration<Rep, Period>& sleep_duration, SleepData& sd) {
+    std::unique_lock<std::mutex> lk(sd.m);
+    sd.cv.wait_for(lk, sleep_duration);
+}
+
+template< class Rep, class Period >
+void sleep2(const std::chrono::duration<Rep, Period>& sleep_duration) {
+    std::this_thread::sleep_for(sleep_duration);
+}
+
+//
+////////////////////////
+
 /**
  * Return the current time as a std::chrono time_point.
  * This function is intended to be used with the sister function toc() to measure elapsed
