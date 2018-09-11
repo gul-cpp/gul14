@@ -25,20 +25,29 @@ auto toc(std::chrono::steady_clock::time_point t0)
 struct SleepData {
     std::mutex m;
     std::condition_variable cv;
+    std::atomic<bool> canceled{ false };
+
     void abort() noexcept {
+        canceled = true;
         cv.notify_all();
     }
 };
 
 template< class Rep, class Period >
-void sleep2(const std::chrono::duration<Rep, Period>& sleep_duration, SleepData& sd) {
+auto sleep2(const std::chrono::duration<Rep, Period>& sleep_duration, SleepData& sd) {
+    auto const end = std::chrono::steady_clock::now() + sleep_duration;
     std::unique_lock<std::mutex> lk(sd.m);
-    sd.cv.wait_for(lk, sleep_duration);
+    if (sd.canceled)
+        return false;
+    sd.cv.wait_until(lk, end,
+        [&sd, &end]{ return std::chrono::steady_clock::now() >= end or sd.canceled; });
+    return std::chrono::steady_clock::now() >= end;
 }
 
 template< class Rep, class Period >
-void sleep2(const std::chrono::duration<Rep, Period>& sleep_duration) {
+auto sleep2(const std::chrono::duration<Rep, Period>& sleep_duration) {
     std::this_thread::sleep_for(sleep_duration);
+    return true;
 }
 
 //////
@@ -47,8 +56,8 @@ void sleep2(const std::chrono::duration<Rep, Period>& sleep_duration) {
 void waiter(SleepData& sd) {
     std::cerr << "waiter() entered\n";
     using namespace std::chrono_literals;
-    sleep2(3s, sd);
-    std::cerr << "waiter() woken\n";
+    auto full_sleep = sleep2(3s, sd);
+    std::cerr << "waiter() resumes, slept the full time: " << full_sleep << "\n";
 }
 
 int main()
@@ -60,7 +69,7 @@ int main()
 
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(1s);
-    std::cerr << "I'm the main thread, i waited: " << toc(t0) << " s\n";
+    std::cerr << "I'm the main thread, I waited: " << toc(t0) << " s\n";
 
     // Signal the waiter to abort its wait
     // Comment out next line to see how the full sleep time is waited
