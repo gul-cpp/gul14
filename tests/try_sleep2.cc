@@ -27,9 +27,16 @@ struct SleepData {
     std::condition_variable cv;
     std::atomic<bool> canceled{ false };
 
-    void abort() noexcept {
+    void cancel() noexcept {
         canceled = true;
         cv.notify_all();
+    }
+    void reset() noexcept {
+        cancel();
+        canceled = false;
+    }
+    explicit operator bool() const {
+        return canceled;
     }
 };
 
@@ -65,6 +72,7 @@ int main()
     auto t0 = tic();
 
     SleepData sld;
+    sld.reset(); // not needed
     std::thread w(waiter, std::ref(sld));
 
     using namespace std::chrono_literals;
