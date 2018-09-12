@@ -24,19 +24,19 @@ else
 endif
 git_conf = configuration_data()
 git_conf.set('GIT_VERSION', git_version)
-git_conf.set('LIBGUL_API_VERSION', LIBGUL_API_VERSION)
+git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
                configuration : git_conf)
 
 libgul = shared_library('gul', libgul_src + [ version_cc ],
-                        soversion : LIBGUL_API_VERSION,
-                        cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(LIBGUL_API_VERSION),
+                        soversion : libgul_api_version,
+                        cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
                         include_directories : inc,
                         link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                         install : true)
 
 libgul_s = static_library('gul', libgul_src + [ version_cc ],
-                          cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(LIBGUL_API_VERSION),
+                          cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
                           include_directories : inc,
                           link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                           install : true)
@@ -46,5 +46,5 @@ if deb_install
     pkg.generate(libraries : libgul,
                  name : 'libgul',
                  description : 'General Utility Library',
-                 version : '@0@'.format(LIBGUL_API_VERSION))
+                 version : '@0@'.format(libgul_api_version))
 endif
