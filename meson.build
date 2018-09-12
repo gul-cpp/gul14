@@ -12,7 +12,7 @@ libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 message('LIBGUL_API_VERSION @0@'.format(libgul_api_version))
 
 # Find out if this is a normal (not local) install (not into prefix/obj/)
-deb_install = get_option('bindir').startswith('obj/') == false
+deb_install = get_option('prefix') == '/usr'
 message('Install for debian packaging: @0@'.format(deb_install))
 
 subdir('include')
@@ -24,5 +24,5 @@ subdir('tests')
 
 # Add debian/* files
 if deb_install
-#   subdir('debian.in')  to be added
+    subdir('debian')
 endif

@@ -1,0 +1,24 @@
+Source: libgul
+Priority: optional
+Maintainer: Fini Jastrow <ulf.fini.jastrow@desy.de>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.7
+Section: libs
+Homepage: https://stash.desy.de/projects/GUL/repos/libgul
+
+Package: libgul-dev
+Section: libdevel
+Architecture: any
+Depends: libgul (= ${binary:Version}), ${misc:Depends}
+Description: general utility library
+ The general utility library contains often-used utility
+ functions and types that form the foundation for other
+ libraries and programs.
+
+Package: libgul
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: general utility library
+ The general utility library contains often-used utility
+ functions and types that form the foundation for other
+ libraries and programs.
