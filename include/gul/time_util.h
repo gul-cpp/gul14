@@ -64,6 +64,10 @@ struct SleepData {
     std::condition_variable cv;
     std::atomic<bool> canceled{ false };
 
+    ~SleepData() {
+        cancel();
+    }
+
     void cancel() noexcept {
         canceled = true;
         cv.notify_all();
