@@ -19,18 +19,18 @@ Clone this repository:
 Use meson to configure the build you want to have. Build directory names can be what you want. If you use directories starting with 'build' they will be ignored by git. Examples:
 
         meson -D warning_level=3 build
-	meson -D warning_level=3 -D tests=true build_with_tests
-	meson -D buildtype=release --prefix /usr build_rel
-	meson -D buildtype=release --prefix /usr -D tests=true -D unity=on build_rel_tests_unity
-	meson -D buildtype=release --prefix /usr -D doxy=true build_doxy_rel
+        meson -D warning_level=3 -D tests=false build_without_tests
+        meson -D buildtype=release --prefix /usr build_rel
+        meson -D buildtype=release --prefix /usr -D unity=on build_rel_unity
+        meson -D buildtype=release --prefix /usr -D doxy=true build_doxy_rel
 
 Afterwards enter you build directory and fire the build process:
 
-        cd build_rel_tests_unity
-	ninja
-	ninja test
-	ninja resources/doxy
-	makeDdeb -D
+        cd build_rel_unity
+        ninja
+        ninja test
+        ninja resources/doxy
+        makeDdeb -D
 
 ## Notes
 
@@ -51,4 +51,4 @@ In addidion to meson's standard switches there are:
     Option Default Value Possible Values Description
     ------ ------------- --------------- -----------
     doxy   false         [true, false]   generate doxygen documentation
-    tests  false         [true, false]   generate tests
+    tests  true          [true, false]   generate tests
