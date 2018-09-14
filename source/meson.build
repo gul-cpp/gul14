@@ -41,10 +41,8 @@ libgul_s = static_library('gul', libgul_src + [ version_cc ],
                           link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                           install : true)
 
-if deb_install
-    pkg = import('pkgconfig')
-    pkg.generate(libraries : libgul,
-                 name : 'libgul',
-                 description : 'General Utility Library',
-                 version : '@0@'.format(libgul_api_version))
-endif
+pkg = import('pkgconfig')
+pkg.generate(libraries : libgul,
+             name : 'libgul',
+             description : 'General Utility Library',
+             version : '@0@'.format(libgul_api_version))
