@@ -40,7 +40,7 @@ test('replace() and replace_inplace()',
                 link_with : libgul),
      timeout : test_time)
 
-test('Testing tokenize(), tokenize_string_view()',
+test('tokenize(), tokenize_string_view()',
      executable('tokenize-test',
                 [ 'test_tokenize.cc', catch_main ],
                 include_directories : test_inc,

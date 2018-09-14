@@ -1,4 +1,0 @@
-#include "gul/version.h"
-
-const gul::string_view gul::version_git{ "@GIT_VERSION@" };
-const gul::string_view gul::version_api{ "@LIBGUL_API_VERSION@" };
