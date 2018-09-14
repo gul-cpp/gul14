@@ -187,6 +187,7 @@
 #include "gul/string_util.h"
 #include "gul/string_view.h"
 #include "gul/tokenize.h"
+#include "gul/version.h"
 
 /// Namespace gul contains all functions and classes of the General Utility Library.
 namespace gul {}
