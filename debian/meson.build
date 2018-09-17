@@ -6,7 +6,7 @@ deb_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 # Not applied to any file, do we need this anywhere?
 
 empty_conf = configuration_data() # for <0.47 compat
-empty_conf.set('FOR_MESON_0.47', 'FOR_MESON_0.47') # Empty rule to suppress warning in meson 0.47+
+empty_conf.set('FOR_MESON_0.47', '@FOR_MESON_0.47@') # Empty rule to suppress warning in meson 0.47+
 
 debian_files = [
   'changelog',
