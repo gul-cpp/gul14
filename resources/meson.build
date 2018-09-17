@@ -6,7 +6,7 @@
 # so this is done by the doxywrap
 
 if get_option('docs')
-message('Run \'ninja resources/docs\' to generate documenation.')
+message('Run \'ninja resources/docs\' to generate documentation.')
 
 docs_data = configuration_data()
 docs_data.set('PROJECT_NUMBER', meson.project_version())
