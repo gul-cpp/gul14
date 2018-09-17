@@ -182,7 +182,7 @@ bool sleep(const std::chrono::duration<Rep, Period>& duration, SleepInterrupt& i
  * Sleep for a given number of seconds, with the option of being woken up from another
  * thread. The sleep can be interrupted from another thread via a shared \ref SleepInterrupt
  * object. See \ref SleepInterrupt for more details.
- * \param duration   Time span to wait, as a std::chrono::duration type.
+ * \param duration   Seconds to wait.
  * \param interrupt  Reference to a SleepInterrupt object that can be used to interrupt
  *                   the delay. If such an interruption occurs, false is returned.
  * \returns true if the entire requested sleep duration has passed, or false if the sleep
