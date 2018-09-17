@@ -22,14 +22,14 @@ Use meson to configure the build you want to have. Build directory names can be 
         meson -D warning_level=3 -D tests=false build_without_tests
         meson -D buildtype=release --prefix /usr build_rel
         meson -D buildtype=release --prefix /usr -D unity=on build_rel_unity
-        meson -D buildtype=release --prefix /usr -D doxy=true build_doxy_rel
+        meson -D buildtype=release --prefix /usr -D docs=true build_docs_rel
 
 Afterwards enter you build directory and fire the build process:
 
         cd build_rel_unity
         ninja
         ninja test
-        ninja resources/doxy
+        ninja resources/docs
         makeDdeb -D
 
 ## Notes
@@ -50,5 +50,5 @@ In addidion to meson's standard switches there are:
 
     Option Default Value Possible Values Description
     ------ ------------- --------------- -----------
-    doxy   false         [true, false]   generate doxygen documentation
+    docs   false         [true, false]   generate documentation via doxygen
     tests  true          [true, false]   generate tests
