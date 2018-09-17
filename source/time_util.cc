@@ -21,35 +21,9 @@
  */
 
 #include "gul/time_util.h"
-#include <ctime>
-#include <thread>
 
 namespace gul {
 
-    
-void sleep(double seconds, const std::atomic_bool *interrupt)
-{
-    auto t0 = tic();
-    auto seconds_remaining = seconds;
-
-    while (seconds_remaining >= 0)
-    {
-        // External interrupt requested?
-        if (interrupt != nullptr && *interrupt)
-            return;
-
-        // Can we just sleep for all the remaining time?
-        if (interrupt == nullptr || seconds_remaining < 0.01)
-        {
-            std::this_thread::sleep_for(std::chrono::duration<double>(seconds_remaining));
-            return;
-        }
-
-        std::this_thread::sleep_for(std::chrono::microseconds(9500));
-
-        seconds_remaining = seconds - toc(t0);
-    }
-}
-
+// All implementation details are currently in the header file
 
 } // namespace gul

@@ -28,6 +28,7 @@ using namespace std::literals;
 using gul::tic;
 using gul::toc;
 using gul::sleep;
+using gul::SleepInterrupt;
 
 SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]")
 {
@@ -58,7 +59,7 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
 
     WHEN("a 20 ms delay is made via sleep()")
     {
-        sleep(0.02);
+        sleep(20ms);
 
         THEN("toc() measures approximately 20 ms afterwards")
         {
@@ -70,14 +71,14 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
     }
 }
 
-SCENARIO("sleep(..., &interrupt) respects the interrupt flag", "[time]")
+SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state", "[time]")
 {
     auto t0 = tic();
 
-    WHEN("calling sleep(0.005, &interrupt) with interrupt == false")
+    WHEN("calling sleep(0.005, interrupt) with interrupt { false }")
     {
-        std::atomic_bool interrupt{ false };
-        sleep(0.005, &interrupt);
+        SleepInterrupt interrupt{ false };
+        sleep(0.005, interrupt);
 
         THEN("the elapsed time is approximately 5 ms")
         {
@@ -88,10 +89,23 @@ SCENARIO("sleep(..., &interrupt) respects the interrupt flag", "[time]")
         }
     }
 
-    WHEN("calling sleep(0.005, &interrupt) with interrupt == false")
+    WHEN("calling sleep(0.005, interrupt) with interrupt { true }")
     {
-        std::atomic_bool interrupt{ true };
-        sleep(0.005, &interrupt);
+        SleepInterrupt interrupt { true };
+        sleep(0.005, interrupt);
+
+        THEN("the elapsed time is very very small")
+        {
+            REQUIRE(toc(t0) < 0.0001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 100);
+        }
+    }
+
+    WHEN("calling sleep(0.005, interrupt) after interrupt = true")
+    {
+        SleepInterrupt interrupt;
+        interrupt = true;
+        sleep(0.005, interrupt);
 
         THEN("the elapsed time is very very small")
         {
