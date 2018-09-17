@@ -71,6 +71,55 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
     }
 }
 
+SCENARIO("Negative or zero times make sleep() not wait", "[time]")
+{
+    auto t0 = tic();
+
+    WHEN("sleep(0ms) is executed")
+    {
+        sleep(0ms);
+
+        THEN("the elapsed time is very very small")
+        {
+            REQUIRE(toc(t0) < 0.0001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 100);
+        }
+    }
+
+    WHEN("sleep(0.0) is executed")
+    {
+        sleep(0.0);
+
+        THEN("the elapsed time is very very small")
+        {
+            REQUIRE(toc(t0) < 0.0001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 100);
+        }
+    }
+
+    WHEN("sleep(-50ms) is executed")
+    {
+        sleep(-50ms);
+
+        THEN("the elapsed time is very very small")
+        {
+            REQUIRE(toc(t0) < 0.0001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 100);
+        }
+    }
+
+    WHEN("sleep(-0.5) is executed")
+    {
+        sleep(-0.5);
+
+        THEN("the elapsed time is very very small")
+        {
+            REQUIRE(toc(t0) < 0.0001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 100);
+        }
+    }
+}
+
 SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state", "[time]")
 {
     auto t0 = tic();
