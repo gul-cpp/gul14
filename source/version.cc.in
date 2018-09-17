@@ -1,0 +1,29 @@
+/**
+ * \file    version.cc.in
+ * \brief   Implementation of the storage location for version strings
+ * \authors \ref contributors
+ * \date    Created on 14 Sep 2018
+ *
+ * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 2.1 of the license, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "gul/version.h"
+
+// The @string@ sequences are replaced with the actual strings by the meson build system
+// and written into the build directory as verion.cc. That file is compiled and linked
+// if specified.
+const gul::string_view gul::version_git{ "@GIT_VERSION@" };
+const gul::string_view gul::version_api{ "@LIBGUL_API_VERSION@" };
