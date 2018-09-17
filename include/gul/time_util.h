@@ -24,88 +24,18 @@
 
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 namespace gul {
 
-/**
- * Sleep for a given number of seconds.
- * Optionally, the sleep can be interrupted from another thread by setting a
- * std::atomic_bool value to true. The function polls this value with a period less than
- * or equal to 10 ms.
- * \param seconds    Number of seconds to wait.
- * \param interrupt  Pointer to a std::atomic_bool for interrupting the sleep. If a null
- *                   pointer is passed (default), the sleep is not interruptible.
- */
-void sleep(double seconds, const std::atomic_bool *interrupt = nullptr);
-
-/**
- * Sleep for a given time span.
- * Optionally, the sleep can be interrupted from another thread by setting a
- * std::atomic_bool value to true. The function polls this value with a period less than
- * or equal to 10 ms.
- * \param seconds    Number of seconds to wait.
- * \param interrupt  Pointer to a std::atomic_bool for interrupting the sleep. If a null
- *                   pointer is passed (default), the sleep is not interruptible.
- */
-inline void sleep(std::chrono::duration<double> duration,
-                  const std::atomic_bool *interrupt = nullptr)
-{
-    sleep(duration.count(), interrupt);
-}
-
-
-////////////////////////
-//
-// Alternative implementation of sleep, without polling
-// Returns true if sleep has not been interrupted (i.e. went as long as expected)
-
-struct SleepData {
-    std::mutex m;
-    std::condition_variable cv;
-    std::atomic<bool> canceled{ false };
-
-    ~SleepData() {
-        cancel();
-    }
-
-    void cancel() noexcept {
-        canceled = true;
-        cv.notify_all();
-    }
-    void reset() noexcept {
-        cancel();
-        canceled = false;
-    }
-    explicit operator bool() const {
-        return canceled;
-    }
-};
-
-template< class Rep, class Period >
-auto sleep2(const std::chrono::duration<Rep, Period>& sleep_duration, SleepData& sd) {
-    auto const end = std::chrono::steady_clock::now() + sleep_duration;
-    std::unique_lock<std::mutex> lk(sd.m);
-    if (sd.canceled)
-        return false;
-    sd.cv.wait_until(lk, end,
-        [&sd, &end]{ return std::chrono::steady_clock::now() >= end or sd.canceled; });
-    return std::chrono::steady_clock::now() >= end;
-}
-
-template< class Rep, class Period >
-auto sleep2(const std::chrono::duration<Rep, Period>& sleep_duration) {
-    std::this_thread::sleep_for(sleep_duration);
-    return true;
-}
-
-//
-////////////////////////
 
 /**
  * Return the current time as a std::chrono time_point.
  * This function is intended to be used with the sister function toc() to measure elapsed
  * time.
- * 
+ *
  * <h4>Example</h4>
  * \code
  * auto t0 = tic();
@@ -132,10 +62,10 @@ inline std::chrono::steady_clock::time_point tic()
  * auto t0 = tic();
  *
  * // <do some work>
- * 
+ *
  * // Default: Return seconds as a double
  * std::cout << "Elapsed time: " << toc(t0) << " seconds.\n";
- * 
+ *
  * // Custom type: Return milliseconds as an integer
  * std::cout << "Elapsed time: " << toc<std::chrono::milliseconds>(t0) << " milliseconds.\n";
  * \endcode
@@ -158,5 +88,146 @@ auto toc(std::chrono::steady_clock::time_point t0)
     return std::chrono::duration_cast<TimeUnitType>(tic() - t0).count();
 }
 
+
+/**
+ * A class for interrupting sleep() delays from another thread.
+ * 
+ * When a SleepInterrupt object is passed as an argument to sleep(), the sleep can be
+ * interrupted by assigning true to the object. Assigning false does not cause a sleep
+ * interruption.
+ *
+ * Example:
+ * \code
+ * // Data shared between threads
+ * SleepInterrupt interrupt;
+ * \endcode
+ * \code
+ * using std::literals; // for the "ms" suffix
+ * // Thread 1
+ * bool slept_well = sleep(5ms, interrupt);
+ * if (!slept_well)
+ *     std::cout << "Sleep interrupted.\n";
+ * if (interrupt) // equivalent to the above, unless another thread has messed with interrupt
+ *     std::cout << "Sleep interrupted.\n";
+ * \endcode
+ * \code
+ * // Thread 2
+ * if (some_condition)
+ *     interrupt = true; // Will interrupt the sleep in the other thread
+ * \endcode
+ */
+class SleepInterrupt
+{
+public:
+    std::mutex mutex_;
+    std::condition_variable cv_;
+
+    explicit SleepInterrupt(bool interrupted = false) noexcept : interrupted_{ interrupted }
+    {}
+
+    ~SleepInterrupt() noexcept {
+        interrupt();
+    }
+
+    explicit operator bool() const noexcept {
+        return interrupted_;
+    }
+
+    SleepInterrupt &operator=(bool interrupt) noexcept {
+        if (interrupt)
+            this->interrupt();
+        else
+            interrupted_ = false;
+        return *this;
+    }
+
+    void interrupt() noexcept {
+        interrupted_ = true;
+        cv_.notify_all();
+    }
+
+    void reset() noexcept {
+        interrupt();
+        interrupted_ = false;
+    }
+
+private:
+    std::atomic<bool> interrupted_{ false };
+};
+
+
+/**
+ * Sleep for a given time span, with the option of being woken up from another thread.
+ * The sleep can be interrupted from another thread via a shared \ref SleepInterrupt
+ * object. See \ref SleepInterrupt for more details.
+ * \param duration   Time span to wait, as a std::chrono::duration type.
+ * \param interrupt  Reference to a SleepInterrupt object that can be used to interrupt
+ *                   the delay. If such an interruption occurs, false is returned.
+ * \returns true if the entire requested sleep duration has passed, or false if the sleep
+ *          has been interrupted prematurely via the SleepInterrupt object.
+ */
+template< class Rep, class Period >
+bool sleep(const std::chrono::duration<Rep, Period>& duration, SleepInterrupt& interrupt)
+{
+    auto const end_time = tic() + duration;
+    std::unique_lock<std::mutex> lk(interrupt.mutex_);
+    if (interrupt)
+        return false;
+    interrupt.cv_.wait_until(lk, end_time,
+        [&interrupt, &end_time]{ return tic() >= end_time || interrupt; });
+    return tic() >= end_time;
+}
+
+/**
+ * Sleep for a given number of seconds, with the option of being woken up from another
+ * thread. The sleep can be interrupted from another thread via a shared \ref SleepInterrupt
+ * object. See \ref SleepInterrupt for more details.
+ * \param duration   Time span to wait, as a std::chrono::duration type.
+ * \param interrupt  Reference to a SleepInterrupt object that can be used to interrupt
+ *                   the delay. If such an interruption occurs, false is returned.
+ * \returns true if the entire requested sleep duration has passed, or false if the sleep
+ *          has been interrupted prematurely via the SleepInterrupt object.
+ */
+inline bool sleep(double seconds, SleepInterrupt &sd)
+{
+    return sleep(std::chrono::duration<double>{ seconds }, sd);
+}
+
+/**
+ * Sleep for a given time span.
+ * 
+ * Example:
+ * \code
+ * using std::literals; // for the "ms" suffix
+ * sleep(5ms); // Wait 5 milliseconds
+ * \endcode
+ *
+ * \param duration   Time span to wait, as a std::chrono::duration type.
+ * \returns true to signalize that the entire requested sleep duration has passed. This is
+ *          for symmetry with the interruptible version of sleep() only.
+ */
+template< class Rep, class Period >
+bool sleep(const std::chrono::duration<Rep, Period>& sleep_duration)
+{
+    std::this_thread::sleep_for(sleep_duration);
+    return true;
+}
+
+/**
+ * Sleep for a given number of seconds.
+ *
+ * Example:
+ * \code
+ * sleep(0.005); // Wait 5 milliseconds
+ * \endcode
+ *
+ * \param seconds  Seconds to wait.
+ * \returns true to signalize that the entire requested sleep duration has passed. This is
+ *          for symmetry with the interruptible version of sleep() only.
+ */
+inline bool sleep(double seconds)
+{
+    return sleep(std::chrono::duration<double>{ seconds });
+}
 
 } // namespace gul
