@@ -50,7 +50,7 @@ std::string escape(const std::string& in)
 
     escaped.reserve(in.length());
 
-    for (char c : in)
+    for (auto const c : in)
     {
         switch (c)
         {
@@ -70,8 +70,12 @@ std::string escape(const std::string& in)
                 escaped += "\\t";
                 break;
             default:
-                if (c < 32) // This applies also to all non-ASCII characters
+                if (c < 32)
                 {
+                    // This applies also to all non-ASCII characters,
+                    // i.e. also > 127 because they are mapped to negative values
+                    static_assert(static_cast<decltype(c)>(128) == -128, "Character type not signed 8 bit");
+
                     escaped += "\\x";
                     escaped += get_last_nibble_as_hex(c >> 4);
                     escaped += get_last_nibble_as_hex(c);
