@@ -28,6 +28,8 @@
 #include <stdexcept>
 #include <sstream>
 
+using namespace std::literals::string_literals;
+
 namespace gul {
 
 // anonymous namespace to confine helper functions to this translation unit
@@ -46,8 +48,7 @@ char get_last_nibble_as_hex(unsigned int i)
 
 std::string escape(const std::string& in)
 {
-    std::string escaped;
-
+    auto escaped = ""s;
     escaped.reserve(in.length());
 
     for (auto const c : in)
@@ -104,7 +105,7 @@ std::string unescape(const std::string& in)
         buf << rit->prefix();
         if (rit->empty())
             continue;
-        const auto c = rit->format("$1");
+        auto const c = rit->format("$1");
         switch (c[0]) {
         case '\"':
         case '\\':
@@ -119,12 +120,12 @@ std::string unescape(const std::string& in)
         case 't':
             buf << "\t";
             break;
-		case 'x':
+        case 'x':
             buf << static_cast<unsigned char>(std::stoi(rit->format("$1").substr(1), 0, 16));
             break;
-		default:
-			buf << rit->str();
-			break;
+        default:
+            buf << rit->str();
+            break;
         }
     }
 
@@ -155,8 +156,7 @@ std::string replace(string_view haystack, string_view needle, string_view hammer
     if (needle.empty())
         return std::string(haystack);
 
-    std::string result;
-
+    auto result = ""s;
     result.reserve(haystack.length());
 
     std::size_t pos = 0;
