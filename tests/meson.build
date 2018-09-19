@@ -5,6 +5,8 @@ test_inc = inc + [ include_directories('.') ]
 catch_main = 'test_main.cc'
 test_time = 2 # Default timeout
 
+thread_dep = dependency('threads')
+
 test('Backports',
      executable('backports-test',
                 [ 'test_backports.cc', catch_main ],
@@ -44,6 +46,7 @@ test('Time utility functions',
      executable('time-util-test',
                 [ 'test_time_util.cc', catch_main ],
                 include_directories : test_inc,
+                dependencies : thread_dep,
                 link_with : libgul),
      timeout : test_time)
 
