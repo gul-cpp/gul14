@@ -5,6 +5,7 @@ libgul_src = [
     'join_split.cc',
     'string_util.cc',
     'tokenize.cc',
+    'trim.cc',
 ]
 
 inc += include_directories('.')

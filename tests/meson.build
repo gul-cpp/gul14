@@ -53,4 +53,11 @@ test('tokenize(), tokenize_string_view()',
                 link_with : libgul),
      timeout : test_time)
 
+test('trim() and variants',
+     executable('trim-test',
+                [ 'test_trim.cc', catch_main ],
+                include_directories : test_inc,
+                link_with : libgul),
+     timeout : test_time)
+
 endif # if not get_option('tests') else
