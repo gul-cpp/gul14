@@ -171,20 +171,22 @@ public:
     void reset() noexcept;
 
     /**
-     * Sleep until the given time point or until the sleep is interrupted.
+     * Suspend execution of the current thread until a given time point or until the sleep
+     * is interrupted from another thread.
      * For most applications, the free function sleep() is easier to use.
      *
      * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
      * \tparam Duration  The duration type to be used, typically Clock::duration.
      *
-     * \param t  The function suspends execution of the current thread until this
+     * \param t  The function 
      *           time point is reached (or until some other thread has triggered
      *           an interrupt on this object).
+     *
      * \returns true if the entire requested sleep time has passed, or false if the sleep
      *          has been interrupted prematurely.
      */
     template <class Clock, class Duration>
-    bool sleep_until(std::chrono::time_point<Clock, Duration> t) const
+    bool sleep_until(const std::chrono::time_point<Clock, Duration> &t) const
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
@@ -214,7 +216,8 @@ private:
  *          has been interrupted prematurely via the SleepInterrupt object.
  */
 template< class Rep, class Period >
-bool sleep(const std::chrono::duration<Rep, Period>& duration, SleepInterrupt& interrupt)
+bool sleep(const std::chrono::duration<Rep, Period>& duration,
+           const SleepInterrupt& interrupt)
 {
     return interrupt.sleep_until(tic() + duration);
 }
@@ -229,7 +232,7 @@ bool sleep(const std::chrono::duration<Rep, Period>& duration, SleepInterrupt& i
  * \returns true if the entire requested sleep duration has passed, or false if the sleep
  *          has been interrupted prematurely via the SleepInterrupt object.
  */
-inline bool sleep(double seconds, SleepInterrupt &interrupt)
+inline bool sleep(double seconds, const SleepInterrupt &interrupt)
 {
     return sleep(std::chrono::duration<double>{ seconds }, interrupt);
 }
