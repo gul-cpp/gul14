@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
@@ -101,6 +100,7 @@ auto toc(std::chrono::steady_clock::time_point t0)
  * // Data shared between threads
  * SleepInterrupt interrupt;
  * \endcode
+ *
  * \code
  * using std::literals; // for the "ms" suffix
  * // Thread 1
@@ -110,49 +110,96 @@ auto toc(std::chrono::steady_clock::time_point t0)
  * if (interrupt) // equivalent to the above, unless another thread has messed with interrupt
  *     std::cout << "Sleep interrupted.\n";
  * \endcode
+ *
  * \code
  * // Thread 2
  * if (some_condition)
  *     interrupt = true; // Will interrupt the sleep in the other thread
  * \endcode
+ *
+ * \note
+ * SleepInterrupt is a thread-safe, self-synchronizing class.
  */
 class SleepInterrupt
 {
 public:
-    std::mutex mutex_;
-    std::condition_variable cv_;
-
     explicit SleepInterrupt(bool interrupted = false) noexcept : interrupted_{ interrupted }
     {}
 
-    ~SleepInterrupt() noexcept {
+    /**
+     * Destructor: Interrupt all associated sleep() calls because they can no longer
+     * safely monitor this object.
+     */
+    ~SleepInterrupt() noexcept
+    {
         interrupt();
     }
 
-    explicit operator bool() const noexcept {
-        return interrupted_;
-    }
+    /**
+     * Bool operator: Return if the sleep was interrupted or not.
+     *
+     * The boolean operator returns true if the sleep was interrupted through this
+     * SleepInterrupt object, or false otherwise.
+     *
+     * Example:
+     * \code
+     * SleepInterrupt si;
+     * if (!si) // si now returns false
+     *     cout << "No interrupt yet\n";
+     * si.interrupt();
+     * if (si) // si now returns true
+     *     cout << "Interrupt has taken place\n";
+     * \endcode
+     */
+    explicit operator bool() const noexcept;
 
-    SleepInterrupt &operator=(bool interrupt) noexcept {
-        if (interrupt)
-            this->interrupt();
-        else
-            interrupted_ = false;
-        return *this;
-    }
+    /**
+     * Assignment: Cause associated sleep() calls to wake up if set to true, or reset
+     * the interrupt flag to false.
+     */
+    SleepInterrupt &operator=(bool interrupt) noexcept;
 
-    void interrupt() noexcept {
-        interrupted_ = true;
-        cv_.notify_all();
-    }
+    /**
+     * Cause associated sleep() calls to wake up and set the interrupt flag to true.
+     */
+    void interrupt() noexcept;
 
-    void reset() noexcept {
-        interrupt();
-        interrupted_ = false;
+    /**
+     * Reset the interrupt flag.
+     * This call has no direct impact on any associated sleep() call.
+     */
+    void reset() noexcept;
+
+    /**
+     * Sleep until the given time point or until the sleep is interrupted.
+     * For most applications, the free function sleep() is easier to use.
+     *
+     * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
+     * \tparam Duration  The duration type to be used, typically Clock::duration.
+     *
+     * \param t  The function suspends execution of the current thread until this
+     *           time point is reached (or until some other thread has triggered
+     *           an interrupt on this object).
+     * \returns true if the entire requested sleep time has passed, or false if the sleep
+     *          has been interrupted prematurely.
+     */
+    template <class Clock, class Duration>
+    bool sleep_until(std::chrono::time_point<Clock, Duration> t) const
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+
+        if (interrupted_)
+            return false;
+
+        cv_.wait_until(lock, t, [this]{ return interrupted_; });
+
+        return !interrupted_;
     }
 
 private:
-    std::atomic<bool> interrupted_{ false };
+    mutable std::mutex mutex_; // Protects private data and is used with the condition variable
+    mutable std::condition_variable cv_;
+    bool interrupted_ = false;
 };
 
 
@@ -169,13 +216,7 @@ private:
 template< class Rep, class Period >
 bool sleep(const std::chrono::duration<Rep, Period>& duration, SleepInterrupt& interrupt)
 {
-    auto const end_time = tic() + duration;
-    std::unique_lock<std::mutex> lk(interrupt.mutex_);
-    if (interrupt)
-        return false;
-    interrupt.cv_.wait_until(lk, end_time,
-        [&interrupt, &end_time]{ return tic() >= end_time || interrupt; });
-    return tic() >= end_time;
+    return interrupt.sleep_until(tic() + duration);
 }
 
 /**
@@ -188,9 +229,9 @@ bool sleep(const std::chrono::duration<Rep, Period>& duration, SleepInterrupt& i
  * \returns true if the entire requested sleep duration has passed, or false if the sleep
  *          has been interrupted prematurely via the SleepInterrupt object.
  */
-inline bool sleep(double seconds, SleepInterrupt &sd)
+inline bool sleep(double seconds, SleepInterrupt &interrupt)
 {
-    return sleep(std::chrono::duration<double>{ seconds }, sd);
+    return sleep(std::chrono::duration<double>{ seconds }, interrupt);
 }
 
 /**

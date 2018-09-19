@@ -24,6 +24,45 @@
 
 namespace gul {
 
-// All implementation details are currently in the header file
+
+SleepInterrupt &SleepInterrupt::operator=(bool interrupt) noexcept
+{
+    if (interrupt)
+    {
+        this->interrupt();
+    }
+    else
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        interrupted_ = false;
+    }
+
+    return *this;
+}
+
+SleepInterrupt::operator bool() const noexcept
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return interrupted_;
+}
+
+void SleepInterrupt::interrupt() noexcept
+{
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        interrupted_ = true;
+    }
+
+    // It is more efficient if we do not hold the lock on mutex_ when notifying other
+    // threads, because they need to acquire the lock as well.
+    cv_.notify_all();
+}
+
+void SleepInterrupt::reset() noexcept
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    interrupted_ = false;
+}
+
 
 } // namespace gul
