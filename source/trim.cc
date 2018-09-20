@@ -26,21 +26,24 @@
 namespace gul {
 
 
-std::string trim(string_view str, string_view whitespace_characters)
+const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
+
+
+std::string trim(string_view str, string_view ws_chars)
 {
-    const auto lpos = str.find_first_not_of(whitespace_characters);
+    const auto lpos = str.find_first_not_of(ws_chars);
 
     if (lpos == string_view::npos)
         return "";
 
-    const auto rpos = str.find_last_not_of(whitespace_characters);
+    const auto rpos = str.find_last_not_of(ws_chars);
 
     return std::string(str.begin() + lpos, str.begin() + rpos + 1);
 }
 
-std::string trim_left(string_view str, string_view whitespace_characters)
+std::string trim_left(string_view str, string_view ws_chars)
 {
-    const auto pos = str.find_first_not_of(whitespace_characters);
+    const auto pos = str.find_first_not_of(ws_chars);
 
     if (pos == string_view::npos)
         return "";
@@ -48,9 +51,9 @@ std::string trim_left(string_view str, string_view whitespace_characters)
     return std::string(str.begin() + pos, str.end());
 }
 
-std::string trim_right(string_view str, string_view whitespace_characters)
+std::string trim_right(string_view str, string_view ws_chars)
 {
-    const auto pos = str.find_last_not_of(whitespace_characters);
+    const auto pos = str.find_last_not_of(ws_chars);
 
     if (pos == string_view::npos)
         return "";

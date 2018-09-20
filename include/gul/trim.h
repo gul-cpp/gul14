@@ -29,37 +29,59 @@ namespace gul {
 
 
 /**
- * Trim leading and trailing whitespace (or a custom set of characters) from a string.
+ * The default characters that are treated as whitespace by GUL.
+ * This is a string view that contains the space and the most common control characters,
+ * namely (with their ASCII codes):
+ * - Bell/alert (7)
+ * - Backspace (8)
+ * - Horizontal tabulator (9)
+ * - Newline/line feed (10)
+ * - Vertical Tab (11)
+ * - Form feed (12)
+ * - Carriage return (13)
+ * - Space (32)
+ *
+ * \note
+ * The null character is not treated as whitespace by default.
+ */
+extern const string_view default_whitespace_characters;
+
+
+/**
+ * Trim leading and trailing whitespace (or a custom set of characters) from a string,
+ * returning a new std::string.
  * Which characters are removed can be customized via the whitespace_characters parameter.
  * \param str   The string that should be trimmed.
- * \param whitespace_characters  A string containing all the characters that should be
- *                               treated as whitespace (i.e. that are trimmed). If this is
- *                               empty, no characters are trimmed.
+ * \param ws_chars  A string containing all the characters that should be treated as
+ *                  whitespace (i.e. that are trimmed). If this is empty, no characters
+ *                  are trimmed.
  * \returns a trimmed copy of the input string.
  */
-std::string trim(string_view str, string_view whitespace_characters = " \t\r\n\a\b\f\v");
+std::string trim(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
- * Trim leading whitespace (or a custom set of characters) from a string.
+ * Trim leading whitespace (or a custom set of characters) from a string, returning a new
+ * std::string.
  * Which characters are removed can be customized via the whitespace_characters parameter.
  * \param str   The string from which leading characters should be trimmed.
- * \param whitespace_characters  A string containing all the characters that should be
- *                               treated as whitespace (i.e. that are trimmed). If this is
- *                               empty, no characters are trimmed.
+ * \param ws_chars  A string containing all the characters that should be treated as
+ *                  whitespace (i.e. that are trimmed). If this is empty, no characters
+ *                  are trimmed.
  * \returns a trimmed copy of the input string.
  */
-std::string trim_left(string_view str, string_view whitespace_characters = " \t\r\n\a\b\f\v");
+std::string trim_left(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
- * Trim trailing whitespace (or a custom set of characters) from a string.
+ * Trim trailing whitespace (or a custom set of characters) from a string, returning a new
+ * std::string.
  * Which characters are removed can be customized via the whitespace_characters parameter.
  * \param str   The string from which trailing characters should be trimmed.
- * \param whitespace_characters  A string containing all the characters that should be
- *                               treated as whitespace (i.e. that are trimmed). If this is
- *                               empty, no characters are trimmed.
+ * \param ws_chars  A string containing all the characters that should be treated as
+ *                  whitespace (i.e. that are trimmed). If this is empty, no characters
+ *                  are trimmed.
  * \returns a trimmed copy of the input string.
  */
-std::string trim_right(string_view str, string_view whitespace_characters = " \t\r\n\a\b\f\v");
+std::string trim_right(string_view str, string_view ws_chars = default_whitespace_characters);
 
 
 // TODO: trim_*_inplace to be added in a separate pull request
