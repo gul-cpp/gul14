@@ -40,7 +40,7 @@ std::string trim(string_view str, string_view whitespace_characters)
 
 std::string trim_left(string_view str, string_view whitespace_characters)
 {
-    auto pos = str.find_first_not_of(whitespace_characters);
+    const auto pos = str.find_first_not_of(whitespace_characters);
 
     if (pos == string_view::npos)
         return "";
@@ -48,9 +48,9 @@ std::string trim_left(string_view str, string_view whitespace_characters)
     return std::string(str.begin() + pos, str.end());
 }
 
-std::string trim_right(gul::string_view str, gul::string_view whitespace_characters)
+std::string trim_right(string_view str, string_view whitespace_characters)
 {
-    auto pos = str.find_last_not_of(whitespace_characters);
+    const auto pos = str.find_last_not_of(whitespace_characters);
 
     if (pos == string_view::npos)
         return "";
