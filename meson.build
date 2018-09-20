@@ -35,8 +35,10 @@ message('GIT EXTERNAL TAG   @0@'.format(git_external))
 # semantic version number matches the specified API version from above
 if not (git_version == 'unknown')
     git_vers_parts = git_version.split('.')
-    git_api_version = '@0@.@1@'.format(git_vers_parts[0].strip('v'), git_vers_parts[1])
+    git_major_version_parts = git_vers_parts[0].split('v')
+    git_api_version = '@0@.@1@'.format(git_major_version_parts[1], git_vers_parts[1])
     if not (git_api_version == libgul_api_version)
+        message('API version parsed from GIT version: @0@'.format(git_api_version))
         error('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
     endif
 endif
