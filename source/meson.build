@@ -11,17 +11,33 @@ inc += include_directories('.')
 
 # We want the git and API versions of this build to be available in the
 # library. The library can then be queried to identify its built version.
+#
+# Inside git we identify versions with two types of git tags:
+# - Version tags
+# - External/proprietary tags (for example Doocs version tags)
+#
+# The version tags have to follow this form (following https://semver.org):
+# "vM.m.p" where M, m, and p are decimal numbers of Major, minor, and patch
+# version numbers respectively. For example "v3.12.8".
 git_exe = find_program('git', required : false, native : true)
 if git_exe.found()
-    git_vers = run_command(git_exe, '-C', meson.source_root(), 'describe', '--tags', '--always', '--dirty')
+    git_vers = run_command(git_exe, '-C', meson.source_root(), 'describe', '--tags', '--always', '--dirty', '--match', 'v*')
     if git_vers.returncode() != 0
         git_version = 'unknown'
     else
         git_version = git_vers.stdout().strip()
     endif
+    git_exte = run_command(git_exe, '-C', meson.source_root(), 'describe', '--tags', '--always', '--abbrev=0', '--match', '[^v]*')
+    if git_exte.returncode() != 0
+        git_external = 'unknown'
+    else
+        git_external = git_exte.stdout().strip()
+    endif
 else
     git_version = 'unknown'
+    git_external = 'unknown'
 endif
+
 git_conf = configuration_data()
 git_conf.set('GIT_VERSION', git_version)
 git_conf.set('LIBGUL_API_VERSION', libgul_api_version)

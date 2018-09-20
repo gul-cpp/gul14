@@ -25,6 +25,20 @@ if deb_install
     subdir('debian')
 endif
 
+message('Install for debian packaging: @0@'.format(deb_install))
+
 message('LIBGUL_API_VERSION @0@'.format(libgul_api_version))
 message('GIT VERSION        @0@'.format(git_version))
-message('Install for debian packaging: @0@'.format(deb_install))
+message('GIT EXTERNAL TAG   @0@'.format(git_external))
+
+# Check if the git version (git tag starting with 'v') interpreted as
+# semantic version number matches the specified API version from above
+if git_version.contains('.')
+    git_vers_parts = git_version.split('.')
+    git_api_version = '@0@.@1@'.format(git_vers_parts[0].strip('v'), git_vers_parts[1])
+    if not (git_api_version == libgul_api_version)
+        error('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
+    endif
+else
+    warning('GIT VERSION tag malformed (\'.\' missing)')
+endif
