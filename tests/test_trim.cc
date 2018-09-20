@@ -25,8 +25,11 @@
 #include "gul/trim.h"
 
 using gul::trim;
+using gul::trim_sv;
 using gul::trim_left;
+using gul::trim_left_sv;
 using gul::trim_right;
+using gul::trim_right_sv;
 
 using namespace std::literals;
 
@@ -45,6 +48,21 @@ TEST_CASE("trim() works with various examples", "[string]")
     REQUIRE(trim(" Hello World ", "") == " Hello World ");
 }
 
+TEST_CASE("trim_sv() works with various examples", "[string]")
+{
+    REQUIRE(trim_sv("  Hello\n World\t\r   ") == "Hello\n World");
+    REQUIRE(trim_sv("Hello\t\r   ") == "Hello");
+    REQUIRE(trim_sv(" \t\r   Hello") == "Hello");
+    REQUIRE(trim_sv("Hello") == "Hello");
+    REQUIRE(trim_sv(" \n \t ") == "");
+    REQUIRE(trim_sv("") == "");
+    REQUIRE(trim_sv("\0Hello\0"s) == "\0Hello\0"s);
+
+    REQUIRE(trim_sv("\0 Hello \0"s, "\0 \t"s) == "Hello"s);
+    REQUIRE(trim_sv("Hello World", "Held") == "o Wor");
+    REQUIRE(trim_sv(" Hello World ", "") == " Hello World ");
+}
+
 TEST_CASE("trim_left() works with various examples", "[string]")
 {
     REQUIRE(trim_left("  Hello\n World\t\r   ") == "Hello\n World\t\r   ");
@@ -60,6 +78,21 @@ TEST_CASE("trim_left() works with various examples", "[string]")
     REQUIRE(trim_left(" Hello World ", "") == " Hello World ");
 }
 
+TEST_CASE("trim_left_sv() works with various examples", "[string]")
+{
+    REQUIRE(trim_left_sv("  Hello\n World\t\r   ") == "Hello\n World\t\r   ");
+    REQUIRE(trim_left_sv("Hello\t\r   ") == "Hello\t\r   ");
+    REQUIRE(trim_left_sv(" \t\r   Hello") == "Hello");
+    REQUIRE(trim_left_sv("Hello") == "Hello");
+    REQUIRE(trim_left_sv(" \n \t ") == "");
+    REQUIRE(trim_left_sv("") == "");
+    REQUIRE(trim_left_sv("\0Hello\0"s) == "\0Hello\0"s);
+
+    REQUIRE(trim_left_sv("\0 Hello \0"s, "\0 \t"s) == "Hello \0"s);
+    REQUIRE(trim_left_sv("Hello World", "Hel") == "o World");
+    REQUIRE(trim_left_sv(" Hello World ", "") == " Hello World ");
+}
+
 TEST_CASE("trim_right() works with various examples", "[string]")
 {
     REQUIRE(trim_right("  Hello\n World\t\r   ") == "  Hello\n World");
@@ -73,4 +106,19 @@ TEST_CASE("trim_right() works with various examples", "[string]")
     REQUIRE(trim_right("\0 Hello \0"s, "\0 \t"s) == "\0 Hello"s);
     REQUIRE(trim_right("Hello World", "ldr") == "Hello Wo");
     REQUIRE(trim_right(" Hello World ", "") == " Hello World ");
+}
+
+TEST_CASE("trim_right_sv() works with various examples", "[string]")
+{
+    REQUIRE(trim_right_sv("  Hello\n World\t\r   ") == "  Hello\n World");
+    REQUIRE(trim_right_sv("Hello\t\r   ") == "Hello");
+    REQUIRE(trim_right_sv(" \t\r   Hello") == " \t\r   Hello");
+    REQUIRE(trim_right_sv("Hello") == "Hello");
+    REQUIRE(trim_right_sv(" \n \t ") == "");
+    REQUIRE(trim_right_sv("") == "");
+    REQUIRE(trim_right_sv("\0Hello\0"s) == "\0Hello\0"s);
+
+    REQUIRE(trim_right_sv("\0 Hello \0"s, "\0 \t"s) == "\0 Hello"s);
+    REQUIRE(trim_right_sv("Hello World", "ldr") == "Hello Wo");
+    REQUIRE(trim_right_sv(" Hello World ", "") == " Hello World ");
 }

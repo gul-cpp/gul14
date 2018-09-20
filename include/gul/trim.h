@@ -50,7 +50,7 @@ extern const string_view default_whitespace_characters;
 /**
  * Trim leading and trailing whitespace (or a custom set of characters) from a string,
  * returning a new std::string.
- * Which characters are removed can be customized via the whitespace_characters parameter.
+ * Which characters are removed can be customized via the ws_chars parameter.
  * \param str   The string that should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -60,9 +60,21 @@ extern const string_view default_whitespace_characters;
 std::string trim(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
+ * Trim leading and trailing whitespace (or a custom set of characters) from a string,
+ * returning a view into the original string.
+ * Which characters are removed can be customized via the ws_chars parameter.
+ * \param str   The string that should be trimmed.
+ * \param ws_chars  A string containing all the characters that should be treated as
+ *                  whitespace (i.e. that are trimmed). If this is empty, no characters
+ *                  are trimmed.
+ * \returns a string_view that points into the input string.
+ */
+string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_characters);
+
+/**
  * Trim leading whitespace (or a custom set of characters) from a string, returning a new
  * std::string.
- * Which characters are removed can be customized via the whitespace_characters parameter.
+ * Which characters are removed can be customized via the ws_chars parameter.
  * \param str   The string from which leading characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -72,9 +84,21 @@ std::string trim(string_view str, string_view ws_chars = default_whitespace_char
 std::string trim_left(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
+ * Trim leading whitespace (or a custom set of characters) from a string, returning a view
+ * into the original string.
+ * Which characters are removed can be customized via the ws_chars parameter.
+ * \param str   The string from which leading characters should be trimmed.
+ * \param ws_chars  A string containing all the characters that should be treated as
+ *                  whitespace (i.e. that are trimmed). If this is empty, no characters
+ *                  are trimmed.
+ * \returns a string_view that points into the input string.
+ */
+string_view trim_left_sv(string_view str, string_view ws_chars = default_whitespace_characters);
+
+/**
  * Trim trailing whitespace (or a custom set of characters) from a string, returning a new
  * std::string.
- * Which characters are removed can be customized via the whitespace_characters parameter.
+ * Which characters are removed can be customized via the ws_chars parameter.
  * \param str   The string from which trailing characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -82,6 +106,18 @@ std::string trim_left(string_view str, string_view ws_chars = default_whitespace
  * \returns a trimmed copy of the input string.
  */
 std::string trim_right(string_view str, string_view ws_chars = default_whitespace_characters);
+
+/**
+ * Trim trailing whitespace (or a custom set of characters) from a string, returning a
+ * view into the original string.
+ * Which characters are removed can be customized via the ws_chars parameter.
+ * \param str   The string from which trailing characters should be trimmed.
+ * \param ws_chars  A string containing all the characters that should be treated as
+ *                  whitespace (i.e. that are trimmed). If this is empty, no characters
+ *                  are trimmed.
+ * \returns a trimmed copy of the input string.
+ */
+string_view trim_right_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
 
 // TODO: trim_*_inplace to be added in a separate pull request

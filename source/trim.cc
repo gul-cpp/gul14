@@ -31,6 +31,11 @@ const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
 
 std::string trim(string_view str, string_view ws_chars)
 {
+    return std::string(trim_sv(str, ws_chars));
+}
+
+string_view trim_sv(string_view str, string_view ws_chars)
+{
     const auto lpos = str.find_first_not_of(ws_chars);
 
     if (lpos == string_view::npos)
@@ -38,27 +43,37 @@ std::string trim(string_view str, string_view ws_chars)
 
     const auto rpos = str.find_last_not_of(ws_chars);
 
-    return std::string(str.begin() + lpos, str.begin() + rpos + 1);
+    return str.substr(lpos, rpos - lpos + 1);
 }
 
 std::string trim_left(string_view str, string_view ws_chars)
+{
+    return std::string(trim_left_sv(str, ws_chars));
+}
+
+string_view trim_left_sv(string_view str, string_view ws_chars)
 {
     const auto pos = str.find_first_not_of(ws_chars);
 
     if (pos == string_view::npos)
         return "";
 
-    return std::string(str.begin() + pos, str.end());
+    return str.substr(pos);
 }
 
 std::string trim_right(string_view str, string_view ws_chars)
+{
+    return std::string(trim_right_sv(str, ws_chars));
+}
+
+string_view trim_right_sv(string_view str, string_view ws_chars)
 {
     const auto pos = str.find_last_not_of(ws_chars);
 
     if (pos == string_view::npos)
         return "";
 
-    return std::string(str.begin(), str.begin() + pos + 1);
+    return str.substr(0, pos + 1);
 }
 
 
