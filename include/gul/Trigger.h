@@ -93,6 +93,8 @@ namespace gul {
  * sleep(100ms);
  * trigger.trigger();
  * \endcode
+ * The unconditional wait() stops execution until the Trigger becomes true or is
+ * destructed. If a timeout is required, wait_for() or wait_until() can be used instead.
  *
  * \note
  * Trigger is a thread-safe, self-synchronizing class.
@@ -104,8 +106,8 @@ public:
     {}
 
     /**
-     * Destructor: Interrupt all associated sleep() calls because they can no longer
-     * safely monitor this object.
+     * Destructor: Send a final trigger signal so that all threads waiting on this object
+     * have a chance to stop.
      */
     ~Trigger() noexcept
     {
@@ -113,66 +115,74 @@ public:
     }
 
     /**
-     * Return if the trigger has been activated.
-     *
-     * The boolean operator returns true if the trigger has been activated sleep was interrupted through this
-     * SleepInterrupt object, or false otherwise.
+     * Return if the trigger is high==true or low==false.
      *
      * Example:
      * \code
-     * SleepInterrupt si;
-     * if (!si) // si now returns false
-     *     cout << "No interrupt yet\n";
-     * si.interrupt();
-     * if (si) // si now returns true
-     *     cout << "Interrupt has taken place\n";
+     * Trigger t;
+     * if (!t) // t returns false
+     *     cout << "Trigger is low\n";
+     * t.trigger();
+     * if (t) // t now returns true
+     *     cout << "Trigger is now high\n";
      * \endcode
      */
     explicit operator bool() const noexcept;
 
     /**
-     * Assignment: Cause associated sleep() calls to wake up if set to true, or reset
-     * the interrupt flag to false.
+     * Set the trigger to high==true or low==false.
+     * Setting it to true will cause any waiting threads to resume.
      */
     Trigger &operator=(bool interrupt) noexcept;
 
     /**
-     * Cause associated sleep() calls to wake up and set the interrupt flag to true.
+     * Set the trigger to high (true).
+     * This causes any waiting threads to resume.
      */
     void trigger() noexcept;
 
-    /**
-     * Reset the interrupt flag.
-     * This call has no direct impact on any associated sleep() call.
-     */
+    /// Set the trigger to low (false).
     void reset() noexcept;
 
     /**
-     * Suspend execution of the current thread until a given time point or until the sleep
-     * is interrupted from another thread.
-     * For most applications, the free function sleep() is easier to use.
+     * Suspend execution of the current thread until the trigger goes high (true) or the
+     * given time span has passed.
+     * For many applications, the free function sleep() is easier to use.
      *
      * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
      * \tparam Duration  The duration type to be used, typically Clock::duration.
      *
-     * \param t  The function
-     *           time point is reached (or until some other thread has triggered
-     *           an interrupt on this object).
+     * \param delta_t  A time span to wait. If the trigger still has not become true after
+     *                 this time, the function returns false.
      *
-     * \returns true if the entire requested sleep time has passed, or false if the sleep
-     *          has been interrupted prematurely.
+     * \returns the state of the trigger at the end of the call. If this is false, the
+     *          function has exited due to timeout.
      */
-    template <class Clock, class Duration>
-    bool sleep_until(const std::chrono::time_point<Clock, Duration> &t) const
+    template <class Rep, class Period>
+    bool wait_for(const std::chrono::duration<Rep, Period> &delta_t) const
     {
         std::unique_lock<std::mutex> lock(mutex_);
+        return cv_.wait_for(lock, delta_t, [this]{ return triggered_; });
+    }
 
-        if (triggered_)
-            return false;
-
-        cv_.wait_until(lock, t, [this]{ return triggered_; });
-
-        return !triggered_;
+    /**
+     * Suspend execution of the current thread until the trigger goes high (true) or the
+     * given time point has been reached.
+     * For many applications, the free function sleep() is easier to use.
+     *
+     * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
+     * \tparam Duration  The duration type to be used, typically Clock::duration.
+     *
+     * \param t  A time point after which the function should stop waiting.
+     *
+     * \returns the state of the trigger at the end of the call. If this is false, the
+     *          function has exited due to timeout.
+     */
+    template <class Clock, class Duration>
+    bool wait_until(const std::chrono::time_point<Clock, Duration> &t) const
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        return cv_.wait_until(lock, t, [this]{ return triggered_; });
     }
 
 private:

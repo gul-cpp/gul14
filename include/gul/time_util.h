@@ -99,7 +99,7 @@ auto toc(std::chrono::steady_clock::time_point t0)
 template< class Rep, class Period >
 bool sleep(const std::chrono::duration<Rep, Period>& duration, const Trigger& trg)
 {
-    return trg.sleep_until(tic() + duration);
+    return !trg.wait_until(tic() + duration);
 }
 
 /**
