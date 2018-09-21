@@ -97,7 +97,7 @@ namespace gul {
  * destructed. If a timeout is required, wait_for() or wait_until() can be used instead.
  *
  * \note
- * Trigger is a thread-safe, self-synchronizing class.
+ * Trigger is a thread-safe, self-synchronizing class; it is neither copyable nor movable.
  */
 class Trigger
 {
@@ -109,10 +109,7 @@ public:
      * Destructor: Send a final trigger signal so that all threads waiting on this object
      * have a chance to stop.
      */
-    ~Trigger() noexcept
-    {
-        trigger();
-    }
+    ~Trigger() noexcept;
 
     /**
      * Return if the trigger is high==true or low==false.
@@ -135,19 +132,25 @@ public:
      */
     Trigger &operator=(bool interrupt) noexcept;
 
+    /// Set the trigger to low (false).
+    void reset() noexcept;
+
     /**
      * Set the trigger to high (true).
      * This causes any waiting threads to resume.
      */
     void trigger() noexcept;
 
-    /// Set the trigger to low (false).
-    void reset() noexcept;
+    /**
+     * Suspend execution of the current thread until the trigger goes high (true).
+     * Execution is also resumed if the object is destructed.
+     */
+    void wait() const;
 
     /**
      * Suspend execution of the current thread until the trigger goes high (true) or the
      * given time span has passed.
-     * For many applications, the free function sleep() is easier to use.
+     * Execution is also resumed if the object is destructed.
      *
      * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
      * \tparam Duration  The duration type to be used, typically Clock::duration.
@@ -157,6 +160,9 @@ public:
      *
      * \returns the state of the trigger at the end of the call. If this is false, the
      *          function has exited due to timeout.
+     *
+     * \note
+     * For many applications, the free function sleep() is easier to use.
      */
     template <class Rep, class Period>
     bool wait_for(const std::chrono::duration<Rep, Period> &delta_t) const
@@ -168,7 +174,7 @@ public:
     /**
      * Suspend execution of the current thread until the trigger goes high (true) or the
      * given time point has been reached.
-     * For many applications, the free function sleep() is easier to use.
+     * Execution is also resumed if the object is destructed.
      *
      * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
      * \tparam Duration  The duration type to be used, typically Clock::duration.
@@ -177,6 +183,9 @@ public:
      *
      * \returns the state of the trigger at the end of the call. If this is false, the
      *          function has exited due to timeout.
+     *
+     * \note
+     * For many applications, the free function sleep() is easier to use.
      */
     template <class Clock, class Duration>
     bool wait_until(const std::chrono::time_point<Clock, Duration> &t) const

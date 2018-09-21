@@ -25,6 +25,11 @@
 namespace gul {
 
 
+Trigger::~Trigger() noexcept
+{
+    trigger();
+}
+
 Trigger &Trigger::operator=(bool interrupt) noexcept
 {
     if (interrupt)
@@ -46,6 +51,12 @@ Trigger::operator bool() const noexcept
     return triggered_;
 }
 
+void Trigger::reset() noexcept
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    triggered_ = false;
+}
+
 void Trigger::trigger() noexcept
 {
     {
@@ -58,10 +69,10 @@ void Trigger::trigger() noexcept
     cv_.notify_all();
 }
 
-void Trigger::reset() noexcept
+void Trigger::wait() const
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    triggered_ = false;
+    std::unique_lock<std::mutex> lock(mutex_);
+    cv_.wait(lock, [this]{ return triggered_; });
 }
 
 
