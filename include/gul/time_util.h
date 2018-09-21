@@ -88,29 +88,32 @@ auto toc(std::chrono::steady_clock::time_point t0)
 
 /**
  * Sleep for a given time span, with the option of being woken up from another thread.
- * The sleep can be interrupted from another thread via a shared \ref SleepInterrupt
- * object. See \ref SleepInterrupt for more details.
+ * The sleep can be interrupted from another thread via a shared \ref Trigger object.
  * \param duration   Time span to wait, as a std::chrono::duration type.
  * \param interrupt  Reference to a SleepInterrupt object that can be used to interrupt
  *                   the delay. If such an interruption occurs, false is returned.
  * \returns true if the entire requested sleep duration has passed, or false if the sleep
- *          has been interrupted prematurely via the SleepInterrupt object.
+ *          has been interrupted prematurely via the Trigger object.
+ *
+ * \see \ref Trigger
  */
 template< class Rep, class Period >
 bool sleep(const std::chrono::duration<Rep, Period>& duration, const Trigger& trg)
 {
-    return !trg.wait_until(tic() + duration);
+    return !trg.wait_for(duration);
 }
 
 /**
  * Sleep for a given number of seconds, with the option of being woken up from another
- * thread. The sleep can be interrupted from another thread via a shared \ref SleepInterrupt
- * object. See \ref SleepInterrupt for more details.
+ * thread. The sleep can be interrupted from another thread via a shared \ref Trigger
+ * object.
  * \param duration   Seconds to wait.
  * \param interrupt  Reference to a SleepInterrupt object that can be used to interrupt
  *                   the delay. If such an interruption occurs, false is returned.
  * \returns true if the entire requested sleep duration has passed, or false if the sleep
- *          has been interrupted prematurely via the SleepInterrupt object.
+ *          has been interrupted prematurely via the Trigger object.
+ *
+ * \see \ref Trigger
  */
 inline bool sleep(double seconds, const Trigger &trg)
 {
