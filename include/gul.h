@@ -32,7 +32,7 @@
  * library are:
  * 
  *  - \ref string_utilities
- *  - Exceptions
+ *  - \ref concurrency_utilities
  *  - \ref time_utilities
  *  - Numerical helpers
  *  - \ref backports of standard library features that are not yet available on common
@@ -169,14 +169,34 @@
  */
 
 /**
+ * \page concurrency_utilities Concurrency Utilities
+ *
+ * GUL provides some utilities to make dealing with concurrency (threads, locks, and so
+ * on) easier.
+ *
+ * <h3>Classes</h3>
+ *
+ * \ref gul::Trigger "Trigger":
+ *     A class that allows sending triggers and waiting for them across different threads,
+ *     like an electric trigger line.
+ *
+ * <h3>Functions</h3>
+ *
+ * sleep():
+ *     Wait for a given amount of time and be woken up from a different thread.
+ */
+
+/**
  * \page time_utilities Time Utilities
  *
- * The General Utility Library provides a few time-related utility functions:
+ * The General Utility Library provides a few time-related utility functions.
  *
- * sleep(): Wait for a given amount of time (and be woken up from a different thread, if
- *          desired).
+ * sleep():
+ *     Wait for a given amount of time (and be woken up from a different thread, if
+ *     desired).
  *
- * tic() & toc(): Measure elapsed time.
+ * tic() & toc():
+ *     Measure elapsed time.
  */
 
 /**
@@ -199,6 +219,7 @@
 #include "gul/string_view.h"
 #include "gul/time_util.h"
 #include "gul/tokenize.h"
+#include "gul/Trigger.h"
 #include "gul/version.h"
 
 /// Namespace gul contains all functions and classes of the General Utility Library.
