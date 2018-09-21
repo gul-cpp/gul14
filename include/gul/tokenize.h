@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include "gul/string_util.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -43,7 +44,7 @@ namespace gul {
  * \returns a std::vector with the single substrings.
  */
 std::vector<std::string> tokenize(string_view str,
-    string_view delimiters = " \t\r\n\a\b\f\v");
+    string_view delimiters = default_whitespace_characters);
 
 /**
  * Split the given string into a vector of substrings (tokens) delimited by any of the
@@ -62,6 +63,6 @@ std::vector<std::string> tokenize(string_view str,
  *          lifetime of that argument.
  */
 std::vector<string_view> tokenize_sv(string_view str,
-    string_view delimiters = " \t\r\n\a\b\f\v");
+    string_view delimiters = default_whitespace_characters);
 
 } // namespace gul
