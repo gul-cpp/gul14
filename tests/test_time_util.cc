@@ -29,7 +29,7 @@ using namespace std::literals;
 using gul::tic;
 using gul::toc;
 using gul::sleep;
-using gul::SleepInterrupt;
+using gul::Trigger;
 
 SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]")
 {
@@ -127,7 +127,7 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
     WHEN("calling sleep(0.005, interrupt) with interrupt { false }")
     {
-        SleepInterrupt interrupt{ false };
+        Trigger interrupt{ false };
         sleep(0.005, interrupt);
 
         THEN("the elapsed time is approximately 5 ms")
@@ -141,7 +141,7 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
     WHEN("calling sleep(0.005, interrupt) with interrupt { true }")
     {
-        SleepInterrupt interrupt { true };
+        Trigger interrupt { true };
         sleep(0.005, interrupt);
 
         THEN("the elapsed time is very very small")
@@ -153,7 +153,7 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
     WHEN("calling sleep(0.005, interrupt) after interrupt = true")
     {
-        SleepInterrupt interrupt;
+        Trigger interrupt;
         interrupt = true;
         sleep(0.005, interrupt);
 
@@ -169,7 +169,7 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time]
 {
     WHEN("interrupting sleep(2s, interrupt) after 10 ms")
     {
-        SleepInterrupt interrupt;
+        Trigger interrupt;
 
         auto future = std::async(std::launch::async,
                 [&interrupt]

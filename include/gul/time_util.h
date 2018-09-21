@@ -89,56 +89,92 @@ auto toc(std::chrono::steady_clock::time_point t0)
 
 
 /**
- * A class for interrupting sleep() delays from another thread.
- * 
- * When a SleepInterrupt object is passed as an argument to sleep(), the sleep can be
- * interrupted by assigning true to the object. Assigning false does not cause a sleep
- * interruption.
+ * A class that allows sending triggers and waiting for them across different threads.
  *
- * Example:
+ * A Trigger object is similar to a digital electric trigger signal. Its state is either
+ * high (true) or low (false), and actions are triggered when it is at the high level -
+ * that is to say, an arbitrary number of threads can wait until the Trigger object
+ * becomes true. Internally, a Trigger is little more than a wrapper around a mutex, a
+ * condition variable, and a boolean.
+ *
+ * There are two ways to use a Trigger:
+ *
+ * <h3>Using bools</h3>
+ *
+ * To stay in the picture of a digital electric trigger line, high and low states can
+ * be assigned and tested like booleans. This allows for easy communication of state:
  * \code
  * // Data shared between threads
- * SleepInterrupt interrupt;
- * \endcode
+ * Trigger trigger;
  *
- * \code
- * using std::literals; // for the "ms" suffix
+ * ...
+ *
  * // Thread 1
- * bool slept_well = sleep(5ms, interrupt);
- * if (!slept_well)
- *     std::cout << "Sleep interrupted.\n";
- * if (interrupt) // equivalent to the above, unless another thread has messed with interrupt
- *     std::cout << "Sleep interrupted.\n";
+ * trigger.wait(); // wait until trigger becomes true
+ * while (trigger)
+ * {
+ *     cout << "high\n";
+ *     sleep(10ms);
+ * }
+ * cout << "low\n";
+ * ...
+ *
+ * // Thread 2
+ * trigger = true;
+ * sleep(100ms);
+ * trigger = false;
  * \endcode
  *
+ * <h3>Using member functions</h3>
+ *
+ * Sometimes assignment of boolean values does not fit well to a specific task. The member
+ * functions trigger() and reset() are identical to assigning \c true and \c false,
+ * respectively:
  * \code
+ * // Data shared between threads
+ * Trigger trigger;
+ *
+ * ...
+ *
+ * // Thread 1
+ * while (true)
+ * {
+ *     trigger.wait();
+ *     cout << "Triggered!\n";
+ *     trigger.reset();
+ * }
+ * ...
+ *
  * // Thread 2
- * if (some_condition)
- *     interrupt = true; // Will interrupt the sleep in the other thread
+ * trigger.trigger();
+ * sleep(100ms);
+ * trigger.trigger();
+ * sleep(100ms);
+ * trigger.trigger();
  * \endcode
  *
  * \note
- * SleepInterrupt is a thread-safe, self-synchronizing class.
+ * Trigger is a thread-safe, self-synchronizing class.
  */
-class SleepInterrupt
+class Trigger
 {
 public:
-    explicit SleepInterrupt(bool interrupted = false) noexcept : interrupted_{ interrupted }
+    explicit Trigger(bool triggered = false) noexcept : triggered_{ triggered }
     {}
 
     /**
      * Destructor: Interrupt all associated sleep() calls because they can no longer
      * safely monitor this object.
      */
-    ~SleepInterrupt() noexcept
+    ~Trigger() noexcept
     {
-        interrupt();
+        trigger();
     }
 
     /**
-     * Bool operator: Return if the sleep was interrupted or not.
+     * Return if the trigger has been activated.
      *
-     * The boolean operator returns true if the sleep was interrupted through this
+     * The boolean operator returns true if the trigger has been activated sleep was interrupted through this
      * SleepInterrupt object, or false otherwise.
      *
      * Example:
@@ -157,12 +193,12 @@ public:
      * Assignment: Cause associated sleep() calls to wake up if set to true, or reset
      * the interrupt flag to false.
      */
-    SleepInterrupt &operator=(bool interrupt) noexcept;
+    Trigger &operator=(bool interrupt) noexcept;
 
     /**
      * Cause associated sleep() calls to wake up and set the interrupt flag to true.
      */
-    void interrupt() noexcept;
+    void trigger() noexcept;
 
     /**
      * Reset the interrupt flag.
@@ -190,18 +226,18 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        if (interrupted_)
+        if (triggered_)
             return false;
 
-        cv_.wait_until(lock, t, [this]{ return interrupted_; });
+        cv_.wait_until(lock, t, [this]{ return triggered_; });
 
-        return !interrupted_;
+        return !triggered_;
     }
 
 private:
     mutable std::mutex mutex_; // Protects private data and is used with the condition variable
     mutable std::condition_variable cv_;
-    bool interrupted_ = false;
+    bool triggered_ = false;
 };
 
 
@@ -217,7 +253,7 @@ private:
  */
 template< class Rep, class Period >
 bool sleep(const std::chrono::duration<Rep, Period>& duration,
-           const SleepInterrupt& interrupt)
+           const Trigger& interrupt)
 {
     return interrupt.sleep_until(tic() + duration);
 }
@@ -232,7 +268,7 @@ bool sleep(const std::chrono::duration<Rep, Period>& duration,
  * \returns true if the entire requested sleep duration has passed, or false if the sleep
  *          has been interrupted prematurely via the SleepInterrupt object.
  */
-inline bool sleep(double seconds, const SleepInterrupt &interrupt)
+inline bool sleep(double seconds, const Trigger &interrupt)
 {
     return sleep(std::chrono::duration<double>{ seconds }, interrupt);
 }

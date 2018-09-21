@@ -25,32 +25,32 @@
 namespace gul {
 
 
-SleepInterrupt &SleepInterrupt::operator=(bool interrupt) noexcept
+Trigger &Trigger::operator=(bool interrupt) noexcept
 {
     if (interrupt)
     {
-        this->interrupt();
+        this->trigger();
     }
     else
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        interrupted_ = false;
+        triggered_ = false;
     }
 
     return *this;
 }
 
-SleepInterrupt::operator bool() const noexcept
+Trigger::operator bool() const noexcept
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    return interrupted_;
+    return triggered_;
 }
 
-void SleepInterrupt::interrupt() noexcept
+void Trigger::trigger() noexcept
 {
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        interrupted_ = true;
+        triggered_ = true;
     }
 
     // It is more efficient if we do not hold the lock on mutex_ when notifying other
@@ -58,10 +58,10 @@ void SleepInterrupt::interrupt() noexcept
     cv_.notify_all();
 }
 
-void SleepInterrupt::reset() noexcept
+void Trigger::reset() noexcept
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    interrupted_ = false;
+    triggered_ = false;
 }
 
 
