@@ -56,7 +56,7 @@ test('Time utility functions',
                 link_with : libgul),
      timeout : test_time)
 
-test('tokenize(), tokenize_string_view()',
+test('tokenize(), tokenize_sv()',
      executable('tokenize-test',
                 [ 'test_tokenize.cc', catch_main ],
                 include_directories : test_inc,

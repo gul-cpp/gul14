@@ -143,7 +143,7 @@
  *
  * tokenize(): Split a string into a vector of string tokens at delimiter characters.
  *
- * tokenize_string_view(): Split a string into a vector of string_views that point into
+ * tokenize_sv(): Split a string into a vector of string_views that point into
  *                         the original string.
  *
  * <h4>Find & Replace</h4>

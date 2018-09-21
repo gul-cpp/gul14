@@ -2,7 +2,7 @@
  * \file    tokenize.h
  * \authors \ref contributors
  * \date    Created on September 3, 2018
- * \brief   Declaration of tokenize(), tokenize_string_view().
+ * \brief   Declaration of tokenize(), tokenize_sv().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -34,7 +34,7 @@ namespace gul {
  * single one, and delimiters at the beginning and end of the string are ignored.
  * For example, tokenize("   A  B C  ") yields a vector with the three entries "A", "B",
  * and "C".
- * \see gul::tokenize_string_view() returns a vector<string_view> instead.
+ * \see gul::tokenize_sv() returns a vector<string_view> instead.
  * \param str         The string to be split.
  * \param delimiters  String with delimiter characters. Any of the characters in
  *                    this string marks the beginning/end of a token. By
@@ -61,7 +61,7 @@ std::vector<std::string> tokenize(string_view str,
  *          string views point to the original string str and are valid only for the
  *          lifetime of that argument.
  */
-std::vector<string_view> tokenize_string_view(string_view str,
+std::vector<string_view> tokenize_sv(string_view str,
     string_view delimiters = " \t\r\n\a\b\f\v");
 
 } // namespace gul

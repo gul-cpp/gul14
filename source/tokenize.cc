@@ -1,7 +1,7 @@
 /**
  * \file    tokenize.cc
  * \authors \ref contributors
- * \brief   Implementation of tokenize(), tokenize_string_view().
+ * \brief   Implementation of tokenize(), tokenize_sv().
  * \date    Created on September 3, 2018
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
@@ -61,7 +61,7 @@ std::vector<std::string> tokenize(string_view str, string_view delimiters)
     return tokenize<std::string>(str, delimiters);
 }
 
-std::vector<string_view> tokenize_string_view(string_view str, string_view delimiters)
+std::vector<string_view> tokenize_sv(string_view str, string_view delimiters)
 {
     return tokenize<string_view>(str, delimiters);
 }

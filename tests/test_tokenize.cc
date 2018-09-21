@@ -2,7 +2,7 @@
  * \file   test_tokenize.cc
  * \author Lars Froehlich
  * \date   Created on September 3, 2018
- * \brief  Test suite for tokenize() and tokenize_string_view() from the General Utility
+ * \brief  Test suite for tokenize() and tokenize_sv() from the General Utility
  *         Library.
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
@@ -27,7 +27,7 @@
 using namespace std::literals;
 
 using gul::tokenize;
-using gul::tokenize_string_view;
+using gul::tokenize_sv;
 
 TEST_CASE("gul::tokenize() works with \"Hello World\"", "[tokenize]")
 {
@@ -68,9 +68,9 @@ TEST_CASE("gul::tokenize() works with empty delimiter string", "[tokenize]")
     REQUIRE(tokens[0] == "Hello World");
 }
 
-TEST_CASE("gul::tokenize_string_view() works with \"Hello World\"", "[tokenize]")
+TEST_CASE("gul::tokenize_sv() works with \"Hello World\"", "[tokenize]")
 {
-    auto tokens = tokenize_string_view("Hello World");
+    auto tokens = tokenize_sv("Hello World");
 
     REQUIRE(tokens.size() == 2);
     REQUIRE(tokens[0] == "Hello");
@@ -79,19 +79,19 @@ TEST_CASE("gul::tokenize_string_view() works with \"Hello World\"", "[tokenize]"
     REQUIRE(tokens[1].length() == 5);
 }
 
-TEST_CASE("gul::tokenize_string_view() works with \" Hello World\" with odd whitespace", "[tokenize]")
+TEST_CASE("gul::tokenize_sv() works with \" Hello World\" with odd whitespace", "[tokenize]")
 {
-    auto tokens = tokenize_string_view("\t Hello\n\rWorld\t\t  ");
+    auto tokens = tokenize_sv("\t Hello\n\rWorld\t\t  ");
 
     REQUIRE(tokens.size() == 2);
     REQUIRE(tokens[0] == "Hello");
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize_string_view() works with custom delimiters and null characters", "[tokenize]")
+TEST_CASE("gul::tokenize_sv() works with custom delimiters and null characters", "[tokenize]")
 {
     const auto input = "\t Hel\0lo\n\rWorld\t\t  "s;
-    auto tokens = tokenize_string_view(input, " \t\n\r");
+    auto tokens = tokenize_sv(input, " \t\n\r");
 
     REQUIRE(tokens.size() == 2);
     REQUIRE(tokens[0] == "Hel\0lo"s);
@@ -99,9 +99,9 @@ TEST_CASE("gul::tokenize_string_view() works with custom delimiters and null cha
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize_string_view() works with empty delimiter string", "[tokenize]")
+TEST_CASE("gul::tokenize_sv() works with empty delimiter string", "[tokenize]")
 {
-    auto tokens = tokenize_string_view("Hello World", "");
+    auto tokens = tokenize_sv("Hello World", "");
 
     REQUIRE(tokens.size() == 1);
     REQUIRE(tokens[0] == "Hello World");
