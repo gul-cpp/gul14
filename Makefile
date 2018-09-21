@@ -188,6 +188,7 @@ TEST_OBJ = $(OBJDIR)/tests/test_main.o \
            $(OBJDIR)/tests/test_string_split.o \
            $(OBJDIR)/tests/test_time_util.o \
            $(OBJDIR)/tests/test_tokenize.o \
+           $(OBJDIR)/tests/test_Trigger.o \
            $(OBJDIR)/tests/test_trim.o \
            $(LIBRARYOBJ)
 
@@ -230,6 +231,11 @@ $(OBJDIR)/tests/test_tokenize.o: $(SRCDIR)/../tests/test_tokenize.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_tokenize.o \
 	    $(SRCDIR)/../tests/test_tokenize.cc
+
+$(OBJDIR)/tests/test_Trigger.o: $(SRCDIR)/../tests/test_Trigger.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_Trigger.o \
+	    $(SRCDIR)/../tests/test_Trigger.cc
 
 $(OBJDIR)/tests/test_trim.o: $(SRCDIR)/../tests/test_trim.cc
 	@echo $(INTRO) $@ $(OUTRO)

@@ -63,6 +63,14 @@ test('tokenize(), tokenize_string_view()',
                 link_with : libgul),
      timeout : test_time)
 
+test('Trigger class',
+     executable('Trigger-test',
+                [ 'test_Trigger.cc', catch_main ],
+                include_directories : test_inc,
+                dependencies : thread_dep,
+                link_with : libgul),
+     timeout : test_time)
+
 test('trim() and variants',
      executable('trim-test',
                 [ 'test_trim.cc', catch_main ],

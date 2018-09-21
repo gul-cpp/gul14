@@ -124,7 +124,7 @@ public:
      *     cout << "Trigger is now high\n";
      * \endcode
      */
-    explicit operator bool() const noexcept;
+    operator bool() const noexcept;
 
     /**
      * Set the trigger to high==true or low==false.
