@@ -26,9 +26,6 @@
 namespace gul {
 
 
-const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
-
-
 std::string trim(string_view str, string_view ws_chars)
 {
     return std::string(trim_sv(str, ws_chars));

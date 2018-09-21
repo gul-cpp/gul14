@@ -29,6 +29,25 @@ namespace gul {
 
 
 /**
+ * The default characters that are treated as whitespace by GUL.
+ * This is a string view that contains the space and the most common control characters,
+ * namely (with their ASCII codes):
+ * - Bell/alert (7)
+ * - Backspace (8)
+ * - Horizontal tabulator (9)
+ * - Newline/line feed (10)
+ * - Vertical Tab (11)
+ * - Form feed (12)
+ * - Carriage return (13)
+ * - Space (32)
+ *
+ * \note
+ * The null character is not treated as whitespace by default.
+ */
+extern const string_view default_whitespace_characters;
+
+
+/**
  * Create a new string that looks like an ASCII-only C string literal of the input string.
  * This is achieved by replacing all non-printable and non-ASCII characters with a hex
  * code escape in the form `\x01`.

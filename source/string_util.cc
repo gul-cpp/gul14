@@ -32,10 +32,14 @@ using namespace std::literals::string_literals;
 
 namespace gul {
 
+
+const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
+
+
 // anonymous namespace to confine helper functions to this translation unit
 namespace {
 
-static std::array<char, 16> hex_table =
+static const std::array<char, 16> hex_table =
     { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
 
 char get_last_nibble_as_hex(unsigned int i)
