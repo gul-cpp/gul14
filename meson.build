@@ -8,11 +8,10 @@ project('libgul', 'cpp',
 # The API version is the major version of the project.
 # Increase the major project version in project() above on API breaking changes.
 version_parts = meson.project_version().split('.')
-LIBGUL_API_VERSION = '@0@.@1@'.format(version_parts[0], version_parts[1])
+libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
 # Find out if this is a normal (not local) install (not into prefix/obj/)
-deb_install = get_option('bindir').startswith('obj/') == false
-message('Install for debian packaging: @0@'.format(deb_install))
+deb_install = get_option('prefix') == '/usr'
 
 subdir('include')
 subdir('source')
@@ -23,5 +22,23 @@ subdir('tests')
 
 # Add debian/* files
 if deb_install
-#   subdir('debian.in')  to be added
+    subdir('debian')
+endif
+
+message('Install for debian packaging: @0@'.format(deb_install))
+
+message('LIBGUL_API_VERSION @0@'.format(libgul_api_version))
+message('GIT VERSION        @0@'.format(git_version))
+message('GIT EXTERNAL TAG   @0@'.format(git_external))
+
+# Check if the git version (git tag starting with 'v') interpreted as
+# semantic version number matches the specified API version from above
+if not (git_version == 'unknown')
+    git_vers_parts = git_version.split('.')
+    git_major_version_parts = git_vers_parts[0].split('v')
+    git_api_version = '@0@.@1@'.format(git_major_version_parts[1], git_vers_parts[1])
+    if not (git_api_version == libgul_api_version)
+        message('API version parsed from GIT version: @0@'.format(git_api_version))
+        error('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
+    endif
 endif

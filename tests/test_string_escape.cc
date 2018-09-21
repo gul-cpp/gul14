@@ -21,6 +21,7 @@
  */
 
 #include "catch.h"
+#include <random>
 #include <gul.h>
 
 using namespace std::literals;
@@ -35,7 +36,7 @@ TEST_CASE("Compare escaped strings", "[string_util]")
 
 	REQUIRE(gul::escape("foo\abar\000baz"s) == R"(foo\x07bar\x00baz)"s);
 
-	// TODO: add more tests cases...for ACK NAK ENQ REQ STX ETX...
+	REQUIRE(gul::escape("\xff") == "\\xff");
 }
 
 TEST_CASE("Compare unescaped strings", "[string_util]")
@@ -47,6 +48,47 @@ TEST_CASE("Compare unescaped strings", "[string_util]")
 
 	REQUIRE(gul::unescape(R"(foo\x07bar\x00baz)"s) == "foo\abar\000baz"s);
 
+    REQUIRE(gul::unescape("\\xff") == "\xff");
+    
 	auto const s = "foo\abar\000baz"s;
 	REQUIRE(gul::unescape(gul::escape(s)) == s);
+}
+
+TEST_CASE("Check escaping and unescaping with random strings", "[string_util]")
+{
+    std::random_device r;
+    std::default_random_engine re(r());
+    std::uniform_int_distribution<unsigned char> uniform_dist(0, 255);
+
+    for (int len = 0; len < 100; len++)
+    {
+        std::string original(len, ' ');
+
+        for (char &c : original)
+            c = uniform_dist(re);
+
+        auto escaped = gul::escape(original);
+
+        REQUIRE(original.length() <= escaped.length());
+
+        auto unescaped = gul::unescape(escaped);
+
+        if (original != unescaped)
+        {
+            INFO(gul::cat("Original \"", original, "\" != \"", unescaped,
+                          "\" after escape/unescape"));
+
+            std::string str = "Original bytes:              ";
+
+            for (const char &c : original)
+                str += gul::cat("[", static_cast<int>(c), "] ");
+
+            str += "\nBytes after escape/unescape: ";
+
+            for (const char &c : unescaped)
+                str += gul::cat("[", static_cast<int>(c), "] ");
+
+            FAIL(str);
+        }
+    }
 }

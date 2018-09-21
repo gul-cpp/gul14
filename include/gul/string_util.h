@@ -29,13 +29,13 @@ namespace gul {
 
 
 /**
- * Create a new string that looks like the C string literal of the input
- * string. This is achiaved by replacing all non printable characters
- * with a hex code escape in the form `\x01`.
+ * Create a new string that looks like an ASCII-only C string literal of the input string.
+ * This is achieved by replacing all non-printable and non-ASCII characters with a hex
+ * code escape in the form `\x01`.
  *
- * A few special cases are implemented to give more readable representations
- * for very common control characters, and of course backslash and double quotes
- * additionally are escaped:
+ * A few special cases are implemented to give more readable representations for very
+ * common control characters, and of course backslash and double quotes are escaped as
+ * well:
  *
  *     CR   ->  \r
  *     NL   ->  \n
@@ -43,14 +43,23 @@ namespace gul {
  *     \    ->  \\
  *     "    ->  \"
  *
- * Note: The hexadecimal escape uses always two digits. This is different from
- * the C(++) standard, where it can be an arbitrary number of digits. The standard's
- * way makes it impossible to have any hex digit after a hex escape, e.g. `"\x200"`
- * is invalid and not `" 0"` from the standard's point of view.
+ * <h4>Example</h4>
+ * \code
+ * std::cout << escape("Zwei\tFlüsse\nfließen ins Meer.") << "\n";
+ * \endcode
+ * Output (assuming that the string literal was in Latin-1 encoding):
+ *
+ *     Zwei\tFl\xfcsse\nflie\xdfen ins Meer.
+ *
+ * \note
+ * The hexadecimal escape always uses two digits. This is different from the C/C++
+ * standard, where it can be an arbitrary number of digits. The standard's way makes it
+ * impossible to have any hex digit after a hex escape, e.g. `"\x200"` is invalid and not
+ * equal to `" 0"` from the standard's point of view.
  *
  * \param in The input string.
  *
- * \returns a new string that is the C string literal of the input.
+ * \returns a new string that contains only ASCII characters.
  */
 std::string escape(const std::string& in);
 

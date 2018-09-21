@@ -1,4 +1,4 @@
 .*
 nbproject
 tests/test_main
-build
+build*

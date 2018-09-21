@@ -28,52 +28,67 @@
 #include <stdexcept>
 #include <sstream>
 
+using namespace std::literals::string_literals;
+
 namespace gul {
+
+// anonymous namespace to confine helper functions to this translation unit
+namespace {
+
+static std::array<char, 16> hex_table =
+    { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' };
+
+char get_last_nibble_as_hex(unsigned int i)
+{
+    return hex_table[i & 0xf];
+}
+
+} // anonymous namespace
+
 
 std::string escape(const std::string& in)
 {
-    auto re = std::regex{ R"([^[:print:]]|\\|")" };
-    auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
-    auto rend = std::regex_iterator<std::string::const_iterator>{ };
-    auto last = rend; // last processed
+    auto escaped = ""s;
+    escaped.reserve(in.length());
 
-    auto buf = std::stringstream{ };
+    for (auto const c : in)
+    {
+        switch (c)
+        {
+            case '"':
+                escaped += "\\\"";
+                break;
+            case '\\':
+                escaped += "\\\\";
+                break;
+            case '\n':
+                escaped += "\\n";
+                break;
+            case '\r':
+                escaped += "\\r";
+                break;
+            case '\t':
+                escaped += "\\t";
+                break;
+            default:
+                if (c < 32)
+                {
+                    // This applies also to all non-ASCII characters,
+                    // i.e. also > 127 because they are mapped to negative values
+                    static_assert(static_cast<decltype(c)>(128) == -128, "Character type not signed 8 bit");
 
-    for (; rit != rend; ++rit) {
-        last = rit;
-        buf << rit->prefix();
-        if (rit->empty())
-            continue;
-        const auto c = rit->str()[0];
-        switch (c) {
-        case '\"':
-            buf << "\\\"";
-            break;
-        case '\\':
-            buf << "\\\\";
-            break;
-        case '\n':
-            buf << "\\n";
-            break;
-        case '\r':
-            buf << "\\r";
-            break;
-        case '\t':
-            buf << "\\t";
-            break;
-        default:
-            buf << "\\x" << std::hex << std::setfill('0')
-				<< std::setw(2) << static_cast<unsigned int>(c);
-            break;
-        }
+                    escaped += "\\x";
+                    escaped += get_last_nibble_as_hex(c >> 4);
+                    escaped += get_last_nibble_as_hex(c);
+                }
+                else
+                {
+                    escaped += c;
+                }
+        };
     }
 
-    if (last == rend) // no match
-        buf << in;
-    else
-        buf << last->suffix();
-
-    return buf.str();
+    return escaped;
 }
 
 std::string unescape(const std::string& in)
@@ -90,7 +105,7 @@ std::string unescape(const std::string& in)
         buf << rit->prefix();
         if (rit->empty())
             continue;
-        const auto c = rit->format("$1");
+        auto const c = rit->format("$1");
         switch (c[0]) {
         case '\"':
         case '\\':
@@ -105,12 +120,12 @@ std::string unescape(const std::string& in)
         case 't':
             buf << "\t";
             break;
-		case 'x':
+        case 'x':
             buf << static_cast<unsigned char>(std::stoi(rit->format("$1").substr(1), 0, 16));
             break;
-		default:
-			buf << rit->str();
-			break;
+        default:
+            buf << rit->str();
+            break;
         }
     }
 
@@ -141,8 +156,7 @@ std::string replace(string_view haystack, string_view needle, string_view hammer
     if (needle.empty())
         return std::string(haystack);
 
-    std::string result;
-
+    auto result = ""s;
     result.reserve(haystack.length());
 
     std::size_t pos = 0;

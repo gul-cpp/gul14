@@ -8,8 +8,9 @@ install_headers(
     'gul/cat.h',
     'gul/string_util.h',
     'gul/string_view.h',
-    'gul/tokenize.h',
     'gul/time_util.h',
+    'gul/tokenize.h',
+    'gul/trim.h',
     subdir : 'gul'
 )
 

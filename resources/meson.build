@@ -5,8 +5,11 @@
 # OUTPUT_DIRECTORY can't be rewritten without Makefile modifications,
 # so this is done by the doxywrap
 
-doxy_data = configuration_data()
-doxy_data.set('PROJECT_NUMBER', meson.project_version())
+if get_option('docs')
+message('Run \'ninja resources/docs\' to generate documentation.')
+
+docs_data = configuration_data()
+docs_data.set('PROJECT_NUMBER', meson.project_version())
 
 doxy_conf = files('Doxyfile')
 doxy_run = find_program('doxywrap')
@@ -14,7 +17,7 @@ doxy_run = find_program('doxywrap')
 dox = configure_file(
       input : 'Doxyfile',
       output : 'Doxyfile',
-      configuration : doxy_data)
+      configuration : docs_data)
 
 custom_target('doxy_generate', # This is not the ninja target name
     command : [ doxy_run,
@@ -32,3 +35,5 @@ custom_target('doxy_generate', # This is not the ninja target name
 # Installation of doxygenerated-tree still missing
 #
 # install_subdir(....)
+
+endif # if get_option('docs')

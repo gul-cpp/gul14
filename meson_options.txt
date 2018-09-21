@@ -1,0 +1,6 @@
+# Meson options definitions
+
+option('tests', type : 'boolean', value : true,
+       description : 'generate tests')
+option('docs', type : 'boolean', value : false,
+       description : 'generate documentation via doxygen')
