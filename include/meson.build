@@ -10,6 +10,7 @@ install_headers(
     'gul/string_view.h',
     'gul/time_util.h',
     'gul/tokenize.h',
+    'gul/Trigger.h',
     'gul/trim.h',
     subdir : 'gul'
 )

@@ -6,6 +6,7 @@ libgul_src = [
     'string_util.cc',
     'time_util.cc',
     'tokenize.cc',
+    'Trigger.cc',
     'trim.cc',
 ]
 

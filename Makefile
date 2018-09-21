@@ -15,6 +15,7 @@ LIBRARYOBJ = \
 	$(OBJDIR)/string_util.o \
 	$(OBJDIR)/time_util.o \
 	$(OBJDIR)/tokenize.o \
+	$(OBJDIR)/Trigger.o \
 	$(OBJDIR)/trim.o
 
 # All headers to be exported by the library, relative to $(INCDIR)
@@ -26,6 +27,7 @@ LIBRARYHFILES = \
 	gul/string_view.h \
 	gul/time_util.h \
 	gul/tokenize.h \
+	gul/Trigger.h \
 	gul/trim.h
 
 PKGCONFIG =

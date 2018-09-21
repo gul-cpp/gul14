@@ -24,45 +24,6 @@
 
 namespace gul {
 
-
-Trigger &Trigger::operator=(bool interrupt) noexcept
-{
-    if (interrupt)
-    {
-        this->trigger();
-    }
-    else
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        triggered_ = false;
-    }
-
-    return *this;
-}
-
-Trigger::operator bool() const noexcept
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    return triggered_;
-}
-
-void Trigger::trigger() noexcept
-{
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        triggered_ = true;
-    }
-
-    // It is more efficient if we do not hold the lock on mutex_ when notifying other
-    // threads, because they need to acquire the lock as well.
-    cv_.notify_all();
-}
-
-void Trigger::reset() noexcept
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    triggered_ = false;
-}
-
+// currently all implementation is in the header file
 
 } // namespace gul
