@@ -59,7 +59,8 @@ struct IsHexDumpContainer <T, decltype(std::declval<T>().data(),
 
 } // namespace detail
 
-template<typename ElemT>
+template<typename ElemT,
+    typename = std::enable_if_t<std::is_integral<ElemT>::value>>
 ::gul::detail::HexdumpOut hexdump(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
 {
     const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
