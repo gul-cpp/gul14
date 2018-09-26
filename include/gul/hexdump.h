@@ -63,8 +63,8 @@ constexpr std::size_t get_num_hex_digits() {
 template<typename CharT>
 ::gul::detail::HexdumpOut hexdump(const CharT* const buf, const size_t buflen, const std::string& prompt = "")
 {
-    auto const maxelem = 1000ul * 16; // 1000 lines with 16 elements each
-    auto const maxidx = buflen < maxelem ? buflen : maxelem;
+    const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
+    const auto maxidx = buflen < maxelem ? buflen : maxelem;
     const auto nod = ::gul::detail::get_num_hex_digits<CharT>();
 
     std::string indent(prompt.length(), ' ');
