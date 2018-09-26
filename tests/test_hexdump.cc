@@ -36,12 +36,13 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         std::string x = "test\nthe Ä west!\t\r\n";
 
         auto a1 = gul::hexdump(x.data(), x.size(), "deBuk -> ").str();
-        auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  \n"
-                       "         000010: 21 09 0d 0a                                      \n"s;
+        auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
+                       "         000010: 21 09 0d 0a                                      !...\n"s;
+
 	REQUIRE(a1 == answer1);
         auto a2 = gul::hexdump(x, "deBak -> ").str();
-        auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  \n"
-                       "         000010: 21 09 0d 0a                                      \n"s;
+        auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
+                       "         000010: 21 09 0d 0a                                      !...\n"s;
 	REQUIRE(a2 == answer2);
 
     }

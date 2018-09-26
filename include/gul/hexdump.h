@@ -108,7 +108,7 @@ template<typename ElemT,
             }
         }
         out.stream << ' ';
-        if (nod < 2) { // only char
+        if (nod == 2) { // only char
             for (j = 0; j < 16; j++) {
                 if (i + j < buflen)
                     out.stream << (isprint(buf[i + j]) ? buf[i + j] : '.');
