@@ -59,6 +59,27 @@ struct IsHexDumpContainer <T, decltype(std::declval<T>().data(),
 
 } // namespace detail
 
+/**
+ * Generate a hexdump of a structure/buffer.
+ * The elements of the buffer are dumped with their native width. I.e. when the elements are
+ * 16 bit wide the numbers are dumped as 16bit integers.
+ * Elements have to be an integral type.
+ * If the elements are of type char, also a textual representation of the printable
+ * characters is dumped.
+ *
+ * The result can be captured as string or passed to a stream:
+ * \code
+ * std::string dump1 = hexdump(data, len);
+ * const auto dump2 = hexdump(data, len).str();
+ * std::cerr << hexdump(data, len, "ERROR 42: ");
+ * \endcode
+ *
+ * \param buf Pointer to the buffer to dump
+ * \param buflen Number of elements in the buffer (i.e. number of elements to dump)
+ * \param prompt (optional) String that prefixes the dump text
+ *
+ * \returns a HexDumpOut object that easily converts to a string and can be passed to a stream
+ */
 template<typename ElemT,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
 ::gul::detail::HexdumpOut hexdump(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
@@ -98,14 +119,53 @@ template<typename ElemT,
     return out;
 }
 
+/**
+ * Generate a hexdump of a (probably STL) container.
+ * The elements of the container are dumped with their native width. I.e. when the elements are
+ * 16 bit wide the numbers are dumped as 16bit integers.
+ * Elements have to be an integral type.
+ * If the elements are of type char, also a textual representation of the printable
+ * characters is dumped.
+ *
+ * The result can be captured as string or passed to a stream:
+ * \code
+ * std::string dump1 = hexdump(contain);
+ * const auto dump2 = hexdump(contain).str();
+ * std::cerr << hexdump(contain, "ERROR 42: ");
+ * \endcode
+ *
+ * \param cont Reference to the container to dump
+ * \param prompt (optional) String that prefixes the dump text
+ *
+ * \returns a HexDumpOut object that easily converts to a string and can be passed to a stream
+ */
 template<typename ContainerT,
     typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>,
     typename = std::enable_if_t<not std::is_convertible<ContainerT, string_view>::value> >
-::gul::detail::HexdumpOut hexdump(const ContainerT& str, const std::string& prompt = "")
+::gul::detail::HexdumpOut hexdump(const ContainerT& cont, const std::string& prompt = "")
 {
-    return hexdump(str.data(), str.size(), prompt);
+    return hexdump(cont.data(), cont.size(), prompt);
 }
 
+/**
+ * Generate a hexdump of a string.
+ * The elements in the string are dumped with their native width. I.e. when the elements are
+ * 16 bit wide the numbers are dumped as 16bit integers.
+ * If the elements are of type char, also a textual representation of the printable
+ * characters is dumped.
+ *
+ * The result can be captured as string or passed to a stream:
+ * \code
+ * std::string dump1 = hexdump(mystring);
+ * const auto dump2 = hexdump(mystring).str();
+ * std::cerr << hexdump(mystring, "ERROR 42: ");
+ * \endcode
+ *
+ * \param str The string to output
+ * \param prompt (optional) String that prefixes the dump text
+ *
+ * \returns a HexDumpOut object that easily converts to a string and can be passed to a stream
+ */
 template<typename StringT,
     typename = std::enable_if_t<std::is_convertible<StringT, string_view>::value> >
 ::gul::detail::HexdumpOut hexdump(StringT str, const std::string& prompt = "")
