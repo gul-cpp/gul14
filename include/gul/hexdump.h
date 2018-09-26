@@ -23,7 +23,6 @@
 #pragma once
 
 #include <iomanip>
-#include <limits>
 #include <sstream>
 #include <type_traits>
 
@@ -104,11 +103,13 @@ template<typename ElemT,
                 long long ch = reinterpret_cast<typename std::make_unsigned<const ElemT>::type &>(buf[i+j]);
                 out.stream << std::setw(nod) << ch << ' ';
             } else {
+                if (nod != 2)
+                    break;
                 out.stream << empty;
             }
         }
-        out.stream << ' ';
         if (nod == 2) { // only char
+            out.stream << ' ';
             for (j = 0; j < 16; j++) {
                 if (i + j < buflen)
                     out.stream << (isprint(buf[i + j]) ? buf[i + j] : '.');

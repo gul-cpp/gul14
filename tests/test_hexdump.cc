@@ -39,18 +39,17 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
 
-	REQUIRE(a1 == answer1);
+        REQUIRE(a1 == answer1);
         auto a2 = gul::hexdump(x, "deBak -> ").str();
         auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
-	REQUIRE(a2 == answer2);
+        REQUIRE(a2 == answer2);
 
     }
     SECTION("dump arrays") {
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
         auto a1 = gul::hexdump(ar).str();
-        auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf"
-	               "                                                                          \n"s;
-	REQUIRE(a1 == answer1);
+        auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
+        REQUIRE(a1 == answer1);
     }
 }
