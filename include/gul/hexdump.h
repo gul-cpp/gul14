@@ -58,6 +58,16 @@ constexpr std::size_t get_num_hex_digits() {
     return i;
 }
 
+// Helper to identify types that have data() and size()
+// Until we have concepts ;-)
+template <typename T, typename = int>
+struct IsHexDumpContainer : std::false_type { };
+
+template <typename T>
+struct IsHexDumpContainer <T, decltype(std::declval<T>().data(),
+                                       std::declval<T>().size(),
+                                       0)> : std::true_type { };
+
 } // namespace detail
 
 template<typename CharT>
@@ -97,10 +107,20 @@ template<typename CharT>
     return out;
 }
 
-template<typename ContainerT>
+template<typename ContainerT,
+    typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>,
+    typename = std::enable_if_t<not std::is_convertible<ContainerT, string_view>::value> >
 ::gul::detail::HexdumpOut hexdump(const ContainerT& str, const std::string& prompt = "")
 {
     return hexdump(str.data(), str.size(), prompt);
+}
+
+template<typename StringT,
+    typename = std::enable_if_t<std::is_convertible<StringT, string_view>::value> >
+::gul::detail::HexdumpOut hexdump(StringT str, const std::string& prompt = "")
+{
+    const auto sv = string_view{ str };
+    return hexdump(sv.data(), sv.size(), prompt);
 }
 
 } // namespace gul
