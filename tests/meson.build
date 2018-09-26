@@ -78,4 +78,11 @@ test('trim() and variants',
                 link_with : libgul),
      timeout : test_time)
 
+test('hexdump()',
+     executable('trim-hexdump',
+                [ 'test_hexdump.cc', catch_main ],
+                include_directories : test_inc,
+                link_with : libgul),
+     timeout : test_time)
+
 endif # if not get_option('tests') else

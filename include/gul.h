@@ -225,6 +225,7 @@
 #pragma once
 
 #include "gul/cat.h"
+#include "gul/hexdump.h"
 #include "gul/join_split.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
