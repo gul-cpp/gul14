@@ -30,9 +30,7 @@ TEST_CASE("Hexdump Test", "[hexdump]")
     SECTION("assignment (cast) test") {
         // This fails to compile if cast is impossible
         std::string x = gul::hexdump(""s);
-    }
-    SECTION("get_num_hex_digits is constexpr") {
-        REQUIRE(noexcept(gul::detail::get_num_hex_digits<int>()) == true);
+        std::string y = gul::hexdump("");
     }
     SECTION("dump strings") {
         std::string x = "test\nthe Ä west!\t\r\n";
