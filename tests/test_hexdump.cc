@@ -22,6 +22,7 @@
 
 #include "catch.h"
 #include <gul.h>
+#include <iostream>
 
 using namespace std::literals::string_literals;
 
@@ -31,25 +32,32 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         // This fails to compile if cast is impossible
         std::string x = gul::hexdump(""s);
         std::string y = gul::hexdump("");
+        REQUIRE(x == y);
     }
     SECTION("dump strings") {
         std::string x = "test\nthe Ä west!\t\r\n";
 
-        auto a1 = gul::hexdump(x.data(), x.size(), "deBuk -> ").str();
+        auto a1 = gul::hexdump(x.data(), x.size(), "deBuk -> ");
         auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
-
         REQUIRE(a1 == answer1);
-        auto a2 = gul::hexdump(x, "deBak -> ").str();
+
+        auto a2 = gul::hexdump(x, "deBak -> ");
         auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a2 == answer2);
-
     }
     SECTION("dump arrays") {
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
-        auto a1 = gul::hexdump(ar).str();
+        auto a1 = gul::hexdump(ar);
         auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
         REQUIRE(a1 == answer1);
+    }
+    SECTION("dump to stream") {
+        std::string x = "test\nthe Ä west!\t\r\n";
+
+        // output not checked, just check instantiation is possible
+        gul::hexdump_stream(std::cout, x.data(), x.size(), "deBuk -> ");
+        std::cout << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
     }
 }
