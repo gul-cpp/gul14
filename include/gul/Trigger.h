@@ -111,6 +111,12 @@ public:
      */
     ~Trigger() noexcept;
 
+    /// Not copyable and not movable
+    Trigger(const Trigger&) = delete;
+    Trigger(Trigger&&) = delete;
+    Trigger& operator=(const Trigger&) = delete;
+    Trigger& operator=(Trigger&&) = delete;
+
     /**
      * Return if the trigger is high==true or low==false.
      *
