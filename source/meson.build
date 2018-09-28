@@ -47,15 +47,20 @@ git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
                configuration : git_conf)
 
+# There seems to be a bug in ancient meson versions that prevent
+# correct assignment and evaluation of cpp_args, so we do it here by hand :-(
+add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
+                 '-Wshadow' ]
+
 libgul = shared_library('gul', libgul_src + [ version_cc ],
                         soversion : libgul_api_version,
-                        cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
+                        cpp_args : add_cpp_args,
                         include_directories : inc,
                         link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                         install : true)
 
 libgul_s = static_library('gul', libgul_src + [ version_cc ],
-                          cpp_args : '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
+                          cpp_args : add_cpp_args,
                           include_directories : inc,
                           link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                           install : true)
