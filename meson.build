@@ -1,7 +1,10 @@
 # Build specification for the General Utilities Library
 
 project('libgul', 'cpp',
-    default_options : [ 'cpp_std=c++14' ],
+    default_options : [ 'cpp_std=c++14',
+                        'warning_level=3',
+                        'cpp_args=-Wshadow',
+                        'prefix=/usr'],
     version : '0.1',
     meson_version : '>=0.29')
 
