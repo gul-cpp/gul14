@@ -22,7 +22,7 @@
 
 #include "gul/version.h"
 
-// The @string@ sequences are replaced with the actual strings by the meson build system
+// The "@ string @" sequences are replaced with the actual strings by the meson build system
 // and written into the build directory as verion.cc. That file is compiled and linked
 // if specified.
 const gul::string_view gul::version_git{ "@GIT_VERSION@" };
