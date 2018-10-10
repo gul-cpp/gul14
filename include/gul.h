@@ -34,7 +34,6 @@
  *  - \ref string_utilities
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
- *  - Numerical helpers
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
  *
@@ -96,15 +95,21 @@
  * notice:
  *
  * <dl>
+ * <dt>\ref catch.h</dt>
+ * <dd>Copyright Phil Nash, Martin Hořeňovský et al. 2010-2018.
+ *     Distributed under the Boost Software License, Version 1.0 (see \ref catch.h
+ *     for details).</dd>
+ *
  * <dt>\ref string_view.h</dt>
  * <dd>Copyright Marshall Clow 2012-2015, copyright Beman Dawes 2015.
- *     Distributed under the Boost Software License, Version 1.0 (see  \ref string_view.h
+ *     Distributed under the Boost Software License, Version 1.0 (see \ref string_view.h
  *     for details).</dd>
  * </dl>
  */
 
 /**
  * \page quality_standards Quality Standards
+ * \brief.
  *
  * The General Utility Library strives for a very high quality level. This is ensured by
  * following a set of best practices:
@@ -125,13 +130,14 @@
 
 /**
  * \page string_utilities String Utilities
+ * \brief.
  *
  * The General Utility Library provides a number of utility functions and classes to help
  * with strings.
  *
  * <h3>Functions</h3>
  *
- * <h4>Splitting & Joining</h4>
+ * <h4>Joining & Splitting</h4>
  *
  * cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
  *        string_views, or numbers.
@@ -141,17 +147,19 @@
  * split(): Separate a string at all occurences of a delimiter string or regular
  *          expression.
  *
- * tokenize(): Split a string into a vector of string tokens at delimiter characters.
+ * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector
+ *          of string or string_view tokens.
  *
- * tokenize_sv(): Split a string into a vector of string_views that point into
- *                         the original string.
- *
- * <h4>Find & Replace</h4>
+ * <h4>Replacing & Trimming</h4>
  *
  * replace(): Replace all occurrences of a string in another string.
  *
  * replace_inplace(): Replace all occurrences of a string in another string in-place.
  *
+ * trim(), trim_left(), trim_right() etc.: Trim leading and/or trailing whitespace (or a
+ *          custom set of characters) from a string, returning a new std::string or a
+ *          string_view.
+ * 
  * <h4>Dealing with Special Characters</h4>
  *
  * escape(): Replace non-printable characters in a string so that it looks like a C string
@@ -170,9 +178,10 @@
 
 /**
  * \page concurrency_utilities Concurrency Utilities
+ * \brief.
  *
- * GUL provides some utilities to make dealing with concurrency (threads, locks, and so
- * on) easier.
+ * The General Utility Library provides some utilities to make dealing with concurrency
+ * (threads, locks, and so on) easier.
  *
  * <h3>Classes</h3>
  *
@@ -188,6 +197,7 @@
 
 /**
  * \page time_utilities Time Utilities
+ * \brief.
  *
  * The General Utility Library provides a few time-related utility functions.
  *
@@ -201,6 +211,7 @@
 
 /**
  * \page backports Backports
+ * \brief.
  *
  * The General Utility Library provides a few classes from C++ standard libraries that
  * are not yet available to users of older compilers. Here's a list:
