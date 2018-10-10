@@ -11,7 +11,6 @@ message('Run \'ninja resources/docs\' to generate documentation.')
 docs_data = configuration_data()
 docs_data.set('PROJECT_NUMBER', meson.project_version())
 
-doxy_conf = files('Doxyfile.in')
 doxy_run = find_program('doxywrap')
 
 dox = configure_file(
