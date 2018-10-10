@@ -11,11 +11,11 @@ message('Run \'ninja resources/docs\' to generate documentation.')
 docs_data = configuration_data()
 docs_data.set('PROJECT_NUMBER', meson.project_version())
 
-doxy_conf = files('Doxyfile')
+doxy_conf = files('Doxyfile.in')
 doxy_run = find_program('doxywrap')
 
 dox = configure_file(
-      input : 'Doxyfile',
+      input : 'Doxyfile.in',
       output : 'Doxyfile',
       configuration : docs_data)
 
@@ -25,10 +25,10 @@ custom_target('doxy_generate', # This is not the ninja target name
                 meson.source_root(),
                 meson.current_build_dir() + '/doxygenerated', # join_paths()... sigh
                 '@INPUT@' ],
-    input : doxy_conf,
+    input : dox,
     #depend_files : inc,
     capture : true,
-    output : 'doxy', # This is how the target is called
+    output : 'docs', # This is how the target is called
     build_by_default : false,
     )
 
