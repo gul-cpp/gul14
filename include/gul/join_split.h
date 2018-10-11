@@ -30,7 +30,7 @@
 namespace gul {
 
 /**
- * Separate a string at all occurences of a delimiter, returning the strings between the
+ * Separate a string at all occurrences of a delimiter, returning the strings between the
  * delimiters in a vector.
  *
  * The result has at least one element. If the delimiter is not present in the text the

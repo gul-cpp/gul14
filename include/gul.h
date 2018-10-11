@@ -145,7 +145,7 @@
  *
  * join(): Concatenate a vector of strings, adding some glue in between.
  *
- * split(): Separate a string at all occurences of a delimiter string or regular
+ * split(): Separate a string at all occurrences of a delimiter string or regular
  *          expression.
  *
  * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector

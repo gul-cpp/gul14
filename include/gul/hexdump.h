@@ -318,7 +318,7 @@ template<typename StringT,
     typename = std::enable_if_t<std::is_convertible<StringT, string_view>::value> >
 std::string hexdump(StringT str, const std::string& prompt = "")
 {
-    // We need to create a string_view object explicitely because there is no
+    // We need to create a string_view object explicitly because there is no
     // automatic type conversion in template arguments, and we need it to pass
     // the iterators along...
     // (Special case, needed for C string literals)
@@ -333,7 +333,7 @@ std::string hexdump(StringT str, const std::string& prompt = "")
 //
 
 /**
- * Helper object used to enable a conveniant syntax to dump things to a stream.
+ * Helper object used to enable a convenient syntax to dump things to a stream.
  * \code
  * std::cerr << hexdump_stream(mydata.data(), mydata.size()) << "\n";
  * \endcode
@@ -433,7 +433,7 @@ hexdump_stream(const ContainerT& cont, const std::string& prompt = "")
 }
 
 /**
- * Overload of std::ostream's operator<< to enable a conventiant syntax to dump
+ * Overload of std::ostream's operator<< to enable a convenient syntax to dump
  * things to a stream. Can also be used for ofstreams or stringstreams.
  * \code
  * std::cerr << hexdump_stream(mydata.data(), mydata.size()) << "\n";
