@@ -47,11 +47,17 @@ TEST_CASE("Hexdump Test", "[hexdump]")
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a2 == answer2);
     }
-    SECTION("dump arrays") {
+    SECTION("dump full container") {
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
         auto a1 = gul::hexdump(ar);
         auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
         REQUIRE(a1 == answer1);
+
+        auto a2 = gul::hexdump(ar.begin(), ar.end());
+        REQUIRE(a2 == answer1);
+
+        // output not checked, just check instantiation is possible
+        std::cout << gul::hexdump_stream(ar);
     }
     SECTION("dump to stream") {
         std::string x = "test\nthe Ä west!\t\r\n";
@@ -59,5 +65,16 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         // output not checked, just check instantiation is possible
         gul::hexdump_stream(std::cout, x.data(), x.size(), "deBuk -> ");
         std::cout << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
+        std::cout << gul::hexdump_stream(x, "deBuk -> ");
+    }
+    SECTION("dump with iterators") {
+        std::stringstream o{ };
+        std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+        auto a1 = gul::hexdump_stream(o, ar.begin(), ar.end()).str();
+        auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
+        REQUIRE(a1 == answer1);
+
+        // output not checked, just check instantiation is possible
+        std::cout << gul::hexdump_stream(ar.begin(), ar.end());
     }
 }

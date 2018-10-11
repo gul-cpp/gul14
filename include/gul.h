@@ -32,6 +32,7 @@
  * library are:
  * 
  *  - \ref string_utilities
+ *  - \ref hexdump_utility
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
  *  - \ref backports of standard library features that are not yet available on common
@@ -220,6 +221,32 @@
  *     A view to a contiguous sequence of chars. The GUL version is a backport of
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  *     from libc++ for C++17.
+ */
+
+/**
+ * \page hexdump_utility Utility to generate hexdumps
+ *
+ * The General Utility Library provides an utility to easily generate hexdumps of various
+ * structures.
+ *
+ * <h3>Functions</h3>
+ *
+ * std::string hexdump(const IteratorT begin, const IteratorT end, const std::string& prompt = "")
+ * std::string hexdump(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+ * std::string hexdump(const ContainerT& cont, const std::string& prompt = "")
+ * std::string hexdump(StringT str, const std::string& prompt = "")
+ *
+ * StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, const std::string& prompt = "")
+ * StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+ *
+ * struct HexdumpParameterForward
+ *
+ * HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, const std::string& prompt = "")
+ * HexdumpParameterForward<...> hexdump_stream(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+ * HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, const std::string& prompt = "")
+ *
+ * std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<ElemT>& hdp)
+ *
  */
 
 #pragma once
