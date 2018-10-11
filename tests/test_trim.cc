@@ -21,8 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "catch.h"
-#include "gul/trim.h"
+#include "gul/catch.h"
+#include "gul.h"
 
 using gul::trim;
 using gul::trim_sv;

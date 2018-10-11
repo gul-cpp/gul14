@@ -20,7 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "catch.h"
+#include "gul/catch.h"
 #include <random>
 #include <gul.h>
 

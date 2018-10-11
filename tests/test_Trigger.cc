@@ -21,7 +21,7 @@
  */
 
 #include <future>
-#include "catch.h"
+#include "gul/catch.h"
 #include "gul.h"
 
 using namespace std::literals;

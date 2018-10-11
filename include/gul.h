@@ -219,6 +219,7 @@
 #include "gul/string_view.h"
 #include "gul/time_util.h"
 #include "gul/tokenize.h"
+#include "gul/trim.h"
 #include "gul/Trigger.h"
 #include "gul/version.h"
 

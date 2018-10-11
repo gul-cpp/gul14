@@ -22,6 +22,6 @@
 
 // This tells Catch to provide a main() - only do this in one cc file
 #define CATCH_CONFIG_MAIN
-#include "catch.h"
+#include "gul/catch.h"
 
 // No tests here
