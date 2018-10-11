@@ -23,6 +23,7 @@
 #include "catch.h"
 #include <gul.h>
 #include <iostream>
+#include <limits>
 
 using namespace std::literals::string_literals;
 
@@ -76,5 +77,11 @@ TEST_CASE("Hexdump Test", "[hexdump]")
 
         // output not checked, just check instantiation is possible
         std::cout << gul::hexdump_stream(ar.begin(), ar.end());
+    }
+    SECTION("dump unsigned long long") {
+        // This assumes a certain number of bits in long long ....
+        std::array<unsigned long long, 1> ar = {{ std::numeric_limits<unsigned long long>::max() }};
+        auto a1 = gul::hexdump(ar);
+        REQUIRE(a1 == "000000: ffffffffffffffff \n"s);
     }
 }

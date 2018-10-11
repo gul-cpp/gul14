@@ -152,7 +152,7 @@ StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, const 
         auto line = it;
         for (j = 0; j < 16; ++j) {
             if (it != end) {
-                const long long ch = static_cast<
+                const unsigned long long ch = static_cast<
                         typename std::make_unsigned<
                             typename std::decay<decltype(*std::declval<IteratorT>())>::type
                         >::type
@@ -425,9 +425,7 @@ hexdump_stream(const ElemT* const buf, const size_t buflen, const std::string& p
  * \returns a helper object to be used with operator<< on streams
  */
 template<typename ContainerT,
-    typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>//,
-    //typename = std::enable_if_t<not std::is_convertible<ContainerT, string_view>::value> >
->
+    typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>>
 HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin())>
 hexdump_stream(const ContainerT& cont, const std::string& prompt = "")
 {
