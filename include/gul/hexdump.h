@@ -27,20 +27,20 @@
 #include <type_traits>
 #include <utility>
 
-////// Overview if the prototypes contained in here, but without template specifications:
+////// Overview of the prototypes contained in here, but without template specifications:
 //
-// std::string hexdump(const IteratorT begin, const IteratorT end, string_view prompt = "")
-// std::string hexdump(const ElemT* const buf, const size_t buflen, string_view prompt = "")
+// std::string hexdump(IteratorT begin, IteratorT end, string_view prompt = "")
+// std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
 // std::string hexdump(const ContainerT& cont, string_view prompt = "")
 // std::string hexdump(StringT str, string_view prompt = "")
 //
-// StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, string_view prompt = "")
-// StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, string_view prompt = "")
+// StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view prompt = "")
+// StreamT& hexdump_stream(StreamT& dest, const ElemT* buf, size_t buflen, string_view prompt = "")
 //
 // struct HexdumpParameterForward
 //
 // HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(const ElemT* const buf, const size_t buflen, string_view prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(const ElemT* buf, size_t buflen, string_view prompt = "")
 // HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, string_view prompt = "")
 //
 // std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<ElemT>& hdp)
@@ -115,25 +115,42 @@ struct IsHexDumpStream : std::true_type { };
 //
 
 /**
- * Generate a hexdump of a structure/buffer on a stream.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
- * The destination steam must be convertible to std::basic_ostream.
+ * Generate a hexdump of a data range and write it to a stream.
  *
- * \param dest The stream to use for dumping
- * \param it ForwardIterator to the first data to be dumped
- * \param end ForwardIterator past the last data element to be dumped
+ * The elements of the data range must be of integral type. They are dumped as unsigned
+ * integer values with their native width: Chars as "00" to "ff", 16-bit integers as
+ * "0000" to "ffff", and so on. If the elements are of type char, also a textual
+ * representation of the printable characters is dumped. An optional prompt can be added
+ * in front of the hexdump.
+ *
+ * \code
+ * std::string x = "test\nthe Ä west!\t\r\n";
+ * gul::hexdump_stream(std::cerr, x.begin(), x.end(), "debug -> ");
+ * \endcode
+\verbatim
+debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west
+         000010: 21 09 0d 0a                                      !...
+\endverbatim
+ *
+ * \code
+ * std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+ * gul::hexdump_stream(std::cout, begin(ar), end(ar));
+ * \endcode
+\verbatim
+000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf
+\endverbatim
+ *
+ * \param dest  The output stream to use for dumping
+ * \param it  ForwardIterator to the first data element to be dumped
+ * \param end  ForwardIterator past the last data element to be dumped
  * \param prompt (optional) String that prefixes the dump text
  *
- * \returns Ref to the stream used to dump
+ * \returns a reference to the output stream
  */
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
-StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, string_view prompt = "")
+StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view prompt = "")
 {
     const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
     // Get the number of hex digits to represent any value of a given integral type ElemT
@@ -180,27 +197,21 @@ StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, string
 }
 
 /**
- * Generate a hexdump of a structure/buffer on a stream.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
- * The destination steam must be convertible to std::basic_ostream.
+ * \overload
  *
- * \param dest The stream to use for dumping
- * \param buf Pointer to the buffer to dump
- * \param buflen Number of elements in the buffer (i.e. number of elements to dump)
+ * \param dest  The stream to use for dumping
+ * \param buf  Pointer to the buffer to dump
+ * \param len  Number of elements to dump
  * \param prompt (optional) String that prefixes the dump text
  *
- * \returns Ref to the stream used to dump
+ * \returns a reference to the output stream
  */
 template<typename StreamT, typename ElemT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, string_view prompt = "")
+StreamT& hexdump_stream(StreamT& dest, const ElemT* buf, size_t len, string_view prompt = "")
 {
-    return hexdump_stream(dest, buf, buf + buflen, prompt);
+    return hexdump_stream(dest, buf, buf + len, prompt);
 }
 
 //////
@@ -208,80 +219,69 @@ StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t bufl
 //
 
 /**
- * Generate a hexdump of a structure/buffer.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
+ * Generate a hexdump of a data range and return it as a string.
  *
- * The result is a std::string:
+ * The elements of the data range must be of integral type. They are dumped as unsigned
+ * integer values with their native width: Chars as "00" to "ff", 16-bit integers as
+ * "0000" to "ffff", and so on. If the elements are of type char, also a textual
+ * representation of the printable characters is dumped. An optional prompt can be added
+ * in front of the hexdump.
+ *
  * \code
- * std::string dump1 = hexdump(data.begin(), data.end());
- * const auto dump2 = hexdump(data.begin(), data.end());
- * std::cerr << hexdump(data.begin(), data.end(), "ERROR 42: ");
+ * std::string x = "test\nthe Ä west!\t\r\n";
+ * std::string str = gul::hexdump(x.begin(), x.end(), "debug -> ");
+ * std::cerr << str;
  * \endcode
+\verbatim
+deBug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west
+         000010: 21 09 0d 0a                                      !...
+\endverbatim
  *
- * \param begin ForwardIterator to the first data to be dumped
- * \param end ForwardIterator past the last data element to be dumped
+ * \code
+ * std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+ * std::string str = gul::hexdump(begin(ar), end(ar));
+ * std::cout << str;
+ * \endcode
+\verbatim
+000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf
+\endverbatim
+ *
+ * \param begin  ForwardIterator to the first data element to be dumped
+ * \param end  ForwardIterator past the last data element to be dumped
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a string containing the dump
  */
 template<typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
-std::string hexdump(const IteratorT begin, const IteratorT end, string_view prompt = "")
+std::string hexdump(IteratorT begin, IteratorT end, string_view prompt = "")
 {
     std::stringstream o{ };
     return hexdump_stream(o, begin, end, prompt).str();
 }
 
 /**
- * Generate a hexdump of a structure/buffer.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
+ * \overload
  *
- * The result is a std::string:
- * \code
- * std::string dump1 = hexdump(data, len);
- * const auto dump2 = hexdump(data, len);
- * std::cerr << hexdump(data, len, "ERROR 42: ");
- * \endcode
- *
- * \param buf Pointer to the buffer to dump
- * \param buflen Number of elements in the buffer (i.e. number of elements to dump)
+ * \param buf  Pointer to the buffer to dump
+ * \param len  Number of elements to dump
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a string containing the dump
  */
 template<typename ElemT,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-std::string hexdump(const ElemT* const buf, const size_t buflen, string_view prompt = "")
+std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
 {
     std::stringstream o{ };
-    return hexdump_stream(o, buf, buf + buflen, prompt).str();
+    return hexdump_stream(o, buf, buf + len, prompt).str();
 }
 
 /**
- * Generate a hexdump of a (probably STL) container.
- * The elements of the container are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
+ * \overload
  *
- * The result is a std::string:
- * \code
- * std::string dump1 = hexdump(mycontainer);
- * const auto dump2 = hexdump(mycontainer);
- * std::cerr << hexdump(mycontainer, "ERROR 42: ");
- * \endcode
- * mycontainer can be std::array, std::vector, ...
- *
- * \param cont Reference to the container to dump
+ * \param cont  Reference to the container whose contents should be dumped; the container
+ *              must provide ForwardIterators for .cbegin() and .cend()
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a string containing the dump
@@ -296,20 +296,10 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
 }
 
 /**
- * Generate a hexdump of a string.
- * The elements in the string are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
+ * \overload
  *
- * The result is a std::string:
- * \code
- * std::string dump1 = hexdump(mystring);
- * const auto dump2 = hexdump(mystring);
- * std::cerr << hexdump(mystring, "ERROR 42: ");
- * \endcode
- *
- * \param str The string to dump
+ * \param str  The string that should be converted into a hexdump; any type that is
+ *             convertible into a string_view is accepted.
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a string containing the dump
@@ -326,6 +316,7 @@ std::string hexdump(StringT str, string_view prompt = "")
     std::stringstream o{ };
     return hexdump_stream(o, sv.cbegin(), sv.cend(), prompt).str();
 }
+
 
 //////
 // Functions returning a forwarder object
@@ -347,19 +338,30 @@ struct HexdumpParameterForward {
 };
 
 /**
- * Generate a hexdump of a structure/buffer on a stream.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
- * The destination steam must be convertible to std::basic_ostream.
+ * Generate a hexdump of a data range and write it to a stream.
+ *
+ * The elements of the data range must be of integral type. They are dumped as unsigned
+ * integer values with their native width: Chars as "00" to "ff", 16-bit integers as
+ * "0000" to "ffff", and so on. If the elements are of type char, also a textual
+ * representation of the printable characters is dumped. An optional prompt can be added
+ * in front of the hexdump.
  *
  * \code
- * std::cout << hexdump_stream(mydata.begin(), mydata.end()) << "\n";
- * my_filestream << hexdump_stream(data, data + len);
- * std::cerr << hexdump_stream(d.begin(), d.end(), "ERROR 42: ");
+ * std::string x = "test\nthe Ä west!\t\r\n";
+ * std::cerr << gul::hexdump_stream(x.begin(), x.end(), "debug -> ");
  * \endcode
+\verbatim
+debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west
+         000010: 21 09 0d 0a                                      !...
+\endverbatim
+ *
+ * \code
+ * std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+ * std::cout << gul::hexdump_stream(begin(ar), end(ar));
+ * \endcode
+\verbatim
+000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf
+\endverbatim
  *
  * \param begin ForwardIterator to the first data to be dumped
  * \param end ForwardIterator past the last data element to be dumped
@@ -376,22 +378,10 @@ hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
 }
 
 /**
- * Generate a hexdump of a structure/buffer on a stream.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
- * The destination steam must be convertible to std::basic_ostream.
- *
- * \code
- * std::cout << hexdump_stream(mydata.begin(), mydata.end()) << "\n";
- * my_filestream << hexdump_stream(data, data + len);
- * std::cerr << hexdump_stream(d.begin(), d.end(), "ERROR 42: ");
- * \endcode
+ * \overload
  *
  * \param buf Pointer to the buffer to dump
- * \param buflen Number of elements in the buffer (i.e. number of elements to dump)
+ * \param len Number of elements in the buffer (i.e. number of elements to dump)
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a helper object to be used with operator<< on streams
@@ -399,27 +389,15 @@ hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
 template<typename ElemT,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
 HexdumpParameterForward<const ElemT* const>
-hexdump_stream(const ElemT* const buf, const size_t buflen, string_view prompt = "")
- {
-    return { buf, buf + buflen, prompt };
- }
+hexdump_stream(const ElemT* buf, size_t len, string_view prompt = "")
+{
+    return { buf, buf + len, prompt };
+}
 
 /**
- * Generate a hexdump of a structure/buffer on a stream.
- * The elements of the buffer are dumped with their native width. I.e. when the elements are
- * 16 bit wide the numbers are dumped as 16bit integers.
- * Elements have to be an integral type.
- * If the elements are of type char, also a textual representation of the printable
- * characters is dumped.
- * The destination steam must be convertible to std::basic_ostream.
- *
- * \code
- * std::cout << hexdump_stream(mydata.begin(), mydata.end()) << "\n";
- * my_filestream << hexdump_stream(data, data + len);
- * std::cerr << hexdump_stream(d.begin(), d.end(), "ERROR 42: ");
- * \endcode
- *
- * \param cont Reference to the container to dump
+ * \overload
+ * 
+ * \param cont  Reference to the container to dump
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a helper object to be used with operator<< on streams
