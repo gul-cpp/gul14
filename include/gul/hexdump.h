@@ -29,19 +29,19 @@
 
 ////// Overview if the prototypes contained in here, but without template specifications:
 //
-// std::string hexdump(const IteratorT begin, const IteratorT end, const std::string& prompt = "")
-// std::string hexdump(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
-// std::string hexdump(const ContainerT& cont, const std::string& prompt = "")
-// std::string hexdump(StringT str, const std::string& prompt = "")
+// std::string hexdump(const IteratorT begin, const IteratorT end, string_view prompt = "")
+// std::string hexdump(const ElemT* const buf, const size_t buflen, string_view prompt = "")
+// std::string hexdump(const ContainerT& cont, string_view prompt = "")
+// std::string hexdump(StringT str, string_view prompt = "")
 //
-// StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, const std::string& prompt = "")
-// StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+// StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, string_view prompt = "")
+// StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, string_view prompt = "")
 //
 // struct HexdumpParameterForward
 //
-// HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, const std::string& prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, const std::string& prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(const ElemT* const buf, const size_t buflen, string_view prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, string_view prompt = "")
 //
 // std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<ElemT>& hdp)
 //
@@ -133,7 +133,7 @@ struct IsHexDumpStream : std::true_type { };
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
-StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, const std::string& prompt = "")
+StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, string_view prompt = "")
 {
     const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
     // Get the number of hex digits to represent any value of a given integral type ElemT
@@ -198,7 +198,7 @@ StreamT& hexdump_stream(StreamT& dest, IteratorT it, const IteratorT end, const 
 template<typename StreamT, typename ElemT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t buflen, string_view prompt = "")
 {
     return hexdump_stream(dest, buf, buf + buflen, prompt);
 }
@@ -230,7 +230,7 @@ StreamT& hexdump_stream(StreamT& dest, const ElemT* const buf, const size_t bufl
  */
 template<typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
-std::string hexdump(const IteratorT begin, const IteratorT end, const std::string& prompt = "")
+std::string hexdump(const IteratorT begin, const IteratorT end, string_view prompt = "")
 {
     std::stringstream o{ };
     return hexdump_stream(o, begin, end, prompt).str();
@@ -259,7 +259,7 @@ std::string hexdump(const IteratorT begin, const IteratorT end, const std::strin
  */
 template<typename ElemT,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-std::string hexdump(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+std::string hexdump(const ElemT* const buf, const size_t buflen, string_view prompt = "")
 {
     std::stringstream o{ };
     return hexdump_stream(o, buf, buf + buflen, prompt).str();
@@ -289,7 +289,7 @@ std::string hexdump(const ElemT* const buf, const size_t buflen, const std::stri
 template<typename ContainerT,
     typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>,
     typename = std::enable_if_t<not std::is_convertible<ContainerT, string_view>::value> >
-std::string hexdump(const ContainerT& cont, const std::string& prompt = "")
+std::string hexdump(const ContainerT& cont, string_view prompt = "")
 {
     std::stringstream o{ };
     return hexdump_stream(o, cont.cbegin(), cont.cend(), prompt).str();
@@ -316,7 +316,7 @@ std::string hexdump(const ContainerT& cont, const std::string& prompt = "")
  */
 template<typename StringT,
     typename = std::enable_if_t<std::is_convertible<StringT, string_view>::value> >
-std::string hexdump(StringT str, const std::string& prompt = "")
+std::string hexdump(StringT str, string_view prompt = "")
 {
     // We need to create a string_view object explicitly because there is no
     // automatic type conversion in template arguments, and we need it to pass
@@ -343,7 +343,7 @@ template<typename IteratorT>
 struct HexdumpParameterForward {
     const IteratorT begin;
     const IteratorT end;
-    const std::string& prompt;
+    string_view prompt;
 };
 
 /**
@@ -370,7 +370,7 @@ struct HexdumpParameterForward {
 template<typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
 HexdumpParameterForward<IteratorT>
-hexdump_stream(IteratorT begin, IteratorT end, const std::string& prompt = "")
+hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
 {
     return { begin, end, prompt };
 }
@@ -399,7 +399,7 @@ hexdump_stream(IteratorT begin, IteratorT end, const std::string& prompt = "")
 template<typename ElemT,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
 HexdumpParameterForward<const ElemT* const>
-hexdump_stream(const ElemT* const buf, const size_t buflen, const std::string& prompt = "")
+hexdump_stream(const ElemT* const buf, const size_t buflen, string_view prompt = "")
  {
     return { buf, buf + buflen, prompt };
  }
@@ -427,7 +427,7 @@ hexdump_stream(const ElemT* const buf, const size_t buflen, const std::string& p
 template<typename ContainerT,
     typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>>
 HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin())>
-hexdump_stream(const ContainerT& cont, const std::string& prompt = "")
+hexdump_stream(const ContainerT& cont, string_view prompt = "")
 {
     return { cont.cbegin(), cont.cend(), prompt };
 }
