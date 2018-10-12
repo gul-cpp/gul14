@@ -2,7 +2,7 @@
  * \file   test_hexdump.cc
  * \author \ref contributors
  * \date   Created on September 25, 2018
- * \brief  Part of test suite for string utility functions in the General Utility Library.
+ * \brief  Test suite for hexdump() and hexdump_stream().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -58,15 +58,18 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         REQUIRE(a2 == answer1);
 
         // output not checked, just check instantiation is possible
-        std::cout << gul::hexdump_stream(ar);
+        std::ostringstream oss;
+        oss << gul::hexdump_stream(ar);
     }
     SECTION("dump to stream") {
         std::string x = "test\nthe Ä west!\t\r\n";
 
         // output not checked, just check instantiation is possible
-        gul::hexdump_stream(std::cout, x.data(), x.size(), "deBuk -> ");
-        std::cout << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
-        std::cout << gul::hexdump_stream(x, "deBuk -> ");
+        std::ostringstream oss;
+
+        gul::hexdump_stream(oss, x.data(), x.size(), "deBuk -> ");
+        oss << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
+        oss << gul::hexdump_stream(x, "deBuk -> ");
     }
     SECTION("dump with iterators") {
         std::stringstream o{ };
@@ -76,7 +79,8 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         REQUIRE(a1 == answer1);
 
         // output not checked, just check instantiation is possible
-        std::cout << gul::hexdump_stream(ar.begin(), ar.end());
+        std::ostringstream oss;
+        oss << gul::hexdump_stream(ar.begin(), ar.end());
     }
     SECTION("dump unsigned long long") {
         // This assumes a certain number of bits in long long ....
