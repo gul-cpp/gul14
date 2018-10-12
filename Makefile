@@ -22,6 +22,7 @@ LIBRARYOBJ = \
 LIBRARYHFILES = \
 	gul.h \
 	gul/cat.h \
+	gul/hexdump.h \
 	gul/join_split.h \
 	gul/string_util.h \
 	gul/string_view.h \
@@ -183,6 +184,7 @@ dirs:
 TEST_OBJ = $(OBJDIR)/tests/test_main.o \
            $(OBJDIR)/tests/test_backports.o \
            $(OBJDIR)/tests/test_cat.o \
+           $(OBJDIR)/tests/test_hexdump.o \
            $(OBJDIR)/tests/test_string_escape.o \
            $(OBJDIR)/tests/test_string_replace.o \
            $(OBJDIR)/tests/test_string_split.o \
@@ -206,6 +208,11 @@ $(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
 	    $(SRCDIR)/../tests/test_cat.cc
+
+$(OBJDIR)/tests/test_hexdump.o: $(SRCDIR)/../tests/test_hexdump.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_hexdump.o \
+	    $(SRCDIR)/../tests/test_hexdump.cc
 
 $(OBJDIR)/tests/test_string_escape.o: $(SRCDIR)/../tests/test_string_escape.cc
 	@echo -e $(INTRO) $@ $(OUTRO)
