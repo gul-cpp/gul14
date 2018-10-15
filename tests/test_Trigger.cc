@@ -31,13 +31,6 @@ using gul::toc;
 using gul::sleep;
 using gul::Trigger;
 
-const int MS_BEFORE = 1;
-const int MS_AFTER  = 16;
-const int US_BEFORE = MS_BEFORE * 1000;
-const int US_AFTER  = MS_AFTER * 1000;
-const float S_BEFORE = MS_BEFORE * 1e-3;
-const float S_AFTER = MS_AFTER * 1e-3;
-
 TEST_CASE("Construction, assignment, equality and bool operator work", "[concurrency]")
 {
     Trigger trg;
@@ -54,16 +47,14 @@ TEST_CASE("Construction, assignment, equality and bool operator work", "[concurr
 
 SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurrency]")
 {
-    GIVEN("a trigger and a helper thread that sets it to true after 30 ms")
+    GIVEN("a trigger and a helper thread that sets it to true after 15 ms")
     {
         Trigger trg;
-        std::chrono::steady_clock::time_point t0;
 
         auto future = std::async(std::launch::async,
-                [&t0, &trg]
+                [&trg]
                 {
-                    t0 = tic();
-                    sleep(50ms);
+                    sleep(15ms);
                     trg = true;
                 });
 
@@ -72,10 +63,10 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
             trg.wait();
             auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-            THEN("it resumes after approximately 50 ms")
+            THEN("it resumes after approximately 15 ms")
             {
-                REQUIRE(time_ms >= 50 - MS_BEFORE);
-                REQUIRE(time_ms <= 50 + MS_AFTER);
+                REQUIRE(time_ms >= 14);
+                REQUIRE(time_ms <= 19);
             }
         }
 
@@ -84,10 +75,10 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
             trg.wait_for(1s);
             auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-            THEN("it resumes after approximately 50 ms")
+            THEN("it resumes after approximately 15 ms")
             {
-                REQUIRE(time_ms >= 50 - MS_BEFORE);
-                REQUIRE(time_ms <= 50 + MS_AFTER);
+                REQUIRE(time_ms >= 14);
+                REQUIRE(time_ms <= 19);
             }
         }
 
@@ -96,10 +87,10 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
             trg.wait_until(std::chrono::system_clock::now() + 1s);
             auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-            THEN("it resumes after approximately 50 ms")
+            THEN("it resumes after approximately 15 ms")
             {
-                REQUIRE(time_ms >= 50 - MS_BEFORE);
-                REQUIRE(time_ms <= 50 + MS_AFTER);
+                REQUIRE(time_ms >= 14);
+                REQUIRE(time_ms <= 19);
             }
         }
     }
@@ -111,27 +102,27 @@ SCENARIO("Trigger::wait_for() and wait_until() wait the requested amount of time
 
     auto t0 = tic();
 
-    WHEN("calling wait_for(50ms)")
+    WHEN("calling wait_for(10ms)")
     {
-        trg.wait_for(50ms);
+        trg.wait_for(10ms);
         auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-        THEN("execution resumes after approximately 50 ms")
+        THEN("execution resumes after approximately 10 ms")
         {
-            REQUIRE(time_ms >= 50 - MS_BEFORE);
-            REQUIRE(time_ms <= 50 + MS_AFTER);
+            REQUIRE(time_ms >= 9);
+            REQUIRE(time_ms <= 11);
         }
     }
 
-    WHEN("calling wait_until(now + 50ms)")
+    WHEN("calling wait_until(now + 10ms)")
     {
-        trg.wait_until(std::chrono::system_clock::now() + 50ms);
+        trg.wait_until(std::chrono::system_clock::now() + 10ms);
         auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-        THEN("execution resumes after approximately 50 ms")
+        THEN("execution resumes after approximately 10 ms")
         {
-            REQUIRE(time_ms >= 50 - MS_BEFORE);
-            REQUIRE(time_ms <= 50 + MS_AFTER);
+            REQUIRE(time_ms >= 9);
+            REQUIRE(time_ms <= 11);
         }
     }
 }
