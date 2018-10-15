@@ -54,8 +54,18 @@ INTRO = "\033[1;34m------------"
 OUTRO = "------------\033[0m"
 
 
-all:	$(ALLLIBS) $(PKGCONFIG)
+all:	build $(ALLLIBS) $(PKGCONFIG)
 	@echo Empty command for stubborn make versions. >/dev/null
+
+build:
+	@if [ ! -d build ] ; then \
+	    echo $(INTRO) Create build/ dir $(OUTRO) ; \
+	    mkdir -p build ; \
+	fi
+	@if [ ! -f build/build.ninja ] ; then \
+	    echo $(INTRO) Use Meson to create build configuration under build/ $(OUTRO) ; \
+	    meson build ; \
+	fi
 
 $(OBJDIR)/.depend depend:
 	@echo $(INTRO) $@ $(OUTRO)
@@ -176,88 +186,8 @@ doxygen:
 	-chmod -R ug+w $(DOCDIR) 2>/dev/null
 	-find $(DOCDIR) -type d -exec chmod a+x {} ';' 2>/dev/null
 
-dirs:
-	@echo $(INTRO) Create dir ${OBJDIR}/tests $(OUTRO)
-	-mkdir -p ${OBJDIR}/tests
-
-# TODO: Improve building of tests
-TEST_OBJ = $(OBJDIR)/tests/test_main.o \
-           $(OBJDIR)/tests/test_backports.o \
-           $(OBJDIR)/tests/test_cat.o \
-           $(OBJDIR)/tests/test_hexdump.o \
-           $(OBJDIR)/tests/test_string_escape.o \
-           $(OBJDIR)/tests/test_string_replace.o \
-           $(OBJDIR)/tests/test_string_split.o \
-           $(OBJDIR)/tests/test_time_util.o \
-           $(OBJDIR)/tests/test_tokenize.o \
-           $(OBJDIR)/tests/test_Trigger.o \
-           $(OBJDIR)/tests/test_trim.o \
-           $(LIBRARYOBJ)
-
-$(OBJDIR)/tests/test_main.o: $(SRCDIR)/../tests/test_main.cc
+test: build
 	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_main.o \
-	    $(SRCDIR)/../tests/test_main.cc
+	@cd build; ninja test
 
-$(OBJDIR)/tests/test_backports.o: $(SRCDIR)/../tests/test_backports.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_backports.o \
-	    $(SRCDIR)/../tests/test_backports.cc
-
-$(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
-	    $(SRCDIR)/../tests/test_cat.cc
-
-$(OBJDIR)/tests/test_hexdump.o: $(SRCDIR)/../tests/test_hexdump.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_hexdump.o \
-	    $(SRCDIR)/../tests/test_hexdump.cc
-
-$(OBJDIR)/tests/test_string_escape.o: $(SRCDIR)/../tests/test_string_escape.cc
-	@echo -e $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_escape.o \
-	    $(SRCDIR)/../tests/test_string_escape.cc
-
-$(OBJDIR)/tests/test_string_replace.o: $(SRCDIR)/../tests/test_string_replace.cc
-	@echo -e $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_replace.o \
-	    $(SRCDIR)/../tests/test_string_replace.cc
-
-$(OBJDIR)/tests/test_string_split.o: $(SRCDIR)/../tests/test_string_split.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_string_split.o \
-	    $(SRCDIR)/../tests/test_string_split.cc
-
-$(OBJDIR)/tests/test_time_util.o: $(SRCDIR)/../tests/test_time_util.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_time_util.o \
-	    $(SRCDIR)/../tests/test_time_util.cc
-
-$(OBJDIR)/tests/test_tokenize.o: $(SRCDIR)/../tests/test_tokenize.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_tokenize.o \
-	    $(SRCDIR)/../tests/test_tokenize.cc
-
-$(OBJDIR)/tests/test_Trigger.o: $(SRCDIR)/../tests/test_Trigger.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_Trigger.o \
-	    $(SRCDIR)/../tests/test_Trigger.cc
-
-$(OBJDIR)/tests/test_trim.o: $(SRCDIR)/../tests/test_trim.cc
-	@echo $(INTRO) $@ $(OUTRO)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_trim.o \
-	    $(SRCDIR)/../tests/test_trim.cc
-
-tests/test_main: dirs $(TEST_OBJ)
-	@echo $(INTRO) $@ $(OUTRO)
-	$(LINK.cc) $(TEST_OBJ) -o tests/test_main
-
-build-tests: tests/test_main
-	@echo Done.
-
-test: export LD_LIBRARY_PATH=$(DOOCSLIBS):$LD_LIBRARY_PATH
-test: build-tests
-	tests/test_main
-
-.PHONY: build-tests dirs doc doxygen rmlocalinstall test
+.PHONY: doc doxygen rmlocalinstall test
