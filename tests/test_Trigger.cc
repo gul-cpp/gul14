@@ -47,14 +47,14 @@ TEST_CASE("Construction, assignment, equality and bool operator work", "[concurr
 
 SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurrency]")
 {
-    GIVEN("a trigger and a helper thread that sets it to true after 10 ms")
+    GIVEN("a trigger and a helper thread that sets it to true after 15 ms")
     {
         Trigger trg;
 
         auto future = std::async(std::launch::async,
                 [&trg]
                 {
-                    sleep(10ms);
+                    sleep(15ms);
                     trg = true;
                 });
 
@@ -65,10 +65,10 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
             trg.wait();
             auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-            THEN("it resumes after approximately 10 ms")
+            THEN("it resumes after approximately 15 ms")
             {
-                REQUIRE(time_ms >= 9);
-                REQUIRE(time_ms <= 11);
+                REQUIRE(time_ms >= 14);
+                REQUIRE(time_ms <= 19);
             }
         }
 
@@ -77,10 +77,10 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
             trg.wait_for(1s);
             auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-            THEN("it resumes after approximately 10 ms")
+            THEN("it resumes after approximately 15 ms")
             {
-                REQUIRE(time_ms >= 9);
-                REQUIRE(time_ms <= 11);
+                REQUIRE(time_ms >= 14);
+                REQUIRE(time_ms <= 19);
             }
         }
 
@@ -89,10 +89,10 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
             trg.wait_until(std::chrono::system_clock::now() + 1s);
             auto time_ms = toc<std::chrono::milliseconds>(t0);
 
-            THEN("it resumes after approximately 10 ms")
+            THEN("it resumes after approximately 15 ms")
             {
-                REQUIRE(time_ms >= 9);
-                REQUIRE(time_ms <= 11);
+                REQUIRE(time_ms >= 14);
+                REQUIRE(time_ms <= 19);
             }
         }
     }
