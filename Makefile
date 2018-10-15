@@ -58,12 +58,13 @@ all:	build $(ALLLIBS) $(PKGCONFIG)
 	@echo Empty command for stubborn make versions. >/dev/null
 
 build:
+	@echo $(INTRO) $@ $(OUTRO)
 	@if [ ! -d build ] ; then \
-	    echo $(INTRO) Create build/ dir $(OUTRO) ; \
+	    echo Create build/ dir ; \
 	    mkdir -p build ; \
 	fi
 	@if [ ! -f build/build.ninja ] ; then \
-	    echo $(INTRO) Use Meson to create build configuration under build/ $(OUTRO) ; \
+	    echo Use Meson to create build configuration under build/ ; \
 	    meson build ; \
 	fi
 
@@ -189,5 +190,9 @@ doxygen:
 test: build
 	@echo $(INTRO) $@ $(OUTRO)
 	@cd build; ninja test
+
+# Needed for NetBeans IDE
+build-tests:
+	@echo $(INTRO) $@ $(OUTRO)
 
 .PHONY: doc doxygen rmlocalinstall test
