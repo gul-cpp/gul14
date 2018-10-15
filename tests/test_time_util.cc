@@ -41,20 +41,26 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
 
         THEN("toc() measures approximately 5 ms after the first one")
         {
-            REQUIRE(toc(t0) > 0.0045);
-            REQUIRE(toc(t0) < 0.0055);
-            REQUIRE(toc<std::chrono::microseconds>(t0) > 4500);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 5500);
+            const auto toc_s = toc(t0);
+            const auto toc_us = toc<std::chrono::microseconds>(t0);
+
+            REQUIRE(toc_s > 0.004);
+            REQUIRE(toc_s < 0.006);
+            REQUIRE(toc_us > 4000);
+            REQUIRE(toc_us < 6000);
         }
 
         sleep(0.005);
 
         THEN("toc() measures approximately 10 ms after the second one")
         {
-            REQUIRE(toc(t0) > 0.0095);
-            REQUIRE(toc(t0) < 0.0105);
-            REQUIRE(toc<std::chrono::microseconds>(t0) > 9500);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 10500);
+            const auto toc_s = toc(t0);
+            const auto toc_us = toc<std::chrono::microseconds>(t0);
+
+            REQUIRE(toc_s > 0.009);
+            REQUIRE(toc_s < 0.011);
+            REQUIRE(toc_us > 9000);
+            REQUIRE(toc_us < 11000);
         }
     }
 
@@ -64,10 +70,13 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
 
         THEN("toc() measures approximately 20 ms afterwards")
         {
-            REQUIRE(toc(t0) > 0.0195);
-            REQUIRE(toc(t0) < 0.0205);
-            REQUIRE(toc<std::chrono::milliseconds>(t0) >= 19);
-            REQUIRE(toc<std::chrono::milliseconds>(t0) <= 21);
+            const auto toc_s = toc(t0);
+            const auto toc_ms = toc<std::chrono::milliseconds>(t0);
+
+            REQUIRE(toc_s > 0.019);
+            REQUIRE(toc_s < 0.021);
+            REQUIRE(toc_ms >= 19);
+            REQUIRE(toc_ms <= 21);
         }
     }
 }
