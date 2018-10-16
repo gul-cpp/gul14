@@ -1,5 +1,6 @@
 DOOCSROOT = ../../..
 PKGDIR = gul
+BUILDDIR = build
 
 include $(DOOCSROOT)/$(DOOCSARCH)/CONFIG
 
@@ -38,20 +39,20 @@ OUTRO = "------------\033[0m"
 all:	build libs
 	@echo Empty command for stubborn make versions. >/dev/null
 
-build:
+$(BUILDDIR):
 	@echo $(INTRO) $@ $(OUTRO)
-	@if [ ! -d build ] ; then \
-	    echo Create build/ dir ; \
-	    mkdir -p build ; \
+	@if [ ! -d $(BUILDDIR) ] ; then \
+	    echo Create $(BUILDDIR) dir ; \
+	    mkdir -p $(BUILDDIR) ; \
 	fi
-	@if [ ! -f build/build.ninja ] ; then \
-	    echo Use Meson to create build configuration under build/ ; \
-	    meson build ; \
+	@if [ ! -f $(BUILDDIR)/build.ninja ] ; then \
+	    echo Use Meson to create build configuration under $(BUILDDIR) ; \
+	    meson $(BUILDDIR) ; \
 	fi
 
 libs:
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd build; ninja
+	@cd $(BUILDDIR); ninja
 
 localinstall: libs
 	@echo $(INTRO) $@ $(OUTRO)
@@ -114,7 +115,7 @@ rmlocalinstall:
 
 clean:
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd build; ninja clean
+	@cd $(BUILDDIR); ninja clean
 
 doc:	doxygen
 	@echo $(INTRO) $@ $(OUTRO)
@@ -127,9 +128,9 @@ doxygen:
 	-chmod -R ug+w $(DOCDIR) 2>/dev/null
 	-find $(DOCDIR) -type d -exec chmod a+x {} ';' 2>/dev/null
 
-test: build
+test: $(BUILDDIR)
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd build; ninja test
+	@cd $(BUILDDIR); ninja test
 
 # Needed for NetBeans IDE
 build-tests:
