@@ -5,32 +5,34 @@
 # OUTPUT_DIRECTORY can't be rewritten without Makefile modifications,
 # so this is done by the doxywrap
 
-if get_option('docs')
-message('Run \'ninja data/docs\' to generate documentation.')
+if get_option('docs') and find_program('doxygen', required : false).found()
+    doxy_run = find_program('doxywrap')
 
-docs_data = configuration_data()
-docs_data.set('PROJECT_NUMBER', meson.project_version())
+    message('Run \'ninja resources/docs\' to generate documentation.')
 
-dox = configure_file(
-      input : 'Doxyfile.in',
-      output : 'Doxyfile',
-      configuration : docs_data)
+    docs_data = configuration_data()
+    docs_data.set('PROJECT_NUMBER', meson.project_version())
 
-custom_target('doxy_generate', # This is not the ninja target name
-    command : [ doxy_run,
-                # "Usage: doxywrap source_root output_root config_file [doxygen parameters]"
-                meson.source_root(),
-                meson.current_build_dir() + '/doxygenerated', # join_paths()... sigh
-                '@INPUT@' ],
-    input : dox,
-    #depend_files : inc,
-    capture : true,
-    output : 'docs', # This is how the target is called
-    build_by_default : false,
-    )
+    dox = configure_file(
+          input : 'Doxyfile.in',
+          output : 'Doxyfile',
+          configuration : docs_data)
 
-# Installation of doxygenerated-tree still missing
-#
-# install_subdir(....)
+    custom_target('doxy_generate', # This is not the ninja target name
+        command : [ doxy_run,
+                    # "Usage: doxywrap source_root output_root config_file [doxygen parameters]"
+                    meson.source_root(),
+                    meson.current_build_dir() + '/doxygenerated', # join_paths()... sigh
+                    '@INPUT@' ],
+        input : dox,
+        #depend_files : inc,
+        capture : true,
+        output : 'docs', # This is how the target is called
+        build_by_default : false,
+        )
 
-endif # if get_option('docs')
+    # Installation of doxygenerated-tree still missing
+    #
+    # install_subdir(....)
+
+endif

@@ -1,7 +1,7 @@
 Source: libgul
 Priority: optional
 Maintainer: Fini Jastrow <ulf.fini.jastrow@desy.de>
-Build-Depends: debhelper (>=9), meson (>=0.29), ninja-build (>=1.5.1)
+Build-Depends: debhelper (>=9), meson (>=0.37), ninja-build (>=1.5.1)
 Standards-Version: 3.9.7
 Section: libs
 Homepage: https://stash.desy.de/projects/GUL/repos/libgul
