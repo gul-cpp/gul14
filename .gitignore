@@ -1,5 +1,4 @@
 .DS_Store
 ._*
 nbproject
-tests/test_main
 build*
