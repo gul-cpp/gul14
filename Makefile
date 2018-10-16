@@ -1,7 +1,6 @@
 DOOCSROOT = ../../..
+PKGDIR = gul
 
-include $(DOOCSROOT)/$(DOOCSARCH)/DEFINEDOOCSROOT
-include ./LIBNO
 include $(DOOCSROOT)/$(DOOCSARCH)/CONFIG
 
 OBJDIR = $(DOOCSROOT)/$(DOOCSARCH)/obj/library/common/$(PKGDIR)
@@ -31,30 +30,12 @@ LIBRARYHFILES = \
 	gul/Trigger.h \
 	gul/trim.h
 
-PKGCONFIG =
-# \
-#	$(OBJDIR)/gul.pc
-
-ALLLIBS = \
-	$(OBJDIR)/libgul.$(EXT) \
-	$(OBJDIR)/libgul.a
-
-CPPFLAGS := -I $(INCDIR) ${CPPFLAGS}
-
-#CXXFLAGS += -std=c++14
-#CPPFLAGS += -std=c++14
-
-# Link against Clang's C++ lib instead of the system one
-ifeq  '$(shell uname)' 'Darwin'
-    CXXFLAGS += -stdlib=libc++
-endif
-
 # Colorful toys
 INTRO = "\033[1;34m------------"
 OUTRO = "------------\033[0m"
 
 
-all:	build $(ALLLIBS) $(PKGCONFIG)
+all:	build libs
 	@echo Empty command for stubborn make versions. >/dev/null
 
 build:
@@ -68,53 +49,11 @@ build:
 	    meson build ; \
 	fi
 
-$(OBJDIR)/.depend depend:
+libs:
 	@echo $(INTRO) $@ $(OUTRO)
-	@if [ ! -f $(OBJDIR) ] ; then \
-	    echo ---------- create dir $(OBJDIR) --------------; \
-	    mkdir -p $(OBJDIR) ; \
-	fi
-	for i in $(SRCDIR)/*.cc ;do \
-	    $(CCDEP) $$i ; \
-	done > $(OBJDIR)/.depend_temp
-	cat $(OBJDIR)/.depend_temp | sed -e "/:/s/^/\$$\(OBJDIR\)\//g" > $(OBJDIR)/.depend
-	chmod g+w $(OBJDIR)/.depend*
+	@cd build; ninja
 
-ifneq ($(MAKECMDGOALS),clean)
-    include $(OBJDIR)/.depend
-endif
-
-$(OBJDIR)/libgul.a: $(LIBRARYOBJ)
-	@echo $(INTRO) $@ $(OUTRO)
-	$(LINK.a) $(LIBRARYOBJ)
-	@-ranlib $(OBJDIR)/libgul.a
-	@-chmod g+w $(OBJDIR)/libgul.a
-	@echo "---------- $(OBJDIR)/libgul.a done---------------"
-
-$(OBJDIR)/libgul.so.$(LIBNO): $(LIBRARYOBJ)
-	@echo $(INTRO) $@ $(OUTRO)
-	$(LINK.so) $(LIBRARYOBJ)
-	@-chmod g+w $(OBJDIR)/libgul.s*.$(LIBNO)
-	@rm -f $(OBJDIR)/libgul.so
-	@ln -s $(OBJDIR)/libgul.so.$(LIBNO) $(OBJDIR)/libgul.so
-	@echo "------ $(OBJDIR)/libgul.so.$(LIBNO) done---------------"
-
-$(OBJDIR)/libgul.$(LIBNO).dylib: $(LIBRARYOBJ)
-	@echo $(INTRO) $@ $(OUTRO)
-	$(LINK.dylib) $(LIBRARYOBJ) -undefined suppress
-	@-chmod g+w $(OBJDIR)/libgul.$(LIBNO).d*
-	@rm -f $(OBJDIR)/libgul.dylib
-	@ln -s $(OBJDIR)/libgul.$(LIBNO).dylib $(OBJDIR)/libgul.dylib
-	@echo "------------ $(OBJDIR)/libgul.$(LIBNO).dylib done ---------------"
-	@echo
-
-# Insert the current release version, by extracting it from release tag
-$(OBJDIR)/%.pc: $(SRCDIR)/../%.pc.in
-	@echo $(INTRO) $@ $(OUTRO)
-	@echo "GEN   $(subst $(OBJDIR)/,,$@)"
-	@cat $< | sed -e "s/@VERSION@/$(shell git describe --tags | sed -e 's/[^_]*_//' -e 's/-.*//' -e 's/_/./g')/g" > $@
-
-localinstall: $(ALLLIBS)
+localinstall: libs
 	@echo $(INTRO) $@ $(OUTRO)
 	# Install header files
 	@if [ ! -d $(DOOCSINC) ] ; then \
@@ -170,18 +109,19 @@ localinstall: $(ALLLIBS)
 	done
 
 rmlocalinstall:
+	@echo $(INTRO) $@ $(OUTRO)
 	-find $(DOOCSLIBS) -name '*'$(PKGDIR)'*' -print -delete
 
-clean: rmlocalinstall
-	rm -f $(LIBRARYOBJ) \
-	      $(OBJDIR)/libgul.* $(OBJDIR)/.depend*
-	rm -f $(PKGCONFIG)
-	rm -rf $(OBJDIR)
+clean:
+	@echo $(INTRO) $@ $(OUTRO)
+	@cd build; ninja clean
 
 doc:	doxygen
+	@echo $(INTRO) $@ $(OUTRO)
 	@echo Done.
 
 doxygen:
+	@echo $(INTRO) $@ $(OUTRO)
 	-( cat data/Doxyfile.in | sed "s/PROJECT_NUMBER         =.*/PROJECT_NUMBER         = `cut -f2 -d= LIBNO`/" ) | doxygen -
 	-chmod -R a+r $(DOCDIR) 2>/dev/null
 	-chmod -R ug+w $(DOCDIR) 2>/dev/null
@@ -195,4 +135,4 @@ test: build
 build-tests:
 	@echo $(INTRO) $@ $(OUTRO)
 
-.PHONY: doc doxygen rmlocalinstall test
+.PHONY: clean doc doxygen libs rmlocalinstall test
