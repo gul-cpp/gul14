@@ -1,6 +1,6 @@
 DOOCSROOT = ../../..
 PKGDIR = gul
-BUILDDIR = build
+BUILDDIR = build.release
 
 include $(DOOCSROOT)/$(DOOCSARCH)/CONFIG
 
@@ -36,7 +36,7 @@ INTRO = "\033[1;34m------------"
 OUTRO = "------------\033[0m"
 
 
-all:	build libs
+all:	$(BUILDDIR) libs
 	@echo Empty command for stubborn make versions. >/dev/null
 
 $(BUILDDIR):
@@ -45,12 +45,20 @@ $(BUILDDIR):
 	    echo Create $(BUILDDIR) dir ; \
 	    mkdir -p $(BUILDDIR) ; \
 	fi
+
+$(BUILDDIR)/build.ninja: $(BUILDDIR)
 	@if [ ! -f $(BUILDDIR)/build.ninja ] ; then \
 	    echo Use Meson to create build configuration under $(BUILDDIR) ; \
-	    meson $(BUILDDIR) ; \
+	    if [ $(BUILDDIR) = build.release ] ; then \
+		meson $(BUILDDIR) --buildtype=release ; \
+	    elif [ $(BUILDDIR) = build.debug ] ; then \
+		meson $(BUILDDIR) --buildtype=debug ; \
+	    else \
+	        meson $(BUILDDIR) ; \
+	    fi ; \
 	fi
 
-libs:
+libs:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	@cd $(BUILDDIR); ninja
 
@@ -117,18 +125,18 @@ clean:
 	@echo $(INTRO) $@ $(OUTRO)
 	@cd $(BUILDDIR); ninja clean
 
-doc:	doxygen
+doc:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@echo Done.
+	@cd $(BUILDDIR); ninja resources/docs
 
-doxygen:
+install-doc: doc
 	@echo $(INTRO) $@ $(OUTRO)
-	-( cat data/Doxyfile.in | sed "s/PROJECT_NUMBER         =.*/PROJECT_NUMBER         = `cut -f2 -d= LIBNO`/" ) | doxygen -
+	-cp -r $(BUILDDIR)/resources/doxygenerated/* $(DOCDIR)
 	-chmod -R a+r $(DOCDIR) 2>/dev/null
 	-chmod -R ug+w $(DOCDIR) 2>/dev/null
 	-find $(DOCDIR) -type d -exec chmod a+x {} ';' 2>/dev/null
 
-test: $(BUILDDIR)
+test: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	@cd $(BUILDDIR); ninja test
 
@@ -136,4 +144,4 @@ test: $(BUILDDIR)
 build-tests:
 	@echo $(INTRO) $@ $(OUTRO)
 
-.PHONY: clean doc doxygen libs rmlocalinstall test
+.PHONY: clean doc install-doc libs rmlocalinstall test

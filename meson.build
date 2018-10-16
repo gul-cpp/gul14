@@ -5,7 +5,7 @@ project('libgul', 'cpp',
                         'warning_level=3',
                         'prefix=/usr'],
     version : '0.1',
-    meson_version : '>=0.29')
+    meson_version : '>=0.37')
 
 # The API version is the major version of the project.
 # Increase the major project version in project() above on API breaking changes.
