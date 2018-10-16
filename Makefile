@@ -25,7 +25,7 @@ OUTRO = "------------\033[0m"
 
 libs:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd $(BUILDDIR); ninja
+	@ninja -C $(BUILDDIR)
 
 
 # Needed for NetBeans IDE
@@ -34,11 +34,11 @@ build-tests:
 
 clean:
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd $(BUILDDIR); ninja clean
+	@ninja -C $(BUILDDIR) clean
 
 doc:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd $(BUILDDIR); ninja resources/docs
+	@ninja -C $(BUILDDIR) resources/docs
 
 install-doc: doc
 	@echo $(INTRO) $@ $(OUTRO)
@@ -49,11 +49,11 @@ install-doc: doc
 
 localinstall: $(LOCALINSTDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd $(LOCALINSTDIR); ninja install
+	@ninja -C $(LOCALINSTDIR) install
 
 test: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@cd $(BUILDDIR); ninja test
+	@ninja -C $(BUILDDIR) test
 
 $(BUILDDIR)/build.ninja:
 	@if [ ! -f $(BUILDDIR)/build.ninja ] ; then \
