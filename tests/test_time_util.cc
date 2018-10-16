@@ -31,52 +31,59 @@ using gul::toc;
 using gul::sleep;
 using gul::Trigger;
 
+const int MS_BEFORE = 1;
+const int MS_AFTER  = 16;
+const int US_BEFORE = MS_BEFORE * 1000;
+const int US_AFTER  = MS_AFTER * 1000;
+const float S_BEFORE = MS_BEFORE * 1e-3;
+const float S_AFTER = MS_AFTER * 1e-3;
+
 SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]")
 {
     auto t0 = tic();
 
-    WHEN("two 10 ms delays are made via sleep()")
+    WHEN("two 50 ms delays are made via sleep()")
     {
-        sleep(0.01);
+        sleep(0.050);
 
-        THEN("toc() measures approximately 10 ms after the first one")
+        THEN("toc() measures approximately 50 ms after the first one")
         {
             const auto toc_s = toc(t0);
             const auto toc_us = toc<std::chrono::microseconds>(t0);
 
-            REQUIRE(toc_s > 0.009);
-            REQUIRE(toc_s < 0.013);
-            REQUIRE(toc_us > 9000);
-            REQUIRE(toc_us < 13000);
+            REQUIRE(toc_s > 0.050 - S_BEFORE);
+            REQUIRE(toc_s < 0.050 + S_AFTER);
+            REQUIRE(toc_us > 50000 - US_BEFORE);
+            REQUIRE(toc_us < 50000 + US_AFTER);
         }
 
-        sleep(0.01);
+        sleep(0.050);
 
-        THEN("toc() measures approximately 20 ms after the second one")
+        THEN("toc() measures approximately 100 ms after the second one")
         {
             const auto toc_s = toc(t0);
             const auto toc_us = toc<std::chrono::microseconds>(t0);
 
-            REQUIRE(toc_s > 0.019);
-            REQUIRE(toc_s < 0.023);
-            REQUIRE(toc_us > 19000);
-            REQUIRE(toc_us < 23000);
+            REQUIRE(toc_s > 0.1 - S_BEFORE);
+            REQUIRE(toc_s < 0.1 + S_AFTER);
+            REQUIRE(toc_us > 100000 - US_BEFORE);
+            REQUIRE(toc_us < 100000 + US_AFTER);
         }
     }
 
-    WHEN("a 20 ms delay is made via sleep()")
+    WHEN("a 50 ms delay is made via sleep()")
     {
-        sleep(20ms);
+        sleep(50ms);
 
-        THEN("toc() measures approximately 20 ms afterwards")
+        THEN("toc() measures approximately 50 ms afterwards")
         {
             const auto toc_s = toc(t0);
             const auto toc_ms = toc<std::chrono::milliseconds>(t0);
 
-            REQUIRE(toc_s > 0.019);
-            REQUIRE(toc_s < 0.023);
-            REQUIRE(toc_ms >= 19);
-            REQUIRE(toc_ms <= 23);
+            REQUIRE(toc_s > 0.05 - S_BEFORE);
+            REQUIRE(toc_s < 0.05 + S_AFTER);
+            REQUIRE(toc_ms >= 50 - MS_BEFORE);
+            REQUIRE(toc_ms <= 50 + MS_AFTER);
         }
     }
 }
@@ -141,10 +148,10 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
         THEN("the elapsed time is approximately 10 ms")
         {
-            REQUIRE(toc(t0) > 0.009);
-            REQUIRE(toc(t0) < 0.013);
-            REQUIRE(toc<std::chrono::milliseconds>(t0) >= 9);
-            REQUIRE(toc<std::chrono::milliseconds>(t0) <= 13);
+            REQUIRE(toc(t0) > 0.01 - S_BEFORE);
+            REQUIRE(toc(t0) < 0.01 + S_AFTER);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) >= 10 - MS_BEFORE);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) <= 10 + MS_AFTER);
         }
     }
 
@@ -176,28 +183,30 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
 SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time]")
 {
-    WHEN("interrupting sleep(2s, interrupt) after 10 ms")
+    WHEN("interrupting sleep(2s, interrupt) after 15 ms")
     {
         Trigger interrupt;
+        std::chrono::steady_clock::time_point t0;
         
         auto future = std::async(std::launch::async,
-                [&interrupt]
+                [&t0, &interrupt]
                 {
-                    sleep(10ms);
+                    t0 = tic();
+                    sleep(15ms);
                     interrupt = true;
                 });
 
         sleep(2s, interrupt);
 
-        THEN("the elapsed time is approximately 10 ms")
+        THEN("the elapsed time is approximately 15 ms")
         {
             const auto toc_s = toc(t0);
             const auto toc_ms = toc<std::chrono::milliseconds>(t0);
 
-            REQUIRE(toc_s > 0.009);
-            REQUIRE(toc_s < 0.013);
-            REQUIRE(toc_ms >=  9);
-            REQUIRE(toc_ms <= 13);
+            REQUIRE(toc_s > 0.015 - S_BEFORE);
+            REQUIRE(toc_s < 0.015 + S_AFTER);
+            REQUIRE(toc_ms >= 15 - MS_BEFORE);
+            REQUIRE(toc_ms <= 15 + MS_AFTER);
         }
 
         THEN("an additional sleep does not wait anymore")
@@ -213,10 +222,10 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time]
 
             auto t1 = tic();
 
-            sleep(10ms, interrupt);
+            sleep(15ms, interrupt);
 
-            REQUIRE(toc<std::chrono::milliseconds>(t1) >= 9);
-            REQUIRE(toc<std::chrono::milliseconds>(t1) <= 13);
+            REQUIRE(toc<std::chrono::milliseconds>(t1) >= 15 - MS_BEFORE);
+            REQUIRE(toc<std::chrono::milliseconds>(t1) <= 15 + MS_AFTER);
         }
     }
 }
