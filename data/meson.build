@@ -7,32 +7,53 @@
 
 if get_option('docs') and find_program('doxygen', required : false).found()
     doxy_run = find_program('doxywrap')
-
-    message('Run \'ninja resources/docs\' to generate documentation.')
+    rsync = find_program('rsync', required : false)
 
     docs_data = configuration_data()
     docs_data.set('PROJECT_NUMBER', meson.project_version())
+    docs_data.set('PROJECT_NAME', meson.project_name())
 
     dox = configure_file(
           input : 'Doxyfile.in',
           output : 'Doxyfile',
           configuration : docs_data)
 
-    custom_target('doxy_generate', # This is not the ninja target name
+    docs_outdir = join_paths(meson.current_build_dir(), 'doxygenerated')
+
+    docs_gen = custom_target('doxy_generate', # This is not the ninja target name
         command : [ doxy_run,
                     # "Usage: doxywrap source_root output_root config_file [doxygen parameters]"
                     meson.source_root(),
-                    meson.current_build_dir() + '/doxygenerated', # join_paths()... sigh
+                    docs_outdir,
                     '@INPUT@' ],
         input : dox,
-        #depend_files : inc,
         capture : true,
         output : 'docs', # This is how the target is called
-        build_by_default : false,
+        # build_by_default : false,  This is the default default
         )
 
-    # Installation of doxygenerated-tree still missing
-    #
-    # install_subdir(....)
+    if rsync.found()
+        docdir = join_paths(get_option('prefix'),
+                            get_option('datadir'),
+                            meson.project_name())
 
-endif
+        custom_target('copy_doxygenerated',
+            command : [ rsync,
+                        '-rt',
+                        '--chmod=Da=rx,ug+w,Fa=r,ug+w',
+                        join_paths(docs_outdir, 'html'),
+                        docdir ],
+            input : docs_gen,
+            capture : true,
+            output : 'install_docs',
+            # build_by_default : false,  This is the default default
+        )
+    endif # have rsync
+
+    message('Run \'ninja resources/docs\' to generate documentation.')
+    if rsync.found()
+        message('Run \'ninja resources/install_docs\' to install documentation in ' + docdir)
+    endif
+
+
+endif # option docs and have doxygen

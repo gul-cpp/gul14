@@ -62,3 +62,11 @@ In addidion to meson's standard switches there are:
     ------ ------------- --------------- -----------
     docs   true          [true, false]   generate documentation via doxygen
     tests  true          [true, false]   generate tests
+
+Overview of maybe useful standard project options:
+
+    Option         Default Value         Description
+    ------         -------------         -----------
+    prefix         /usr                  Installation prefix
+    datadir        local/share           Data file (Doxygen website) directory
+
