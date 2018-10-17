@@ -55,7 +55,10 @@ std::string escape(const std::string& in)
     auto escaped = ""s;
     escaped.reserve(in.length());
 
-    for (auto const c : in)
+    static_assert(static_cast<signed char>(128) == -128,
+                  "Signed char > 127 does not wrap to negative values as expected");
+
+    for (const signed char c : in)
     {
         switch (c)
         {
@@ -77,10 +80,8 @@ std::string escape(const std::string& in)
             default:
                 if (c < 32)
                 {
-                    // This applies also to all non-ASCII characters,
-                    // i.e. also > 127 because they are mapped to negative values
-                    static_assert(static_cast<decltype(c)>(128) == -128, "Character type not signed 8 bit");
-
+                    // This applies also to all non-ASCII characters (>127) because they
+                    // are mapped to negative values
                     escaped += "\\x";
                     escaped += get_last_nibble_as_hex(c >> 4);
                     escaped += get_last_nibble_as_hex(c);
