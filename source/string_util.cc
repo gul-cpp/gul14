@@ -23,6 +23,7 @@
 
 #include <gul/string_util.h>
 
+#include <array>
 #include <iomanip>
 #include <regex>
 #include <stdexcept>
