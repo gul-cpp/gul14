@@ -79,7 +79,7 @@ test('trim() and variants',
      timeout : test_time)
 
 test('hexdump()',
-     executable('trim-hexdump',
+     executable('hexdump-test',
                 [ 'test_hexdump.cc', catch_main ],
                 include_directories : test_inc,
                 link_with : libgul),
