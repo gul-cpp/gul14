@@ -87,9 +87,9 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump unsigned long long") {
-        // This assumes a certain number of bits in long long ....
         std::array<unsigned long long, 1> ar = {{ std::numeric_limits<unsigned long long>::max() }};
         auto a1 = gul::hexdump(ar);
-        REQUIRE(a1 == "000000: ffffffffffffffff \n"s);
+        auto answer1 = "000000: " + std::string(sizeof(ar[0]) * 2, 'f') + " \n"s;
+        REQUIRE(a1 == answer1);
     }
 }
