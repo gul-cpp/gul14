@@ -34,9 +34,6 @@
 // std::string hexdump(const ContainerT& cont, string_view prompt = "")
 // std::string hexdump(StringT str, string_view prompt = "")
 //
-// StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view prompt = "")
-// StreamT& hexdump_stream(StreamT& dest, const ElemT* buf, size_t buflen, string_view prompt = "")
-//
 // struct HexdumpParameterForward
 //
 // HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
@@ -108,45 +105,8 @@ template <typename StreamT,
         std::basic_ostream<typename StreamT::char_type, typename StreamT::traits_type>*>::value>>
 struct IsHexDumpStream : std::true_type { };
 
-} // namespace detail
-
-//////
-// Functions returning a stream
-//
-
-/**
- * Generate a hexdump of a data range and write it to a stream.
- *
- * The elements of the data range must be of integral type. They are dumped as unsigned
- * integer values with their native width: Chars as "00" to "ff", 16-bit integers as
- * "0000" to "ffff", and so on. If the elements are of type char, also a textual
- * representation of the printable characters is dumped. An optional prompt can be added
- * in front of the hexdump.
- *
- * \code
- * std::string x = "test\nthe Ä west!\t\r\n";
- * gul::hexdump_stream(std::cerr, x.begin(), x.end(), "debug -> ");
- * \endcode
-\verbatim
-debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west
-         000010: 21 09 0d 0a                                      !...
-\endverbatim
- *
- * \code
- * std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
- * gul::hexdump_stream(std::cout, begin(ar), end(ar));
- * \endcode
-\verbatim
-000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf
-\endverbatim
- *
- * \param dest  The output stream to use for dumping
- * \param it  ForwardIterator to the first data element to be dumped
- * \param end  ForwardIterator past the last data element to be dumped
- * \param prompt (optional) String that prefixes the dump text
- *
- * \returns a reference to the output stream
- */
+// Here is the template actually doing the hexdump
+// It is called by the different hexdump*() versions
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
@@ -196,23 +156,7 @@ StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view 
     return dest;
 }
 
-/**
- * \overload
- *
- * \param dest  The stream to use for dumping
- * \param buf  Pointer to the buffer to dump
- * \param len  Number of elements to dump
- * \param prompt (optional) String that prefixes the dump text
- *
- * \returns a reference to the output stream
- */
-template<typename StreamT, typename ElemT,
-    typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
-    typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-StreamT& hexdump_stream(StreamT& dest, const ElemT* buf, size_t len, string_view prompt = "")
-{
-    return hexdump_stream(dest, buf, buf + len, prompt);
-}
+} // namespace detail
 
 //////
 // Functions returning a string
@@ -257,7 +201,7 @@ template<typename IteratorT,
 std::string hexdump(IteratorT begin, IteratorT end, string_view prompt = "")
 {
     std::stringstream o{ };
-    return hexdump_stream(o, begin, end, prompt).str();
+    return detail::hexdump_stream(o, begin, end, prompt).str();
 }
 
 /**
@@ -274,7 +218,7 @@ template<typename ElemT,
 std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
 {
     std::stringstream o{ };
-    return hexdump_stream(o, buf, buf + len, prompt).str();
+    return detail::hexdump_stream(o, buf, buf + len, prompt).str();
 }
 
 /**
@@ -292,7 +236,7 @@ template<typename ContainerT,
 std::string hexdump(const ContainerT& cont, string_view prompt = "")
 {
     std::stringstream o{ };
-    return hexdump_stream(o, cont.cbegin(), cont.cend(), prompt).str();
+    return detail::hexdump_stream(o, cont.cbegin(), cont.cend(), prompt).str();
 }
 
 /**
@@ -314,7 +258,7 @@ std::string hexdump(StringT str, string_view prompt = "")
     // (Special case, needed for C string literals)
     const auto sv = string_view{ str };
     std::stringstream o{ };
-    return hexdump_stream(o, sv.cbegin(), sv.cend(), prompt).str();
+    return detail::hexdump_stream(o, sv.cbegin(), sv.cend(), prompt).str();
 }
 
 
@@ -422,7 +366,7 @@ hexdump_stream(const ContainerT& cont, string_view prompt = "")
 template<typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
 std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<IteratorT>& hdp) {
-    return hexdump_stream(os, hdp.begin, hdp.end, hdp.prompt);
+    return detail::hexdump_stream(os, hdp.begin, hdp.end, hdp.prompt);
 }
 
 
