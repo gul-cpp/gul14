@@ -4,6 +4,11 @@ PKGDIR = gul
 # Generate an architecture descriptor like x86_64-linux-gnu
 ARCH := $(shell uname -mo | sed -e 's/\([^ ]*\) \([^/]*\)\/\?\(.*\)/\L\1-\3-\2/')
 
+# Hack: Limit ARM targets to sequential compilation to avoid out-of-memory problems
+ifneq "$(findstring arm,$(shell uname -m))" ""
+NINJA_ARGS += -j 1
+endif
+
 BUILDTYPE = release
 BUILDDIR = build/$(ARCH)/$(BUILDTYPE)
 
@@ -46,19 +51,19 @@ build-tests:
 
 clean: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@ninja -C $(BUILDDIR) clean
+	ninja $(NINJA_ARGS) -C $(BUILDDIR) clean
 
 debug: build/$(ARCH)/debug/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@ninja -C $(BUILDDIR)
+	ninja $(NINJA_ARGS) -C build/$(ARCH)/debug
 
 doc:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@ninja -C $(BUILDDIR) resources/docs
+	ninja $(NINJA_ARGS) -C $(BUILDDIR) resources/docs
 
 localinstall: $(LOCALINSTDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@ninja -C $(LOCALINSTDIR) install
+	ninja $(NINJA_ARGS) -C $(LOCALINSTDIR) install
 
 mrproper:
 	@echo $(INTRO) $@ $(OUTRO)
@@ -66,11 +71,11 @@ mrproper:
 
 release: build/$(ARCH)/release/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@ninja -C $(BUILDDIR)
+	ninja $(NINJA_ARGS) -C build/$(ARCH)/release
 
 test: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	@ninja -C $(BUILDDIR) test
+	ninja $(NINJA_ARGS) -C $(BUILDDIR) test
 
 
 build/$(ARCH)/debug/build.ninja:
@@ -83,7 +88,7 @@ build/$(ARCH)/release/build.ninja:
 
 $(LOCALINSTDIR)/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
-	@meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
-               --buildtype=release ${LOCALINSTDIR}
+	meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
+              --buildtype=release ${LOCALINSTDIR}
 
 .PHONY: build-tests debug clean doc install-doc libs localinstall mrproper release test
