@@ -155,7 +155,7 @@ StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view 
     const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
     // Get the number of hex digits to represent any value of a given integral type ElemT
     // Use an approximation of std::iterator_traits<IteratorT>::value_type that works with raw pointers also
-    const auto nod = sizeof(decltype(*std::declval<IteratorT>())) * 2;
+    const auto nod = sizeof(*it) * 2;
 
     std::string indent(prompt.length(), ' ');
     std::string empty(nod + 1, ' ');
@@ -171,7 +171,7 @@ StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view 
             if (it != end) {
                 const unsigned long long ch = static_cast<
                         typename std::make_unsigned<
-                            typename std::decay<decltype(*std::declval<IteratorT>())>::type
+                            typename std::decay<decltype(*it)>::type
                         >::type
                     >(*it++);
                 dest << std::setw(nod) << ch << ' ';
