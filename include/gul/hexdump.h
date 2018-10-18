@@ -275,8 +275,8 @@ std::string hexdump(const CStringLitT& str, string_view prompt = "")
  */
 template<typename IteratorT>
 struct HexdumpParameterForward {
-    const IteratorT begin;
-    const IteratorT end;
+    const IteratorT& begin;
+    const IteratorT& end;
     string_view prompt;
 };
 
