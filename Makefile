@@ -2,13 +2,6 @@ DOOCSROOT = ../../..
 PKGDIR = gul
 BUILDDIR = build.release
 
-include $(DOOCSROOT)/$(DOOCSARCH)/CONFIG
-
-OBJDIR = $(DOOCSROOT)/$(DOOCSARCH)/obj/library/common/$(PKGDIR)
-SRCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/src
-INCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/include
-DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
-
 # LOCALINSTDIR The build dir used for local install
 LOCALINSTDIR = local_build
 DOOCSARCH ?= unknown_doocsarch
@@ -30,6 +23,7 @@ all:
 	@echo You can \'make lib\' to build the library under build.release
 	@echo You can \'make BUILDDIR=build.debug lib\' to build a debug version of the library under build.debug
 	@echo You can \'make BUILDDIR=mybuilddir test\' to run unit tests in the specified build directory
+	@echo You can \'make BUILDDIR=mybuilddir doc\' to build documentation under mybuilddir/resources/doxygenerated (needs Doxygen)
 	@echo You can \'make localinstall\' to make a local installation of the library under $(LOCALINSTPRE)/lib
 
 # Needed for NetBeans IDE
@@ -43,13 +37,6 @@ clean: $(BUILDDIR)/build.ninja
 doc:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	@ninja -C $(BUILDDIR) resources/docs
-
-install-doc: doc
-	@echo $(INTRO) $@ $(OUTRO)
-	-cp -r $(BUILDDIR)/resources/doxygenerated/* $(DOCDIR)
-	-chmod -R a+r $(DOCDIR) 2>/dev/null
-	-chmod -R ug+w $(DOCDIR) 2>/dev/null
-	-find $(DOCDIR) -type d -exec chmod a+x {} ';' 2>/dev/null
 
 lib:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
