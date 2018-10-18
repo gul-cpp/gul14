@@ -231,8 +231,7 @@ std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
  * \returns a string containing the dump
  */
 template<typename ContainerT,
-    typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>,
-    typename = std::enable_if_t<not std::is_convertible<ContainerT, string_view>::value> >
+    typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>>
 std::string hexdump(const ContainerT& cont, string_view prompt = "")
 {
     std::stringstream o{ };
@@ -242,22 +241,22 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
 /**
  * \overload
  *
- * \param str  The string that should be converted into a hexdump; any type that is
+ * \param str  The C string literal that should be converted into a hexdump; any type that is
  *             convertible into a string_view is accepted.
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a string containing the dump
  */
-template<typename StringT,
-    typename = std::enable_if_t<std::is_convertible<StringT, string_view>::value> >
-std::string hexdump(StringT str, string_view prompt = "")
+template<typename CStringLitT,
+    typename = std::enable_if_t<std::is_array<CStringLitT>::value>,
+    typename = std::enable_if_t<std::is_convertible<CStringLitT, string_view>::value>>
+std::string hexdump(const CStringLitT& str, string_view prompt = "")
 {
     // We need to create a string_view object explicitly because there is no
-    // automatic type conversion in template arguments, and we need it to pass
-    // the iterators along...
+    // automatic type conversion in template arguments
     // (Special case, needed for C string literals)
     const auto sv = string_view{ str };
-    std::stringstream o{ };
+    auto o = std::stringstream{ };
     return detail::hexdump_stream(o, sv.cbegin(), sv.cend(), prompt).str();
 }
 
@@ -340,7 +339,7 @@ hexdump_stream(const ElemT* buf, size_t len, string_view prompt = "")
 
 /**
  * \overload
- * 
+ *
  * \param cont  Reference to the container to dump
  * \param prompt (optional) String that prefixes the dump text
  *
@@ -352,6 +351,24 @@ HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin())>
 hexdump_stream(const ContainerT& cont, string_view prompt = "")
 {
     return { cont.cbegin(), cont.cend(), prompt };
+}
+
+/**
+ * \overload
+ *
+ * \param cont  Reference to the container to dump
+ * \param prompt (optional) String that prefixes the dump text
+ *
+ * \returns a helper object to be used with operator<< on streams
+ */
+template<typename CStringLitT,
+    typename = std::enable_if_t<std::is_array<CStringLitT>::value>,
+    typename = std::enable_if_t<std::is_convertible<CStringLitT, string_view>::value>>
+HexdumpParameterForward<decltype(string_view{std::declval<CStringLitT>()}.cbegin())>
+hexdump_stream(const CStringLitT& str, string_view prompt = "")
+{
+    const auto sv = string_view{ str };
+    return { sv.cbegin(), sv.cend(), prompt };
 }
 
 /**
