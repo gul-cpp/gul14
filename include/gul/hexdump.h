@@ -110,11 +110,12 @@ struct IsHexDumpStream : std::true_type { };
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
-StreamT& hexdump_stream(StreamT& dest, IteratorT it, IteratorT end, string_view prompt = "")
+StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& end, string_view prompt = "")
 {
     const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
     // Get the number of hex digits to represent any value of a given integral type ElemT
     // Use an approximation of std::iterator_traits<IteratorT>::value_type that works with raw pointers also
+    auto it = IteratorT{ begin };
     const auto nod = sizeof(*it) * 2;
 
     std::string indent(prompt.length(), ' ');
@@ -275,8 +276,8 @@ std::string hexdump(const CStringLitT& str, string_view prompt = "")
  */
 template<typename IteratorT>
 struct HexdumpParameterForward {
-    const IteratorT& begin;
-    const IteratorT& end;
+    const IteratorT begin;
+    const IteratorT end;
     string_view prompt;
 };
 
@@ -315,7 +316,7 @@ debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. we
 template<typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
 HexdumpParameterForward<IteratorT>
-hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
+hexdump_stream(const IteratorT& begin, const IteratorT& end, string_view prompt = "")
 {
     return { begin, end, prompt };
 }

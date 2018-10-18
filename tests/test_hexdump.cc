@@ -55,14 +55,18 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         oss1 << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
         REQUIRE(oss1.str() == answer1);
 
+        auto oss2 = std::ostringstream{ };
+        oss2 << gul::hexdump_stream(x.begin(), x.end(), "deBuk -> ");
+        REQUIRE(oss2.str() == answer1);
+
         auto a2 = gul::hexdump(x, "deBak -> ");
         auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a2 == answer2);
 
-        auto oss2 = std::ostringstream{ };
-        oss2 << gul::hexdump_stream(x, "deBak -> ");
-        REQUIRE(oss2.str() == answer2);
+        auto oss3 = std::ostringstream{ };
+        oss3 << gul::hexdump_stream(x, "deBak -> ");
+        REQUIRE(oss3.str() == answer2);
     }
     SECTION("dump full container") {
         auto ar = std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
@@ -74,6 +78,19 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         auto oss1 = std::ostringstream{ };
         oss1 << gul::hexdump_stream(ar);
         REQUIRE(oss1.str() == answer1);
+
+        auto oss2 = std::ostringstream{ };
+        auto hdp_forward = gul::hexdump_stream(std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }});
+        {
+            // We need this complicate construct to replace the remnants of the temporary above with some
+            // different object on the stack. ar2 now lives in the memory space of the temporary array
+            // if its lifetime has not been extended
+            // This works only in gcc, I can't find a way to trigger this error in clang
+            auto ar2 = std::array<int, 8>{{ 1, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+            oss2 << hdp_forward;
+            oss1 << ar2.size(); // just to use the variable for something to prevent optimizing it out
+        }
+        // this fails! REQUIRE(oss2.str() == answer1);
     }
     SECTION("dump with iterators") {
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
