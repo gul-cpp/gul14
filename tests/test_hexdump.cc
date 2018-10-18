@@ -34,53 +34,57 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         std::string x = gul::hexdump(""s);
         std::string y = gul::hexdump("");
         REQUIRE(x == y);
+
+        auto oss1 = std::ostringstream{ };
+        oss1 << gul::hexdump_stream(""s);
+        REQUIRE(oss1.str() == ""s);
+
+        auto oss2 = std::ostringstream{ };
+        oss2 << gul::hexdump_stream("");
+        REQUIRE(oss2.str() == ""s);
     }
     SECTION("dump strings") {
-        std::string x = "test\nthe Ä west!\t\r\n";
+        auto x = "test\nthe Ä west!\t\r\n"s;
 
         auto a1 = gul::hexdump(x.data(), x.size(), "deBuk -> ");
         auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a1 == answer1);
 
+        auto oss1 = std::ostringstream{ };
+        oss1 << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
+        REQUIRE(oss1.str() == answer1);
+
         auto a2 = gul::hexdump(x, "deBak -> ");
         auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a2 == answer2);
+
+        auto oss2 = std::ostringstream{ };
+        oss2 << gul::hexdump_stream(x, "deBak -> ");
+        REQUIRE(oss2.str() == answer2);
     }
     SECTION("dump full container") {
-        std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+        auto ar = std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
+
         auto a1 = gul::hexdump(ar);
         auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
         REQUIRE(a1 == answer1);
 
-        auto a2 = gul::hexdump(ar.begin(), ar.end());
-        REQUIRE(a2 == answer1);
-
-        // output not checked, just check instantiation is possible
-        std::ostringstream oss;
-        oss << gul::hexdump_stream(ar);
-    }
-    SECTION("dump to stream") {
-        std::string x = "test\nthe Ä west!\t\r\n";
-
-        // output not checked, just check instantiation is possible
-        std::ostringstream oss;
-
-        gul::hexdump_stream(oss, x.data(), x.size(), "deBuk -> ");
-        oss << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
-        oss << gul::hexdump_stream(x, "deBuk -> ");
+        auto oss1 = std::ostringstream{ };
+        oss1 << gul::hexdump_stream(ar);
+        REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump with iterators") {
-        std::stringstream o{ };
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
-        auto a1 = gul::hexdump_stream(o, ar.begin(), ar.end()).str();
+
+        auto a1 = gul::hexdump(ar.begin(), ar.end());
         auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
         REQUIRE(a1 == answer1);
 
-        // output not checked, just check instantiation is possible
-        std::ostringstream oss;
-        oss << gul::hexdump_stream(ar.begin(), ar.end());
+        auto oss1 = std::ostringstream{ };
+        oss1 << gul::hexdump_stream(ar.begin(), ar.end());
+        REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump unsigned long long") {
         // This assumes a certain number of bits in long long ....
