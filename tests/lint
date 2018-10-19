@@ -6,16 +6,15 @@
 # many warnings that it shall be ignored, this is a bit complicated.
 
 if [ $# -lt 1 ]; then
-	echo "Usage: `basename "$0"` source_file [source_file, ...]"
+	echo "Usage: `basename "$0"` [options] <source0> [... <sourceN>]"
 	echo "Please specify one or more C++ implementation files."
 	exit 1
 fi
 
-
-HEADERLIST=`find ../include -type f -print | grep -v string_view.h | sed -r 's/^/{"name":"/;s/$/"}/' | tr '\n' ','`
+HEADERLIST=`find ../include -type f -print | grep -v '/string_view.h$' | sed 's/^/{"name":"/;s/$/"}/' | tr '\n' ','`
 
 echo clang-tidy $@
 
 clang-tidy '-checks=cppcore*,readability*,performance*,modernize*,misc*,clang-analyzer*,-clang-analyzer-alpha.core.CastToStruct' \
 	'-header-filter=.*' -line-filter=[${HEADERLIST}] $@ \
-    -- -I../include  -I../include/gul -std=c++14
+	-- -I../include  -I../include/gul -std=c++14
