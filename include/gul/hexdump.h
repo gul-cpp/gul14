@@ -138,8 +138,9 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
                     >(*it++);
                 dest << std::setw(nod) << ch << ' ';
             } else {
-                if (nod != 2)
+                if (nod != 2) {
                     break;
+                }
                 dest << empty;
             }
         }
@@ -153,8 +154,9 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
         }
         dest << "\n";
     }
-    if (it != end)
+    if (it != end) {
         dest << indent << "[output truncated...]\n";
+    }
     return dest;
 }
 
@@ -372,7 +374,7 @@ HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), Container
 hexdump_stream(ContainerT&& cont, string_view prompt = "")
 {
     auto ret = HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{ };
-    ret.cont = std::move(cont); // The temporary must be moved to retain the values until we need them after operator<<.
+    ret.cont = std::forward<ContainerT>(cont); // The temporary must be moved to retain the values until we need them after operator<<.
     ret.begin = ret.cont.cbegin();
     ret.end = ret.cont.cend();
     ret.prompt = prompt;
