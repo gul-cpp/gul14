@@ -90,7 +90,13 @@ TEST_CASE("Hexdump Test", "[hexdump]")
             oss2 << hdp_forward;
             oss1 << ar2.size(); // just to use the variable for something to prevent optimizing it out
         }
-        // this fails! REQUIRE(oss2.str() == answer1);
+        REQUIRE(oss2.str() == answer1);
+
+        // Check if ar has been moved and left us with a corpse
+        // Is ar still the same?
+        auto oss3 = std::ostringstream{ };
+        oss3 << gul::hexdump_stream(ar);
+        REQUIRE(oss3.str() == answer1);
     }
     SECTION("dump with iterators") {
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};

@@ -372,7 +372,7 @@ HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), Container
 hexdump_stream(ContainerT&& cont, string_view prompt = "")
 {
     auto ret = HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{ };
-    ret.cont = cont; // The temporary must be copied to retain the values until we need them after operator<<.
+    ret.cont = std::move(cont); // The temporary must be moved to retain the values until we need them after operator<<.
     ret.begin = ret.cont.cbegin();
     ret.end = ret.cont.cend();
     ret.prompt = prompt;
