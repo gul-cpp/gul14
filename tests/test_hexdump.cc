@@ -68,6 +68,15 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         oss3 << gul::hexdump_stream(x, "deBak -> ");
         REQUIRE(oss3.str() == answer2);
     }
+    SECTION("dump c string literal") {
+        char x[12] = "aaa";
+        auto answer1 = "000000: 61 61 61                                         aaa\n"s;
+        auto hdp_forward = gul::hexdump_stream(x);
+        x[0] = 'b';
+        auto oss1 = std::ostringstream{ };
+        oss1 << hdp_forward;
+        REQUIRE(oss1.str() == answer1);
+    }
     SECTION("dump full container") {
         auto ar = std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
 

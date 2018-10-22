@@ -36,10 +36,10 @@
 //
 // struct HexdumpParameterForward
 //
-// HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, string_view prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(const ElemT* buf, size_t buflen, string_view prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, string_view prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(ContainerT&& cont, string_view prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, std::string prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(const ElemT* buf, size_t buflen, std::string prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, std::string prompt = "")
+// HexdumpParameterForward<...> hexdump_stream(ContainerT&& cont, std::string prompt = "")
 //
 // std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<...>& hdp)
 //
@@ -282,7 +282,7 @@ template<typename IteratorT, typename ContainerT = void*>
 struct HexdumpParameterForward {
     IteratorT begin;
     IteratorT end;
-    string_view prompt;
+    const std::string prompt;
     ContainerT cont;
 };
 
@@ -321,9 +321,9 @@ debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. we
 template<typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
 HexdumpParameterForward<const IteratorT>
-hexdump_stream(const IteratorT& begin, const IteratorT& end, string_view prompt = "")
+hexdump_stream(const IteratorT& begin, const IteratorT& end, std::string prompt = "")
 {
-    return { begin, end, prompt, nullptr };
+    return { begin, end, std::move(prompt), nullptr };
 }
 
 /**
@@ -338,9 +338,9 @@ hexdump_stream(const IteratorT& begin, const IteratorT& end, string_view prompt 
 template<typename ElemT,
     typename = std::enable_if_t<std::is_integral<ElemT>::value>>
 HexdumpParameterForward<const ElemT* const>
-hexdump_stream(const ElemT* buf, size_t len, string_view prompt = "")
+hexdump_stream(const ElemT* buf, size_t len, std::string prompt = "")
 {
-    return { buf, buf + len, prompt, nullptr };
+    return { buf, buf + len, std::move(prompt), nullptr };
 }
 
 /**
@@ -354,9 +354,9 @@ hexdump_stream(const ElemT* buf, size_t len, string_view prompt = "")
 template<typename ContainerT,
     typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value>>
 HexdumpParameterForward<const decltype(std::declval<ContainerT>().cbegin())>
-hexdump_stream(const ContainerT& cont, string_view prompt = "")
+hexdump_stream(const ContainerT& cont, std::string prompt = "")
 {
-    return { cont.cbegin(), cont.cend(), prompt, nullptr };
+    return { cont.cbegin(), cont.cend(), std::move(prompt), nullptr };
 }
 
 /**
@@ -371,32 +371,44 @@ template<typename ContainerT,
     typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value,
     decltype(HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{ }, 0)>>
 HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>
-hexdump_stream(ContainerT&& cont, string_view prompt = "")
+hexdump_stream(ContainerT&& cont, std::string prompt = "")
 {
-    auto ret = HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{ };
-    ret.cont = std::forward<ContainerT>(cont); // The temporary must be moved to retain the values until we need them after operator<<.
-    ret.begin = ret.cont.cbegin();
+    auto cheap_dummy = cont.cbegin();
+    // The temporary container must be moved to retain the values until we need them after operator<<.
+    auto ret = HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{
+        cheap_dummy,
+        cheap_dummy,
+        std::move(prompt),
+        std::forward<ContainerT>(cont)};
+    ret.begin = ret.cont.cbegin(); // (re)construct iterator after move
     ret.end = ret.cont.cend();
-    ret.prompt = prompt;
     return ret;
 }
 
 /**
  * \overload
  *
- * \param cont  Reference to the container to dump
+ * \param cont  Reference to C string literal to dump
  * \param prompt (optional) String that prefixes the dump text
  *
  * \returns a helper object to be used with operator<< on streams
  */
 template<typename CStringLitT,
     typename = std::enable_if_t<std::is_array<CStringLitT>::value>,
-    typename = std::enable_if_t<std::is_convertible<CStringLitT, string_view>::value>>
-HexdumpParameterForward<decltype(string_view{std::declval<CStringLitT>()}.cbegin())>
-hexdump_stream(const CStringLitT& str, string_view prompt = "")
+    typename = std::enable_if_t<std::is_convertible<CStringLitT, std::string>::value>>
+HexdumpParameterForward<decltype(std::string{std::declval<CStringLitT>()}.cbegin()), std::string>
+hexdump_stream(const CStringLitT& str, std::string prompt = "")
 {
-    const auto sv = string_view{ str };
-    return { sv.cbegin(), sv.cend(), prompt, nullptr };
+    const auto s = std::string{ str };
+    auto cheap_dummy = s.cbegin();
+    auto ret = HexdumpParameterForward<decltype(s.cbegin()), std::string>{
+        cheap_dummy,
+        cheap_dummy,
+        std::move(prompt),
+        std::move(s) };
+    ret.begin = ret.cont.cbegin(); // (re)construct iterator after move
+    ret.end = ret.cont.cend();
+    return ret;
 }
 
 /**
