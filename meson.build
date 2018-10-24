@@ -26,10 +26,11 @@ subdir('tests')
 
 # Add debian/* files
 if deb_install
+    message('Install for debian packaging: @0@'.format(deb_install))
     subdir('debian')
+else
+    message('Install for debian packaging: @0@ (specify --prefix=/usr to enable)'.format(deb_install))
 endif
-
-message('Install for debian packaging: @0@'.format(deb_install))
 
 message('LIBGUL_API_VERSION @0@'.format(libgul_api_version))
 message('GIT VERSION        @0@'.format(git_version))

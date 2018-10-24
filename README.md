@@ -20,14 +20,14 @@ Use meson to configure the build you want to have. Build directory names can be 
 
         meson build
         meson -D tests=false build_without_tests
-        meson -D buildtype=release build_rel
+        meson --prefix=/usr -D buildtype=release build_rel
         meson -D buildtype=release -D unity=on build_rel_unity
         meson -D buildtype=release -D docs=false build_nodocs_rel
         CXX=clang meson build_clang
 
 Afterwards enter you build directory and fire the build process:
 
-        cd build_rel_unity
+        cd build_rel
         ninja
         ninja test
         ninja data/docs
@@ -50,7 +50,7 @@ Depending on the installed coverage tool the targets ``coverage-text`` and ``cov
 1. You can list all possible build configuration switches with ``meson configure`` in an existing build directory [1]. This command can also be used to change build configurations after the directory has been created. For example to decrease the warning level after the build directory has already been created: ``meson configure -D warning_level=1`` [1].
 2. The configuration to be changed can immediately follow the ``-D`` for example ``-Dwarning_level=1``.
 3. You must call ``ninja`` in the build directory before you call ``makeDdeb`` once. The first call sets up the build directory for makeDdeb to run. Afterwards you can always trigger rebuilds by just calling makeDdeb. (The only exception is changes in debian/, run ninja always after you changed a file in debian/.)
-4. ``makeDdeb`` has to be called in the build directory of choice, usually with buildtype = release
+4. ``makeDdeb`` has to be called in the build directory of choice, usually with buildtype = release. Note that debian packaging needs the prefix to be set to /usr (see examples above)
 
 [1] Use ``mesonconf`` if your meson is too old.
 
@@ -67,6 +67,6 @@ Overview of maybe useful standard project options:
 
     Option         Default Value         Description
     ------         -------------         -----------
-    prefix         /usr                  Installation prefix
-    datadir        local/share           Data file (Doxygen website) directory
+    prefix         /usr/local            Installation prefix
+    datadir        share                 Data file (Doxygen website) directory
 
