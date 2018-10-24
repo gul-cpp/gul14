@@ -3,10 +3,9 @@
 The general utility library contains often-used utility functions and types that form the foundation for other libraries and programs. The main fields covered by the library are:
 
 
-  * Strings
-  * Exceptions
-  * Time
-  * Numerical helpers
+  * String utilities
+  * Concurrency Utilities
+  * Time Utilities
   * Backports from new standard library extensions
 
 # Building
