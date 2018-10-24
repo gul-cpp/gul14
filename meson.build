@@ -4,7 +4,7 @@ project('libgul', 'cpp',
     default_options : [ 'cpp_std=c++14',
                         'warning_level=3',
                         'prefix=/usr',
-                        'datadir=local/share' ],
+                        'datadir=share' ],
     version : '0.1',
     meson_version : '>=0.37')
 
