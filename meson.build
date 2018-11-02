@@ -13,7 +13,7 @@ version_parts = meson.project_version().split('.')
 libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
 # Find out if this is a normal (not local) install (not into prefix/obj/)
-deb_install = get_option('prefix') == '/usr'
+deb_install = get_option('prefix') != '/usr/local'
 
 subdir('include')
 subdir('src')
@@ -28,7 +28,8 @@ if deb_install
     message('Install for debian packaging: @0@'.format(deb_install))
     subdir('debian')
 else
-    message('Install for debian packaging: @0@ (specify --prefix=/usr to enable)'.format(deb_install))
+    message('Install for debian packaging: @0@ (packets installing files to /usr/local forbidden)'.format(deb_install))
+    message('                              Enable by specifying correct prefix e.g. --prefix=/usr')
 endif
 
 message('LIBGUL_API_VERSION @0@'.format(libgul_api_version))

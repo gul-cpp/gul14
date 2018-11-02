@@ -2,11 +2,9 @@
 # Only called if deb_install == true
 
 deb_conf = configuration_data()
-deb_conf.set('LIBGUL_API_VERSION', libgul_api_version)
-# Not applied to any file, do we need this anywhere?
-
-empty_conf = configuration_data() # for <0.47 compat
-empty_conf.set('FOR_MESON_0.47', '@FOR_MESON_0.47@') # Empty rule to suppress warning in meson 0.47+
+deb_conf.set('PREFIX', get_option('prefix'))
+deb_conf.set('LIBDIR', get_option('libdir'))
+deb_conf.set('INCLUDEDIR', get_option('includedir'))
 
 debian_files = [
   'changelog',
@@ -19,7 +17,6 @@ debian_files = [
 ]
 
 foreach f : debian_files
-    # should rather be: configure_file(input : f, output : f, copy : true)
     configure_file(input : f, output : f,
-                   configuration : empty_conf)
+                   configuration : deb_conf)
 endforeach

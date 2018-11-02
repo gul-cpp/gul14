@@ -67,5 +67,7 @@ Overview of maybe useful standard project options:
     Option         Default Value         Description
     ------         -------------         -----------
     prefix         /usr/local            Installation prefix
+    libdir         lib/...               Library directory
+    includedir     include               Header file directory
     datadir        share                 Data file (Doxygen website) directory
 
