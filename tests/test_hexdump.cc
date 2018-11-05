@@ -29,14 +29,14 @@ using namespace std::literals::string_literals;
 
 TEST_CASE("Hexdump Test", "[hexdump]")
 {
-    SECTION("assignment (cast) test") {
-        // This fails to compile if cast is impossible
+    SECTION("empty dump test") {
         std::string x = gul::hexdump(""s);
-        REQUIRE(x == ""s);
+        auto answer1 = "000000:                                                  \n"s;
+        REQUIRE(x == answer1);
 
         auto oss1 = std::ostringstream{ };
         oss1 << gul::hexdump_stream(""s);
-        REQUIRE(oss1.str() == ""s);
+        REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump strings") {
         auto x = "test\nthe Ä west!\t\r\n"s;

@@ -127,7 +127,7 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
     // Inspired by epatel @ stack overflow
     // https://stackoverflow.com/a/29865
     size_t i, j;
-    for (i = 0; it != end and i < maxelem; i += 16) {
+    for (i = 0; (it != end and i < maxelem) or (i == 0); i += 16) {
         dest << (i ? indent : prompt) << std::setw(6) << i << ": ";
         auto line = it;
         for (j = 0; j < 16; ++j) {
