@@ -41,18 +41,14 @@ TEST_CASE("Hexdump Test", "[hexdump]")
     SECTION("dump strings") {
         auto x = "test\nthe Ä west!\t\r\n"s;
 
-        auto a1 = gul::hexdump(x.data(), x.size(), "deBuk -> ");
+        auto a1 = gul::hexdump(x.begin(), x.end(), "deBuk -> ");
         auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a1 == answer1);
 
         auto oss1 = std::ostringstream{ };
-        oss1 << gul::hexdump_stream(x.data(), x.size(), "deBuk -> ");
+        oss1 << gul::hexdump_stream(x.begin(), x.end(), "deBuk -> ");
         REQUIRE(oss1.str() == answer1);
-
-        auto oss2 = std::ostringstream{ };
-        oss2 << gul::hexdump_stream(x.begin(), x.end(), "deBuk -> ");
-        REQUIRE(oss2.str() == answer1);
 
         auto a2 = gul::hexdump(x, "deBak -> ");
         auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"

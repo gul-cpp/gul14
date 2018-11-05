@@ -31,13 +31,11 @@
 ////// Overview of the prototypes contained in here, but without template specifications:
 //
 // std::string hexdump(IteratorT begin, IteratorT end, string_view prompt = "")
-// std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
 // std::string hexdump(const ContainerT& cont, string_view prompt = "")
 //
 // struct HexdumpParameterForward
 //
 // HexdumpParameterForward<...> hexdump_stream(IteratorT begin, IteratorT end, std::string prompt = "")
-// HexdumpParameterForward<...> hexdump_stream(const ElemT* buf, size_t buflen, std::string prompt = "")
 // HexdumpParameterForward<...> hexdump_stream(const ContainerT& cont, std::string prompt = "")
 // HexdumpParameterForward<...> hexdump_stream(ContainerT&& cont, std::string prompt = "")
 //
@@ -211,23 +209,6 @@ std::string hexdump(IteratorT begin, IteratorT end, string_view prompt = "")
 /**
  * \overload
  *
- * \param buf  Pointer to the buffer to dump
- * \param len  Number of elements to dump
- * \param prompt (optional) String that prefixes the dump text
- *
- * \returns a string containing the dump
- */
-template<typename ElemT,
-    typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
-{
-    std::stringstream o{ };
-    return detail::hexdump_stream(o, buf, buf + len, prompt).str();
-}
-
-/**
- * \overload
- *
  * \param cont  Reference to the container whose contents should be dumped; the container
  *              must provide ForwardIterators for .cbegin() and .cend()
  * \param prompt (optional) String that prefixes the dump text
@@ -301,23 +282,6 @@ HexdumpParameterForward<const IteratorT>
 hexdump_stream(const IteratorT& begin, const IteratorT& end, std::string prompt = "")
 {
     return { begin, end, std::move(prompt), nullptr };
-}
-
-/**
- * \overload
- *
- * \param buf Pointer to the buffer to dump
- * \param len Number of elements in the buffer (i.e. number of elements to dump)
- * \param prompt (optional) String that prefixes the dump text
- *
- * \returns a helper object to be used with operator<< on streams
- */
-template<typename ElemT,
-    typename = std::enable_if_t<std::is_integral<ElemT>::value>>
-HexdumpParameterForward<const ElemT* const>
-hexdump_stream(const ElemT* buf, size_t len, std::string prompt = "")
-{
-    return { buf, buf + len, std::move(prompt), nullptr };
 }
 
 /**
