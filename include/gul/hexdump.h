@@ -112,22 +112,22 @@ template<typename StreamT, typename IteratorT,
 StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& end, string_view prompt = "")
 {
     const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
-    // Get the number of hex digits to represent any value of a given integral type ElemT
-    // Use an approximation of std::iterator_traits<IteratorT>::value_type that works with raw pointers also
-    auto it = IteratorT{ begin };
-    const auto nod = sizeof(*it) * 2;
+    
+    // Get the number of hex digits to represent any value of the given integral type
+    const auto nod = sizeof(*begin) * 2;
 
-    std::string indent(prompt.length(), ' ');
-    std::string empty(nod + 1, ' ');
+    const std::string indent(prompt.length(), ' ');
+    const std::string empty(nod + 1, ' ');
+
     dest << std::hex << std::setfill('0');
 
-    // Inspired by epatel @ stack overflow
-    // https://stackoverflow.com/a/29865
-    size_t i, j;
-    for (i = 0; (it != end and i < maxelem) or (i == 0); i += 16) {
+    auto it = IteratorT{ begin };
+
+    // Inspired by epatel @ stack overflow, https://stackoverflow.com/a/29865
+    for (size_t i = 0; (it != end and i < maxelem) or (i == 0); i += 16) {
         dest << (i ? indent : prompt) << std::setw(6) << i << ": ";
         auto line = it;
-        for (j = 0; j < 16; ++j) {
+        for (size_t j = 0; j < 16; ++j) {
             if (it != end) {
                 const unsigned long long ch = static_cast<
                         typename std::make_unsigned<
@@ -146,8 +146,8 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
             // Here we re-visit the iterator from the beginning of the line, thus
             // requiring ForwardIterators over InputOperators
             dest << ' ';
-            for (j = 0; j < 16 and line != end; ++j, ++line) {
-                    dest << (isprint(*line) ? *line : '.');
+            for (size_t j = 0; j < 16 and line != end; ++j, ++line) {
+                dest << (isprint(*line) ? *line : '.');
             }
         }
         dest << "\n";
