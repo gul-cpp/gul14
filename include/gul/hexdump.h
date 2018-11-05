@@ -379,3 +379,5 @@ std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<Iterat
 
 
 } // namespace gul
+
+// vi:ts=4:sw=4:et

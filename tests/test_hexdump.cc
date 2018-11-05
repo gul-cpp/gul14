@@ -111,3 +111,5 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         REQUIRE(a1 == answer1);
     }
 }
+
+// vi:ts=4:sw=4:et
