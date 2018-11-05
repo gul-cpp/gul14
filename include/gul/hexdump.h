@@ -33,7 +33,6 @@
 // std::string hexdump(IteratorT begin, IteratorT end, string_view prompt = "")
 // std::string hexdump(const ElemT* buf, size_t len, string_view prompt = "")
 // std::string hexdump(const ContainerT& cont, string_view prompt = "")
-// std::string hexdump(StringT str, string_view prompt = "")
 //
 // struct HexdumpParameterForward
 //
