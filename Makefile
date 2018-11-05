@@ -32,6 +32,7 @@ help:
 	@echo
 	@echo \'make release\' builds the release version of the library under build/$(ARCH)/release
 	@echo \'make debug\' builds the debug version of the library under build/$(ARCH)/debug
+	@echo \'make doocs-release\' builds a DOOCS release version that can be packaged with makeDdeb under build/$(ARCH)/doocs-release
 	@echo
 	@echo \'make test\' runs unit tests on the release version
 	@echo \'make BUILDTYPE=debug test\' runs unit tests on the debug version
@@ -61,6 +62,10 @@ doc:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) resources/docs
 
+doocs-release: build/$(ARCH)/doocs-release/build.ninja
+	@echo $(INTRO) $@ $(OUTRO)
+	ninja $(NINJA_ARGS) -C build/$(ARCH)/doocs-release
+
 localinstall: $(LOCALINSTDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	ninja $(NINJA_ARGS) -C $(LOCALINSTDIR) install
@@ -82,6 +87,11 @@ build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
 	meson build/$(ARCH)/debug --buildtype=debug
 
+build/$(ARCH)/doocs-release/build.ninja:
+	@echo $(INTRO) $@ $(OUTRO)
+	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=/export/doocs \
+	      --includedir=lib/include --libdir=lib
+
 build/$(ARCH)/release/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
 	meson build/$(ARCH)/release --buildtype=release
@@ -91,4 +101,4 @@ $(LOCALINSTDIR)/build.ninja:
 	meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
               --buildtype=release ${LOCALINSTDIR}
 
-.PHONY: build-tests debug clean doc install-doc libs localinstall mrproper release test
+.PHONY: build-tests debug clean doc doocs-release install-doc libs localinstall mrproper release test
