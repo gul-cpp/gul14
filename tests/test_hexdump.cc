@@ -32,16 +32,11 @@ TEST_CASE("Hexdump Test", "[hexdump]")
     SECTION("assignment (cast) test") {
         // This fails to compile if cast is impossible
         std::string x = gul::hexdump(""s);
-        std::string y = gul::hexdump("");
-        REQUIRE(x == y);
+        REQUIRE(x == ""s);
 
         auto oss1 = std::ostringstream{ };
         oss1 << gul::hexdump_stream(""s);
         REQUIRE(oss1.str() == ""s);
-
-        auto oss2 = std::ostringstream{ };
-        oss2 << gul::hexdump_stream("");
-        REQUIRE(oss2.str() == ""s);
     }
     SECTION("dump strings") {
         auto x = "test\nthe Ä west!\t\r\n"s;
@@ -67,15 +62,6 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         auto oss3 = std::ostringstream{ };
         oss3 << gul::hexdump_stream(x, "deBak -> ");
         REQUIRE(oss3.str() == answer2);
-    }
-    SECTION("dump c string literal") {
-        char x[12] = "aaa";
-        auto answer1 = "000000: 61 61 61                                         aaa\n"s;
-        auto hdp_forward = gul::hexdump_stream(x);
-        x[0] = 'b';
-        auto oss1 = std::ostringstream{ };
-        oss1 << hdp_forward;
-        REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump full container") {
         auto ar = std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};

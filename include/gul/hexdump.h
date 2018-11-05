@@ -243,29 +243,6 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
     return detail::hexdump_stream(o, cont.cbegin(), cont.cend(), prompt).str();
 }
 
-/**
- * \overload
- *
- * \param str  The C string literal that should be converted into a hexdump; any type that is
- *             convertible into a string_view is accepted.
- * \param prompt (optional) String that prefixes the dump text
- *
- * \returns a string containing the dump
- */
-template<typename CStringLitT,
-    typename = std::enable_if_t<std::is_array<CStringLitT>::value>,
-    typename = std::enable_if_t<std::is_convertible<CStringLitT, string_view>::value>>
-std::string hexdump(const CStringLitT& str, string_view prompt = "")
-{
-    // We need to create a string_view object explicitly because there is no
-    // automatic type conversion in template arguments
-    // (Special case, needed for C string literals)
-    const auto sv = string_view{ str };
-    auto o = std::stringstream{ };
-    return detail::hexdump_stream(o, sv.cbegin(), sv.cend(), prompt).str();
-}
-
-
 //////
 // Functions returning a forwarder object
 // (Support for 'stream << hexdump' without intermediate data image)
@@ -381,32 +358,6 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
         cheap_dummy,
         std::move(prompt),
         std::forward<ContainerT>(cont)};
-    ret.begin = ret.cont.cbegin(); // (re)construct iterator after move
-    ret.end = ret.cont.cend();
-    return ret;
-}
-
-/**
- * \overload
- *
- * \param cont  Reference to C string literal to dump
- * \param prompt (optional) String that prefixes the dump text
- *
- * \returns a helper object to be used with operator<< on streams
- */
-template<typename CStringLitT,
-    typename = std::enable_if_t<std::is_array<CStringLitT>::value>,
-    typename = std::enable_if_t<std::is_convertible<CStringLitT, std::string>::value>>
-HexdumpParameterForward<decltype(std::string{std::declval<CStringLitT>()}.cbegin()), std::string>
-hexdump_stream(const CStringLitT& str, std::string prompt = "")
-{
-    const auto s = std::string{ str };
-    auto cheap_dummy = s.cbegin();
-    auto ret = HexdumpParameterForward<decltype(s.cbegin()), std::string>{
-        cheap_dummy,
-        cheap_dummy,
-        std::move(prompt),
-        std::move(s) };
     ret.begin = ret.cont.cbegin(); // (re)construct iterator after move
     ret.end = ret.cont.cend();
     return ret;
