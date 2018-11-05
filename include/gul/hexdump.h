@@ -231,17 +231,17 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
 /**
  * Helper object used to enable a convenient syntax to dump things to a stream.
  * \code
- * std::cerr << hexdump_stream(mydata.data(), mydata.size()) << "\n";
+ * std::cerr << hexdump_stream(mydata.begin(), mydata.end()) << "\n";
  * \endcode
  * It just forwards the parameters to hexdump_stream() to the appropriate operator<<.
  * Member cont holds the container if a temporary has been used for dumping.
  */
 template<typename IteratorT, typename ContainerT = void*>
 struct HexdumpParameterForward {
-    IteratorT begin;
-    IteratorT end;
-    const std::string prompt;
-    ContainerT cont;
+    IteratorT begin_;
+    IteratorT end_;
+    const std::string prompt_;
+    ContainerT cont_;
 };
 
 /**
@@ -331,8 +331,8 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
         cheap_dummy,
         std::move(prompt),
         std::forward<ContainerT>(cont)};
-    ret.begin = ret.cont.cbegin(); // (re)construct iterator after move
-    ret.end = ret.cont.cend();
+    ret.begin_ = ret.cont_.cbegin(); // (re)construct iterator after move
+    ret.end_ = ret.cont_.cend();
     return ret;
 }
 
@@ -347,7 +347,7 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
  */
 template<typename IteratorT, typename ContainerT>
 std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<IteratorT, ContainerT>& hdp) {
-    return detail::hexdump_stream(os, hdp.begin, hdp.end, hdp.prompt);
+    return detail::hexdump_stream(os, hdp.begin_, hdp.end_, hdp.prompt_);
 }
 
 
