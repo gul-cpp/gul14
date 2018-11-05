@@ -26,6 +26,7 @@
 #include <sstream>
 #include <type_traits>
 #include <utility>
+#include "gul/string_view.h"
 
 ////// Overview of the prototypes contained in here, but without template specifications:
 //
