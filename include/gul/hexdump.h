@@ -245,7 +245,17 @@ struct HexdumpParameterForward {
 };
 
 /**
- * Generate a hexdump of a data range and write it to a stream.
+ * Generate a hexdump of a data range that can be efficiently written to a stream using
+ * operator<<.
+ *
+ * Where hexdump() writes all of its output into one monolithic string, hexdump_stream()
+ * returns a tiny helper object that can efficiently send its output to an output stream
+ * via operator<<. This means that the following two lines produce the exact same output,
+ * but the stream version uses less resources:
+ * \code
+ * std::cout << gul::hexdump_stream(x.begin(), x.end()) << "\n"; // good
+ * std::cout << gul::hexdump(x.begin(), x.end()) << "\n"; // also good, but allocates a temporary string
+ * \endcode
  *
  * The elements of the data range must be of integral type. They are dumped as unsigned
  * integer values with their native width: Chars as "00" to "ff", 16-bit integers as

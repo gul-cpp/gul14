@@ -35,7 +35,6 @@
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
  *  - \ref debugging_utilities
- *  - Numerical helpers
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
  *
@@ -233,7 +232,7 @@
  *
  * <h3>Functions</h3>
  *
- * hexdump() & hexdump_stream():
+ * hexdump() & \ref gul::hexdump_stream "hexdump_stream()":
  *     Generate an ASCII hex dump of a container, a range, or a piece of memory.
  */
 
