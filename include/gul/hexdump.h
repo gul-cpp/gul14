@@ -234,7 +234,7 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
  * std::cerr << hexdump_stream(mydata.begin(), mydata.end()) << "\n";
  * \endcode
  * It just forwards the parameters to hexdump_stream() to the appropriate operator<<.
- * Member cont holds the container if a temporary has been used for dumping.
+ * Member cont_ holds the container if a temporary has been used for dumping.
  */
 template<typename IteratorT, typename ContainerT = void*>
 struct HexdumpParameterForward {
@@ -326,7 +326,7 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
 {
     auto cheap_dummy = cont.cbegin();
     // The temporary container must be moved to retain the values until we need them after operator<<.
-    auto ret = HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{
+    auto ret = HexdumpParameterForward<decltype(cheap_dummy), ContainerT>{
         cheap_dummy,
         cheap_dummy,
         std::move(prompt),
