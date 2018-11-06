@@ -55,15 +55,15 @@ debian_files = [
 ]
 
 foreach f : debian_files
-    configure_file(input : f, output : f,
+    configure_file(input : f + '.in', output : f,
                    configuration : deb_conf)
 endforeach
 
 # The install files need to be renamed, if the package name is not standard,
 # so we handle them individually
-configure_file(input : deb_name_default + '.install',
+configure_file(input : deb_name_default + '.install.in',
                output : deb_name + '.install',
                configuration : deb_conf)
-configure_file(input : deb_dev_name_default + '.install',
+configure_file(input : deb_dev_name_default + '.install.in',
                output : deb_dev_name + '.install',
                configuration : deb_conf)
