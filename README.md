@@ -62,8 +62,12 @@ In addidion to meson's standard switches there are:
     tests          true           [true, false]    Generate tests
     deb-dev-name   @0@-dev        string           Debian package name for development package
     deb-name       @0@            string           Debian package name
+    deb-vers-ext   false          [true, false]    Debian package will use external versioning
+
 
 The ``deb-*name`` switch can be used to configure the debian package building process with non-standard packet names. The substring '@0@' will be replaced by the canonical packet name (i.e. 'libgul'). Although non-standard packages automatically conflict with standard packages care must be taken to keep the install target system consistent (i.e. install always only one variant of libgul).
+
+The ``deb-vers-ext`` switch forces the package names and versions to be based on the latest 'git external tag'. This is a tag in the git repository that does not start with 'v'. It is expected to give the version number to use in the form ``DESCRIPTION_major_minor_patch``, where major, minor, and patch are positive integers.
 
 Overview of maybe useful standard project options:
 

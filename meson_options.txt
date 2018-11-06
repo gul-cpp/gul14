@@ -8,3 +8,5 @@ option('deb-name', type : 'string', value : '@0@',
        description : 'Debian package name')
 option('deb-dev-name', type : 'string', value : '@0@-dev',
        description : 'Debian package name for development package')
+option('deb-vers-ext', type : 'boolean', value : false,
+       description : 'Debian package will use external versioning')

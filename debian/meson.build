@@ -9,7 +9,18 @@ deb_dev_name_default = meson.project_name() + '-dev'
 # Thereby @0@ is substituted with the official package name
 deb_name = get_option('deb-name').format(meson.project_name())
 deb_dev_name = get_option('deb-dev-name').format(meson.project_name())
-message('Debian package names: ' + deb_name + ', ' + deb_dev_name)
+
+# If we use an obscure package name, the builder might want an
+# obscure version number also
+# Expected tag is in the form 'TEXT_M_m_p'
+if get_option('deb-vers-ext')
+    message('Debian package versioning: external tag')
+    git_external_parts = git_external.split('_')
+    git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
+    git_external_suf = '-' + git_external_parts[1] + '-' + git_external_parts[2] + '-' + git_external_parts[3]
+else
+    git_external_suf = ''
+endif
 
 deb_conf = configuration_data()
 deb_conf.set('PREFIX', get_option('prefix'))
@@ -17,21 +28,23 @@ deb_conf.set('LIBDIR', get_option('libdir'))
 deb_conf.set('INCLUDEDIR', get_option('includedir'))
 deb_conf.set('NAME', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
-deb_conf.set('LIBGUL_API_VERSION', libgul_api_version)
+deb_conf.set('CONFLICTS', '')
+deb_conf.set('LIBGUL_API_VERSION', get_variable('git_external_num', libgul_api_version))
 
 # Mark a conflict, if we generate a non standard debian package
 # This is not a perfect, but at least some protection against
 # having both installed.
 if deb_name != deb_name_default
+    deb_name = deb_name + git_external_suf
+    deb_conf.set('NAME', deb_name)
     deb_conf.set('CONFLICTS', deb_name_default)
-else
-    deb_conf.set('CONFLICTS', '')
 endif
 if deb_dev_name != deb_dev_name_default
+    deb_conf.set('NAME-DEV', deb_dev_name)
     deb_conf.set('CONFLICTS-DEV', deb_dev_name_default)
-else
-    deb_conf.set('CONFLICTS-DEV', '')
 endif
+
+message('Debian package names: ' + deb_name + ', ' + deb_dev_name)
 
 debian_files = [
   'changelog',
