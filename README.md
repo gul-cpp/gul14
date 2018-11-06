@@ -47,7 +47,7 @@ Depending on the installed coverage tool the targets ``coverage-text`` and ``cov
 
 1. You can list all possible build configuration switches with ``meson configure`` in an existing build directory [1]. This command can also be used to change build configurations after the directory has been created. For example to decrease the warning level after the build directory has already been created: ``meson configure -D warning_level=1`` [1].
 2. The configuration to be changed can immediately follow the ``-D`` for example ``-Dwarning_level=1``.
-3. It's not nesseccary to call ``ninja`` before you call ``makeDdeb``. But of course you usually want to do a ``ninja test`` before you package.
+3. It's not necessary to call ``ninja`` before you call ``makeDdeb``. But of course you usually want to do a ``ninja test`` before you package.
 4. ``makeDdeb`` has to be called in the build directory of choice (that has been usually created with buildtype = release). Note that a proper debian package needs the prefix to be set to /usr (see examples above)
 
 [1] Use ``mesonconf`` if your meson is too old.
@@ -56,10 +56,14 @@ Depending on the installed coverage tool the targets ``coverage-text`` and ``cov
 
 In addidion to meson's standard switches there are:
 
-    Option Default Value Possible Values Description
-    ------ ------------- --------------- -----------
-    docs   true          [true, false]   generate documentation via doxygen
-    tests  true          [true, false]   generate tests
+    Option         Default Value  Possible Values  Description
+    ------         -------------  ---------------  -----------
+    docs           true           [true, false]    Generate documentation via doxygen
+    tests          true           [true, false]    Generate tests
+    deb-dev-name   @0@-dev        string           Debian package name for development package
+    deb-name       @0@            string           Debian package name
+
+The ``deb-*name`` switch can be used to configure the debian package building process with non-standard packet names. The substring '@0@' will be replaced by the canonical packet name (i.e. 'libgul'). Although non-standard packages automatically conflict with standard packages care must be taken to keep the install target system consistent (i.e. install always only one variant of libgul).
 
 Overview of maybe useful standard project options:
 

@@ -6,18 +6,20 @@ Standards-Version: 3.9.7
 Section: libs
 Homepage: https://stash.desy.de/projects/GUL/repos/libgul
 
-Package: libgul-dev
+Package: @NAME-DEV@
 Section: libdevel
 Architecture: any
-Depends: libgul (= ${binary:Version}), ${misc:Depends}
+Depends: @NAME@ (= ${binary:Version}), ${misc:Depends}
+Conflicts: @CONFLICTS-DEV@
 Description: general utility library
  The general utility library contains often-used utility
  functions and types that form the foundation for other
  libraries and programs.
 
-Package: libgul
+Package: @NAME@
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: @CONFLICTS@
 Description: general utility library
  The general utility library contains often-used utility
  functions and types that form the foundation for other

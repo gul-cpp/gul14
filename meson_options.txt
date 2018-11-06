@@ -1,6 +1,10 @@
 # Meson options definitions
 
 option('tests', type : 'boolean', value : true,
-       description : 'generate tests')
+       description : 'Generate tests')
 option('docs', type : 'boolean', value : true,
-       description : 'generate documentation via Doxygen')
+       description : 'Generate documentation via Doxygen')
+option('deb-name', type : 'string', value : '@0@',
+       description : 'Debian package name')
+option('deb-dev-name', type : 'string', value : '@0@-dev',
+       description : 'Debian package name for development package')
