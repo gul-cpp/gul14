@@ -24,6 +24,7 @@ subdir('data')
 subdir('tests')
 
 # Add debian/* files
+message('Install prefix: ' + get_option('prefix'))
 if deb_install
     message('Install for debian packaging: @0@'.format(deb_install))
     subdir('debian')
