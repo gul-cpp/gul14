@@ -2,7 +2,6 @@
 
 The general utility library contains often-used utility functions and types that form the foundation for other libraries and programs. The main fields covered by the library are:
 
-
   * String utilities
   * Concurrency Utilities
   * Time Utilities
@@ -15,7 +14,7 @@ Clone this repository:
         git clone ssh://git@stash.desy.de:7999/gul/libgul.git
         cd libgul
 
-Use meson to configure the build you want to have. Build directory names can be what you want. If you use directories starting with 'build' they will be ignored by git. Examples:
+Use meson to configure the build you want to have. Build directory name can be what you want. If you use directories starting with 'build' they will be ignored by git. Examples:
 
         meson build
         meson -D tests=false build_without_tests
@@ -48,8 +47,8 @@ Depending on the installed coverage tool the targets ``coverage-text`` and ``cov
 
 1. You can list all possible build configuration switches with ``meson configure`` in an existing build directory [1]. This command can also be used to change build configurations after the directory has been created. For example to decrease the warning level after the build directory has already been created: ``meson configure -D warning_level=1`` [1].
 2. The configuration to be changed can immediately follow the ``-D`` for example ``-Dwarning_level=1``.
-3. You must call ``ninja`` in the build directory before you call ``makeDdeb`` once. The first call sets up the build directory for makeDdeb to run. Afterwards you can always trigger rebuilds by just calling makeDdeb. (The only exception is changes in debian/, run ninja always after you changed a file in debian/.)
-4. ``makeDdeb`` has to be called in the build directory of choice, usually with buildtype = release. Note that debian packaging needs the prefix to be set to /usr (see examples above)
+3. It's not nesseccary to call ``ninja`` before you call ``makeDdeb``. But of course you usually want to do a ``ninja test`` before you package.
+4. ``makeDdeb`` has to be called in the build directory of choice (that has been usually created with buildtype = release). Note that a proper debian package needs the prefix to be set to /usr (see examples above)
 
 [1] Use ``mesonconf`` if your meson is too old.
 

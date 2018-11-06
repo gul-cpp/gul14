@@ -47,7 +47,7 @@ git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
                configuration : git_conf)
 
-# There seems to be a bug in ancient meson versions that prevent
+# There seems to be a bug in meson versions prior 0.46.0 that prevent
 # correct assignment and evaluation of cpp_args, so we do it here by hand :-(
 add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
                  '-Wshadow' ]
