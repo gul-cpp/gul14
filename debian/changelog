@@ -1,4 +1,4 @@
-libgul (0.1-1) unstable; urgency=medium
+@NAME@ (@LIBGUL_API_VERSION@) unstable; urgency=medium
 
   * Initial release
   * Following line needed for lintian:

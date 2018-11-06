@@ -17,6 +17,7 @@ deb_conf.set('LIBDIR', get_option('libdir'))
 deb_conf.set('INCLUDEDIR', get_option('includedir'))
 deb_conf.set('NAME', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
+deb_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 
 # Mark a conflict, if we generate a non standard debian package
 # This is not a perfect, but at least some protection against

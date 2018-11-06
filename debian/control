@@ -1,4 +1,4 @@
-Source: libgul
+Source: @NAME@
 Priority: optional
 Maintainer: Fini Jastrow <ulf.fini.jastrow@desy.de>
 Build-Depends: debhelper (>=9), meson (>=0.37), ninja-build (>=1.5.1)
