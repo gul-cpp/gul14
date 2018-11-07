@@ -18,8 +18,22 @@ if get_option('deb-vers-ext')
     git_external_parts = git_external.split('_')
     git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
     git_external_suf = '-' + git_external_parts[1] + '-' + git_external_parts[2] + '-' + git_external_parts[3]
+    if not changelogger.found()
+        error('Debian changelog generator not found')
+    endif
+
+    # All the following can be replaced with configure_file(capture) with meson >= 0.41
+    # Now we capture by hand and stuff it into an almost empty file
+    changelog_in_c = run_command(changelogger)
+    changelog_conf = configuration_data()
+    changelog_conf.set('ALL', changelog_in_c.stdout())
+    changelog_in = configure_file(
+        input : 'changelog.gen',
+        output :  'changelog.gen',
+        configuration : changelog_conf)
 else
     git_external_suf = ''
+    changelog_in = 'changelog.in'
 endif
 
 deb_conf = configuration_data()
@@ -27,6 +41,7 @@ deb_conf.set('PREFIX', get_option('prefix'))
 deb_conf.set('LIBDIR', get_option('libdir'))
 deb_conf.set('INCLUDEDIR', get_option('includedir'))
 deb_conf.set('NAME', deb_name)
+deb_conf.set('NAME-BASE', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
 deb_conf.set('CONFLICTS', '')
 deb_conf.set('LIBGUL_API_VERSION', get_variable('git_external_num', libgul_api_version))
@@ -47,7 +62,6 @@ endif
 message('Debian package names: ' + deb_name + ', ' + deb_dev_name)
 
 debian_files = [
-  'changelog',
   'control',
   'compat',
   'copyright',
@@ -58,6 +72,9 @@ foreach f : debian_files
     configure_file(input : f + '.in', output : f,
                    configuration : deb_conf)
 endforeach
+
+configure_file(input : changelog_in, output : 'changelog',
+               configuration : deb_conf)
 
 # The install files need to be renamed, if the package name is not standard,
 # so we handle them individually

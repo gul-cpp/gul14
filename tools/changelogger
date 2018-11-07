@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# Autogenerate the debian/changelog from 'git external tags'
+# The output will be further configured by meson
+#
+# 'git external tags' have the form 'name_M_m_p' where M, m and p are
+# positive integers with the semantic version number. name is a non-
+# numeric string that is ignored here
+# Note that the matching is rather sloppy, this only works when no
+# strange tags are created.
+# 'Regular' API version tags start with 'v' and are ignored.
+
+# Collect all relevant information
+# HEAD, TAGS..., ROOT-commit
+allcommits=`git log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
+head=`echo "${allcommits}" | head -n 1`
+root=`echo "${allcommits}" | tail -n 1`
+tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" 'refs/tags/[^v]*'`
+
+#prepare for first loop iteration
+entry_begin=${head}
+eval "${entry_begin}"
+header=`echo "@NAME@ (@LIBGUL_API_VERSION@) stable; urgency=low"`
+
+echo "${tags}\n${root}" | \
+while read entry_end; do
+	footer=`echo " -- ${aut} ${email}  ${dat}"`
+	head_ref=${ref}
+	eval "${entry_end}"
+	echo "${header}"
+	eval "git log --format='  * %s %d' ${ref}..${head_ref}"
+	echo "${footer}\n"
+	# prepare for next loop iteration
+	# (the header of the first iteration is different; it takes direct meson variables)
+	version=`echo ${ref} | sed 's/.*\/[^0-9]*//;s/[^0-9]/./g'`
+	vername=`echo ${ref} | sed 's/.*\/[^0-9]*//;s/[^0-9]/-/g'`
+	header=`echo "@NAME-BASE@-${vername} (${version}) stable; urgency=low"`
+	head=${entry_end}
+done
