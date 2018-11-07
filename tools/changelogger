@@ -17,10 +17,21 @@ head=`echo "${allcommits}" | head -n 1`
 root=`echo "${allcommits}" | tail -n 1`
 tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" 'refs/tags/[^v]*'`
 
-#prepare for first loop iteration
+# find out if HEAD is a tagged commit
+top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' 'refs/tags/[^v]*'`
+patches=`git rev-list ${top_tag}..HEAD --count`
+if [ ${patches} -lt 1 ]; then
+	patch=''
+	entry_begin=`echo ${tags} | head -n 1`
+	tags=`echo ${tags} | tail -n +1`
+else
+	patch="-${patches}"
+fi
+
+# prepare for first loop iteration
 entry_begin=${head}
 eval "${entry_begin}"
-header=`echo "@NAME@ (@LIBGUL_API_VERSION@) stable; urgency=low"`
+header=`echo "@NAME@ (@LIBGUL_API_VERSION@${patch}) stable; urgency=low"`
 
 echo "${tags}\n${root}" | \
 while read entry_end; do
