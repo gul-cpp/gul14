@@ -187,7 +187,7 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time]
     {
         Trigger interrupt;
         std::chrono::steady_clock::time_point t0;
-        
+
         auto future = std::async(std::launch::async,
                 [&t0, &interrupt]
                 {
