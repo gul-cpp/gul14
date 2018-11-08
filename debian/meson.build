@@ -44,6 +44,7 @@ deb_conf.set('NAME', deb_name)
 deb_conf.set('NAME-BASE', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
 deb_conf.set('CONFLICTS', '')
+deb_conf.set('CONFLICTS-DEV', '')
 deb_conf.set('LIBGUL_API_VERSION', get_variable('git_external_num', libgul_api_version))
 
 # Mark a conflict, if we generate a non standard debian package
