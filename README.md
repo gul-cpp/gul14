@@ -29,6 +29,10 @@ Afterwards enter you build directory and fire the build process:
         ninja
         ninja test
         ninja data/docs
+
+And then you might want to build a debian package:
+
+        debuild
         makeDdeb -D
 
 ## Testing
@@ -45,16 +49,17 @@ Depending on the installed coverage tool the targets ``coverage-text`` and ``cov
 
 ## Notes
 
-1. You can list all possible build configuration switches with ``meson configure`` in an existing build directory [1]. This command can also be used to change build configurations after the directory has been created. For example to decrease the warning level after the build directory has already been created: ``meson configure -D warning_level=1`` [1].
-2. The configuration to be changed can immediately follow the ``-D`` for example ``-Dwarning_level=1``.
-3. It's not necessary to call ``ninja`` before you call ``makeDdeb``. But of course you usually want to do a ``ninja test`` before you package.
+1. You can list all possible build configuration switches with ``meson configure`` in an existing build directory [1]. This command can also be used to change build configurations after the directory has been created. For example to decrease the warning level after the build directory has already been created: ``meson configure -D warning_level=1`` [1]
+2. The configuration to be changed can immediately follow the ``-D`` for example ``-Dwarning_level=1``
+3. ``debuild`` is the normal debian packager, ``makeDdeb`` is a custom tool used here
+3. It's not necessary to call ``ninja`` before you call ``makeDdeb``. But of course you usually want to do a ``ninja test`` before you package
 4. ``makeDdeb`` has to be called in the build directory of choice (that has been usually created with buildtype = release). Note that a proper debian package needs the prefix to be set to /usr (see examples above)
 
 [1] Use ``mesonconf`` if your meson is too old.
 
 ## Build configuration switches
 
-In addidion to meson's standard switches there are:
+In addition to meson's standard switches there are:
 
     Option         Default Value  Possible Values  Description
     ------         -------------  ---------------  -----------
@@ -78,3 +83,10 @@ Overview of maybe useful standard project options:
     includedir     include               Header file directory
     datadir        share                 Data file (Doxygen website) directory
 
+## About git tags
+
+In the git repository two tag families are used:
+
+One tag family donates the API version of the package that is in effect starting with the tagged commit. This is the so-called GIT\_VERSION or LIBGUL\_API\_VERSION. The version uses semantic versioning, and the format is defined as ``v1.2.3`` where 1 is the major, 2 the minor, and 3 the patch version-part. It always starts with a lower case ``v``. This tag is cross checked with the project version number given in the main meson.build file.
+
+If a tag does not start with a lower case v it is considered a git-external-tag. This tag is used to tag specific points in time when a packet has been created from the project. Its form is ``name_1_2_3``, and again 1, 2, and 3 donate version number parts, that might or might not be semantic. These tags can be used to create packet names in the form libgul-1.2.3 (with ``--D deb-vers-ext=true`` set in meson). Note that the ``name`` part is ignored and can be arbitrary, as long as it does not start with lower case 'v'.
