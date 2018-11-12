@@ -42,7 +42,7 @@ while read entry_end; do
 	head_ref=${ref}
 	eval "${entry_end}"
 	printf "${header}\n"
-	eval "git log --format='  * %s %d' ${ref}..${head_ref}"
+	eval "git log --format='  * %s %d' ${ref}..${head_ref} | sed 's/ *$//g'"
 	printf "${footer}\n\n"
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
