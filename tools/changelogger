@@ -10,6 +10,12 @@
 # strange tags are created.
 # 'Regular' API version tags start with 'v' and are ignored.
 
+if [ $# -ne 1 ]; then
+	echo "Usage: `basename "$0"` output_file"
+	exit 1
+fi
+printf "" > $1
+
 # Collect all relevant information
 # HEAD, TAGS..., ROOT-commit
 allcommits=`git log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
@@ -41,9 +47,9 @@ while read entry_end; do
 	footer=" -- ${aut} ${email}  ${dat}"
 	head_ref=${ref}
 	eval "${entry_end}"
-	printf "${header}\n"
-	eval "git log --format='  * %s %d' ${ref}..${head_ref} | sed 's/ *$//g'"
-	printf "${footer}\n\n"
+	printf "${header}\n" >> $1
+	eval "git log --format='  * %s %d' ${ref}..${head_ref} | sed 's/ *$//g'" >> $1
+	printf "${footer}\n\n" >> $1
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
 	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g'`

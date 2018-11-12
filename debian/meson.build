@@ -22,15 +22,9 @@ if get_option('deb-vers-ext')
         error('Debian changelog generator not found')
     endif
 
-    # All the following can be replaced with configure_file(capture) with meson >= 0.41
-    # Now we capture by hand and stuff it into an almost empty file
-    changelog_in_c = run_command(changelogger)
-    changelog_conf = configuration_data()
-    changelog_conf.set('ALL', changelog_in_c.stdout())
-    changelog_in = configure_file(
-        input : 'changelog.gen',
-        output :  'changelog.gen',
-        configuration : changelog_conf)
+    changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
+    run_command(changelogger, changelog_gen)
+    changelog_in = changelog_gen
 else
     git_external_suf = ''
     changelog_in = 'changelog.in'
