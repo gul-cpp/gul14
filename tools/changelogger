@@ -34,20 +34,20 @@ eval "${entry_begin}"
 # The top entry will get the version number always from meson to make sure we do
 # not go wrong, ever. If the following entries have wrong versions this is just
 # a cosmetic glitch
-header=`echo "@NAME@ (@LIBGUL_API_VERSION@${patch}) stable; urgency=low"`
+header="@NAME@ (@LIBGUL_API_VERSION@${patch}) stable; urgency=low"
 
-echo "${tags}\n${root}" | \
+printf "${tags}\n${root}\n" | \
 while read entry_end; do
-	footer=`echo " -- ${aut} ${email}  ${dat}"`
+	footer=" -- ${aut} ${email}  ${dat}"
 	head_ref=${ref}
 	eval "${entry_end}"
-	echo "${header}"
+	printf "${header}\n"
 	eval "git log --format='  * %s %d' ${ref}..${head_ref}"
-	echo "${footer}\n"
+	printf "${footer}\n\n"
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
-	version=`echo ${ref} | sed 's/.*\/[^0-9]*//;s/[^0-9]/./g'`
-	vername=`echo ${ref} | sed 's/.*\/[^0-9]*//;s/[^0-9]/-/g'`
-	header=`echo "@NAME-BASE@-${vername} (${version}) stable; urgency=low"`
+	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g'`
+	vername=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
+	header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
 	head=${entry_end}
 done
