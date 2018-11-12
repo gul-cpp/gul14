@@ -23,7 +23,7 @@ if get_option('deb-vers-ext')
     endif
 
     changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
-    run_command(changelogger, changelog_gen)
+    run_command(changelogger, '[^v]*', changelog_gen)
     changelog_in = changelog_gen
 else
     git_external_suf = ''

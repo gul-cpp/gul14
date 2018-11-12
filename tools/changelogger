@@ -1,30 +1,36 @@
 #!/bin/sh
 #
-# Autogenerate the debian/changelog from 'git external tags'
+# Autogenerate the debian/changelog from git tags
 # The output will be further configured by meson
 #
-# 'git external tags' have the form 'name_M_m_p' where M, m and p are
+# A git version tag have the form 'name_M_m_p' where M, m and p are
 # positive integers with the semantic version number. name is a non-
-# numeric string that is ignored here
+# numeric string that is ignored and must be specified with parameter tag_prefix.
+#
+# Parameter tag_prefix is used to find the tags that denote the version this script
+# shall use. It is evaluated by git for-each-ref and usually needs to end in a wildcard
+# character. This are not regexes.
+#
 # Note that the matching is rather sloppy, this only works when no
 # strange tags are created.
-# 'Regular' API version tags start with 'v' and are ignored.
 
-if [ $# -ne 1 ]; then
-	echo "Usage: `basename "$0"` output_file"
+if [ $# -ne 2 ]; then
+	echo "Usage: `basename "$0"` tag_prefix output_file"
 	exit 1
 fi
-printf "" > $1
+tag_pre=$1
+outfile=$2
+printf "" > ${outfile}
 
 # Collect all relevant information
 # HEAD, TAGS..., ROOT-commit
 allcommits=`git log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
 head=`echo "${allcommits}" | head -n 1`
 root=`echo "${allcommits}" | tail -n 1`
-tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" 'refs/tags/[^v]*'`
+tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" "refs/tags/${tag_pre}"`
 
 # find out if HEAD is a tagged commit
-top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' 'refs/tags/[^v]*'`
+top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}"`
 patches=`git rev-list ${top_tag}..HEAD --count`
 if [ ${patches} -lt 1 ]; then
 	patch=''
@@ -43,17 +49,16 @@ eval "${entry_begin}"
 header="@NAME@ (@LIBGUL_API_VERSION@${patch}) stable; urgency=low"
 
 printf "${tags}\n${root}\n" | \
-while read entry_end; do
+while read entry_next; do
 	footer=" -- ${aut} ${email}  ${dat}"
 	head_ref=${ref}
-	eval "${entry_end}"
-	printf "${header}\n" >> $1
-	eval "git log --format='  * %s %d' ${ref}..${head_ref} | sed 's/ *$//g'" >> $1
-	printf "${footer}\n\n" >> $1
+	eval "${entry_next}"
+	printf "${header}\n" >> ${outfile}
+	eval "git log --format='  * %s %d' ${ref}..${head_ref} | sed 's/ *$//g'" >> ${outfile}
+	printf "${footer}\n\n" >> ${outfile}
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
 	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g'`
 	vername=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
 	header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
-	head=${entry_end}
 done
