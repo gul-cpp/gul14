@@ -5,7 +5,7 @@ include ./LIBNO
 include $(DOOCSROOT)/$(DOOCSARCH)/CONFIG
 
 OBJDIR = $(DOOCSROOT)/$(DOOCSARCH)/obj/library/common/$(PKGDIR)
-SRCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/source
+SRCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/src
 INCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/include
 DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 

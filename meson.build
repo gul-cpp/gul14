@@ -16,7 +16,7 @@ libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 deb_install = get_option('prefix') == '/usr'
 
 subdir('include')
-subdir('source')
+subdir('src')
 
 subdir('resources')
 
