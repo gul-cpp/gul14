@@ -18,6 +18,7 @@ deb_install = get_option('prefix') == '/usr'
 subdir('include')
 subdir('src')
 
+subdir('tools')
 subdir('resources')
 
 subdir('tests')
