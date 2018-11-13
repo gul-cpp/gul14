@@ -19,7 +19,7 @@ subdir('include')
 subdir('src')
 
 subdir('tools')
-subdir('resources')
+subdir('data')
 
 subdir('tests')
 

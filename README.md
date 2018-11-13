@@ -30,7 +30,7 @@ Afterwards enter you build directory and fire the build process:
         cd build_rel_unity
         ninja
         ninja test
-        ninja resources/docs
+        ninja data/docs
         makeDdeb -D
 
 ## Testing

@@ -171,7 +171,7 @@ doc:	doxygen
 	@echo Done.
 
 doxygen:
-	-( cat resources/Doxyfile | sed "s/PROJECT_NUMBER         =.*/PROJECT_NUMBER         = `cut -f2 -d= LIBNO`/" ) | doxygen -
+	-( cat data/Doxyfile.in | sed "s/PROJECT_NUMBER         =.*/PROJECT_NUMBER         = `cut -f2 -d= LIBNO`/" ) | doxygen -
 	-chmod -R a+r $(DOCDIR) 2>/dev/null
 	-chmod -R ug+w $(DOCDIR) 2>/dev/null
 	-find $(DOCDIR) -type d -exec chmod a+x {} ';' 2>/dev/null
