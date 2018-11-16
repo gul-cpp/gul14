@@ -34,6 +34,7 @@
  *  - \ref string_utilities
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
+ *  - \ref debugging_utilities
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
  *
@@ -144,7 +145,7 @@
  *
  * join(): Concatenate a vector of strings, adding some glue in between.
  *
- * split(): Separate a string at all occurences of a delimiter string or regular
+ * split(): Separate a string at all occurrences of a delimiter string or regular
  *          expression.
  *
  * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector
@@ -222,9 +223,23 @@
  *     from libc++ for C++17.
  */
 
+/**
+ * \page debugging_utilities Debugging Utilities
+ * \brief.
+ *
+ * The General Utility Library provides some utilities that are mainly, but not
+ * exclusively, helpful for debugging.
+ *
+ * <h3>Functions</h3>
+ *
+ * hexdump() & \ref gul::hexdump_stream "hexdump_stream()":
+ *     Generate an ASCII hex dump of a container, a range, or a piece of memory.
+ */
+
 #pragma once
 
 #include "gul/cat.h"
+#include "gul/hexdump.h"
 #include "gul/join_split.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"

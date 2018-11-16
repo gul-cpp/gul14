@@ -5,7 +5,7 @@ include ./LIBNO
 include $(DOOCSROOT)/$(DOOCSARCH)/CONFIG
 
 OBJDIR = $(DOOCSROOT)/$(DOOCSARCH)/obj/library/common/$(PKGDIR)
-SRCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/source
+SRCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/src
 INCDIR = $(DOOCSROOT)/library/common/$(PKGDIR)/include
 DOCDIR = /web/tesla/doocs/doocs_libs/$(PKGDIR)
 
@@ -22,6 +22,7 @@ LIBRARYOBJ = \
 LIBRARYHFILES = \
 	gul.h \
 	gul/cat.h \
+	gul/hexdump.h \
 	gul/join_split.h \
 	gul/string_util.h \
 	gul/string_view.h \
@@ -170,7 +171,7 @@ doc:	doxygen
 	@echo Done.
 
 doxygen:
-	-( cat resources/Doxyfile | sed "s/PROJECT_NUMBER         =.*/PROJECT_NUMBER         = `cut -f2 -d= LIBNO`/" ) | doxygen -
+	-( cat data/Doxyfile.in | sed "s/PROJECT_NUMBER         =.*/PROJECT_NUMBER         = `cut -f2 -d= LIBNO`/" ) | doxygen -
 	-chmod -R a+r $(DOCDIR) 2>/dev/null
 	-chmod -R ug+w $(DOCDIR) 2>/dev/null
 	-find $(DOCDIR) -type d -exec chmod a+x {} ';' 2>/dev/null
@@ -183,6 +184,7 @@ dirs:
 TEST_OBJ = $(OBJDIR)/tests/test_main.o \
            $(OBJDIR)/tests/test_backports.o \
            $(OBJDIR)/tests/test_cat.o \
+           $(OBJDIR)/tests/test_hexdump.o \
            $(OBJDIR)/tests/test_string_escape.o \
            $(OBJDIR)/tests/test_string_replace.o \
            $(OBJDIR)/tests/test_string_split.o \
@@ -206,6 +208,11 @@ $(OBJDIR)/tests/test_cat.o: $(SRCDIR)/../tests/test_cat.cc
 	@echo $(INTRO) $@ $(OUTRO)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_cat.o \
 	    $(SRCDIR)/../tests/test_cat.cc
+
+$(OBJDIR)/tests/test_hexdump.o: $(SRCDIR)/../tests/test_hexdump.cc
+	@echo $(INTRO) $@ $(OUTRO)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o ${OBJDIR}/tests/test_hexdump.o \
+	    $(SRCDIR)/../tests/test_hexdump.cc
 
 $(OBJDIR)/tests/test_string_escape.o: $(SRCDIR)/../tests/test_string_escape.cc
 	@echo -e $(INTRO) $@ $(OUTRO)
