@@ -1,0 +1,17 @@
+---
+BasedOnStyle: WebKit
+BreakBeforeBraces: Stroustrup
+BreakConstructorInitializersBeforeComma: 'true'
+ColumnLimit: '90'
+FixNamespaceComments: 'true'
+IndentWidth: '4'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+Language: Cpp
+MaxEmptyLinesToKeep: '2'
+NamespaceIndentation: Inner
+PointerAlignment: Left
+ReflowComments: 'false'
+Standard: Cpp11
+UseTab: Never
+
+...
