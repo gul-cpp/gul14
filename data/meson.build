@@ -5,8 +5,7 @@
 # OUTPUT_DIRECTORY can't be rewritten without Makefile modifications,
 # so this is done by the doxywrap
 
-if get_option('docs') and find_program('doxygen', required : false).found()
-    doxy_run = find_program('doxywrap')
+if get_option('docs') and find_program('doxygen', required : false).found() and doxy_run.found()
     rsync = find_program('rsync', required : false)
 
     docs_data = configuration_data()
