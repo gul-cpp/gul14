@@ -1,4 +1,3 @@
-DOOCSROOT = ../../..
 PKGDIR = gul
 
 # Generate an architecture descriptor like x86_64-linux-gnu
