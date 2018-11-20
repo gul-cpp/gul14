@@ -6,6 +6,7 @@ install_headers(
 
 install_headers(
     'gul/cat.h',
+    'gul/catch.h',
     'gul/hexdump.h',
     'gul/join_split.h',
     'gul/string_util.h',
