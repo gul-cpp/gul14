@@ -1,5 +1,3 @@
-PKGDIR = gul
-
 # Generate an architecture descriptor like x86_64-linux-gnu
 ARCH := $(shell uname -mo | sed -e 's/\([^ ]*\) \([^/]*\)\/\?\(.*\)/\L\1-\3-\2/')
 
@@ -101,4 +99,4 @@ $(LOCALINSTDIR)/build.ninja:
 	meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
               --buildtype=release ${LOCALINSTDIR}
 
-.PHONY: build-tests debug clean doc doocs-release install-doc libs localinstall mrproper release test
+.PHONY: build-tests debug clean doc doocs-release help install-doc libs localinstall mrproper release test
