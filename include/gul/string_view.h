@@ -358,6 +358,7 @@ private:
     std::size_t len_;
 };
 
+/// \cond HIDE_SYMBOLS
 
 //  Comparison operators
 //  Equality
@@ -598,6 +599,9 @@ operator<<(std::basic_ostream<charT, traits>& os,
     return os;
 }
 
+/// \endcond
+
+
 /**
  * A view to a contiguous sequence of chars. This is a backport of
  * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
@@ -630,6 +634,8 @@ using wstring_view = basic_string_view<wchar_t, std::char_traits<wchar_t>>;
 
 // Custom extensions (Lars Froehlich)
 
+/// \cond HIDE_SYMBOLS
+
 inline std::string &operator+=(std::string &a, string_view b)
 {
     a.append(b.begin(), b.end());
@@ -647,5 +653,8 @@ inline std::string operator+(string_view a, std::string b)
     b.insert(b.begin(), a.begin(), a.end());
     return b;
 }
+
+/// \endcond
+
 
 } // namespace gul

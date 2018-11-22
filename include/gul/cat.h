@@ -38,19 +38,19 @@ namespace gul {
 class ConvertingStringView
 {
 public:
-    ConvertingStringView(const std::string &str) : sv_(str) {}
-    ConvertingStringView(string_view sv) : sv_(sv) {}
-    ConvertingStringView(const char *str) : sv_(str) {}
+    ConvertingStringView(const std::string &str) : sv_(str) {} ///< Construct a ConvertingStringView from a std::string.
+    ConvertingStringView(string_view sv) : sv_(sv) {} ///< Construct a ConvertingStringView from a string_view.
+    ConvertingStringView(const char *str) : sv_(str) {} ///< Construct a ConvertingStringView from a const char *.
 
-    ConvertingStringView(char c) : str_(1, c), sv_(str_) {}
-    ConvertingStringView(int a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(unsigned int a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(long a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(unsigned long a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(long long a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(unsigned long long a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(float a) : str_(std::to_string(a)), sv_(str_) {}
-    ConvertingStringView(double a) : str_(std::to_string(a)), sv_(str_) {}
+    ConvertingStringView(char c) : str_(1, c), sv_(str_) {} ///< Construct a ConvertingStringView from a character.
+    ConvertingStringView(int a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from an integer.
+    ConvertingStringView(unsigned int a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from an unsigned integer.
+    ConvertingStringView(long a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from a long integer.
+    ConvertingStringView(unsigned long a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from an unsigned long integer.
+    ConvertingStringView(long long a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from a long long integer.
+    ConvertingStringView(unsigned long long a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from an unsigned long long integer.
+    ConvertingStringView(float a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from a float.
+    ConvertingStringView(double a) : str_(std::to_string(a)), sv_(str_) {} ///< Construct a ConvertingStringView from a double.
 
     /**
      * Return a pointer to the internal character buffer. The contained string is usually
