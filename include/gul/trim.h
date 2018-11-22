@@ -33,6 +33,9 @@ namespace gul {
  * Trim leading and trailing whitespace (or a custom set of characters) from a string,
  * returning a new std::string.
  * Which characters are removed can be customized via the ws_chars parameter.
+ *
+ * \snippet trim.cc Using trim() with default and custom whitespace
+ *
  * \param str   The string that should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -49,6 +52,9 @@ std::string trim(string_view str, string_view ws_chars = default_whitespace_char
  * Trim leading and trailing whitespace (or a custom set of characters) from a string,
  * returning a view into the original string.
  * Which characters are removed can be customized via the ws_chars parameter.
+ *
+ * \snippet trim.cc Using trim_sv() on a mutable string
+ * 
  * \param str   The string that should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -65,6 +71,9 @@ string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_c
  * Trim leading whitespace (or a custom set of characters) from a string, returning a new
  * std::string.
  * Which characters are removed can be customized via the ws_chars parameter.
+ *
+ * \snippet trim.cc Using trim_left() and trim_right() with default and custom whitespace
+ * 
  * \param str   The string from which leading characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -81,6 +90,9 @@ std::string trim_left(string_view str, string_view ws_chars = default_whitespace
  * Trim leading whitespace (or a custom set of characters) from a string, returning a view
  * into the original string.
  * Which characters are removed can be customized via the ws_chars parameter.
+ *
+ * \snippet trim.cc Using trim_left_sv() and trim_right_sv() with default and custom whitespace
+ *
  * \param str   The string from which leading characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -97,6 +109,9 @@ string_view trim_left_sv(string_view str, string_view ws_chars = default_whitesp
  * Trim trailing whitespace (or a custom set of characters) from a string, returning a new
  * std::string.
  * Which characters are removed can be customized via the ws_chars parameter.
+ *
+ * \snippet trim.cc Using trim_left() and trim_right() with default and custom whitespace
+ *
  * \param str   The string from which trailing characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -113,6 +128,9 @@ std::string trim_right(string_view str, string_view ws_chars = default_whitespac
  * Trim trailing whitespace (or a custom set of characters) from a string, returning a
  * view into the original string.
  * Which characters are removed can be customized via the ws_chars parameter.
+ *
+ * \snippet trim.cc Using trim_left_sv() and trim_right_sv() with default and custom whitespace
+ *
  * \param str   The string from which trailing characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -130,3 +148,10 @@ string_view trim_right_sv(string_view str, string_view ws_chars = default_whites
 
 
 } // namespace gul
+
+
+/**
+ * \example trim.cc
+ * A simple example on how to use the trim() family of functions for stripping characters
+ * from one or both sides of a string.
+ */
