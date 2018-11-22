@@ -50,11 +50,11 @@
  *
  * \section usage Usage
  *
- * GUL requires at least C++14. All utility functions and classes are enclosed in the
- * namespace \ref gul.
- *
  * To use the library, include the single header file \ref gul.h and link your code
  * against the library (-lgul).
+ *
+ * GUL requires at least C++14. All utility functions and classes are enclosed in the
+ * namespace \ref gul.
  *
  * \authors \ref contributors
  * \copyright \ref copyright_notice

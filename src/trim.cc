@@ -2,8 +2,8 @@
  * \file   trim.cc
  * \author \ref contributors
  * \date   Created on September 19, 2018
- * \brief  Definitions of trim(), trim_left(), trim_right(), trim_inplace(),
- *         trim_left_inplace(), and trim_right_inplace().
+ * \brief  Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(),
+ *         and trim_right_sv().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *

@@ -2,8 +2,8 @@
  * \file   trim.h
  * \author \ref contributors
  * \date   Created on September 19, 2018
- * \brief  Declarations of trim(), trim_left(), trim_right(), trim_inplace(),
- *         trim_left_inplace(), and trim_right_inplace().
+ * \brief  Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(),
+ *         and trim_right_sv().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -38,6 +38,10 @@ namespace gul {
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
  *                  are trimmed.
  * \returns a trimmed copy of the input string.
+ *
+ * \see trim_sv() returns a string_view instead of a copied string,<br>
+ *      trim_left() and trim_right() %trim only one side of the string,<br>
+ *      trim_left_sv() and trim_right_sv() %trim only one side and return a string_view.
  */
 std::string trim(string_view str, string_view ws_chars = default_whitespace_characters);
 
@@ -49,7 +53,11 @@ std::string trim(string_view str, string_view ws_chars = default_whitespace_char
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
  *                  are trimmed.
- * \returns a string_view that points into the input string.
+ * \returns a trimmed string_view that points into the input string.
+ *
+ * \see trim() returns a copied string instead of a string_view,<br>
+ *      trim_left_sv() and trim_right_sv() %trim only one side of the string,<br>
+ *      trim_left() and trim_right() %trim only one side and return a copied string.<br>
  */
 string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
@@ -62,6 +70,10 @@ string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_c
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
  *                  are trimmed.
  * \returns a trimmed copy of the input string.
+ *
+ * \see trim_left_sv() returns a string_view instead of a copied string,<br>
+ *      trim_right() and trim_right_sv() %trim the other side of the string,<br>
+ *      trim() and trim_sv() %trim both sides of the string.
  */
 std::string trim_left(string_view str, string_view ws_chars = default_whitespace_characters);
 
@@ -73,7 +85,11 @@ std::string trim_left(string_view str, string_view ws_chars = default_whitespace
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
  *                  are trimmed.
- * \returns a string_view that points into the input string.
+ * \returns a trimmed string_view that points into the input string.
+ *
+ * \see trim_left() returns a copied string instead of a string_view,<br>
+ *      trim_right() and trim_right_sv() %trim the other side of the string,<br>
+ *      trim() and trim_sv() %trim both sides of the string.
  */
 string_view trim_left_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
@@ -86,6 +102,10 @@ string_view trim_left_sv(string_view str, string_view ws_chars = default_whitesp
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
  *                  are trimmed.
  * \returns a trimmed copy of the input string.
+ *
+ * \see trim_right_sv() returns a string_view instead of a copied string,<br>
+ *      trim_left() and trim_left_sv() %trim the other side of the string,<br>
+ *      trim() and trim_sv() %trim both sides of the string.
  */
 std::string trim_right(string_view str, string_view ws_chars = default_whitespace_characters);
 
@@ -97,12 +117,16 @@ std::string trim_right(string_view str, string_view ws_chars = default_whitespac
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
  *                  are trimmed.
- * \returns a trimmed copy of the input string.
+ * \returns a trimmed string_view that points into the input string.
+ *
+ * \see trim_right() returns a copied string instead of a string_view,<br>
+ *      trim_left() and trim_left_sv() %trim the other side of the string,<br>
+ *      trim() and trim_sv() %trim both sides of the string.
  */
 string_view trim_right_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
 
-// TODO: trim_*_inplace to be added in a separate pull request
+// TODO: Add trim_*_inplace
 
 
 } // namespace gul
