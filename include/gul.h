@@ -151,6 +151,10 @@
  * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector
  *          of string or string_view tokens.
  *
+ * <h4>Finding & Comparing</h4>
+ *
+ * starts_with(), ends_with(): Check if one string starts or ends with another one.
+ *
  * <h4>Replacing & Trimming</h4>
  *
  * replace(): Replace all occurrences of a string in another string.
