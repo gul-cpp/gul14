@@ -1,6 +1,6 @@
 /**
  * \file   test_Trigger.cc
- * \author Lars Froehlich
+ * \author \ref contributors
  * \date   Created on September 21, 2018
  * \brief  Test suite for the Trigger class from the General Utility Library.
  *

@@ -1,6 +1,6 @@
 /**
  * \file   test_backports.cc
- * \author Lars Froehlich
+ * \author \ref contributors
  * \date   Created on August 30, 2018
  * \brief  Test suite for standard library backports in the General Utility Library.
  *

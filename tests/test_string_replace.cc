@@ -1,6 +1,6 @@
 /**
- * \file   test_string_substitute.cc
- * \author Soeren Grunewald, Lars Froehlich
+ * \file   test_string_replace.cc
+ * \author \ref contributors
  * \date   Created on August 31, 2018
  * \brief  Part of test suite for string utility functions in the General Utility Library.
  *

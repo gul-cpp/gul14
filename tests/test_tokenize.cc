@@ -1,6 +1,6 @@
 /**
  * \file   test_tokenize.cc
- * \author Lars Froehlich
+ * \author \ref contributors
  * \date   Created on September 3, 2018
  * \brief  Test suite for tokenize() and tokenize_sv() from the General Utility
  *         Library.

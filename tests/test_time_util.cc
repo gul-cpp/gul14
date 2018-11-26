@@ -1,6 +1,6 @@
 /**
  * \file   test_time_util.cc
- * \author Lars Froehlich
+ * \author \ref contributors
  * \date   Created on September 7, 2018
  * \brief  Test suite for tic(), toc(), and sleep() from the General Utility Library.
  *

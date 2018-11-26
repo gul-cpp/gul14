@@ -1,6 +1,6 @@
 /**
  * \file   test_main.cc
- * \author Lars Froehlich
+ * \author \ref contributors
  * \date   Created on August 28, 2018
  * \brief  Test suite for the General Utility Library.
  *
