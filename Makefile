@@ -18,6 +18,8 @@ LOCALSECTION := $(notdir $(abspath ../..))/$(notdir $(abspath ..))
 PREFIX ?= /export/doocs
 DOOCS_PATHS = --libdir 'lib' --includedir 'lib/include'
 
+JUNIT_XML_FILE ?= $(BUILDDIR)/test.xml
+
 # Colorful toys
 INTRO = "\033[1;34m------------"
 OUTRO = "------------\033[0m"
@@ -34,6 +36,7 @@ help:
 	@echo \'make test\' runs unit tests on the release version
 	@echo \'make BUILDTYPE=debug test\' runs unit tests on the debug version
 	@echo \'make test-junit\' runs unit tests and generates output in JUnit XML format under build/$(ARCH)/release/test.xml
+	@echo \'make JUNIT_XML_FILE=a.xml test-junit\' runs unit tests and generates output in JUnit XML format in the specified file
 	@echo
 	@echo \'make clean\' cleans up the build files of the release version
 	@echo \'make BUILDTYPE=debug clean\' cleans up the build files of the debug version
@@ -83,11 +86,11 @@ test: $(BUILDDIR)/build.ninja
 test-junit: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	mesontest -C $(BUILDDIR) --test-args '-r junit'
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' >$(BUILDDIR)/test.xml
-	@echo '<testsuites>' >>$(BUILDDIR)/test.xml
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' >$(JUNIT_XML_FILE)
+	@echo '<testsuites>' >>$(JUNIT_XML_FILE)
 	@perl -0 -p -e 's/.*?(<testsuite .+?>.*?<\/testsuite>).*?<\/testsuites>[^<]*/$$1/gs' \
-	    $(BUILDDIR)/meson-logs/testlog.txt >>$(BUILDDIR)/test.xml
-	@echo '</testsuites>' >>$(BUILDDIR)/test.xml
+	    $(BUILDDIR)/meson-logs/testlog.txt >>$(JUNIT_XML_FILE)
+	@echo '</testsuites>' >>$(JUNIT_XML_FILE)
 
 build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
