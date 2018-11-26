@@ -19,6 +19,7 @@ tests = [
     'test_string_split.cc',
     'test_string_escape.cc',
     'test_string_replace.cc',
+    'test_starts_with_ends_with.cc',
     'test_time_util.cc',
     'test_tokenize.cc',
     'test_Trigger.cc',
