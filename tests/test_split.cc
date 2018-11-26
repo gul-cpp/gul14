@@ -1,5 +1,5 @@
 /**
- * \file   test_string_split.cc
+ * \file   test_split.cc
  * \author \ref contributors
  * \date   Created on August 31, 2018
  * \brief  Part of test suite for string utility functions in the General Utility Library.

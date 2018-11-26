@@ -1,8 +1,8 @@
 /**
- * \file    string_util.cc
- * \brief   Definition of string utilities for the General Utility Library.
+ * \file    starts_with_ends_with.cc
+ * \brief   Implementation of starts_with(), ends_with().
  * \authors \ref contributors
- * \date    Created on 31 August 2018
+ * \date    Created on 26 November 2018
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -21,11 +21,31 @@
  */
 
 
-#include "gul/string_util.h"
+#include "gul/starts_with_ends_with.h"
 
 namespace gul {
 
-const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
+bool ends_with(string_view str1, string_view str2)
+{
+    const auto len1 = str1.length();
+    const auto len2 = str2.length();
+
+    if (len2 > len1)
+        return false;
+
+    if (str1.compare(len1 - len2, len2, str2) == 0)
+        return true;
+    else
+        return false;
+}
+
+bool starts_with(string_view str1, string_view str2)
+{
+    if (str1.compare(0, str2.length(), str2) == 0)
+        return true;
+    else
+        return false;
+}
 
 } // namespace gul
 

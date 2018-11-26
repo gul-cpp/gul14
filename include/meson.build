@@ -7,8 +7,11 @@ install_headers(
 install_headers(
     'gul/cat.h',
     'gul/catch.h',
+    'gul/escape.h',
     'gul/hexdump.h',
     'gul/join_split.h',
+    'gul/replace.h',
+    'gul/starts_with_ends_with.h',
     'gul/string_util.h',
     'gul/string_view.h',
     'gul/time_util.h',

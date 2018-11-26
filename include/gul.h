@@ -239,8 +239,11 @@
 #pragma once
 
 #include "gul/cat.h"
+#include "gul/escape.h"
 #include "gul/hexdump.h"
 #include "gul/join_split.h"
+#include "gul/replace.h"
+#include "gul/starts_with_ends_with.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
 #include "gul/time_util.h"
