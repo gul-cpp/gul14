@@ -51,6 +51,20 @@ char get_last_nibble_as_hex(unsigned int i)
 } // anonymous namespace
 
 
+bool ends_with(string_view str1, string_view str2)
+{
+    const auto len1 = str1.length();
+    const auto len2 = str2.length();
+
+    if (len2 > len1)
+        return false;
+
+    if (str1.compare(len1 - len2, len2, str2) == 0)
+        return true;
+    else
+        return false;
+}
+
 std::string escape(const std::string& in)
 {
     auto escaped = ""s;
@@ -179,6 +193,14 @@ std::string replace(string_view haystack, string_view needle, string_view hammer
     result.shrink_to_fit();
 
     return result;
+}
+
+bool starts_with(string_view str1, string_view str2)
+{
+    if (str1.compare(0, str2.length(), str2) == 0)
+        return true;
+    else
+        return false;
 }
 
 } // namespace gul

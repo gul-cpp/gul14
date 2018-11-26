@@ -46,6 +46,15 @@ namespace gul {
  */
 extern const string_view default_whitespace_characters;
 
+/**
+ * Determine whether a string ends with another string.
+ * The comparison is case sensitive.
+ *
+ * \param haystack  The full string to be tested.
+ * \param stack     The suffix to be looked for at the end of \c haystack.
+ * \returns true if \c haystack ends with \c stack, false otherwise.
+ */
+bool ends_with(string_view haystack, string_view stack);
 
 /**
  * Create a new string that looks like an ASCII-only C string literal of the input string.
@@ -118,6 +127,16 @@ std::string& replace_inplace(std::string& haystack, string_view needle, string_v
  * \param hammer  The replacement string.
  */
 std::string replace(string_view haystack, string_view needle, string_view hammer);
+
+/**
+ * Determine whether a string starts with another string.
+ * The comparison is case sensitive.
+ *
+ * \param haystack  The full string to be tested.
+ * \param hay       The prefix to be looked for at the beginning of \c haystack.
+ * \returns true if \c haystack starts with \c hay, false otherwise.
+ */
+bool starts_with(string_view haystack, string_view hay);
 
 } /* namespace gul */
 
