@@ -85,8 +85,9 @@ test: $(BUILDDIR)/build.ninja
 
 test-junit: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	mesontest -C $(BUILDDIR) --test-args '-r junit'
-	tools/distill_junit_output $(BUILDDIR)/meson-logs/testlog.json $(JUNIT_XML_FILE)
+	mesontest -C $(BUILDDIR) --test-args '-r junit' || \
+	meson test -C $(BUILDDIR) --test-args '-r junit'
+	@tools/distill_junit_output $(BUILDDIR)/meson-logs/testlog.json $(JUNIT_XML_FILE)
 
 build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)

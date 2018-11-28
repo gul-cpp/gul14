@@ -14,3 +14,5 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' >"$2"
 echo '<testsuites>' >>"$2"
 cat "$1" | sed -r -e 's/^.*?<testsuites>(.*)<\/testsuites>.*?$/\1/' -e 's/\\(n|([\\"]))/\2/g' >>"$2"
 echo '</testsuites>' >>"$2"
+
+echo "Created $2"
