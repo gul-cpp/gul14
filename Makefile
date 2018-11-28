@@ -86,11 +86,7 @@ test: $(BUILDDIR)/build.ninja
 test-junit: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	mesontest -C $(BUILDDIR) --test-args '-r junit'
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' >$(JUNIT_XML_FILE)
-	@echo '<testsuites>' >>$(JUNIT_XML_FILE)
-	@perl -0 -p -e 's/.*?(<testsuite .+?>.*?<\/testsuite>).*?<\/testsuites>[^<]*/$$1/gs' \
-	    $(BUILDDIR)/meson-logs/testlog.txt >>$(JUNIT_XML_FILE)
-	@echo '</testsuites>' >>$(JUNIT_XML_FILE)
+	tools/distill_junit_output $(BUILDDIR)/meson-logs/testlog.json $(JUNIT_XML_FILE)
 
 build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
