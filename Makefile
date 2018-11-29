@@ -85,9 +85,9 @@ test: $(BUILDDIR)/build.ninja
 
 test-junit: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	mesontest -C $(BUILDDIR) --test-args '-r junit' || \
-	meson test -C $(BUILDDIR) --test-args '-r junit'
-	@tools/distill_junit_output $(BUILDDIR)/meson-logs/testlog.json $(JUNIT_XML_FILE)
+	ninja $(NINJA_ARGS) -C $(BUILDDIR) tests/libgul-test
+	@$(BUILDDIR)/tests/libgul-test -r junit >$(JUNIT_XML_FILE)
+	@echo Test results in JUnit format written to $(JUNIT_XML_FILE).
 
 build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
