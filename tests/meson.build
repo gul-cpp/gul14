@@ -13,74 +13,23 @@ test_time = 2 # Default timeout
 
 thread_dep = dependency('threads')
 
-test('Backports',
-     executable('backports-test',
-                [ 'test_backports.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
+tests = [
+    'test_backports.cc',
+    'test_cat.cc',
+    'test_string_split.cc',
+    'test_string_escape.cc',
+    'test_string_replace.cc',
+    'test_time_util.cc',
+    'test_tokenize.cc',
+    'test_Trigger.cc',
+    'test_trim.cc',
+    'test_hexdump.cc',
+]
 
-test('cat()',
-     executable('cat-test',
-                [ 'test_cat.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
-
-test('split() and join()',
-     executable('string-split-test',
-                [ 'test_string_split.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
-
-test('escape()',
-     executable('string-escape-test',
-                [ 'test_string_escape.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
-
-test('replace() and replace_inplace()',
-     executable('string-replace-test',
-                [ 'test_string_replace.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
-
-test('Time utility functions',
-     executable('time-util-test',
-                [ 'test_time_util.cc', catch_main ],
-                include_directories : test_inc,
+test('all',
+     executable('libgul-test',
+                tests + [ catch_main ],
                 dependencies : thread_dep,
-                link_with : libgul),
-     timeout : test_time)
-
-test('tokenize(), tokenize_sv()',
-     executable('tokenize-test',
-                [ 'test_tokenize.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
-
-test('Trigger class',
-     executable('Trigger-test',
-                [ 'test_Trigger.cc', catch_main ],
-                include_directories : test_inc,
-                dependencies : thread_dep,
-                link_with : libgul),
-     timeout : test_time)
-
-test('trim() and variants',
-     executable('trim-test',
-                [ 'test_trim.cc', catch_main ],
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
-
-test('hexdump()',
-     executable('hexdump-test',
-                [ 'test_hexdump.cc', catch_main ],
                 include_directories : test_inc,
                 link_with : libgul),
      timeout : test_time)
