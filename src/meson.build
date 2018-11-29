@@ -35,6 +35,8 @@ if git_exe.found()
         git_external = 'unknown'
     else
         git_external = git_exte.stdout().strip()
+        git_external_parts = git_external.split('_')
+        git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
     endif
 else
     git_version = 'unknown'
@@ -47,13 +49,19 @@ git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
                configuration : git_conf)
 
+if not get_option('deb-vers-ext')
+    so_version = libgul_api_version
+else
+    so_version = git_external_num
+endif
+
 # There seems to be a bug in meson versions prior 0.46.0 that prevent
 # correct assignment and evaluation of cpp_args, so we do it here by hand :-(
 add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
                  '-Wshadow' ]
 
 libgul = shared_library('gul', libgul_src + [ version_cc ],
-                        soversion : libgul_api_version,
+                        soversion : so_version,
                         cpp_args : add_cpp_args,
                         include_directories : inc,
                         link_args : [ '-fvisibility=hidden', '-fwhole-program' ],

@@ -15,8 +15,6 @@ deb_dev_name = get_option('deb-dev-name').format(meson.project_name())
 # Expected tag is in the form 'TEXT_M_m_p'
 if get_option('deb-vers-ext')
     message('Debian package versioning: external tag')
-    git_external_parts = git_external.split('_')
-    git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
     git_external_suf = '-' + git_external_parts[1] + '-' + git_external_parts[2] + '-' + git_external_parts[3]
     if not changelogger.found()
         error('Debian changelog generator not found')
