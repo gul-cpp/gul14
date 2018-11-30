@@ -87,7 +87,7 @@ test-junit: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) tests/libgul-test
 	@$(BUILDDIR)/tests/libgul-test -r junit >$(JUNIT_XML_FILE)
-	@echo Test results in JUnit format written to $(JUNIT_XML_FILE).
+	@echo Test results in JUnit format written to $(JUNIT_XML_FILE)
 
 build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
