@@ -26,7 +26,27 @@
 using namespace std::literals;
 using namespace gul;
 
-TEST_CASE("starts_with() works as expected", "[string][starts_with/ends_with]")
+TEST_CASE("ends_with(string_view, string_view)", "[string][starts_with/ends_with]")
+{
+    REQUIRE(!ends_with("Hello World", "Hello World2"));
+    REQUIRE(ends_with("Hello World", "Hello World"));
+    REQUIRE(ends_with("Hello World", "World"));
+    REQUIRE(ends_with("Hello World", ""));
+    REQUIRE(!ends_with("", "Hello"));
+    REQUIRE(ends_with("", ""));
+    REQUIRE(ends_with("Hello World\0"s, "\0"s));
+    REQUIRE(!ends_with("Hello World", "\0"s));
+}
+
+TEST_CASE("ends_with(string_view, char)", "[string][starts_with/ends_with]")
+{
+    REQUIRE(ends_with("Hello World", 'd'));
+    REQUIRE(!ends_with("Hello World", 'D'));
+    REQUIRE(!ends_with("", 'd'));
+    REQUIRE(ends_with("Hello World\0"s, '\0'));
+}
+
+TEST_CASE("starts_with(string_view, string_view)", "[string][starts_with/ends_with]")
 {
     REQUIRE(!starts_with("Hello World", "Hello World2"));
     REQUIRE(starts_with("Hello World", "Hello World"));
@@ -38,14 +58,10 @@ TEST_CASE("starts_with() works as expected", "[string][starts_with/ends_with]")
     REQUIRE(!starts_with("Hello World", "\0"s));
 }
 
-TEST_CASE("Replace parts of a string using replace()", "[string_util]")
+TEST_CASE("starts_with(string_view, char)", "[string][starts_with/ends_with]")
 {
-    REQUIRE(!ends_with("Hello World", "Hello World2"));
-    REQUIRE(ends_with("Hello World", "Hello World"));
-    REQUIRE(ends_with("Hello World", "World"));
-    REQUIRE(ends_with("Hello World", ""));
-    REQUIRE(!ends_with("", "Hello"));
-    REQUIRE(ends_with("", ""));
-    REQUIRE(ends_with("Hello World\0"s, "\0"s));
-    REQUIRE(!ends_with("Hello World", "\0"s));
+    REQUIRE(starts_with("Hello World", 'H'));
+    REQUIRE(!starts_with("Hello World", 'h'));
+    REQUIRE(!starts_with("", 'H'));
+    REQUIRE(starts_with("\0Hello World"s, '\0'));
 }

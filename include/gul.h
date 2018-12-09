@@ -153,7 +153,8 @@
  *
  * <h4>Finding & Comparing</h4>
  *
- * starts_with(), ends_with(): Check if one string starts or ends with another one.
+ * starts_with(), ends_with(): Check if a string starts or ends with a certain string or
+ *          character.
  *
  * <h4>Replacing & Trimming</h4>
  *

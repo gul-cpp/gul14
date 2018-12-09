@@ -1,6 +1,6 @@
 /**
  * \file    starts_with_ends_with.h
- * \brief   Declaration of starts_with() and ends_with().
+ * \brief   Definition of starts_with() and ends_with().
  * \authors \ref contributors
  * \date    Created on 26 November 2018
  *
@@ -33,6 +33,9 @@ namespace gul {
  * \param haystack  The full string to be tested.
  * \param stack     The suffix to be looked for at the end of \c haystack.
  * \returns true if \c haystack ends with \c stack, false otherwise.
+ *
+ * \see ends_with(string_view, char), starts_with(string_view, string_view),
+ *      starts_with(string_view, char)
  */
 constexpr inline bool ends_with(string_view haystack, string_view stack) noexcept
 {
@@ -42,7 +45,21 @@ constexpr inline bool ends_with(string_view haystack, string_view stack) noexcep
     return hsl >= sl && haystack.compare(hsl - sl, sl, stack) == 0;
 }
 
-
+/**
+ * Determine whether a string ends with a certain character.
+ * The comparison is case sensitive.
+ *
+ * \param str  The string to be tested.
+ * \param c    The character to be looked for at the end of \c str.
+ * \returns true if \c str ends with \c c, false otherwise.
+ *
+ * \see ends_with(string_view, string), starts_with(string_view, string_view),
+ *      starts_with(string_view, char)
+ */
+constexpr inline bool ends_with(string_view str, char c) noexcept
+{
+    return !str.empty() && str.back() == c;
+}
 
 /**
  * Determine whether a string starts with another string.
@@ -51,6 +68,9 @@ constexpr inline bool ends_with(string_view haystack, string_view stack) noexcep
  * \param haystack  The full string to be tested.
  * \param hay       The prefix to be looked for at the beginning of \c haystack.
  * \returns true if \c haystack starts with \c hay, false otherwise.
+ *
+ * \see starts_with(string_view, char), ends_with(string_view, string_view),
+ *      ends_with(string_view, char)
  */
 constexpr inline bool starts_with(string_view haystack, string_view hay) noexcept
 {
@@ -58,6 +78,22 @@ constexpr inline bool starts_with(string_view haystack, string_view hay) noexcep
     const auto hl = hay.length();
 
     return hsl >= hl && haystack.compare(0, hl, hay) == 0;
+}
+
+/**
+ * Determine whether a string starts with a certain character.
+ * The comparison is case sensitive.
+ *
+ * \param str  The string to be tested.
+ * \param c    The character to be looked for at the beginning of \c str.
+ * \returns true if \c str starts with \c c, false otherwise.
+ *
+ * \see starts_with(string_view, string_view), ends_with(string_view, string_view),
+ *      ends_with(string_view, char)
+ */
+constexpr inline bool starts_with(string_view str, char c) noexcept
+{
+    return !str.empty() && str.front() == c;
 }
 
 } /* namespace gul */
