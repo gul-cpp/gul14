@@ -29,22 +29,16 @@ bool ends_with(string_view str1, string_view str2)
 {
     const auto len1 = str1.length();
     const auto len2 = str2.length();
-
-    if (len2 > len1)
-        return false;
-
-    if (str1.compare(len1 - len2, len2, str2) == 0)
-        return true;
-    else
-        return false;
+    
+    return len1 >= len2 && str1.compare(len1 - len2, len2, str2) == 0;
 }
 
 bool starts_with(string_view str1, string_view str2)
 {
-    if (str1.compare(0, str2.length(), str2) == 0)
-        return true;
-    else
-        return false;
+    const auto len1 = str1.length();
+    const auto len2 = str2.length();
+    
+    return len1 >= len2 && str1.compare(0, len2, str2) == 0;
 }
 
 } // namespace gul
