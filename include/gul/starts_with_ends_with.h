@@ -34,7 +34,7 @@ namespace gul {
  * \param stack     The suffix to be looked for at the end of \c haystack.
  * \returns true if \c haystack ends with \c stack, false otherwise.
  */
-inline bool ends_with(string_view haystack, string_view stack)
+constexpr inline bool ends_with(string_view haystack, string_view stack) noexcept
 {
     const auto hsl = haystack.length();
     const auto sl = stack.length();
@@ -52,7 +52,7 @@ inline bool ends_with(string_view haystack, string_view stack)
  * \param hay       The prefix to be looked for at the beginning of \c haystack.
  * \returns true if \c haystack starts with \c hay, false otherwise.
  */
-inline bool starts_with(string_view haystack, string_view hay)
+constexpr inline bool starts_with(string_view haystack, string_view hay) noexcept
 {
     const auto hsl = haystack.length();
     const auto hl = hay.length();
