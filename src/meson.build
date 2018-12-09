@@ -5,7 +5,6 @@ libgul_src = [
     'escape.cc',
     'join_split.cc',
     'replace.cc',
-    'starts_with_ends_with.cc',
     'string_util.cc',
     'time_util.cc',
     'tokenize.cc',

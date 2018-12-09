@@ -34,7 +34,15 @@ namespace gul {
  * \param stack     The suffix to be looked for at the end of \c haystack.
  * \returns true if \c haystack ends with \c stack, false otherwise.
  */
-bool ends_with(string_view haystack, string_view stack);
+inline bool ends_with(string_view haystack, string_view stack)
+{
+    const auto hsl = haystack.length();
+    const auto sl = stack.length();
+
+    return hsl >= sl && haystack.compare(hsl - sl, sl, stack) == 0;
+}
+
+
 
 /**
  * Determine whether a string starts with another string.
@@ -44,7 +52,13 @@ bool ends_with(string_view haystack, string_view stack);
  * \param hay       The prefix to be looked for at the beginning of \c haystack.
  * \returns true if \c haystack starts with \c hay, false otherwise.
  */
-bool starts_with(string_view haystack, string_view hay);
+inline bool starts_with(string_view haystack, string_view hay)
+{
+    const auto hsl = haystack.length();
+    const auto hl = hay.length();
+
+    return hsl >= hl && haystack.compare(0, hl, hay) == 0;
+}
 
 } /* namespace gul */
 
