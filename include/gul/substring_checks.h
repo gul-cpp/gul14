@@ -1,6 +1,6 @@
 /**
- * \file    starts_with_ends_with.h
- * \brief   Definition of starts_with() and ends_with().
+ * \file    substring_checks.h
+ * \brief   Definition of contains(), ends_with(), and starts_with().
  * \authors \ref contributors
  * \date    Created on 26 November 2018
  *

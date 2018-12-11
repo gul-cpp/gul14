@@ -26,6 +26,28 @@
 using namespace std::literals;
 using namespace gul;
 
+TEST_CASE("contains(string_view, string_view)", "[string][substring checks]")
+{
+    REQUIRE(contains("Hello World", "Hello"));
+    REQUIRE(contains("Hello World", "World"));
+    REQUIRE(contains("Hello World", "o Wo"));
+    REQUIRE(!contains("Hello World", "lll"));
+    REQUIRE(contains("Hello\0World\0"s, "d\0"s));
+    REQUIRE(contains("Hello\0World\0"s, "\0W"s));
+    REQUIRE(!contains("Hello World", "\0"s));
+}
+
+TEST_CASE("contains(string_view, char)", "[string][substring checks]")
+{
+    REQUIRE(contains("Hello World", 'H'));
+    REQUIRE(contains("Hello World", 'd'));
+    REQUIRE(contains("Hello World", ' '));
+    REQUIRE(!contains("Hello World", 'g'));
+    REQUIRE(contains("Hello\0World\0"s, '\0'));
+    REQUIRE(contains("Hello\0World\0"s, 'd'));
+    REQUIRE(!contains("Hello World", '\0'));
+}
+
 TEST_CASE("ends_with(string_view, string_view)", "[string][starts_with/ends_with]")
 {
     REQUIRE(!ends_with("Hello World", "Hello World2"));
