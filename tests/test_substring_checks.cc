@@ -1,8 +1,8 @@
 /**
- * \file   test_starts_with_ends_with.cc
+ * \file   test_substring_checks.cc
  * \author \ref contributors
  * \date   Created on November 26, 2018
- * \brief  Test suite for starts_with() and ends_with() from the General Utility Library.
+ * \brief  Test suite for contains(), ends_with(), and starts_with().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -35,6 +35,8 @@ TEST_CASE("contains(string_view, string_view)", "[string][substring checks]")
     REQUIRE(contains("Hello\0World\0"s, "d\0"s));
     REQUIRE(contains("Hello\0World\0"s, "\0W"s));
     REQUIRE(!contains("Hello World", "\0"s));
+    REQUIRE(contains("Hello World", ""));
+    REQUIRE(contains("", ""));
 }
 
 TEST_CASE("contains(string_view, char)", "[string][substring checks]")

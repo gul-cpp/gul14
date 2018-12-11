@@ -28,7 +28,8 @@ namespace gul {
 
 /**
  * Determine whether a string contains another string.
- * The comparison is case sensitive.
+ * The comparison is case sensitive. If the searched-for string is empty, the result is
+ * true.
  *
  * \param haystack  The string in which to search.
  * \param needle    The string that should be searched for.
@@ -60,7 +61,8 @@ constexpr inline bool contains(string_view haystack, char needle) noexcept
 
 /**
  * Determine whether a string ends with another string.
- * The comparison is case sensitive.
+ * The comparison is case sensitive. If the searched-for suffix is empty, the result is
+ * true.
  *
  * \param haystack  The full string to be tested.
  * \param stack     The suffix to be looked for at the end of \c haystack.
@@ -95,7 +97,8 @@ constexpr inline bool ends_with(string_view str, char c) noexcept
 
 /**
  * Determine whether a string starts with another string.
- * The comparison is case sensitive.
+ * The comparison is case sensitive. If the searched-for prefix is empty, the result is
+ * true.
  *
  * \param haystack  The full string to be tested.
  * \param hay       The prefix to be looked for at the beginning of \c haystack.
