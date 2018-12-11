@@ -151,10 +151,13 @@
  * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector
  *          of string or string_view tokens.
  *
- * <h4>Finding & Comparing</h4>
+ * <h4>Checking for Substrings</h4>
  *
- * starts_with(), ends_with(): Check if a string starts or ends with a certain string or
- *          character.
+ * contains(): Check if a string contains a certain string or character.
+ *
+ * ends_with(): Check if a string ends with a certain string or character.
+ *
+ * starts_with(): Check if a string starts with a certain string or character.
  *
  * <h4>Replacing & Trimming</h4>
  *

@@ -27,6 +27,38 @@
 namespace gul {
 
 /**
+ * Determine whether a string contains another string.
+ * The comparison is case sensitive.
+ *
+ * \param haystack  The string in which to search.
+ * \param needle    The string that should be searched for.
+ * \returns true if \c haystack contains at least one occurrence of \c needle, false
+ *          otherwise.
+ *
+ * \see contains(char), ends_with(), starts_with()
+ */
+constexpr inline bool contains(string_view haystack, string_view needle) noexcept
+{
+    return haystack.find(needle) != string_view::npos;
+}
+
+/**
+ * Determine whether a string contains a certain character.
+ * The comparison is case sensitive.
+ *
+ * \param haystack  The string in which to search.
+ * \param needle    The character that should be searched for.
+ * \returns true if \c haystack contains at least one occurrence of \c needle, false
+ *          otherwise.
+ *
+ * \see contains(string_view), ends_with(), starts_with()
+ */
+constexpr inline bool contains(string_view haystack, char needle) noexcept
+{
+    return haystack.find(needle) != string_view::npos;
+}
+
+/**
  * Determine whether a string ends with another string.
  * The comparison is case sensitive.
  *
