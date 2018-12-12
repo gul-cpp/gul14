@@ -78,11 +78,14 @@ In addition to meson's standard switches there are:
     deb-dev-name   @0@-dev        string           Debian package name for development package
     deb-name       @0@            string           Debian package name
     deb-vers-ext   false          [true, false]    Debian package will use external versioning
+    deb-vers-patch false          [true, false]    Debian package name will contain patchlevel
 
 
 The ``deb-*name`` switch can be used to configure the debian package building process with non-standard packet names. The substring '@0@' will be replaced by the canonical packet name (i.e. 'libgul'). Although non-standard packages automatically conflict with standard packages care must be taken to keep the install target system consistent (i.e. install always only one variant of libgul).
 
 The ``deb-vers-ext`` switch forces the package names and versions to be based on the latest 'git external tag'. This is a tag in the git repository that does not start with 'v'. It is expected to give the version number to use in the form ``DESCRIPTION_major_minor_patch``, where major, minor, and patch are positive integers.
+
+The ``deb-vers-patch`` switch appends the number of commits since the version-tagged commit to the library and package names.
 
 Overview of maybe useful standard project options:
 
@@ -100,3 +103,5 @@ In the git repository two tag families are used:
 One tag family donates the API version of the package that is in effect starting with the tagged commit. This is the so-called GIT\_VERSION or LIBGUL\_API\_VERSION. The version uses semantic versioning, and the format is defined as ``v1.2.3`` where 1 is the major, 2 the minor, and 3 the patch version-part. It always starts with a lower case ``v``. This tag is cross checked with the project version number given in the main meson.build file.
 
 If a tag does not start with a lower case v it is considered a git-external-tag. This tag is used to tag specific points in time when a packet has been created from the project. Its form is ``name_1_2_3``, and again 1, 2, and 3 donate version number parts, that might or might not be semantic. These tags can be used to create packet names in the form libgul-1.2.3 (with ``-D deb-vers-ext=true`` set in meson). Note that the ``name`` part is ignored and can be arbitrary, as long as it does not start with lower case 'v'.
+
+The packaging rules prevent building dirty repositories. Commit your changes first.

@@ -28,6 +28,10 @@ else
     changelog_in = 'changelog.in'
 endif
 
+if get_option('deb-vers-patch')
+    git_external_suf = git_external_suf + git_patch
+endif
+
 deb_conf = configuration_data()
 deb_conf.set('PREFIX', get_option('prefix'))
 deb_conf.set('LIBDIR', get_option('libdir'))
@@ -42,7 +46,7 @@ deb_conf.set('LIBGUL_API_VERSION', get_variable('git_external_num', libgul_api_v
 # Mark a conflict, if we generate a non standard debian package
 # This is not a perfect, but at least some protection against
 # having both installed.
-if deb_name != deb_name_default
+if deb_name != deb_name_default or git_external_suf != ''
     deb_name = deb_name + git_external_suf
     deb_conf.set('NAME', deb_name)
     deb_conf.set('CONFLICTS', deb_name_default)

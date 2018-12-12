@@ -10,3 +10,5 @@ option('deb-dev-name', type : 'string', value : '@0@-dev',
        description : 'Debian package name for development package')
 option('deb-vers-ext', type : 'boolean', value : false,
        description : 'Debian package will use external versioning')
+option('deb-vers-patch', type : 'boolean', value : false,
+       description : 'Debian package name will contain patchlevel')

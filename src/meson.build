@@ -25,13 +25,19 @@ inc += include_directories('.')
 # version numbers respectively. For example "v3.12.8".
 git_exe = find_program('git', required : false, native : true)
 if git_exe.found()
-    git_vers = run_command(git_exe, '-C', meson.source_root(), 'describe', '--tags', '--always', '--dirty', '--match', 'v*')
+
+    # Get full description based on GUL version ('v0.2.0-22-g3d8867c-dirty')
+    git_vers = run_command(git_exe, '-C', meson.source_root(),
+                           'describe', '--tags', '--always', '--dirty', '--match', 'v*')
     if git_vers.returncode() != 0
         git_version = 'unknown'
     else
         git_version = git_vers.stdout().strip()
     endif
-    git_exte = run_command(git_exe, '-C', meson.source_root(), 'describe', '--tags', '--always', '--abbrev=0', '--match', '[^v]*')
+
+    # Get description based on external tag version ('DOOCSVERSION_18_11_6')
+    git_exte = run_command(git_exe, '-C', meson.source_root(),
+                           'describe', '--tags', '--always', '--abbrev=0', '--match', '[^v]*')
     if git_exte.returncode() != 0
         git_external = 'unknown'
     else
@@ -39,21 +45,60 @@ if git_exe.found()
         git_external_parts = git_external.split('_')
         git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
     endif
+
+    # Get the number of commits since the relevant version tag
+    if get_option('deb-vers-patch')
+        if not get_option('deb-vers-ext')
+            # Need to find the description based on GUL version ('v0.2.0')
+            git_vers_b = run_command(git_exe, '-C', meson.source_root(),
+                                     'describe', '--tags', '--always', '--abbrev=0', '--match', 'v*')
+            if git_vers_b.returncode() != 0
+                git_version_b = 'unknown'
+            else
+                git_version_b = git_vers_b.stdout().strip()
+            endif
+            # find number of commits based on 'v0.2.0'
+            git_pat = run_command(git_exe, '-C', meson.source_root(),
+                                  'rev-list', '--count', git_version_b + '..')
+        else
+            # find number of commits based on 'DOOCSVERSION_18_11_6')
+            git_pat = run_command(git_exe, '-C', meson.source_root(),
+                                  'rev-list', '--count', git_external + '..')
+        endif
+        if git_pat.returncode() != 0
+            git_patch = ''
+        else
+            # Ignore patchlevel if it is zero
+            git_patch = git_pat.stdout().strip()
+            if git_patch != '0'
+                git_patch = '-p' + git_patch
+            else
+                git_patch = ''
+            endif
+        endif
+    endif
+
 else
+    # Have no information whatsoever
     git_version = 'unknown'
     git_external = 'unknown'
+    git_patch = ''
 endif
 
 git_conf = configuration_data()
 git_conf.set('GIT_VERSION', git_version)
 git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
-               configuration : git_conf)
+                            configuration : git_conf)
 
 if not get_option('deb-vers-ext')
     so_version = libgul_api_version
 else
     so_version = git_external_num
+endif
+
+if get_option('deb-vers-patch')
+    so_version = so_version + git_patch
 endif
 
 # There seems to be a bug in meson versions prior 0.46.0 that prevent
