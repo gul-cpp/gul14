@@ -96,8 +96,8 @@ build/$(ARCH)/debug/build.ninja:
 build/$(ARCH)/doocs-release/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
 	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=/export/doocs \
-	      --libdir=lib --includedir=lib/include -D deb-vers-ext=true -D deb-vers-patch=true \
-              -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@
+	      --libdir=lib --includedir=lib/include -D deb-vers-tag='DOOCSVERSION_' \
+	      -D deb-vers-pack=true -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@
 
 build/$(ARCH)/release/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)

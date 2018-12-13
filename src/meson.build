@@ -13,100 +13,74 @@ libgul_src = [
 
 inc += include_directories('.')
 
-# We want the git and API versions of this build to be available in the
-# library. The library can then be queried to identify its built version.
-#
-# Inside git we identify versions with two types of git tags:
-# - Version tags
-# - External/proprietary tags (for example Doocs version tags)
-#
-# The version tags have to follow this form (following https://semver.org):
-# "vM.m.p" where M, m, and p are decimal numbers of Major, minor, and patch
-# version numbers respectively. For example "v3.12.8".
 git_exe = find_program('git', required : false, native : true)
 if git_exe.found()
 
-    # Get full description based on GUL version ('v0.2.0-22-g3d8867c-dirty')
-    git_vers = run_command(git_exe, '-C', meson.source_root(),
+    # Get full description based on git tag API version ('v0.2-22-g3d8867c-dirty')
+    git_f_api = run_command(git_exe, '-C', meson.source_root(),
                            'describe', '--tags', '--always', '--dirty', '--match', 'v*')
+    if git_f_api.returncode() != 0
+        git_full_api_version = 'unknown'
+    else
+        git_full_api_version = git_f_api.stdout().strip()
+    endif
+
+    # Get description based on git version tag ('v0.2' or 'DOOCSVERSION_18_11_6')
+    git_vers = run_command(git_exe, '-C', meson.source_root(),
+                           'describe', '--tags', '--always', '--abbrev=0', '--match',
+                           get_option('deb-vers-tag') + '*')
     if git_vers.returncode() != 0
         git_version = 'unknown'
     else
         git_version = git_vers.stdout().strip()
-    endif
-
-    # Get description based on external tag version ('DOOCSVERSION_18_11_6')
-    git_exte = run_command(git_exe, '-C', meson.source_root(),
-                           'describe', '--tags', '--always', '--abbrev=0', '--match', '[^v]*')
-    if git_exte.returncode() != 0
-        git_external = 'unknown'
-    else
-        git_external = git_exte.stdout().strip()
-        if get_option('deb-vers-ext')
-            git_external_parts = git_external.split('_')
-            git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
-        endif
+        git_version_pure = git_version.split(get_option('deb-vers-tag'))[1]
+        git_version_parts = git_version_pure.split('_')
+        git_version_parts = '-'.join(git_version_parts).split('-')
+        git_version_num = '.'.join(git_version_parts)
+        git_version_parts = git_version_num.split('.')
     endif
 
     # Get the number of commits since the relevant version tag
-    if get_option('deb-vers-patch')
-        if not get_option('deb-vers-ext')
-            # Need to find the description based on GUL version ('v0.2.0')
-            git_vers_b = run_command(git_exe, '-C', meson.source_root(),
-                                     'describe', '--tags', '--always', '--abbrev=0', '--match', 'v*')
-            if git_vers_b.returncode() != 0
-                git_version_b = 'unknown'
+    git_pat = run_command(git_exe, '-C', meson.source_root(),
+                         'rev-list', '--count', git_version + '..')
+    if git_pat.returncode() != 0
+        git_patch = ''
+    else
+        # Ignore patchlevel if it is zero
+        git_patch = git_pat.stdout().strip()
+        if git_patch != '0'
+            if git_version_num.split('.').length() >= 3
+                # If we already have 3 numbers add patchlevel with letter p
+                git_patch = '.p' + git_patch
             else
-                git_version_b = git_vers_b.stdout().strip()
+                git_patch = '.' + git_patch
             endif
-            # find number of commits based on 'v0.2.0'
-            git_pat = run_command(git_exe, '-C', meson.source_root(),
-                                  'rev-list', '--count', git_version_b + '..')
         else
-            # find number of commits based on 'DOOCSVERSION_18_11_6')
-            git_pat = run_command(git_exe, '-C', meson.source_root(),
-                                  'rev-list', '--count', git_external + '..')
-        endif
-        if git_pat.returncode() != 0
             git_patch = ''
-        else
-            # Ignore patchlevel if it is zero
-            git_patch = git_pat.stdout().strip()
-            if git_patch != '0'
-                git_patch = '-p' + git_patch
-            else
-                git_patch = ''
-            endif
         endif
     endif
 
 else
     # Have no information whatsoever
+    git_full_api_version = 'unknown'
     git_version = 'unknown'
-    git_external = 'unknown'
     git_patch = ''
 endif
 
 git_conf = configuration_data()
-git_conf.set('GIT_VERSION', git_version)
+git_conf.set('GIT_FULL_API_VERSION', git_full_api_version)
 git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
 version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
                             configuration : git_conf)
 
-if not get_option('deb-vers-ext')
-    so_version = libgul_api_version
-else
-    so_version = git_external_num
-endif
-
-if get_option('deb-vers-patch')
-    so_version = so_version + git_patch
-endif
+so_version = git_version_num + git_patch
 
 # There seems to be a bug in meson versions prior 0.46.0 that prevent
 # correct assignment and evaluation of cpp_args, so we do it here by hand :-(
 add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
                  '-Wshadow' ]
+
+message('Setting shared library version to ' + so_version)
 
 libgul = shared_library('gul', libgul_src + [ version_cc ],
                         soversion : so_version,

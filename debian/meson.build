@@ -10,28 +10,19 @@ deb_dev_name_default = meson.project_name() + '-dev'
 deb_name = get_option('deb-name').format(meson.project_name())
 deb_dev_name = get_option('deb-dev-name').format(meson.project_name())
 
-# If we use an obscure package name, the builder might want an
-# obscure version number also
-# Expected tag is in the form 'TEXT_M_m_p'
-if get_option('deb-vers-ext')
-    message('Debian package versioning: external tag')
-    git_external_suf = '-' + git_external_parts[1] + '-' + git_external_parts[2] + '-' + git_external_parts[3]
-    if not changelogger.found()
-        error('Debian changelog generator not found')
-    endif
+# Autogenerate debian/changelog
+if not changelogger.found()
+    error('Debian changelog generator not found')
+endif
 
-    changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
-    run_command(changelogger, '[^v]*', changelog_gen)
-    changelog_in = changelog_gen
+changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
+if get_option('deb-vers-pack')
+    run_command(changelogger, '-p', get_option('deb-vers-tag') + '*', changelog_gen)
 else
-    git_external_suf = ''
-    changelog_in = 'changelog.in'
+    run_command(changelogger, get_option('deb-vers-tag') + '*', changelog_gen)
 endif
 
-if get_option('deb-vers-patch')
-    git_external_suf = git_external_suf + git_patch
-endif
-
+# Configure all the debian files
 deb_conf = configuration_data()
 deb_conf.set('PREFIX', get_option('prefix'))
 deb_conf.set('LIBDIR', get_option('libdir'))
@@ -41,14 +32,15 @@ deb_conf.set('NAME-BASE', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
 deb_conf.set('CONFLICTS', '')
 deb_conf.set('CONFLICTS-DEV', '')
-deb_conf.set('VERSION', get_variable('git_external_num', libgul_api_version)
+deb_conf.set('VERSION', get_variable('git_version_num', libgul_api_version)
                         + get_variable('git_patch', ''))
 
 # Mark a conflict, if we generate a non standard debian package
 # This is not a perfect, but at least some protection against
 # having both installed.
-if deb_name != deb_name_default or git_external_suf != ''
-    deb_name = deb_name + git_external_suf
+if deb_name != deb_name_default or get_option('deb-vers-pack')
+    git_version_suf = '-' + '-'.join(git_version_parts)
+    deb_name = deb_name + git_version_suf
     deb_conf.set('NAME', deb_name)
     deb_conf.set('CONFLICTS', deb_name_default)
 endif
@@ -71,7 +63,7 @@ foreach f : debian_files
                    configuration : deb_conf)
 endforeach
 
-configure_file(input : changelog_in, output : 'changelog',
+configure_file(input : changelog_gen, output : 'changelog',
                configuration : deb_conf)
 
 # The install files need to be renamed, if the package name is not standard,

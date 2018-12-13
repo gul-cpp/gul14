@@ -8,7 +8,7 @@ option('deb-name', type : 'string', value : '@0@',
        description : 'Debian package name')
 option('deb-dev-name', type : 'string', value : '@0@-dev',
        description : 'Debian package name for development package')
-option('deb-vers-ext', type : 'boolean', value : false,
-       description : 'Debian package will use external versioning')
-option('deb-vers-patch', type : 'boolean', value : false,
+option('deb-vers-tag', type : 'string', value : 'v',
+       description : 'Debian package uses git version tags starting with this')
+option('deb-vers-pack', type : 'boolean', value : false,
        description : 'Debian package name will contain patchlevel')

@@ -1,5 +1,8 @@
 # Build specification for the General Utilities Library
 
+# Increase the major project version in project() on API breaking changes.
+# Increase the minor project version in project() on API extensions
+
 project('libgul', 'cpp',
     default_options : [ 'cpp_std=c++14',
                         'warning_level=3',
@@ -7,8 +10,7 @@ project('libgul', 'cpp',
     version : '0.4',
     meson_version : '>=0.37')
 
-# The API version is the major version of the project.
-# Increase the major project version in project() above on API breaking changes.
+# Enforce that the version number is according to specs
 version_parts = meson.project_version().split('.')
 libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
@@ -33,14 +35,14 @@ else
     message('                              Enable by specifying correct prefix e.g. --prefix=/usr')
 endif
 
-message('LIBGUL_API_VERSION @0@'.format(libgul_api_version))
-message('GIT VERSION        @0@'.format(git_version))
-message('GIT EXTERNAL TAG   @0@'.format(git_external))
+message('LIBGUL_API_VERSION       @0@'.format(libgul_api_version))
+message('GIT FULL API VERSION    @0@'.format(git_full_api_version))
+message('GIT VERSION TAG         @0@'.format(git_version))
 
 # Check if the git version (git tag starting with 'v') interpreted as
 # semantic version number matches the specified API version from above
-if not (git_version == 'unknown')
-    git_vers_parts = git_version.split('.')
+if not (git_full_api_version == 'unknown')
+    git_vers_parts = git_full_api_version.split('.')
     git_major_version_parts = git_vers_parts[0].split('v')
     git_api_version = '@0@.@1@'.format(git_major_version_parts[1], git_vers_parts[1].split('-')[0])
     if not (git_api_version == libgul_api_version)

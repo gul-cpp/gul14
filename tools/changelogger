@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Autogenerate the debian/changelog from git tags
 # The output will be further configured by meson
@@ -14,10 +14,25 @@
 # Note that the matching is rather sloppy, this only works when no
 # strange tags are created.
 
-if [ $# -ne 2 ]; then
-	echo "Usage: `basename "$0"` tag_prefix output_file"
+while getopts ":p" opt; do
+	case $opt in
+	p)
+		ind_vers=1;;
+	\?)
+		echo "Invalid option: -$OPTARG"
+		hint=1;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [[ ${hint} == 1 ]] || [[ $# -ne 2 ]]; then
+	echo "Usage: `basename "$0"` [options] tag_prefix output_file"
+	echo
+	echo "       Options:"
+	echo "          -p          enable packet name versioning"
 	exit 1
 fi
+
 tag_pre=$1
 outfile=$2
 printf "" > ${outfile}
@@ -27,10 +42,10 @@ printf "" > ${outfile}
 allcommits=`git log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
 head=`echo "${allcommits}" | head -n 1`
 root=`echo "${allcommits}" | tail -n 1`
-tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" "refs/tags/${tag_pre}"`
+tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" "refs/tags/${tag_pre}" --merged`
 
 # find out if HEAD is a tagged commit
-top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}"`
+top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}" --merged`
 patches=`git rev-list ${top_tag}..HEAD --count`
 if [ ${patches} -lt 1 ]; then
 	entry_begin=`echo ${tags} | head -n 1`
@@ -55,7 +70,11 @@ while read entry_next; do
 	printf "${footer}\n\n" >> ${outfile}
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
-	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g'`
+	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
 	vername=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
-	header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
+	if [[ ${ind_vers} -eq 1 ]]; then
+		header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
+	else
+		header="@NAME@ (${version}) stable; urgency=low"
+	fi
 done
