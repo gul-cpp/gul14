@@ -42,8 +42,10 @@ if git_exe.found()
         git_external = 'unknown'
     else
         git_external = git_exte.stdout().strip()
-        git_external_parts = git_external.split('_')
-        git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
+        if get_option('deb-vers-ext')
+            git_external_parts = git_external.split('_')
+            git_external_num = git_external_parts[1] + '.' + git_external_parts[2] + '.' + git_external_parts[3]
+        endif
     endif
 
     # Get the number of commits since the relevant version tag
