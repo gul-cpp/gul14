@@ -33,11 +33,8 @@ tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(
 top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}"`
 patches=`git rev-list ${top_tag}..HEAD --count`
 if [ ${patches} -lt 1 ]; then
-	patch=''
 	entry_begin=`echo ${tags} | head -n 1`
 	tags=`echo ${tags} | tail -n +1`
-else
-	patch="-${patches}"
 fi
 
 # prepare for first loop iteration
@@ -46,7 +43,7 @@ eval "${entry_begin}"
 # The top entry will get the version number always from meson to make sure we do
 # not go wrong, ever. If the following entries have wrong versions this is just
 # a cosmetic glitch
-header="@NAME@ (@LIBGUL_API_VERSION@${patch}) stable; urgency=low"
+header="@NAME@ (@VERSION@) stable; urgency=low"
 
 printf "${tags}\n${root}\n" | \
 while read entry_next; do
