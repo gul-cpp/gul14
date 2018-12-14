@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Autogenerate the debian/changelog from git tags
 # The output will be further configured by meson
@@ -17,7 +17,7 @@
 while getopts ":pt" opt; do
 	case $opt in
 	p)
-		ind_vers=1;;
+		pack_vers=1;;
 	t)
 		show_tags=' %d';;
 	\?)
@@ -27,7 +27,7 @@ while getopts ":pt" opt; do
 done
 shift $((OPTIND-1))
 
-if [[ ${hint} == 1 ]] || [[ $# -ne 2 ]]; then
+if [ -n "${hint}" -o $# -ne 2 ]; then
 	echo "Usage: `basename "$0"` [options] tag_prefix output_file"
 	echo
 	echo "       Options:"
@@ -75,7 +75,7 @@ while read entry_next; do
 	# (the header of the first iteration is different; it takes direct meson variables)
 	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
 	vername=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
-	if [[ ${ind_vers} -eq 1 ]]; then
+	if [ -n "${pack_vers}" ]; then
 		header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
 	else
 		header="@NAME@ (${version}) stable; urgency=low"
