@@ -17,9 +17,13 @@ endif
 
 changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
 if get_option('deb-vers-pack')
-    run_command(changelogger, '-tp', get_option('deb-vers-tag') + '*', changelog_gen)
+    changelg_run = run_command(changelogger, '-tp', get_option('deb-vers-tag') + '*', changelog_gen)
 else
-    run_command(changelogger, '-t', get_option('deb-vers-tag') + '*', changelog_gen)
+    changelg_run = run_command(changelogger, '-t', get_option('deb-vers-tag') + '*', changelog_gen)
+endif
+
+if changelg_run.returncode() != 0
+    error(changelg_run.stdout())
 endif
 
 # Configure all the debian files
