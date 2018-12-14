@@ -38,6 +38,7 @@ deb_conf.set('CONFLICTS', '')
 deb_conf.set('CONFLICTS-DEV', '')
 deb_conf.set('VERSION', get_variable('git_version_num', libgul_api_version)
                         + get_variable('git_patch', ''))
+deb_conf.set('CONFIG_CHECKER', meson.build_root() + '/@0@'.format(config_checker))
 
 # Mark a conflict, if we generate a non standard debian package
 # This is not a perfect, but at least some protection against

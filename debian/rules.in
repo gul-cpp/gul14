@@ -3,11 +3,18 @@
 # output every command that modifies files on the build system.
 export DH_VERBOSE = 1
 
+CONF_DIRTY := $(shell @CONFIG_CHECKER@)
 GIT_DIRTY := $(shell command -v git >/dev/null 2>&1 && (git diff --quiet || echo dirty))
 
 %:
-ifdef GIT_DIRTY
-	@echo Git repository dirty, refusing to packetize
+ifdef CONF_DIRTY
+	@echo '====> Build configuration outdated, refusing to packetize'
+	@echo '      ${CONF_DIRTY}'
+	@echo '      Reconfigure with: ninja reconfigure'
+	@echo
+else ifdef GIT_DIRTY
+	@echo '====> Git repository dirty, refusing to packetize'
+	@echo
 else
 	dh $@
 endif

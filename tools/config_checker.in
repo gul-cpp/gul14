@@ -1,0 +1,27 @@
+#! /bin/sh
+
+# This script checks if the current configuration read from git is still the
+# same as has been used by meson to configure the build system; in particular
+# the packaging system
+
+# Values filled in by meson at configure time:
+full_api=@GIT_FULL_API_VERSION@
+git_ver=@GIT_VERSION@
+version_tag=@VERSION_TAG@
+source_root=@SOURCE_ROOT@
+
+# Re-evaluate the GIT_FULL_API_VERSION and GIT_VERSION
+gfav=`git -C ${source_root} describe --tags --always --dirty --match 'v*'`
+gv=`git -C ${source_root} describe --tags --always --abbrev=0 --match "${version_tag}*"`
+
+ret=0
+if [ "${gfav}" != "${full_api}" ]; then
+	ret=1
+	echo "$(basename $0): Config mismatch: ${gfav} -> ${full_api}"
+fi
+if [ "${gv}" != "${git_ver}" ]; then
+	ret=1
+	echo "$(basename $0): Config mismatch: ${gv} -> ${git_ver}"
+fi
+
+exit $ret
