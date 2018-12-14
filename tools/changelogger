@@ -14,10 +14,12 @@
 # Note that the matching is rather sloppy, this only works when no
 # strange tags are created.
 
-while getopts ":p" opt; do
+while getopts ":pt" opt; do
 	case $opt in
 	p)
 		ind_vers=1;;
+	t)
+		show_tags=' %d';;
 	\?)
 		echo "Invalid option: -$OPTARG"
 		hint=1;;
@@ -29,7 +31,8 @@ if [[ ${hint} == 1 ]] || [[ $# -ne 2 ]]; then
 	echo "Usage: `basename "$0"` [options] tag_prefix output_file"
 	echo
 	echo "       Options:"
-	echo "          -p          enable packet name versioning"
+	echo "          -p          Enable packet name versioning"
+	echo "          -t          Show tags in commit messages"
 	exit 1
 fi
 
@@ -66,7 +69,7 @@ while read entry_next; do
 	head_ref=${ref}
 	eval "${entry_next}"
 	printf "${header}\n" >> ${outfile}
-	eval "git log --format='  * %s %d' ${ref}..${head_ref} | sed 's/ *$//g'" >> ${outfile}
+	eval "git log --format='  * %s${show_tags}' ${ref}..${head_ref} | sed 's/ *$//g'" >> ${outfile}
 	printf "${footer}\n\n" >> ${outfile}
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
