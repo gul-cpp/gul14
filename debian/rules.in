@@ -12,9 +12,11 @@ ifdef CONF_DIRTY
 	@echo '      ${CONF_DIRTY}'
 	@echo '      Reconfigure with: ninja reconfigure'
 	@echo
+	@false
 else ifdef GIT_DIRTY
 	@echo '====> Git repository dirty, refusing to packetize'
 	@echo
+	@false
 else
 	dh $@
 endif

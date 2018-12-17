@@ -54,8 +54,6 @@ if deb_dev_name != deb_dev_name_default
     deb_conf.set('CONFLICTS-DEV', deb_dev_name_default)
 endif
 
-message('Debian package names: ' + deb_name + ', ' + deb_dev_name)
-
 debian_files = [
   'control',
   'compat',

@@ -38,6 +38,10 @@ endif
 message('LIBGUL_API_VERSION       @0@'.format(libgul_api_version))
 message('GIT FULL API VERSION    @0@'.format(git_full_api_version))
 message('GIT VERSION TAG         @0@'.format(git_version))
+if deb_install
+    message('Debian package names    ' + deb_name + ', ' + deb_dev_name)
+endif
+message('Shared library version  ' + so_version)
 
 # Check if the git version (git tag starting with 'v') interpreted as
 # semantic version number matches the specified API version from above

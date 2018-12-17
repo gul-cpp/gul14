@@ -80,8 +80,6 @@ so_version = git_version_num + git_patch
 add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
                  '-Wshadow' ]
 
-message('Setting shared library version to ' + so_version)
-
 libgul = shared_library('gul', libgul_src + [ version_cc ],
                         soversion : so_version,
                         cpp_args : add_cpp_args,
