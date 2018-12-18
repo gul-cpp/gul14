@@ -16,7 +16,7 @@
 # Note that the matching is rather sloppy, this only works when no
 # strange tags are created.
 
-while getopts ":hptC:" opt; do
+while getopts ":hptvC:" opt; do
 	case $opt in
 	h)
 		hint=1;;
@@ -24,6 +24,8 @@ while getopts ":hptC:" opt; do
 		pack_vers=1;;
 	t)
 		show_tags=' %d';;
+	v)
+		verbose='\n';;
 	C)
 		workdir="-C ${OPTARG}";;
 	\?)
@@ -40,6 +42,7 @@ if [ -n "${hint}" -o $# -ne 2 ]; then
 	echo "          -h          Show help (this)"
 	echo "          -p          Enable packet name versioning"
 	echo "          -t          Show tags in commit messages"
+	echo "          -v          Generate verbose changelog with more empty lines"
 	echo "          -C path     Change to path before doing anything"
 	exit 1
 fi
@@ -78,9 +81,9 @@ while read entry_next; do
 	footer=" -- ${aut} ${email}  ${dat}"
 	head_ref=${ref}
 	eval "${entry_next}"
-	printf "${header}\n" >> ${outfile}
+	printf "${header}\n${verbose}" >> ${outfile}
 	eval "git ${workdir} log --format='  * %s${show_tags}' ${ref}..${head_ref} | sed 's/ *$//g'" >> ${outfile}
-	printf "${footer}\n\n" >> ${outfile}
+	printf "${verbose}${footer}\n\n" >> ${outfile}
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
 	version=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
