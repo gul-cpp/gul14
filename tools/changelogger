@@ -60,12 +60,14 @@ top_tag=`git ${workdir} for-each-ref --sort=-v:refname --count=1 --format='%(ref
 patches=`git ${workdir} rev-list ${top_tag}..HEAD --count`
 if [ ${patches} -lt 1 ]; then
 	entry_begin=`printf "${tags}" | head -n 1`
-	tags=`printf "${tags}" | tail -n +1`
+	tags=`printf "${tags}" | tail -n +2`
+else
+	entry_begin=${head}
 fi
 
 # prepare for first loop iteration
-entry_begin=${head}
 eval "${entry_begin}"
+
 # The top entry will get the version number always from meson to make sure we do
 # not go wrong, ever. If the following entries have wrong versions this is just
 # a cosmetic glitch
