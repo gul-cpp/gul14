@@ -32,7 +32,7 @@ Use meson to configure the build you want to have. A list of the [build options]
         meson --prefix=/usr -D buildtype=release build_rel
         meson -D buildtype=release -D unity=on build_rel_unity
         meson -D buildtype=release -D docs=false build_nodocs_rel
-        CXX=clang meson build_clang
+        CXX=clang++ meson build_clang
 
 Typical build configurations can be easily summoned as detailed in [Default configurations](#Default-configurations) below.
 
