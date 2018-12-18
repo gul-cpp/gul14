@@ -51,16 +51,16 @@ printf "" > ${outfile}
 # Collect all relevant information
 # HEAD, TAGS..., ROOT-commit
 allcommits=`git ${workdir} log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
-head=`echo "${allcommits}" | head -n 1`
-root=`echo "${allcommits}" | tail -n 1`
+head=`printf "${allcommits}" | head -n 1`
+root=`printf "${allcommits}" | tail -n 1`
 tags=`git ${workdir} for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" "refs/tags/${tag_pre}" --merged`
 
 # find out if HEAD is a tagged commit
 top_tag=`git ${workdir} for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}" --merged`
 patches=`git ${workdir} rev-list ${top_tag}..HEAD --count`
 if [ ${patches} -lt 1 ]; then
-	entry_begin=`echo ${tags} | head -n 1`
-	tags=`echo ${tags} | tail -n +1`
+	entry_begin=`printf "${tags}" | head -n 1`
+	tags=`printf "${tags}" | tail -n +1`
 fi
 
 # prepare for first loop iteration
@@ -81,8 +81,8 @@ while read entry_next; do
 	printf "${footer}\n\n" >> ${outfile}
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
-	version=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
-	vername=`echo ${ref} | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
+	version=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
+	vername=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
 	if [ -n "${pack_vers}" ]; then
 		header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
 	else
