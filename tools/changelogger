@@ -3,7 +3,7 @@
 # Autogenerate the debian/changelog from git tags
 # The output will be further configured by meson
 #
-# This is version 1.0 "Anteater", changed 14 Dec 2018
+# This is version 1.1 "Anteater", changed 17 Dec 2018
 #
 # A git version tag have the form 'name_M_m_p' where M, m and p are
 # positive integers with the semantic version number. name is a non-
@@ -16,7 +16,7 @@
 # Note that the matching is rather sloppy, this only works when no
 # strange tags are created.
 
-while getopts ":hpt" opt; do
+while getopts ":hptC:" opt; do
 	case $opt in
 	h)
 		hint=1;;
@@ -24,6 +24,8 @@ while getopts ":hpt" opt; do
 		pack_vers=1;;
 	t)
 		show_tags=' %d';;
+	C)
+		workdir="-C ${OPTARG}";;
 	\?)
 		echo "Invalid option: -$OPTARG"
 		hint=1;;
@@ -38,6 +40,7 @@ if [ -n "${hint}" -o $# -ne 2 ]; then
 	echo "          -h          Show help (this)"
 	echo "          -p          Enable packet name versioning"
 	echo "          -t          Show tags in commit messages"
+	echo "          -C path     Change to path before doing anything"
 	exit 1
 fi
 
@@ -47,14 +50,14 @@ printf "" > ${outfile}
 
 # Collect all relevant information
 # HEAD, TAGS..., ROOT-commit
-allcommits=`git log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
+allcommits=`git ${workdir} log --format="ref='%H' aut='%an' email='<%ae>' dat='%cD'"`
 head=`echo "${allcommits}" | head -n 1`
 root=`echo "${allcommits}" | tail -n 1`
-tags=`git for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" "refs/tags/${tag_pre}" --merged`
+tags=`git ${workdir} for-each-ref --shell --sort=-v:refname --format=ref="%(refname) aut=%(taggername) email=%(taggeremail) dat=%(taggerdate:rfc)" "refs/tags/${tag_pre}" --merged`
 
 # find out if HEAD is a tagged commit
-top_tag=`git for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}" --merged`
-patches=`git rev-list ${top_tag}..HEAD --count`
+top_tag=`git ${workdir} for-each-ref --sort=-v:refname --count=1 --format='%(refname)' "refs/tags/${tag_pre}" --merged`
+patches=`git ${workdir} rev-list ${top_tag}..HEAD --count`
 if [ ${patches} -lt 1 ]; then
 	entry_begin=`echo ${tags} | head -n 1`
 	tags=`echo ${tags} | tail -n +1`
@@ -74,7 +77,7 @@ while read entry_next; do
 	head_ref=${ref}
 	eval "${entry_next}"
 	printf "${header}\n" >> ${outfile}
-	eval "git log --format='  * %s${show_tags}' ${ref}..${head_ref} | sed 's/ *$//g'" >> ${outfile}
+	eval "git ${workdir} log --format='  * %s${show_tags}' ${ref}..${head_ref} | sed 's/ *$//g'" >> ${outfile}
 	printf "${footer}\n\n" >> ${outfile}
 	# prepare for next loop iteration
 	# (the header of the first iteration is different; it takes direct meson variables)
