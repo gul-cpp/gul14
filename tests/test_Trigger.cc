@@ -31,12 +31,12 @@ using gul::toc;
 using gul::sleep;
 using gul::Trigger;
 
-const int MS_BEFORE = 1;
-const int MS_AFTER  = 16;
-const int US_BEFORE = MS_BEFORE * 1000;
-const int US_AFTER  = MS_AFTER * 1000;
-const float S_BEFORE = MS_BEFORE * 1e-3;
-const float S_AFTER = MS_AFTER * 1e-3;
+constexpr int __attribute__((unused)) MS_BEFORE = 1;
+constexpr int __attribute__((unused)) MS_AFTER  = 16;
+constexpr int __attribute__((unused)) US_BEFORE = MS_BEFORE * 1000;
+constexpr int __attribute__((unused)) US_AFTER  = MS_AFTER * 1000;
+constexpr float __attribute__((unused)) S_BEFORE = MS_BEFORE * 1e-3;
+constexpr float __attribute__((unused)) S_AFTER = MS_AFTER * 1e-3;
 
 TEST_CASE("Construction, assignment, equality and bool operator work", "[concurrency]")
 {
