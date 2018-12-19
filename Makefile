@@ -1,5 +1,5 @@
-# Generate an architecture descriptor like x86_64-linux-gnu
-ARCH := $(shell uname -mo | sed -e 's/\([^ ]*\) \([^/]*\)\/\?\(.*\)/\L\1-\3-\2/')
+# Generate an architecture descriptor like x86_64-linux
+ARCH := $(shell uname -ms | sed -E 's/([^ ]+) (.+)/\2-\1/' | tr '[A-Z]' '[a-z]')
 
 # Hack: Limit ARM targets to sequential compilation to avoid out-of-memory problems
 ifneq "$(findstring arm,$(shell uname -m))" ""
