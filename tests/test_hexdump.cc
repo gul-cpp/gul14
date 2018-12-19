@@ -24,6 +24,7 @@
 #include <gul.h>
 #include <iostream>
 #include <limits>
+#include <array>
 
 using namespace std::literals::string_literals;
 
