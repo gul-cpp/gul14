@@ -37,6 +37,8 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
 
     auto previous = std::sregex_iterator{ };
     for (;parts != end; ++parts) {
+        if (parts == previous and not parts->length())
+            break;
         result.push_back(parts->prefix());
         previous = parts;
     }
@@ -79,4 +81,4 @@ std::string join(const std::vector<std::string>& parts, string_view glue) {
 
 } // namespace gul
 
-/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+// vi:ts=4:sw=4:et

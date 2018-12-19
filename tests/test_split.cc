@@ -57,16 +57,9 @@ TEST_CASE("String Split Test", "[string_util]")
     REQUIRE(xy[0] == "T"s);
     REQUIRE(xy[1] == "aT"s);
 
-
+    // This checks if indefinite loops are broken, somehow
+    // Empty regexes are UB anyhow
     auto const z1 = gul::split("TaaaT"s, std::regex{""});
-    REQUIRE(z1.size() == 7);
-    REQUIRE(z1[0] == ""s);
-    REQUIRE(z1[1] == "T"s);
-    REQUIRE(z1[2] == "a"s);
-    REQUIRE(z1[3] == "a"s);
-    REQUIRE(z1[4] == "a"s);
-    REQUIRE(z1[5] == "T"s);
-    REQUIRE(z1[6] == ""s);
 
     auto const z2 = gul::split("TaaaT"s, "");
     REQUIRE(z2.size() == 7);
