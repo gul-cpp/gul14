@@ -72,6 +72,28 @@ std::vector<std::string> split(string_view text, string_view delimiter);
 std::vector<std::string> split(const std::string& text, const std::regex& delimiter);
 
 /**
+ * Separate a string at all occurrences of a delimiter, returning the text between the
+ * delimiters as a vector of string_views.
+ *
+ * The result has at least one element. If the delimiter is not present in the text, the
+ * whole text is returned. If there are consecutive delimiters, the collected string
+ * between them is the empty string. If the delimiter is directly at the end of the
+ * input, the collected string between the end of the input and the delimiter is again the
+ * empty string.
+ *
+ * The reverse function of split_sv() is gul::join(). It is guaranteed that
+ * `join(split_sv(text, del), del) == text`.
+ *
+ * \param text       The string that is to be deconstructed
+ * \param delimiter  The delimiting substring
+ *
+ * \returns an array of substrings that were separated by delimiter in the original
+ *          string. The substrings are string_view objects that point into the original
+ *          string passed to the function.
+ */
+std::vector<gul::string_view> split_sv(string_view text, string_view delimiter);
+
+/**
  * Concatenate a vector of strings into one single string, placing a delimiter between
  * them.
  *

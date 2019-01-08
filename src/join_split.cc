@@ -27,6 +27,33 @@ using namespace std::literals::string_literals;
 
 namespace gul {
 
+
+namespace {
+
+template<typename StringType>
+std::vector<StringType> split(gul::string_view text, gul::string_view delimiter) {
+    using SizeType = typename StringType::size_type;
+
+    auto result = std::vector<StringType>{ };
+    auto search_start = SizeType{ 0 };
+    auto push_start = search_start;
+
+    for (;;) {
+        const auto hit = text.find(delimiter.data(), search_start, delimiter.size());
+        if (hit == StringType::npos)
+            break;
+        const auto hit_len = hit - push_start;
+        result.emplace_back(text.substr(push_start, hit_len));
+        search_start += std::max(delimiter.size() + hit_len, SizeType{1});
+        push_start += delimiter.size() + hit_len;
+    }
+    result.emplace_back(text.substr(push_start));
+    return result;
+}
+
+} // anonymous namespace
+
+
 std::vector<std::string> split(const std::string& text, const std::regex& delimiter) {
     auto const end = std::sregex_iterator{ };
     auto result = std::vector<std::string>{ };
@@ -47,21 +74,11 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
 }
 
 std::vector<std::string> split(string_view text, string_view delimiter) {
-    auto result = std::vector<std::string>{ };
-    auto search_start = gul::string_view::size_type{ 0 };
-    auto push_start = search_start;
+    return split<std::string>(text, delimiter);
+}
 
-    for (;;) {
-        auto const hit = text.find(delimiter.data(), search_start, delimiter.size());
-        if (hit == gul::string_view::npos)
-            break;
-        auto const hit_len = hit - push_start;
-        result.emplace_back(text.substr(push_start, hit_len));
-        search_start += std::max(delimiter.size() + hit_len, decltype(delimiter.size()){1});
-        push_start += delimiter.size() + hit_len;
-    }
-    result.emplace_back(text.substr(push_start));
-    return result;
+std::vector<string_view> split_sv(string_view text, string_view delimiter) {
+    return split<string_view>(text, delimiter);
 }
 
 std::string join(const std::vector<std::string>& parts, string_view glue) {
