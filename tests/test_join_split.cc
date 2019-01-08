@@ -1,8 +1,8 @@
 /**
- * \file   test_split.cc
+ * \file   test_join_split.cc
  * \author \ref contributors
  * \date   Created on August 31, 2018
- * \brief  Part of test suite for string utility functions in the General Utility Library.
+ * \brief  Test suite for join(), split(), and split_sv().
  *
  * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *

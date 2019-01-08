@@ -18,15 +18,14 @@ tests = [
     'test_cat.cc',
     'test_escape.cc',
     'test_hexdump.cc',
+    'test_join_split.cc',
     'test_main.cc',
     'test_replace.cc',
-    'test_split.cc',
     'test_substring_checks.cc',
     'test_time_util.cc',
     'test_tokenize.cc',
     'test_Trigger.cc',
     'test_trim.cc',
-    'test_hexdump.cc',
 ]
 
 test('all',
