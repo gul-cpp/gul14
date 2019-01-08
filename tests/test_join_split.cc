@@ -118,21 +118,41 @@ TEST_CASE("split_sv()", "[join_split]")
 
 TEST_CASE("join()", "[join_split]")
 {
-    REQUIRE(gul::join(std::vector<std::string>{ }, "lalala") == ""s);
-    REQUIRE(gul::join(std::vector<std::string>{ { "" } }, "lalala") == ""s);
-    REQUIRE(gul::join(std::vector<std::string>{ { "xyzzy" } }, "lalala") == "xyzzy"s);
-    //throw(1);
+    REQUIRE(gul::join(std::vector<std::string>{ }, "lalala") == "");
+    REQUIRE(gul::join(std::vector<std::string>{ { "" } }, "lalala") == "");
+    REQUIRE(gul::join(std::vector<std::string>{ { "xyzzy" } }, "lalala") == "xyzzy");
+    REQUIRE(gul::join(std::vector<std::string>{ { "A" }, { "B" } }, "lalala") == "AlalalaB");
+
+    REQUIRE(gul::join(std::vector<string_view>{ }, "lalala") == "");
+    REQUIRE(gul::join(std::vector<string_view>{ { "" } }, "lalala") == "");
+    REQUIRE(gul::join(std::vector<string_view>{ { "xyzzy" } }, "lalala") == "xyzzy"s);
+    REQUIRE(gul::join(std::vector<string_view>{ { "A" }, { "B" } }, "lalala") == "AlalalaB");
 }
 
 TEST_CASE("join(split())", "[join_split]")
 {
-    REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"z"}), "!") == "TestXm!eXnoeX"s);
-    REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"X"}), "!") == "Test!mze!noe!"s);
-    REQUIRE(gul::join(gul::split("z"s, std::regex{"z"}), "!") == "!"s);
-    REQUIRE(gul::join(gul::split("z "s, std::regex{"z"}), "!") == "! "s);
-    REQUIRE(gul::join(gul::split(" z"s, std::regex{"z"}), "!") == " !"s);
-    REQUIRE(gul::join(gul::split("xyzzy"s, std::regex{"z"}), "!") == "xy!!y"s);
+    REQUIRE(gul::join(gul::split("TestXmzeXnoeX", std::regex{"z"}), "!") == "TestXm!eXnoeX");
+    REQUIRE(gul::join(gul::split("TestXmzeXnoeX", std::regex{"X"}), "!") == "Test!mze!noe!");
+    REQUIRE(gul::join(gul::split("z", std::regex{"z"}), "!") == "!");
+    REQUIRE(gul::join(gul::split("z ", std::regex{"z"}), "!") == "! ");
+    REQUIRE(gul::join(gul::split(" z", std::regex{"z"}), "!") == " !");
+    REQUIRE(gul::join(gul::split("xyzzy", std::regex{"z"}), "!") == "xy!!y");
+
+    REQUIRE(gul::join(gul::split("TestXmzeXnoeX", "z"), "!") == "TestXm!eXnoeX");
+    REQUIRE(gul::join(gul::split("TestXmzeXnoeX", "X"), "!") == "Test!mze!noe!");
+    REQUIRE(gul::join(gul::split("z", "z"), "!") == "!");
+    REQUIRE(gul::join(gul::split("z ", "z"), "!") == "! ");
+    REQUIRE(gul::join(gul::split(" z", "z"), "!") == " !");
+    REQUIRE(gul::join(gul::split("xyzzy", "z"), "!") == "xy!!y");
+
+    REQUIRE(gul::join(gul::split_sv("TestXmzeXnoeX", "z"), "!") == "TestXm!eXnoeX");
+    REQUIRE(gul::join(gul::split_sv("TestXmzeXnoeX", "X"), "!") == "Test!mze!noe!");
+    REQUIRE(gul::join(gul::split_sv("z", "z"), "!") == "!");
+    REQUIRE(gul::join(gul::split_sv("z ", "z"), "!") == "! ");
+    REQUIRE(gul::join(gul::split_sv(" z", "z"), "!") == " !");
+    REQUIRE(gul::join(gul::split_sv("xyzzy", "z"), "!") == "xy!!y");
 
     auto const x = "EinNegerMitGazelleZagtImRegenNie"s;
     REQUIRE(gul::join(gul::split(x, "e"), "e") == x);
+    REQUIRE(gul::join(gul::split_sv(x, "e"), "e") == x);
 }

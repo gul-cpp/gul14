@@ -31,6 +31,31 @@ namespace gul {
 namespace {
 
 template<typename StringType>
+std::string join(const std::vector<StringType>& parts, string_view glue) {
+    using SizeType = typename StringType::size_type;
+
+    if (parts.empty())
+        return "";
+
+    const SizeType last_idx = parts.size() - 1; // last valid index
+
+    SizeType len = 0;
+    for (const auto &part : parts)
+        len += part.size();
+    len += last_idx * glue.size();
+
+    std::string result;
+    result.reserve(len);
+
+    for (SizeType i = 0; i < last_idx; ++i) {
+        result += parts[i];
+        result.append(glue.data(), glue.size());
+    }
+    result += parts[last_idx];
+    return result;
+}
+
+template<typename StringType>
 std::vector<StringType> split(gul::string_view text, gul::string_view delimiter) {
     using SizeType = typename StringType::size_type;
 
@@ -82,18 +107,11 @@ std::vector<string_view> split_sv(string_view text, string_view delimiter) {
 }
 
 std::string join(const std::vector<std::string>& parts, string_view glue) {
-    auto result = ""s;
-    auto const size = parts.size();
-    if (size < 1)
-        return result;
-    auto const last = size - 1; // last valid index
+    return join<std::string>(parts, glue);
+}
 
-    for (auto i = decltype(last){ 0 }; i < last; ++i) {
-        result += parts[i];
-        result.append(glue.data(), glue.size());
-    }
-    result += parts[last];
-    return result;
+std::string join(const std::vector<string_view>& parts, string_view glue) {
+    return join<string_view>(parts, glue);
 }
 
 } // namespace gul
