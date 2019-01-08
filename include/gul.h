@@ -141,15 +141,16 @@
  * <h4>Joining & Splitting</h4>
  *
  * cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
- *        string_views, or numbers.
+ *         string_views, or numbers.
  *
  * join(): Concatenate a vector of strings, adding some glue in between.
  *
- * split(): Separate a string at all occurrences of a delimiter string or regular
- *          expression.
+ * split(), split_sv(): Split a string at all occurrences of a delimiter string or
+ *         regular expression, returning a vector of string or string_view tokens.
+ *         `split(" hi ", " ")` returns `{"", "hi", ""}`.
  *
  * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector
- *          of string or string_view tokens.
+ *         of string or string_view tokens. `tokenize(" hi ")` returns `{"hi"}`.
  *
  * <h4>Checking for Substrings</h4>
  *
