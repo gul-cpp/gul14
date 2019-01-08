@@ -24,8 +24,9 @@
 #include <gul.h>
 
 using namespace std::literals::string_literals;
+using gul::string_view;
 
-TEST_CASE("String Split Test", "[string_util]")
+TEST_CASE("split()", "[join_split]")
 {
     auto const x = gul::split("Testmenoe"s, std::regex{"X"});
     REQUIRE(x.size() == 1);
@@ -72,7 +73,50 @@ TEST_CASE("String Split Test", "[string_util]")
     REQUIRE(z2[6] == ""s);
 }
 
-TEST_CASE("String Join Test", "[string_util]")
+TEST_CASE("split_sv()", "[join_split]")
+{
+    std::vector<string_view> tok = gul::split_sv("Testmenoe", "X");
+    REQUIRE(tok.size() == 1);
+    REQUIRE(tok[0] == "Testmenoe");
+
+    tok = gul::split_sv("Test\nme\nnoe", "\n");
+    REQUIRE(tok.size() == 3);
+    REQUIRE(tok[0] == "Test");
+    REQUIRE(tok[1] == "me");
+    REQUIRE(tok[2] == "noe");
+
+    tok = gul::split_sv("TaaaT", "aa");
+    REQUIRE(tok.size() == 2);
+    REQUIRE(tok[0] == "T");
+    REQUIRE(tok[1] == "aT");
+
+    tok = gul::split_sv("TaaaT", "");
+    REQUIRE(tok.size() == 7);
+    REQUIRE(tok[0] == "");
+    REQUIRE(tok[1] == "T");
+    REQUIRE(tok[2] == "a");
+    REQUIRE(tok[3] == "a");
+    REQUIRE(tok[4] == "a");
+    REQUIRE(tok[5] == "T");
+    REQUIRE(tok[6] == "");
+
+    tok = gul::split_sv("", "Test");
+    REQUIRE(tok.size() == 1);
+    REQUIRE(tok[0] == "");
+
+    std::string a = "Hello World";
+    tok = gul::split_sv(a, " ");
+    REQUIRE(tok.size() == 2);
+    REQUIRE(tok[0] == "Hello");
+    REQUIRE(tok[1] == "World");
+
+    a[1] = 'a';
+    a[10] = '!';
+    REQUIRE(tok[0] == "Hallo");
+    REQUIRE(tok[1] == "Worl!");
+}
+
+TEST_CASE("join()", "[join_split]")
 {
     REQUIRE(gul::join(std::vector<std::string>{ }, "lalala") == ""s);
     REQUIRE(gul::join(std::vector<std::string>{ { "" } }, "lalala") == ""s);
@@ -80,7 +124,7 @@ TEST_CASE("String Join Test", "[string_util]")
     //throw(1);
 }
 
-TEST_CASE("String Split-Join Test", "[string_util]")
+TEST_CASE("join(split())", "[join_split]")
 {
     REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"z"}), "!") == "TestXm!eXnoeX"s);
     REQUIRE(gul::join(gul::split("TestXmzeXnoeX"s, std::regex{"X"}), "!") == "Test!mze!noe!"s);
