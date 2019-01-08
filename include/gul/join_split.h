@@ -33,25 +33,42 @@ namespace gul {
  * Separate a string at all occurrences of a delimiter, returning the strings between the
  * delimiters in a vector.
  *
+ * The result has at least one element. If the delimiter is not present in the text, the
+ * whole text is returned. If there are consecutive delimiters, the collected string
+ * between them is the empty string. If the delimiter is directly at the end of the
+ * input, the collected string between the end of the input and the delimiter is again the
+ * empty string.
+ *
+ * split() is the reverse funtion of gul::join(). It is guaranteed that
+ * `join(split(text, del), del) == text`.
+ *
+ * \param text       The string that is to be deconstructed
+ * \param delimiter  The delimiting substring
+ *
+ * \returns an array of substrings that were separated by delimiter in the original
+ *          string.
+ */
+std::vector<std::string> split(string_view text, string_view delimiter);
+
+/**
+ * Separate a string at all occurrences of a delimiter described by a regular expression,
+ * returning the strings between the delimiters in a vector.
+ *
  * The result has at least one element. If the delimiter is not present in the text the
  * whole text is returned as one. If there are consecutive delimiters, the collected
  * string between them is the empty string. If the delimiter is directly at the end of the
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
  *
- * split() is the reverse funtion of gul::join(). It is guaranteed that
- * `join(split(text, del), del) == text` (unless del is a std::regex object).
+ * This version of split() does not accept string_view parameters because standard regexes
+ * are not compatible with string_view.
  *
- * Note: The regex version does not take string_views, because regexes and string_view are
- * incompatible.
+ * \param text       The string that is to be deconstructed
+ * \param delimiter  A std::regex object describing the delimiters
  *
- * \param text      The string that is to be deconstructed
- * \param delimiter The delimiting substring
- *
- * \returns an array of substrings that were separated by delimiter in the original
+ * \returns an array of substrings that were separated by delimiters in the original
  *          string.
  */
-std::vector<std::string> split(string_view text, string_view delimiter);
 std::vector<std::string> split(const std::string& text, const std::regex& delimiter);
 
 /**
@@ -61,8 +78,8 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
  * This is the reverse funtion of gul::split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
- * \param parts Array of strings that are to be concatenated
- * \param glue  String that is put between each element of parts
+ * \param parts  Array of strings that are to be concatenated
+ * \param glue   String that is put between each element of parts
  *
  * \returns all strings glued together with the delimiter glue.
  */
