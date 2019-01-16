@@ -58,14 +58,14 @@ TEST_CASE("Check escaping and unescaping with random strings", "[string_util]")
 {
     std::random_device r;
     std::default_random_engine re(r());
-    std::uniform_int_distribution<unsigned char> uniform_dist(0, 255);
+    std::uniform_int_distribution<unsigned short> uniform_dist(0, 255);
 
     for (int len = 0; len < 100; len++)
     {
         std::string original(len, ' ');
 
         for (char &c : original)
-            c = uniform_dist(re);
+            c = static_cast<char>(uniform_dist(re));
 
         auto escaped = gul::escape(original);
 
