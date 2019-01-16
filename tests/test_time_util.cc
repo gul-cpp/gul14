@@ -31,12 +31,16 @@ using gul::toc;
 using gul::sleep;
 using gul::Trigger;
 
-const int MS_BEFORE = 1;
-const int MS_AFTER  = 16;
-const int US_BEFORE = MS_BEFORE * 1000;
-const int US_AFTER  = MS_AFTER * 1000;
-const float S_BEFORE = MS_BEFORE * 1e-3;
-const float S_AFTER = MS_AFTER * 1e-3;
+namespace {
+
+constexpr int MS_BEFORE = 1;
+constexpr int MS_AFTER  = 18;
+constexpr int US_BEFORE = MS_BEFORE * 1000;
+constexpr int US_AFTER  = MS_AFTER * 1000;
+constexpr float S_BEFORE = MS_BEFORE * 1e-3f;
+constexpr float S_AFTER = MS_AFTER * 1e-3f;
+
+} // anonymous namespace
 
 SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]")
 {
@@ -98,8 +102,8 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time]")
 
         THEN("the elapsed time is very very small")
         {
-            REQUIRE(toc(t0) < 0.0005);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 500);
+            REQUIRE(toc(t0) < 0.001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
         }
     }
 
@@ -109,8 +113,8 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time]")
 
         THEN("the elapsed time is very very small")
         {
-            REQUIRE(toc(t0) < 0.0005);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 500);
+            REQUIRE(toc(t0) < 0.001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
         }
     }
 
@@ -120,8 +124,8 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time]")
 
         THEN("the elapsed time is very very small")
         {
-            REQUIRE(toc(t0) < 0.0005);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 500);
+            REQUIRE(toc(t0) < 0.001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
         }
     }
 
@@ -131,8 +135,8 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time]")
 
         THEN("the elapsed time is very very small")
         {
-            REQUIRE(toc(t0) < 0.0005);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 500);
+            REQUIRE(toc(t0) < 0.001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
         }
     }
 }
@@ -162,8 +166,8 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
         THEN("the elapsed time is very very small")
         {
-            REQUIRE(toc(t0) < 0.0005);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 500);
+            REQUIRE(toc(t0) < 0.001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
         }
     }
 
@@ -175,8 +179,8 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
         THEN("the elapsed time is very very small")
         {
-            REQUIRE(toc(t0) < 0.0005);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 500);
+            REQUIRE(toc(t0) < 0.001);
+            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
         }
     }
 }
@@ -213,7 +217,7 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time]
         {
             auto t1 = tic();
             sleep(1s, interrupt);
-            REQUIRE(toc<std::chrono::microseconds>(t1) < 500);
+            REQUIRE(toc<std::chrono::microseconds>(t1) < 1000);
         }
 
         THEN("after setting interrupt to false again, an additional sleep works as expected")
