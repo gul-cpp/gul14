@@ -111,10 +111,10 @@ template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
 StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& end, string_view prompt = "")
 {
-    const auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
+    constexpr auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
     
     // Get the number of hex digits to represent any value of the given integral type
-    const auto nod = sizeof(*begin) * 2;
+    constexpr auto nod = sizeof(*begin) * 2;
 
     const std::string indent(prompt.length(), ' ');
     const std::string empty(nod + 1, ' ');
@@ -147,7 +147,8 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
             // requiring ForwardIterators over InputOperators
             dest << ' ';
             for (size_t j = 0; j < 16 and line != end; ++j, ++line) {
-                dest << (isprint(*line) ? *line : '.');
+                const auto c = static_cast<unsigned char>(*line);
+                dest << static_cast<char>(isprint(c) ? c : '.'); // isprint() is only defined for unsigned char, but only char creates character output
             }
         }
         dest << "\n";
