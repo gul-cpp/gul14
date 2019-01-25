@@ -6,6 +6,12 @@ ifneq "$(findstring arm,$(shell uname -m))" ""
 NINJA_ARGS += -j 1
 endif
 
+# On Darwin, build universal binaries with 32- and 64-bit code
+ifeq "$(shell uname -s)" "Darwin"
+EXTRA_MESON_ARGS_1 = '-Dcpp_args=-arch i386 -arch x86_64'
+EXTRA_MESON_ARGS_2 = '-Dcpp_link_args=-arch i386 -arch x86_64'
+endif
+
 BUILDTYPE = release
 BUILDDIR = build/$(ARCH)/$(BUILDTYPE)
 
@@ -91,21 +97,22 @@ test-junit: $(BUILDDIR)/build.ninja
 
 build/$(ARCH)/debug/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
-	meson build/$(ARCH)/debug --buildtype=debug
+	meson build/$(ARCH)/debug --buildtype=debug $(EXTRA_MESON_ARGS_1) $(EXTRA_MESON_ARGS_2)
 
 build/$(ARCH)/doocs-release/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
 	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=/export/doocs \
 	      --libdir=lib --includedir=lib/include -D deb-vers-tag='DOOCSVERSION_' \
-	      -D deb-vers-pack=true -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@
+	      -D deb-vers-pack=true -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@ \
+	      $(EXTRA_MESON_ARGS_1) $(EXTRA_MESON_ARGS_2)
 
 build/$(ARCH)/release/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
-	meson build/$(ARCH)/release --buildtype=release
+	meson build/$(ARCH)/release --buildtype=release $(EXTRA_MESON_ARGS_1) $(EXTRA_MESON_ARGS_2)
 
 $(LOCALINSTDIR)/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
 	meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
-              --buildtype=release ${LOCALINSTDIR}
+              --buildtype=release ${LOCALINSTDIR} $(EXTRA_MESON_ARGS_1) $(EXTRA_MESON_ARGS_2)
 
 .PHONY: build-tests debug clean doc doocs-release help install-doc libs localinstall mrproper release test
