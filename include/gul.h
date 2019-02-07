@@ -35,6 +35,7 @@
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
  *  - \ref debugging_utilities
+ *  - \ref numeric_utilities
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
  *
@@ -220,6 +221,19 @@
  */
 
 /**
+ * \page numeric_utilities Numeric Utilities
+ * \brief.
+ *
+ * The General Utility Library provides some simple 'number crunching' utility helpers.
+ *
+ * withinAbs()
+ *     Compare two numbwers, allowing a absolute difference
+ *
+ * withinOrders()
+ *     Compare two numbwers, but only taking into account the first digits
+ */
+
+/**
  * \page backports Backports
  * \brief.
  *
@@ -251,6 +265,7 @@
 #include "gul/escape.h"
 #include "gul/hexdump.h"
 #include "gul/join_split.h"
+#include "gul/num_util.h"
 #include "gul/replace.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"

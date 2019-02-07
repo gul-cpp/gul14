@@ -7,6 +7,7 @@ foundation for other libraries and programs. The main fields covered by the libr
   * Concurrency utilities
   * Time utilities
   * Debugging utilities
+  * Numeric utilities
   * Backports from new standard library extensions
 
 Here you find more detailed information on:
