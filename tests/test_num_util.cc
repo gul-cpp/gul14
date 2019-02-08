@@ -196,6 +196,13 @@ TEST_CASE("test withinAbs()", "[numerics]")
     REQUIRE(gul::withinAbs(3648.2831, 3748.2843, 100.0) == false);
     REQUIRE(gul::withinAbs(3648.2831, 3748.2843, 10.0) == false);
     REQUIRE(gul::withinAbs(3648.2831, 3748.2843, 1.0) == false);
+
+    // diff smaller than epsilon()
+    REQUIRE(gul::withinAbs(1.23E77, 1.23E77, 1.0) == true);
+
+    // including boundaries
+    REQUIRE(gul::withinAbs(7.0, 8.0, 1.0) == true);
+    REQUIRE(gul::withinAbs(8.0, 7.0, 1.0) == true);
 }
 
 // vi:ts=4:sw=4:et

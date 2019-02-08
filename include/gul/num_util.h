@@ -69,10 +69,11 @@ template<typename num_t,
         std::is_floating_point<num_t>::value
     >>
 bool withinAbs(num_t a, num_t b, num_t diff) noexcept {
+    diff = std::abs(diff); // negative allowed diff does not make sense
     if (a > b)
-        return a - diff < b;
+        return a - diff <= b;
     else
-        return b - diff < a;
+        return b - diff <= a;
 }
 
 } // namespace gul
