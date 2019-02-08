@@ -52,6 +52,34 @@ bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(f
     return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<num_t>>(0.1), orders);
 }
 
+// For withinAbs() we need abs() that can take unsigned integers. The standard library
+// does not provide it (rather uses either a narrowing conversion to a signed integer or
+// declares programs doing it ill-formed.
+// With C++17's constexpr if this would be trivial to solve, but here I struggled with
+// several easier tries before the following one.
+// It may look quite convoluted, but with -O2 it is all optimized away. Unfortunately
+// optimizing with -O1 is not sufficient.
+//
+// Boiler plate rules...
+namespace {
+
+template<typename num_t, typename = int>
+struct unsigned_save_abs {
+    num_t operator()(num_t x) {
+        return std::abs(x);
+    }
+};
+
+template<typename num_t>
+struct unsigned_save_abs<num_t, typename std::enable_if_t<
+        std::is_unsigned<num_t>::value, int>> {
+    num_t operator()(num_t x){
+        return x;
+    }
+};
+
+} // anonymous namespace
+
 /**
  * Compare two numbers for almost equality.
  *
@@ -66,7 +94,7 @@ bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(f
  */
 template<typename num_t>
 bool withinAbs(num_t a, num_t b, num_t diff) noexcept {
-    diff = std::abs(diff); // negative allowed diff does not make sense
+    diff = unsigned_save_abs<num_t>{}(diff); // Negative diff does not make sense. Use abs() from anon NS.
     if (a > b) {
         if (std::is_floating_point<num_t>::value)
             return a - diff <= b; // different formula needed because of inf/-inf and subnormal values
