@@ -20,6 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <limits>
 #include "gul/catch.h"
 #include "gul.h"
 
@@ -203,6 +204,22 @@ TEST_CASE("test withinAbs()", "[numerics]")
     // including boundaries
     REQUIRE(gul::withinAbs(7.0, 8.0, 1.0) == true);
     REQUIRE(gul::withinAbs(8.0, 7.0, 1.0) == true);
+
+    // only very few tests on integers
+    REQUIRE(gul::withinAbs(7, 8, 1) == true);
+    REQUIRE(gul::withinAbs(8, 7, 1) == true);
+    REQUIRE(gul::withinAbs(7, 9, 1) == false);
+    REQUIRE(gul::withinAbs(9, 7, 1) == false);
+    REQUIRE(gul::withinAbs(7u, 8u, 1u) == true);
+    REQUIRE(gul::withinAbs(8u, 7u, 1u) == true);
+    REQUIRE(gul::withinAbs(7u, 9u, 1u) == false);
+    REQUIRE(gul::withinAbs(9u, 7u, 1u) == false);
+
+    // integer wraparound test
+    auto i1 = std::numeric_limits<int>::min() + 10;
+    auto i2 = i1 - 1;
+    auto i3 = 60;
+    REQUIRE(gul::withinAbs(i1, i2, i3) == true);
 }
 
 // vi:ts=4:sw=4:et

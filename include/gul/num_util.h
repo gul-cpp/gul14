@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 7 Feb 2019
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -56,7 +56,7 @@ bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(f
  * Compare two numbers for almost equality.
  *
  * Checks for two numbers being equal but alowing for an absolute difference.
- * All arguments must be the same floating point type.
+ * All arguments must be the same numeric type (floating point or integer).
  *
  * \param a       The first number to compare
  * \param b       The second number to compare
@@ -64,16 +64,20 @@ bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(f
  *
  * \returns true if a and b are equal-ish
  */
-template<typename num_t,
-    typename = std::enable_if_t<
-        std::is_floating_point<num_t>::value
-    >>
+template<typename num_t>
 bool withinAbs(num_t a, num_t b, num_t diff) noexcept {
     diff = std::abs(diff); // negative allowed diff does not make sense
-    if (a > b)
-        return a - diff <= b;
-    else
-        return b - diff <= a;
+    if (a > b) {
+        if (std::is_floating_point<num_t>::value)
+            return a - diff <= b; // different formula needed because of inf/-inf and subnormal values
+        else
+            return a - b <= diff;
+    } else {
+        if (std::is_floating_point<num_t>::value)
+            return b - diff <= a;
+        else
+            return b - a <= diff;
+    }
 }
 
 } // namespace gul
