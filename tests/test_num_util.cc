@@ -201,6 +201,18 @@ TEST_CASE("test withinAbs()", "[numerics]")
     // diff smaller than epsilon()
     REQUIRE(gul::withinAbs(1.23E77, 1.23E77, 1.0) == true);
 
+    // floating point special values must always fail
+    REQUIRE(gul::withinAbs(std::nan(""), 1.0, 1.0) == false);
+    REQUIRE(gul::withinAbs(1.0, std::nan(""), 1.0) == false);
+    REQUIRE(gul::withinAbs(std::numeric_limits<double>::infinity(), 1.0, 1.0) == false);
+    REQUIRE(gul::withinAbs(1.0, std::numeric_limits<double>::infinity(), 1.0) == false);
+    REQUIRE(gul::withinAbs(-std::numeric_limits<double>::infinity(), 1.0, 1.0) == false);
+    REQUIRE(gul::withinAbs(1.0, -std::numeric_limits<double>::infinity(), 1.0) == false);
+
+    // floating point special values must always fail, except when they don't :->
+    REQUIRE(gul::withinAbs(1.0, 2.0, std::nan("")) == false);
+    REQUIRE(gul::withinAbs(1.0, 2.0, std::numeric_limits<double>::infinity()) == true);
+
     // including boundaries
     REQUIRE(gul::withinAbs(7.0, 8.0, 1.0) == true);
     REQUIRE(gul::withinAbs(8.0, 7.0, 1.0) == true);
