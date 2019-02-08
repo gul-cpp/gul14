@@ -33,6 +33,15 @@ TEST_CASE("test withinOrders()", "[numerics]")
     REQUIRE(gul::withinOrders(1.01, 1.02, 2) == true);
     REQUIRE(gul::withinOrders(1.01, 1.002, 2) == true);
 
+    // crossing zero
+    REQUIRE(gul::withinOrders(1.0, -2.0, 2) == false);
+    REQUIRE(gul::withinOrders(-1.01, 1.02, 2) == false);
+    REQUIRE(gul::withinOrders(-1.01, -1.02, 2) == true);
+
+    // negative orders
+    REQUIRE(gul::withinOrders(1.0, 100.0, -2) == true);
+    REQUIRE(gul::withinOrders(1.0, 101.0, -2) == false);
+
     // equal digits marked:                12345
     REQUIRE(gul::withinOrders(0.6482831, 0.6482843, 2) == true);
     REQUIRE(gul::withinOrders(0.6482831, 0.6482843, 3) == true);
@@ -120,6 +129,20 @@ TEST_CASE("test withinOrders()", "[numerics]")
     REQUIRE(gul::withinOrders(1.01, 1.012, 2) == true);
     REQUIRE(gul::withinOrders(1.01, 1.013, 2) == true); // 0.3 % off
     REQUIRE(gul::withinOrders(1.01, 1.024, 2) == false); // 1.4 % off
+
+    // floating point special values must always fail
+    REQUIRE(gul::withinOrders(std::nan(""), 1.0, 2) == false);
+    REQUIRE(gul::withinOrders(1.0, std::nan(""), 2) == false);
+    REQUIRE(gul::withinOrders(std::numeric_limits<double>::infinity(), 1.0, 2) == false);
+    REQUIRE(gul::withinOrders(1.0, std::numeric_limits<double>::infinity(), 2) == false);
+    REQUIRE(gul::withinOrders(-1E10, 1.0, 2) == false);
+    REQUIRE(gul::withinOrders(-std::numeric_limits<double>::infinity(), 1.0, 2) == false);
+    REQUIRE(gul::withinOrders(1.0, -std::numeric_limits<double>::infinity(), 2) == false);
+
+    // floating point special values must always fail, except when they don't :->
+    REQUIRE(gul::withinOrders(1.0, 1.01, std::nan("")) == false);
+    REQUIRE(gul::withinOrders(1.0, 1.01, std::numeric_limits<double>::infinity()) == false);
+    REQUIRE(gul::withinOrders(1.0, 1.01, -std::numeric_limits<double>::infinity()) == true);
 }
 
 TEST_CASE("test withinAbs()", "[numerics]")

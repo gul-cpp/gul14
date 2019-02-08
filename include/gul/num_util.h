@@ -49,7 +49,7 @@ template<typename num_t, typename order_t,
 bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
     auto const r = a > b ? a / b : b / a;
-    return r - 1.0 < std::pow(static_cast<std::decay_t<num_t>>(0.1), orders);
+    return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<num_t>>(0.1), orders);
 }
 
 /**
