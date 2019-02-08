@@ -257,4 +257,24 @@ TEST_CASE("test withinAbs()", "[numerics]")
     REQUIRE(gul::withinAbs(i1, i2, i3) == true);
 }
 
+TEST_CASE("test withinULP()", "[numerics]")
+{
+    REQUIRE(gul::withinULP(1.0, 1.0 + 1 * std::numeric_limits<double>::epsilon(), 0) == false);
+    REQUIRE(gul::withinULP(1.0, 1.0 + 1 * std::numeric_limits<double>::epsilon(), 1) == true);
+    REQUIRE(gul::withinULP(1.0, 1.0 - 1 * std::numeric_limits<double>::epsilon(), 0) == false);
+    REQUIRE(gul::withinULP(1.0, 1.0 - 1 * std::numeric_limits<double>::epsilon(), 1) == true);
+
+    REQUIRE(gul::withinULP(1.0, 1.0 + 3 * std::numeric_limits<double>::epsilon(), 1) == false);
+    REQUIRE(gul::withinULP(1.0, 1.0 + 3 * std::numeric_limits<double>::epsilon(), 2) == false);
+    REQUIRE(gul::withinULP(1.0, 1.0 + 3 * std::numeric_limits<double>::epsilon(), 3) == true);
+    REQUIRE(gul::withinULP(1.0, 1.0 - 3 * std::numeric_limits<double>::epsilon(), 1) == false);
+    REQUIRE(gul::withinULP(1.0, 1.0 - 3 * std::numeric_limits<double>::epsilon(), 2) == false);
+    REQUIRE(gul::withinULP(1.0, 1.0 - 3 * std::numeric_limits<double>::epsilon(), 3) == true);
+
+    // Typical 4 byte float values allow ~6-7 meaningfull digits, more digits are lost to ULP
+    static_assert(sizeof(float) == 4, "Test needs redesign because float resolution changed");
+    REQUIRE(gul::withinULP(543.0f, 543.001f, 3) == false);
+    REQUIRE(gul::withinULP(543.0f, 543.0001f, 3) == true);
+}
+
 // vi:ts=4:sw=4:et

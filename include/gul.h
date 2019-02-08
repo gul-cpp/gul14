@@ -231,6 +231,10 @@
  *
  * withinOrders()
  *     Compare two numbwers, but only taking into account the first digits
+ *
+ * withinULP()
+ *     Compare two numbers, allowing for some ULPs (alike least significant\
+ *     bit in integers) difference.
  */
 
 /**

@@ -108,6 +108,33 @@ bool withinAbs(num_t a, num_t b, num_t diff) noexcept {
     }
 }
 
+/**
+ * Compare two numbers for almost equality.
+ *
+ * Checks for two numbers being equal thereby alowing them to be ulp
+ * 'floating point representations' apart.
+ *
+ * One ULP is the spacing between two consecutive floating point representations.
+ * There are no possible values in between. One ULP is to floating point numbers
+ * something like LSB for integral numbers.
+ *
+ * All arguments must be the same floating point type.
+ *
+ * \param a       The first number to compare
+ * \param b       The second number to compare
+ * \param ulp     Allowed number of floating point steps in between
+ *
+ * \returns true if a and b are equal-ish
+ */
+template<typename num_t,
+    typename = std::enable_if_t<std::is_floating_point<num_t>::value>>
+bool withinULP(num_t a, num_t b, unsigned int ulp)
+{
+    auto diff = std::abs(a - b);
+    return diff <= std::numeric_limits<num_t>::epsilon() * ulp * std::max(std::abs(a), std::abs(b))
+        or diff < std::numeric_limits<num_t>::min(); // or the difference is subnormal
+}
+
 } // namespace gul
 
 // vi:ts=4:sw=4:et
