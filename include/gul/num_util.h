@@ -63,7 +63,7 @@ bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(f
 // Boiler plate rules...
 namespace {
 
-template<typename num_t, typename = int>
+template<typename num_t, typename = void>
 struct unsigned_save_abs {
     num_t operator()(num_t x) {
         return std::abs(x);
@@ -72,7 +72,7 @@ struct unsigned_save_abs {
 
 template<typename num_t>
 struct unsigned_save_abs<num_t, typename std::enable_if_t<
-        std::is_unsigned<num_t>::value, int>> {
+        std::is_unsigned<num_t>::value>> {
     num_t operator()(num_t x){
         return x;
     }
