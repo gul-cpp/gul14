@@ -3,7 +3,7 @@
 # Autogenerate the debian/changelog from git tags
 # The output will be further configured by meson
 #
-# This is version 1.2 "Anteater", changed 9 Feb 2019
+# This is version 1.3 "Anteater", changed 11 Feb 2019
 #
 # A git version tag have the form 'name_M_m_p' where M, m and p are
 # positive integers with the semantic version number. name is a non-
@@ -79,6 +79,9 @@ header="@NAME@ (@VERSION@) stable; urgency=low"
 printf "${tags}\n${root}\n" | \
 while read entry_next; do
 	footer=" -- ${aut}${caut} ${email}${cemail}  ${dat}${cdat}"
+	if [ -z "${aut}" ]; then
+		footer=`printf "  [Note] No tagger-id available, using topmost commit's author-id as maintainer-id\n${footer}"`
+	fi
 	head_ref=${ref}
 	eval "${entry_next}"
 	printf "${header}\n${verbose}" >> ${outfile}
