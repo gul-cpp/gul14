@@ -46,13 +46,13 @@ template<typename num_t, typename order_t,
         std::is_floating_point<num_t>::value
         and std::is_arithmetic<order_t>::value
     >>
-bool withinOrders(const num_t a, const num_t b, const order_t orders) noexcept(false) {
+bool within_orders(const num_t a, const num_t b, const order_t orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
     auto const r = a > b ? a / b : b / a;
     return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<num_t>>(0.1), orders);
 }
 
-// For withinAbs() we need abs() that can take unsigned integers. The standard library
+// For within_abs() we need abs() that can take unsigned integers. The standard library
 // does not provide it (rather uses either a narrowing conversion to a signed integer or
 // declares programs doing it ill-formed.
 // With C++17's constexpr if this would be trivial to solve, but here I struggled with
@@ -93,7 +93,7 @@ struct unsigned_save_abs<num_t, typename std::enable_if_t<
  * \returns true if a and b are equal-ish
  */
 template<typename num_t>
-bool withinAbs(num_t a, num_t b, num_t diff) noexcept {
+bool within_abs(num_t a, num_t b, num_t diff) noexcept {
     diff = unsigned_save_abs<num_t>{}(diff); // Negative diff does not make sense. Use abs() from anon NS.
     if (a > b) {
         if (std::is_floating_point<num_t>::value)
@@ -128,7 +128,7 @@ bool withinAbs(num_t a, num_t b, num_t diff) noexcept {
  */
 template<typename num_t,
     typename = std::enable_if_t<std::is_floating_point<num_t>::value>>
-bool withinULP(num_t a, num_t b, unsigned int ulp)
+bool within_ulp(num_t a, num_t b, unsigned int ulp)
 {
     auto diff = std::abs(a - b);
     return diff <= std::numeric_limits<num_t>::epsilon() * ulp * std::max(std::abs(a), std::abs(b))

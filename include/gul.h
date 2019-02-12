@@ -226,13 +226,13 @@
  *
  * The General Utility Library provides some simple 'number crunching' utility helpers.
  *
- * withinAbs()
+ * within_abs()
  *     Compare two numbwers, allowing a absolute difference
  *
- * withinOrders()
+ * within_orders()
  *     Compare two numbwers, but only taking into account the first digits
  *
- * withinULP()
+ * within_ulp()
  *     Compare two numbers, allowing for some ULPs (alike least significant\
  *     bit in integers) difference.
  */
