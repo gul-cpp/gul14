@@ -77,15 +77,15 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  *
  * \returns true if a and b are equal-ish
  */
-template<typename num_t, typename order_t,
+template<typename NumT, typename OrderT,
     typename = std::enable_if_t<
-        std::is_floating_point<num_t>::value
-        and std::is_arithmetic<order_t>::value
+        std::is_floating_point<NumT>::value
+        and std::is_arithmetic<OrderT>::value
     >>
-bool within_orders(const num_t a, const num_t b, const order_t orders) noexcept(false) {
+bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
     auto const r = a > b ? a / b : b / a;
-    return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<num_t>>(0.1), orders);
+    return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<NumT>>(0.1), orders);
 }
 
 /**
@@ -100,16 +100,16 @@ bool within_orders(const num_t a, const num_t b, const order_t orders) noexcept(
  *
  * \returns true if a and b are equal-ish
  */
-template<typename num_t>
-bool within_abs(num_t a, num_t b, num_t diff) noexcept {
+template<typename NumT>
+bool within_abs(NumT a, NumT b, NumT diff) noexcept {
     diff = gul::abs(diff); // Negative diff does not make sense
     if (a > b) {
-        if (std::is_floating_point<num_t>::value)
+        if (std::is_floating_point<NumT>::value)
             return a - diff <= b; // different formula needed because of inf/-inf and subnormal values
         else
             return a - b <= diff;
     } else {
-        if (std::is_floating_point<num_t>::value)
+        if (std::is_floating_point<NumT>::value)
             return b - diff <= a;
         else
             return b - a <= diff;
@@ -134,13 +134,13 @@ bool within_abs(num_t a, num_t b, num_t diff) noexcept {
  *
  * \returns true if a and b are equal-ish
  */
-template<typename num_t,
-    typename = std::enable_if_t<std::is_floating_point<num_t>::value>>
-bool within_ulp(num_t a, num_t b, unsigned int ulp)
+template<typename NumT,
+    typename = std::enable_if_t<std::is_floating_point<NumT>::value>>
+bool within_ulp(NumT a, NumT b, unsigned int ulp)
 {
     auto diff = std::abs(a - b);
-    return diff <= std::numeric_limits<num_t>::epsilon() * ulp * std::max(std::abs(a), std::abs(b))
-        or diff < std::numeric_limits<num_t>::min(); // or the difference is subnormal
+    return diff <= std::numeric_limits<NumT>::epsilon() * ulp * std::max(std::abs(a), std::abs(b))
+        or diff < std::numeric_limits<NumT>::min(); // or the difference is subnormal
 }
 
 } // namespace gul
