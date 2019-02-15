@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -76,7 +76,7 @@
  *
  * \section copyright_notice Copyright Notice
  *
- * Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -98,7 +98,7 @@
  *
  * <dl>
  * <dt>\ref catch.h</dt>
- * <dd>Copyright Phil Nash, Martin Hořeňovský et al. 2010-2018.
+ * <dd>Copyright Phil Nash, Martin Hořeňovský et al. 2010-2019.
  *     Distributed under the Boost Software License, Version 1.0 (see \ref catch.h
  *     for details).</dd>
  *
@@ -225,6 +225,9 @@
  * \brief.
  *
  * The General Utility Library provides some simple 'number crunching' utility helpers.
+ *
+ * abs()
+ *     Return absolute value even for unsigned types
  *
  * within_abs()
  *     Compare two numbwers, allowing a absolute difference

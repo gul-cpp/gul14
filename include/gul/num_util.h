@@ -27,6 +27,42 @@
 namespace gul {
 
 /**
+ * Compute the absolute value of a number
+ *
+ * This is almost equal to std::abs() with the exception of unsigned integral types. In
+ * contrast to the standard library unsigned integrals are returned unchanged, in their
+ * original type.
+ *
+ * For work with templates with unknown arithmetical type one still needs to get the
+ * absolute value of some parameters. This is impossible with the std::abs() specification.
+ *
+ * abs(n) = |  |n|,  when n is represented in signed type
+ *          |  n,    when n is represented in unsigned type
+ *
+ * \param n
+ *
+ * \returns the absolute value (i.e. n, because n is unsigned anyhow)
+ */
+template<typename ValueT>
+constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<std::is_unsigned<ValueT>::value, ValueT>
+{
+    return n;
+}
+
+/**
+ * \overload
+ *
+ * \param n
+ *
+ * \returns the absolute value (i.e. |n|) if it is representable (see std::abs())
+ */
+template<typename ValueT>
+constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<ValueT>::value, ValueT>
+{
+    return std::abs(n);
+}
+
+/**
  * Compare two numbers for almost equality.
  *
  * Checks for two numbers being equal but taking into account only a limited number
@@ -52,34 +88,6 @@ bool within_orders(const num_t a, const num_t b, const order_t orders) noexcept(
     return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<num_t>>(0.1), orders);
 }
 
-// For within_abs() we need abs() that can take unsigned integers. The standard library
-// does not provide it (rather uses either a narrowing conversion to a signed integer or
-// declares programs doing it ill-formed.
-// With C++17's constexpr if this would be trivial to solve, but here I struggled with
-// several easier tries before the following one.
-// It may look quite convoluted, but with -O2 it is all optimized away. Unfortunately
-// optimizing with -O1 is not sufficient.
-//
-// Boiler plate rules...
-namespace {
-
-template<typename num_t, typename = void>
-struct unsigned_save_abs {
-    num_t operator()(num_t x) {
-        return std::abs(x);
-    }
-};
-
-template<typename num_t>
-struct unsigned_save_abs<num_t, typename std::enable_if_t<
-        std::is_unsigned<num_t>::value>> {
-    num_t operator()(num_t x){
-        return x;
-    }
-};
-
-} // anonymous namespace
-
 /**
  * Compare two numbers for almost equality.
  *
@@ -94,7 +102,7 @@ struct unsigned_save_abs<num_t, typename std::enable_if_t<
  */
 template<typename num_t>
 bool within_abs(num_t a, num_t b, num_t diff) noexcept {
-    diff = unsigned_save_abs<num_t>{}(diff); // Negative diff does not make sense. Use abs() from anon NS.
+    diff = gul::abs(diff); // Negative diff does not make sense
     if (a > b) {
         if (std::is_floating_point<num_t>::value)
             return a - diff <= b; // different formula needed because of inf/-inf and subnormal values
