@@ -42,7 +42,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(1.0, 100.0, -2) == true);
     REQUIRE(gul::within_orders(1.0, 101.0, -2) == false);
 
-    // equal digits marked:                12345
+    // equal digits marked:                 12345
     REQUIRE(gul::within_orders(0.6482831, 0.6482843, 2) == true);
     REQUIRE(gul::within_orders(0.6482831, 0.6482843, 3) == true);
     REQUIRE(gul::within_orders(0.6482831, 0.6482843, 4) == true);
@@ -51,7 +51,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(0.6482831, 0.6482843, 7) == false);
     REQUIRE(gul::within_orders(0.6482831, 0.6482843, 8) == false);
 
-    // equal digits marked:              1234 56
+    // equal digits marked:               1 23456
     REQUIRE(gul::within_orders(3.6482831, 3.6482843, 2) == true);
     REQUIRE(gul::within_orders(3.6482831, 3.6482843, 3) == true);
     REQUIRE(gul::within_orders(3.6482831, 3.6482843, 4) == true);
@@ -60,7 +60,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3.6482831, 3.6482843, 7) == false);
     REQUIRE(gul::within_orders(3.6482831, 3.6482843, 8) == false);
 
-    // equal digits marked:              1234 56
+    // equal digits marked:               1 23456
     REQUIRE(gul::within_orders(3.6482831, 3.6482820, 2) == true);
     REQUIRE(gul::within_orders(3.6482831, 3.6482820, 3) == true);
     REQUIRE(gul::within_orders(3.6482831, 3.6482820, 4) == true);
@@ -69,7 +69,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3.6482831, 3.6482820, 7) == false);
     REQUIRE(gul::within_orders(3.6482831, 3.6482820, 8) == false);
 
-    // equal digits marked:              1234 56
+    // equal digits marked:               1234 56
     REQUIRE(gul::within_orders(3648.2831, 3648.2843, 2) == true);
     REQUIRE(gul::within_orders(3648.2831, 3648.2843, 3) == true);
     REQUIRE(gul::within_orders(3648.2831, 3648.2843, 4) == true);
@@ -78,7 +78,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3648.2831, 3648.2843, 7) == false);
     REQUIRE(gul::within_orders(3648.2831, 3648.2843, 8) == false);
 
-    // equal digits marked:              1234 5
+    // equal digits marked:               1234 5
     REQUIRE(gul::within_orders(3648.2831, 3648.2743, 2) == true);
     REQUIRE(gul::within_orders(3648.2831, 3648.2743, 3) == true);
     REQUIRE(gul::within_orders(3648.2831, 3648.2743, 4) == true);
@@ -87,7 +87,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3648.2831, 3648.2743, 7) == false);
     REQUIRE(gul::within_orders(3648.2831, 3648.2743, 8) == false);
 
-    // equal digits marked:              1234
+    // equal digits marked:               1234
     REQUIRE(gul::within_orders(3648.2831, 3648.3843, 2) == true);
     REQUIRE(gul::within_orders(3648.2831, 3648.3843, 3) == true);
     REQUIRE(gul::within_orders(3648.2831, 3648.3843, 4) == true);
@@ -96,7 +96,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3648.2831, 3648.3843, 7) == false);
     REQUIRE(gul::within_orders(3648.2831, 3648.3843, 8) == false);
 
-    // equal digits marked:              123
+    // equal digits marked:               123
     REQUIRE(gul::within_orders(3648.2831, 3649.2843, 2) == true);
     REQUIRE(gul::within_orders(3648.2831, 3649.2843, 3) == true);
     REQUIRE(gul::within_orders(3648.2831, 3649.2843, 4) == false);
@@ -105,7 +105,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3648.2831, 3649.2843, 7) == false);
     REQUIRE(gul::within_orders(3648.2831, 3649.2843, 8) == false);
 
-    // equal digits marked:              12
+    // equal digits marked:               12
     REQUIRE(gul::within_orders(3648.2831, 3638.2843, 2) == true);
     REQUIRE(gul::within_orders(3648.2831, 3638.2843, 3) == false);
     REQUIRE(gul::within_orders(3648.2831, 3638.2843, 4) == false);
@@ -114,7 +114,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(3648.2831, 3638.2843, 7) == false);
     REQUIRE(gul::within_orders(3648.2831, 3638.2843, 8) == false);
 
-    // equal digits marked:              1
+    // equal digits marked:               1
     REQUIRE(gul::within_orders(3648.2831, 3748.2843, 1) == true);
     REQUIRE(gul::within_orders(3648.2831, 3748.2843, 2) == false);
     REQUIRE(gul::within_orders(3648.2831, 3748.2843, 3) == false);
@@ -151,6 +151,12 @@ TEST_CASE("test within_abs()", "[numerics]")
     REQUIRE(gul::within_abs(101.0, 1.0, 2.0) == false);
     REQUIRE(gul::within_abs(1.01, 1.02, 0.010001) == true);
     REQUIRE(gul::within_abs(1.01, 1.002, 0.010001) == true);
+
+    // crossing zero
+    REQUIRE(gul::within_abs(2.0, -2.0, 0.1) == false);
+    REQUIRE(gul::within_abs(-1.01, 1.02, 0.1) == false);
+    REQUIRE(gul::within_abs(-1.01, -1.02, 0.02) == true);
+    REQUIRE(gul::within_abs(-1.01, -1.02, -0.02) == true);
 
     // equal digits marked:             12345
     REQUIRE(gul::within_abs(0.6482831, 0.6482843, 0.01) == true);
@@ -259,6 +265,8 @@ TEST_CASE("test within_abs()", "[numerics]")
 
 TEST_CASE("test within_ulp()", "[numerics]")
 {
+    REQUIRE(gul::within_ulp(3.0f/7.0f, 0.42857142857f, 1));
+
     REQUIRE(gul::within_ulp(1.0, 1.0 + 1 * std::numeric_limits<double>::epsilon(), 0) == false);
     REQUIRE(gul::within_ulp(1.0, 1.0 + 1 * std::numeric_limits<double>::epsilon(), 1) == true);
     REQUIRE(gul::within_ulp(1.0, 1.0 - 1 * std::numeric_limits<double>::epsilon(), 0) == false);
