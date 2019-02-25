@@ -27,21 +27,15 @@
 namespace gul {
 
 /**
- * Compute the absolute value of a number
+ * Compute the absolute value of a number.
  *
- * This is almost equal to std::abs() with the exception of unsigned integral types. In
- * contrast to the standard library unsigned integrals are returned unchanged, in their
- * original type.
+ * This function is almost equal to std::abs() with the exception of unsigned integral
+ * types, which are returned unchanged and in their original type. This is especially
+ * useful in templates, where std::abs() cannot be used for all arithmetic types.
  *
- * For work with templates with unknown arithmetical type one still needs to get the
- * absolute value of some parameters. This is impossible with the std::abs() specification.
+ * \param n  The number whose absolute value should be determined.
  *
- * abs(n) = |  |n|,  when n is represented in signed type
- *          |  n,    when n is represented in unsigned type
- *
- * \param n
- *
- * \returns the absolute value (i.e. n, because n is unsigned anyhow)
+ * \returns the absolute value of n.
  */
 template<typename ValueT>
 constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<std::is_unsigned<ValueT>::value, ValueT>
@@ -51,10 +45,6 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<std::is_unsigned<Value
 
 /**
  * \overload
- *
- * \param n
- *
- * \returns the absolute value (i.e. |n|) if it is representable (see std::abs())
  */
 template<typename ValueT>
 constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<ValueT>::value, ValueT>
@@ -63,19 +53,26 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
 }
 
 /**
- * Compare two numbers for almost equality.
+ * Determine if two numbers are almost equal by comparing their ratio to 1.
  *
- * Checks for two numbers being equal but taking into account only a limited number
- * of significant digits.
+ * This function calculates the ratio of the bigger number to the smaller number and
+ * returns true if this ratio deviates from 1.0 by less than 0.1^orders.
  *
- * Unexpected behavior can result when orders is low (< 3) as the simple concept of
- * orders equals digits does not hold so strict anymore.
+ *     within_orders(10, 12, 1):    false (ratio = 1.2   > 1 + 0.1^1)
+ *     within_orders(10, 10.9, 1):  true  (ratio = 1.09  < 1 + 0.1^1)
+ *     within_orders(10, 10.9, 2):  false (ratio = 1.09  > 1 + 0.1^2)
+ *     within_orders(10, 10.09, 2): true  (ratio = 1.009 < 1 + 0.1^2)
+ *
+ * Because this function needs to calculate the ratio between the two numbers, it does
+ * not work if one of them is zero. Unexpected behavior can also result when orders is
+ * low (< 3) as the simple concept of orders equals digits does not hold so strict
+ * anymore.
  *
  * \param a       The first number to compare (any floating point type)
  * \param b       The second number to compare (any floating point type, same type as a)
  * \param orders  The number of orders of magnitude to take for comparison (any numeric type)
  *
- * \returns true if a and b are equal-ish
+ * \returns true if the ratio of a and b is close enough to 1.
  */
 template<typename NumT, typename OrderT,
     typename = std::enable_if_t<
@@ -89,50 +86,47 @@ bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(fal
 }
 
 /**
- * Compare two numbers for almost equality.
+ * Determine if two numbers are almost equal, allowing for an absolute difference.
  *
- * Checks for two numbers being equal but alowing for an absolute difference.
  * All arguments must be the same numeric type (floating point or integer).
  *
- * \param a       The first number to compare
- * \param b       The second number to compare
- * \param diff    The latitude
+ * \param a     The first number to compare
+ * \param b     The second number to compare
+ * \param tol   The absolute tolerance
  *
- * \returns true if a and b are equal-ish
+ * \returns true if the absolute difference between a and b is smaller than tol.
  */
 template<typename NumT>
-bool within_abs(NumT a, NumT b, NumT diff) noexcept {
-    diff = gul::abs(diff); // Negative diff does not make sense
+bool within_abs(NumT a, NumT b, NumT tol) noexcept {
+    tol = gul::abs(tol); // Negative diff does not make sense
     if (a > b) {
         if (std::is_floating_point<NumT>::value)
-            return a - diff <= b; // different formula needed because of inf/-inf and subnormal values
+            return a - tol <= b; // different formula needed because of inf/-inf and subnormal values
         else
-            return a - b <= diff;
+            return a - b <= tol;
     } else {
         if (std::is_floating_point<NumT>::value)
-            return b - diff <= a;
+            return b - tol <= a;
         else
-            return b - a <= diff;
+            return b - a <= tol;
     }
 }
 
 /**
- * Compare two numbers for almost equality.
- *
- * Checks for two numbers being equal thereby alowing them to be ulp
- * 'floating point representations' apart.
+ * Determine if two numbers are almost equal, allowing for a difference of a given number
+ * of units-in-the-last-place (ULPs).
  *
  * One ULP is the spacing between two consecutive floating point representations.
- * There are no possible values in between. One ULP is to floating point numbers
- * something like LSB for integral numbers.
+ * There are no possible values in between. Roughly speaking, one ULP is for floating
+ * point numbers what the 1 is for integral numbers.
  *
- * All arguments must be the same floating point type.
+ * All arguments must be of the same floating point type.
  *
  * \param a       The first number to compare
  * \param b       The second number to compare
  * \param ulp     Allowed number of floating point steps in between
  *
- * \returns true if a and b are equal-ish
+ * \returns true if a and b are equal within the given number of ULPs.
  */
 template<typename NumT,
     typename = std::enable_if_t<std::is_floating_point<NumT>::value>>
