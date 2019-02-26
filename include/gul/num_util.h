@@ -57,27 +57,19 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  *
  * The functions compares the specified number of significant decimal digits of the two
  * values and returns true if they are equal within these digits.
- * i.e.  abs(a - b) < (max(a, b) / orders)
  *
  *     a = 23736384; b = 23736228; within_orders(a, b, 5) => true  (first 5 digits equal)
  *     a = 23736384; b = 23735384; within_orders(a, b, 5) => false (digit #5 differs)
  *
  * Unexpected behavior can result when orders is low (< 3) as the simple concept of
- * orders equals digits does not hold so strict anymore. The above explanation is only
- * approximate. The function calculates the ratio of the bigger number to the smaller number
- * and returns true if this ratio deviates from 1.0 by less than 0.1^orders.
- *
- *     within_orders(10, 12, 1):    false (ratio = 1.2   > 1 + 0.1^1)
- *     within_orders(10, 10.9, 1):  true  (ratio = 1.09  < 1 + 0.1^1)
- *     within_orders(10, 10.9, 2):  false (ratio = 1.09  > 1 + 0.1^2)
- *     within_orders(10, 10.09, 2): true  (ratio = 1.009 < 1 + 0.1^2)
+ * orders equals digits does not hold so strict anymore.
  *
  * Remember that any number (!= 0) has infinite different significant digits compared
  * with 0.00000000. So if either a or b is 0.0 the result must be false.
  *
  * \param a       The first number to compare (any floating point type)
  * \param b       The second number to compare (any floating point type, same type as a)
- * \param orders  The number of digits or orders of magnitude to take for comparison (any numeric type)
+ * \param orders  The number of digits to take for comparison (any numeric type)
  *
  * \returns true if the difference between a and b is orders of magnitude lower than the value of a or b
  */
@@ -88,8 +80,8 @@ template<typename NumT, typename OrderT,
     >>
 bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
-    auto const r = a > b ? a / b : b / a;
-    return std::abs(r - 1.0) < std::pow(static_cast<std::decay_t<NumT>>(0.1), orders);
+    return std::abs(a - b)
+        < (std::max(std::abs(a), std::abs(b)) / std::pow(static_cast<std::decay_t<NumT>>(10.0),orders));
 }
 
 /**
