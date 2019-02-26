@@ -53,26 +53,33 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
 }
 
 /**
- * Determine if two numbers are almost equal by comparing their ratio to 1.
+ * Determine if two numbers are almost equal, taking only some significant digits
  *
- * This function calculates the ratio of the bigger number to the smaller number and
- * returns true if this ratio deviates from 1.0 by less than 0.1^orders.
+ * The functions compares the specified number of significant decimal digits of the two
+ * values and returns true if they are equal within these digits.
+ * i.e.  abs(a - b) < (max(a, b) / orders)
+ *
+ *     a = 23736384; b = 23736228; within_orders(a, b, 5) => true  (first 5 digits equal)
+ *     a = 23736384; b = 23735384; within_orders(a, b, 5) => false (digit #5 differs)
+ *
+ * Unexpected behavior can result when orders is low (< 3) as the simple concept of
+ * orders equals digits does not hold so strict anymore. The above explanation is only
+ * approximate. The function calculates the ratio of the bigger number to the smaller number
+ * and returns true if this ratio deviates from 1.0 by less than 0.1^orders.
  *
  *     within_orders(10, 12, 1):    false (ratio = 1.2   > 1 + 0.1^1)
  *     within_orders(10, 10.9, 1):  true  (ratio = 1.09  < 1 + 0.1^1)
  *     within_orders(10, 10.9, 2):  false (ratio = 1.09  > 1 + 0.1^2)
  *     within_orders(10, 10.09, 2): true  (ratio = 1.009 < 1 + 0.1^2)
  *
- * Because this function needs to calculate the ratio between the two numbers, it does
- * not work if one of them is zero. Unexpected behavior can also result when orders is
- * low (< 3) as the simple concept of orders equals digits does not hold so strict
- * anymore.
+ * Remember that any number (!= 0) has infinite different significant digits compared
+ * with 0.00000000. So if either a or b is 0.0 the result must be false.
  *
  * \param a       The first number to compare (any floating point type)
  * \param b       The second number to compare (any floating point type, same type as a)
- * \param orders  The number of orders of magnitude to take for comparison (any numeric type)
+ * \param orders  The number of digits or orders of magnitude to take for comparison (any numeric type)
  *
- * \returns true if the ratio of a and b is close enough to 1.
+ * \returns true if the difference between a and b is orders of magnitude lower than the value of a or b
  */
 template<typename NumT, typename OrderT,
     typename = std::enable_if_t<
