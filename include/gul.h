@@ -28,6 +28,7 @@
 #include "gul/join_split.h"
 #include "gul/num_util.h"
 #include "gul/replace.h"
+#include "gul/SlidingBuffer.h"
 #include "gul/statistics.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
@@ -59,6 +60,7 @@ namespace gul {
  *  - \ref statistics_utilities
  *  - \ref debugging_utilities
  *  - \ref numeric_utilities
+ *  - \ref container_utilities
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
  *
@@ -332,6 +334,16 @@ namespace gul {
  *
  * \ref gul::FailToInstantiate "FailToInstantiate":
  *     Class to help debug types
+ */
+
+/**
+ * \page container_utilities Useful containers
+ * \brief.
+ *
+ * The General Utility Library provides some additional containers.
+ *
+ * SlidingBuffer{}
+ *     A fixed size container to use as sliding window on a data stream
  */
 
 } // namespace gul

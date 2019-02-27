@@ -12,6 +12,7 @@ install_headers(
     'gul/join_split.h',
     'gul/num_util.h',
     'gul/replace.h',
+    'gul/SlidingBuffer.h',
     'gul/statistics.h',
     'gul/string_util.h',
     'gul/string_view.h',
