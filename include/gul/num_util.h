@@ -53,7 +53,7 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
 }
 
 /**
- * Determine if two numbers are almost equal, taking only some significant digits
+ * Determine if two numbers are almost equal, comparing only some significant digits.
  *
  * The functions compares the specified number of significant decimal digits of the two
  * values and returns true if they are equal within these digits.
@@ -64,14 +64,15 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  * Unexpected behavior can result when orders is low (< 3) as the simple concept of
  * orders equals digits does not hold so strict anymore.
  *
- * Remember that any number (!= 0) has infinite different significant digits compared
+ * Remember that any nonzero number has infinite different significant digits compared
  * with 0.00000000. So if either a or b is 0.0 the result must be false.
  *
  * \param a       The first number to compare (any floating point type)
  * \param b       The second number to compare (any floating point type, same type as a)
  * \param orders  The number of digits to take for comparison (any numeric type)
  *
- * \returns true if the difference between a and b is orders of magnitude lower than the value of a or b
+ * \returns true if the difference between a and b is orders of magnitude lower than the
+ *          value of a or b.
  */
 template<typename NumT, typename OrderT,
     typename = std::enable_if_t<
