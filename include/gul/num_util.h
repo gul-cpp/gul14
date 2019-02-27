@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <type_traits>
 
 namespace gul {
