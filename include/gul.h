@@ -26,11 +26,11 @@
  * \image html gul_big.png
  *
  * \section introduction Introduction
- * 
+ *
  * The General Utility Library (GUL) contains often-used utility functions and types that
  * form the foundation for other libraries and programs. The main fields covered by the
  * library are:
- * 
+ *
  *  - \ref string_utilities
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
@@ -170,7 +170,7 @@
  * trim(), trim_left(), trim_right() etc.: Trim leading and/or trailing whitespace (or a
  *          custom set of characters) from a string, returning a new std::string or a
  *          string_view.
- * 
+ *
  * <h4>Dealing with Special Characters</h4>
  *
  * escape(): Replace non-printable characters in a string so that it looks like a C string
@@ -178,7 +178,7 @@
  *
  * unescape(): Convert a string with escaped characters back to its original form.
  *
- * 
+ *
  * <h3>Classes</h3>
  *
  * \ref gul::string_view "string_view":
@@ -224,20 +224,20 @@
  * \page numeric_utilities Numeric Utilities
  * \brief.
  *
- * The General Utility Library provides some simple 'number crunching' utility helpers.
+ * The General Utility Library provides several functions dealing with numbers.
  *
- * abs()
- *     Return absolute value even for unsigned types
+ * abs():
+ *     Calculate the absolute value, even for unsigned types.
  *
- * within_abs()
- *     Compare two numbwers, allowing a absolute difference
+ * within_abs():
+ *     Determine if two numbers are almost equal, allowing for an absolute difference.
  *
- * within_orders()
- *     Compare two numbwers, but only taking into account the first digits
+ * within_orders():
+ *     Determine if two numbers are almost equal, comparing only some significant digits.
  *
- * within_ulp()
- *     Compare two numbers, allowing for some ULPs (alike least significant\
- *     bit in integers) difference.
+ * within_ulp():
+ *     Determine if two numbers are almost equal, allowing for a difference of a given
+ *     number of units-in-the-last-place (ULPs).
  */
 
 /**
