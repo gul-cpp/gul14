@@ -7,7 +7,7 @@ project('libgul', 'cpp',
     default_options : [ 'cpp_std=c++14',
                         'warning_level=3',
                         'datadir=share' ],
-    version : '0.5',
+    version : '0.6',
     meson_version : '>=0.37')
 
 # Enforce that the version number is according to specs
