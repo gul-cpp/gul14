@@ -67,7 +67,7 @@ debug: build/$(ARCH)/debug/build.ninja
 
 doc:	$(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
-	ninja $(NINJA_ARGS) -C $(BUILDDIR) resources/docs
+	ninja $(NINJA_ARGS) -C $(BUILDDIR) data/docs
 
 doocs-release: build/$(ARCH)/doocs-release/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
