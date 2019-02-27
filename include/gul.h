@@ -28,6 +28,7 @@
 #include "gul/join_split.h"
 #include "gul/num_util.h"
 #include "gul/replace.h"
+#include "gul/statistics.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
 #include "gul/substring_checks.h"
@@ -54,6 +55,7 @@ namespace gul {
  *  - \ref string_utilities
  *  - \ref concurrency_utilities
  *  - \ref time_utilities
+ *  - \ref statistics_utilities
  *  - \ref debugging_utilities
  *  - \ref numeric_utilities
  *  - \ref backports of standard library features that are not yet available on common
@@ -234,6 +236,47 @@ namespace gul {
  *
  * tic() & toc():
  *     Measure elapsed time.
+ */
+
+/**
+ * \page statistics_utilities Statistics Utilities
+ * \brief.
+ *
+ * The General Utility Library offers some utilities to perform statistical
+ * examination of data in an arbitrary container:
+ *
+ * Element<DataT, StateT>{}:
+ *     Type that the container's elements need to be. Holds one sub-element of arithmetic
+ *     type and optionally one sub-element of integral type for status information purposes.
+ *
+ * MinMax<DataT>{}:
+ *     Holds a pair of two values, typically the minimum and maximum element of something.
+ *
+ * mean(container):
+ *     Calculates the mean value of all elements in the container.
+ *     The elements must be of type Element<>.
+ *
+ * median(container):
+ *     Calculates the median value of all elements in the container.
+ *     The elements must be of type Element<>.
+ *
+ * min_max(container):
+ *     Returns the minimum and maximum value of all elements in the container.
+ *     The elements must be of type Element<>.
+ *
+ * standard_deviation(container):
+ *     Returns the standard deviation calculated of all elements in the container
+ *     after optionally removing outliers.
+ *     The elements must be of type Element<>.
+ *
+ * maxstate(container):
+ *     Returns the maximum (hightest) state value stored in all elements in the
+ *     container. The elements must be of type Element<> with StateT enabled.
+ *
+ * remove_outliers(container, amount):
+ *     Removes the data points that are the furthest from the mean of all data points.
+ *     If more than one point is to be removed this will done recursively with
+ *     intermediate recalculations of the mean.
  */
 
 /**
