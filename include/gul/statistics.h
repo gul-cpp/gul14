@@ -269,83 +269,106 @@ auto accumulate(const ContainerT& container, OpClosure op, Accessor accessor = E
     return sum;
 }
 
-//////
+namespace {
+
 // The following stuff is only there to have a two iterator interface
-//
 
-template <typename IteratorT>
-struct MockContainer {
-    const IteratorT& begin_;
-    const IteratorT& end_;
-    using value_type = std::decay_t<decltype(*begin_)>;
+    template <typename IteratorT>
+    struct ContainerView {
+        const IteratorT& begin_;
+        const IteratorT& end_;
+        using value_type = std::decay_t<decltype(*begin_)>;
 
-    MockContainer(const IteratorT& i1, const IteratorT& i2)
-    : begin_{ i1 }
-    , end_{ i2 }
+        ContainerView(const IteratorT& i1, const IteratorT& i2)
+        : begin_{ i1 }
+        , end_{ i2 }
+        {
+        }
+
+        // Just implement the member functions that we use here
+
+        auto cbegin() const noexcept -> const IteratorT&
+        {
+            return begin_;
+        }
+        auto cend() const noexcept -> const IteratorT&
+        {
+            return end_;
+        }
+
+        auto size() const noexcept -> std::size_t
+        {
+            return std::distance(begin_, end_);
+        }
+    };
+
+    template<typename IteratorT>
+    auto make_view(const IteratorT& cbegin, const IteratorT& cend) -> const ContainerView<IteratorT>
     {
+        return ContainerView<IteratorT>{ cbegin, cend };
     }
 
-    // Just implement the member functions that we use here
-
-    auto cbegin() const noexcept -> const IteratorT&
-    {
-        return begin_;
-    }
-    auto cend() const noexcept -> const IteratorT&
-    {
-        return end_;
-    }
-
-    auto size() const noexcept -> std::size_t
-    {
-        return std::distance(begin_, end_);
-    }
-};
+} // namespace anonymous
 
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>>
-auto mean_it(const IteratorT& begin, const IteratorT& end) -> DataT
+auto mean_it(const IteratorT& begin, const IteratorT& end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
-    auto mock = MockContainer<IteratorT>{ begin, end };
-    return mean(mock);
+    return mean(make_view(begin, end), accessor);
 }
 
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>>
-auto median_it(const IteratorT& begin, const IteratorT& end) -> DataT
+auto median_it(const IteratorT& begin, const IteratorT& end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
-    auto mock = MockContainer<IteratorT>{ begin, end };
-    return median(mock);
+    return median(make_view(begin, end), accessor);
 }
 
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>>
-auto min_max_it(const IteratorT& begin, const IteratorT& end) -> MinMax<DataT>
+auto min_max_it(const IteratorT& begin, const IteratorT& end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> MinMax<DataT>
 {
-    auto mock = MockContainer<IteratorT>{ begin, end };
-    return min_max(mock);
+    return min_max(make_view(begin, end), accessor);
 }
 
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>>
-auto standard_deviation_it(const IteratorT& begin, const IteratorT& end) -> DataT
+auto remove_outliers_it(const IteratorT& begin, const IteratorT& end,
+        std::size_t outliers, Accessor accessor = ElementAccessor<ElementT>()) -> std::vector<ElementT>
 {
-    auto mock = MockContainer<IteratorT>{ begin, end };
-    return standard_deviation(mock);
+    return remove_outliers(make_view(begin, end), outliers, accessor);
 }
 
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename DataT = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>>
+auto standard_deviation_it(const IteratorT& begin, const IteratorT& end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    return standard_deviation(make_view(begin, end), accessor);
+}
+
+template <typename IteratorT,
+          typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>,
           typename OpClosure>
-auto maxstate_it(const IteratorT& begin, const IteratorT& end, OpClosure op) -> typename ElementT::state_t
+auto accumulate_it(const IteratorT& begin, const IteratorT& end, OpClosure op,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
-    auto mock = MockContainer<IteratorT>{ begin, end };
-    return maxstate(mock, op);
+    return accumulate(make_view(begin, end), op, accessor);
 }
 
 } // namespace gul

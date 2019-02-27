@@ -92,6 +92,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(mean(fifo) == (value1 + value2 + value3 + value4 + value5) / 5.0);
         REQUIRE(median(fifo) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
+        REQUIRE(accumulate_it(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
         REQUIRE(accumulate(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
         REQUIRE(min_max(fifo).min == value2);
         REQUIRE(min_max(fifo).max == value1);
