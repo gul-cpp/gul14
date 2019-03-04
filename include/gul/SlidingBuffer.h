@@ -112,7 +112,7 @@ public:
     }
 
     /**
-     * Access one element in the buffer, relative to the most recently `push`ed
+     * Access (read) one element in the buffer, relative to the most recently `push`ed
      * element.
      *
      * The index 0 is the most recent element, 1 is the element before that
@@ -125,7 +125,7 @@ public:
      * If the buffer is not yet full it may be possible that the function has nothing to
      * return and so a default constructed Element is returned.
      */
-    auto operator[] (const std::size_t i) -> const ElementT&
+    auto operator[] (const std::size_t i) const -> const ElementT&
     {
         const std::size_t idx = next_element_ + BufferSize - (i % BufferSize) - 1;
         // If the element has ever been filled or not is ignored. A default
@@ -135,13 +135,8 @@ public:
 
     /**
      * Return the oldest ('left most') Element in the buffer.
-     */
-    auto front() noexcept -> const ElementT&
-    {
-        return BaseT::operator[](next_element_);
-    }
-    /**
-     * \overload
+     *
+     * This is a read-only operation.
      */
     auto front() const noexcept -> const ElementT&
     {
@@ -150,13 +145,8 @@ public:
 
     /**
      * Return the youngest / most recent ('right most') Element in the buffer.
-     */
-    auto back() noexcept -> const ElementT&
-    {
-        return operator[](0);
-    }
-    /**
-     * \overload
+     *
+     * This is a read-only operation.
      */
     auto back() const noexcept -> const ElementT&
     {
@@ -164,9 +154,15 @@ public:
     }
 
     /**
-     * Return an iterator to the element following the last element of the container.
+     * Return an iterator to the element following the last element of the underlying
+     * container.
      *
-     * Last element means 'right most' (youngest / most recent) Element.
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
      */
     auto end() noexcept -> decltype(BaseT::end())
     {
@@ -176,11 +172,17 @@ public:
     }
 
     /**
-     * Return an iterator to the element following the last element of the container.
+     * Return a constant iterator to the element following the last element of the
+     * underlying container.
      *
-     * Last element means 'right most' (youngest / most recent) Element.
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
      */
-    auto cend() const noexcept
+    auto cend() const noexcept -> decltype(BaseT::cend())
     {
         if (full_)
             return BaseT::cend();
@@ -188,11 +190,19 @@ public:
     }
 
     /**
-     * Return a reverse iterator to the first element of the reversed container.
+     * Return a reverse iterator to the first element of the reversed underlying container.
+     *
      * It corresponds to the last element of the non-reversed container.
      * If the container is empty, the returned iterator is equal to rend().
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
      */
-    auto rbegin() noexcept
+    auto rbegin() noexcept -> decltype(BaseT::rbegin())
     {
         if (not full_ and next_element_ == 0)
             return BaseT::rend();
@@ -200,15 +210,24 @@ public:
     }
 
     /**
-     * Return a reverse iterator to the first element of the reversed container.
+     * Return a const reverse iterator to the first element of the reversed
+     * underlying container.
+     *
      * It corresponds to the last element of the non-reversed container.
      * If the container is empty, the returned iterator is equal to rend().
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
      */
-    auto rcbegin() const noexcept
+    auto crbegin() const noexcept -> decltype (BaseT::crbegin())
     {
         if (not full_ and next_element_ == 0)
             return BaseT::rcend();
-        return BaseT::rcbegin() + BufferSize - next_element_;
+        return BaseT::crbegin() + BufferSize - next_element_;
     }
 
     /**
@@ -233,7 +252,7 @@ public:
     }
 
     /**
-     * Return if the buffer is completely filled with elements.
+     * Return true if the buffer is completely filled with elements.
      *
      * If the buffer is used in filter contexts this means the filter is fully
      * initialized and working.
