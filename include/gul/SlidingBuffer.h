@@ -53,7 +53,7 @@ namespace gul {
  *
  * Member types:
  *   value_type          Type of the elements
- *   BaseT               Type of the underlying atd::array (i.e. std::array<value_type, ..>)
+ *   container_type      Type of the underlying atd::array (i.e. std::array<value_type, ..>)
  *
  * Member functions:
  *   Element access:
@@ -83,7 +83,7 @@ private:
     bool full_{ false };
 
 public:
-    using BaseT = std::array<ElementT, BufferSize>;
+    using container_type = std::array<ElementT, BufferSize>;
     using value_type = ElementT;
 
     /**
@@ -94,7 +94,7 @@ public:
      */
     auto push_back(ElementT&& in) -> void
     {
-        BaseT::operator[](next_element_) = std::move(in);
+        container_type::operator[](next_element_) = std::move(in);
         ++next_element_;
         if (next_element_ >= capacity()) {
             next_element_ = 0;
@@ -130,7 +130,7 @@ public:
         const std::size_t idx = next_element_ + BufferSize - (i % BufferSize) - 1;
         // If the element has ever been filled or not is ignored. A default
         // constructed ELEMENT will be returned on unset elements
-        return BaseT::operator[](idx % BufferSize);
+        return container_type::operator[](idx % BufferSize);
     }
 
     /**
@@ -140,7 +140,7 @@ public:
      */
     auto front() const noexcept -> const ElementT&
     {
-        return BaseT::operator[](next_element_);
+        return container_type::operator[](next_element_);
     }
 
     /**
@@ -164,11 +164,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto end() noexcept -> decltype(BaseT::end())
+    auto end() noexcept -> decltype(container_type::end())
     {
         if (full_)
-            return BaseT::end();
-        return BaseT::begin() + next_element_;
+            return container_type::end();
+        return container_type::begin() + next_element_;
     }
 
     /**
@@ -182,11 +182,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto cend() const noexcept -> decltype(BaseT::cend())
+    auto cend() const noexcept -> decltype(container_type::cend())
     {
         if (full_)
-            return BaseT::cend();
-        return BaseT::cbegin() + next_element_;
+            return container_type::cend();
+        return container_type::cbegin() + next_element_;
     }
 
     /**
@@ -202,11 +202,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto rbegin() noexcept -> decltype(BaseT::rbegin())
+    auto rbegin() noexcept -> decltype(container_type::rbegin())
     {
         if (not full_ and next_element_ == 0)
-            return BaseT::rend();
-        return BaseT::rbegin() + BufferSize - next_element_;
+            return container_type::rend();
+        return container_type::rbegin() + BufferSize - next_element_;
     }
 
     /**
@@ -223,11 +223,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto crbegin() const noexcept -> decltype (BaseT::crbegin())
+    auto crbegin() const noexcept -> decltype (container_type::crbegin())
     {
         if (not full_ and next_element_ == 0)
-            return BaseT::rcend();
-        return BaseT::crbegin() + BufferSize - next_element_;
+            return container_type::rcend();
+        return container_type::crbegin() + BufferSize - next_element_;
     }
 
     /**
