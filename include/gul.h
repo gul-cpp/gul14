@@ -20,6 +20,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
+#include "gul/cat.h"
+#include "gul/escape.h"
+#include "gul/hexdump.h"
+#include "gul/join_split.h"
+#include "gul/num_util.h"
+#include "gul/replace.h"
+#include "gul/string_util.h"
+#include "gul/string_view.h"
+#include "gul/substring_checks.h"
+#include "gul/time_util.h"
+#include "gul/tokenize.h"
+#include "gul/trim.h"
+#include "gul/Trigger.h"
+#include "gul/version.h"
+
+/// Namespace gul contains all functions and classes of the General Utility Library.
+namespace gul {
+
 /**
  * \mainpage
  *
@@ -266,22 +286,4 @@
  *     Generate an ASCII hex dump of a container, a range, or a piece of memory.
  */
 
-#pragma once
-
-#include "gul/cat.h"
-#include "gul/escape.h"
-#include "gul/hexdump.h"
-#include "gul/join_split.h"
-#include "gul/num_util.h"
-#include "gul/replace.h"
-#include "gul/string_util.h"
-#include "gul/string_view.h"
-#include "gul/substring_checks.h"
-#include "gul/time_util.h"
-#include "gul/tokenize.h"
-#include "gul/trim.h"
-#include "gul/Trigger.h"
-#include "gul/version.h"
-
-/// Namespace gul contains all functions and classes of the General Utility Library.
-namespace gul {}
+} // namespace gul
