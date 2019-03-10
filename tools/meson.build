@@ -7,7 +7,10 @@ changelogger = find_program('changelogger', required : false)
 # doxygen is used by doxywrap; if we have both we are ready to rumble
 doxygen = find_program('doxygen', required : false)
 if get_option('docs') and doxygen.found()
-    doxy_run = find_program('doxywrap')
+    graphviz = find_program('dot', required : false)
+    if graphviz.found()
+        doxy_run = find_program('doxywrap') # this is required because it should always be there
+    endif # if graphviz
 endif # if get_option('docs')
 
 # Script to check the configuration validity

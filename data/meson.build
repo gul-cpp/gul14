@@ -5,7 +5,7 @@
 # OUTPUT_DIRECTORY can't be rewritten without Makefile modifications,
 # so this is done by the doxywrap
 
-if get_option('docs') and doxygen.found() and doxy_run.found()
+if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.found()
     rsync = find_program('rsync', required : false)
 
     docs_data = configuration_data()
@@ -55,4 +55,6 @@ if get_option('docs') and doxygen.found() and doxy_run.found()
     endif
 
 
+elif get_option('docs')
+    message('Documentation requested but tools missing, \'doc\' target not generated')
 endif # option docs and have doxy_run (doxywrap)

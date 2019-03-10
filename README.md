@@ -115,7 +115,7 @@ Some typical build configurations can be set up, all are in build directories un
 * ``make clean`` cleans up the build files of the release version
 * ``make BUILDTYPE=debug clean`` cleans up the build files of the debug version
 * ``make mrproper`` removes all build directories completely
-* ``make doc`` builds documentation under build/x86\_64-linux-gnu/release/resources/doxygenerated (needs Doxygen)
+* ``make doc`` builds documentation under build/x86\_64-linux-gnu/release/resources/doxygenerated (needs Doxygen and Graphviz)
 * ``make localinstall`` makes a local installation of the library under /home/Ubuntu-16.04-x86\_64/lib
 
 ## Testing <a name="Testing"></a>
