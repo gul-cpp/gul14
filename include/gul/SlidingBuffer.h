@@ -51,6 +51,7 @@ namespace gul {
  * The following lists the differences to the std::array interface. All interface
  * items not mentioned here access the underlying std::array interface.
  *
+ * \code
  * Member types:
  *   value_type          Type of the elements
  *   container_type      Type of the underlying atd::array (i.e. std::array<value_type, ..>)
@@ -74,6 +75,7 @@ namespace gul {
  *
  * Non-member functions:
  *   operator<<          Dump the raw data of the buffer to an ostream
+ * \endcode
  *
  */
 template<typename ElementT, std::size_t BufferSize, typename = std::enable_if_t<(BufferSize >= 1u)>>
@@ -83,7 +85,9 @@ private:
     bool full_{ false };
 
 public:
+    /// Type of the underlying container (i.e. std::array<value_type, ..>)
     using container_type = std::array<ElementT, BufferSize>;
+    /// Type of the elements in the underlying container
     using value_type = ElementT;
 
     /**

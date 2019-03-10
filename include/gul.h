@@ -342,7 +342,7 @@ namespace gul {
  *
  * The General Utility Library provides some additional containers.
  *
- * SlidingBuffer{}
+ * SlidingBuffer
  *     A fixed size container to use as sliding window on a data stream
  */
 
