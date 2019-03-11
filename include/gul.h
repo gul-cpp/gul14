@@ -117,10 +117,10 @@ namespace gul {
  * notice:
  *
  * <dl>
- * <dt>\ref catch.h</dt>
+ * <dt>catch.h</dt>
  * <dd>Copyright Phil Nash, Martin Hořeňovský et al. 2010-2019.
- *     Distributed under the Boost Software License, Version 1.0 (see \ref catch.h
- *     for details).</dd>
+ *     Distributed under the Boost Software License, Version 1.0 (see
+ *     https://github.com/catchorg/Catch2 for details).</dd>
  *
  * <dt>\ref string_view.h</dt>
  * <dd>Copyright Marshall Clow 2012-2015, copyright Beman Dawes 2015.
