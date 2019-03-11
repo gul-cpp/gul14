@@ -32,7 +32,13 @@ fi
 
 OUTDIR=$2
 
+# Create tmp file to hold stdout, remove file but keep it open (will be removed after script ends)
+tmpfile=$(mktemp /tmp/doxywrap.XXXXXX)
+exec 3>"$tmpfile"
+rm "$tmpfile"
+
 echo WRAPPER CALL $@
 shift; shift; shift
 #echo "-=> cd \"$SOURCEDIR\" && sed -e \"s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\\\\1$OUTDIR!\" \"${CONF}\" | doxygen $@ -"
-cd "$SOURCEDIR" && sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ -
+#cd "$SOURCEDIR" && sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ - 1>&3 2>&1 | grep -v string_view 1>&2
+cd "$SOURCEDIR" && ( sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ - 2>&1 1>&3 | grep -v 'include/gul/string_view.h:[0-9][0-9]*: warning:' 1>&2 ) 3>&1
