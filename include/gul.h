@@ -131,7 +131,6 @@ namespace gul {
 
 /**
  * \page quality_standards Quality Standards
- * \brief.
  *
  * The General Utility Library strives for a very high quality level. This is ensured by
  * following a set of best practices:
@@ -152,7 +151,6 @@ namespace gul {
 
 /**
  * \page string_utilities String Utilities
- * \brief.
  *
  * The General Utility Library provides a number of utility functions and classes to help
  * with strings.
@@ -209,7 +207,6 @@ namespace gul {
 
 /**
  * \page concurrency_utilities Concurrency Utilities
- * \brief.
  *
  * The General Utility Library provides some utilities to make dealing with concurrency
  * (threads, locks, and so on) easier.
@@ -228,7 +225,6 @@ namespace gul {
 
 /**
  * \page time_utilities Time Utilities
- * \brief.
  *
  * The General Utility Library provides a few time-related utility functions.
  *
@@ -242,7 +238,6 @@ namespace gul {
 
 /**
  * \page numeric_utilities Numeric Utilities
- * \brief.
  *
  * The General Utility Library provides several functions dealing with numbers.
  *
@@ -262,7 +257,6 @@ namespace gul {
 
 /**
  * \page backports Backports
- * \brief.
  *
  * The General Utility Library provides a few classes from C++ standard libraries that
  * are not yet available to users of older compilers. Here's a list:
@@ -275,7 +269,6 @@ namespace gul {
 
 /**
  * \page debugging_utilities Debugging Utilities
- * \brief.
  *
  * The General Utility Library provides some utilities that are mainly, but not
  * exclusively, helpful for debugging.
