@@ -102,6 +102,7 @@ namespace gul {
 class Trigger
 {
 public:
+    /// Constructor
     explicit Trigger(bool triggered = false) noexcept : triggered_{ triggered }
     {}
 

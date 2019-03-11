@@ -141,7 +141,7 @@ std::string join(const std::vector<std::string>& parts, string_view glue);
  *      split() and associated functions can be used to split a string into a vector of
  *      substrings.
  */
-std::string join(const std::vector<gul::string_view>& parts, string_view glue);
+std::string join(const std::vector<string_view>& parts, string_view glue);
 
 } /* namespace gul */
 

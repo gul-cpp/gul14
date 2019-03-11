@@ -106,13 +106,14 @@ struct IsHexDumpStream : std::true_type { };
 
 // Here is the template actually doing the hexdump
 // It is called by the different hexdump*() versions
+// \cond PRIVATE
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
 StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& end, string_view prompt = "")
 {
     constexpr auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
-    
+
     // Get the number of hex digits to represent any value of the given integral type
     constexpr auto nod = sizeof(*begin) * 2;
 
@@ -158,6 +159,7 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
     }
     return dest;
 }
+// \endcond
 
 } // namespace detail
 
@@ -239,9 +241,13 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
  */
 template<typename IteratorT, typename ContainerT = void*>
 struct HexdumpParameterForward {
+    /// Iterator to begin of elements to be dumped (in iterator mode)
     IteratorT begin_;
+    /// Iterator past end of elements to be dumped (in iterator mode)
     IteratorT end_;
+    /// Possible prompt to prepend to the dump
     const std::string prompt_;
+    /// A container with the elements to be dumped (in container/temporary mode)
     ContainerT cont_;
 };
 
