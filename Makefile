@@ -48,7 +48,7 @@ help:
 	@echo \'make BUILDTYPE=debug clean\' cleans up the build files of the debug version
 	@echo \'make mrproper\' removes all build directories completely
 	@echo
-	@echo \'make doc\' builds documentation under build/$(ARCH)/release/resources/doxygenerated \(needs Doxygen\)
+	@echo \'make doc\' builds documentation under build/$(ARCH)/release/data/doxygenerated \(needs Doxygen\)
 	@echo
 	@echo \'make localinstall\' makes a local installation of the library under $(LOCALINSTPRE)/lib
 

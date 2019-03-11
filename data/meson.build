@@ -49,9 +49,9 @@ if get_option('docs') and doxygen.found() and doxy_run.found()
         )
     endif # have rsync
 
-    message('Run \'ninja resources/docs\' to generate documentation.')
+    message('Run \'ninja data/docs\' to generate documentation.')
     if rsync.found()
-        message('Run \'ninja resources/install_docs\' to install documentation in ' + docdir)
+        message('Run \'ninja data/install_docs\' to install documentation in ' + docdir)
     endif
 
 
