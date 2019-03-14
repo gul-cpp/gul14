@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # A wrapper for doxygen to add missing basic functionality by adding
 # the following additional parameters
@@ -32,13 +32,27 @@ fi
 
 OUTDIR=$2
 
-# Create tmp file to hold stdout, remove file but keep it open (will be removed after script ends)
+# Create tmp file to hold stdout, remove file but keep it open via stream handle #3
+# (will be removed after script ends, yeah RAII)
 tmpfile=$(mktemp /tmp/doxywrap.XXXXXX)
 exec 3>"$tmpfile"
 rm "$tmpfile"
 
 echo WRAPPER CALL $@
 shift; shift; shift
-#echo "-=> cd \"$SOURCEDIR\" && sed -e \"s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\\\\1$OUTDIR!\" \"${CONF}\" | doxygen $@ -"
-#cd "$SOURCEDIR" && sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ - 1>&3 2>&1 | grep -v string_view 1>&2
-cd "$SOURCEDIR" && ( sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" | doxygen $@ - 2>&1 1>&3 | grep -v 'include/gul/string_view.h:[0-9][0-9]*: warning:' 1>&2 ) 3>&1
+
+# Fail fast if sed or doxygen failed. Ignore grep due to '|| true'.
+set -eo pipefail
+
+# Stream magic:
+#   redirect doxygen's standard stream to the extra stream (1 -> 3)
+#   redirect doxygen's error stream to the pipe (standard) stream (2 -> 1)
+#   filter the standard stream that comes through the pipe with grep -v
+#   now put the streams back where they belong pipe output to error stream (1 -> 2)
+#   and the extra stream (standard out of doxygen) to standard out (3 -> 1)
+cd "$SOURCEDIR" \
+	&& ( \
+		sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" \
+		| doxygen $@ - 2>&1 1>&3 \
+		| ( grep -v 'include/gul/string_view.h:[0-9]\+: warning:' || true ) 1>&2 \
+	) 3>&1
