@@ -138,6 +138,53 @@ bool within_ulp(NumT a, NumT b, unsigned int ulp)
         or diff < std::numeric_limits<NumT>::min(); // or the difference is subnormal
 }
 
+/**
+ * Coerce a value to be within a given range.
+ *
+ * Check if value v is between (including) lo and hi. If it is too low, lo is returned. If it
+ * is too high, hi is returned.
+ *
+ * Only operator<() is used for this, so it has to be defined for NumT.
+ *
+ * \tparam NumT Type of the objects to compare. Need to have operator<() defined.
+ *
+ * \param v     The value to clamp
+ * \param lo    The lower boundary to clamp v to
+ * \param hi    The upper boundary to clamp v to
+ *
+ * \returns     Reference to lo if v is less than lo, reference to hi if hi is less than v, otherwise reference to v.
+ */
+template<class NumT>
+constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi) {
+    return std::max(lo, std::min(v, hi)); // usually more optimized than actually using operator<()
+}
+/**
+ * \overload
+ *
+ * \tparam NumT Type of the objects to compare. Need to have operator<() defined.
+ * \tparam Compare Type of the comparison function. See notes below.
+ *
+ * \param v     The value to clamp
+ * \param lo    The lower boundary to clamp v to
+ * \param hi    The upper boundary to clamp v to
+ * \param comp  Comparison function object which returns true if the first argument is less than the second.
+ *
+ * The signature of the comparison function should be equivalent to the following:
+ * \code
+ * bool cmp(const Type1& a, const Type2& b);
+ * \endcode
+ * While the signature does not need to have \a const&, the function must not modify the objects passed to it and
+ * must be able to accept all values of type (possibly const) \a Type1 and \a Type2 regardless of value category
+ * (thus, \a Type1& iss not allowed, nor is \a Type1 unless for \a Type1 a move is equivalent to a copy).
+ * The types \a Type1 and \a Type2 must be such that an object of type \a T can be implicitly converted to
+ * both of them.
+ */
+template<class NumT, class Compare>
+constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi, Compare comp) {
+return assert( !comp(hi, lo) ),
+    comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+}
+
 } // namespace gul
 
 // vi:ts=4:sw=4:et

@@ -253,6 +253,9 @@ namespace gul {
  * within_ulp():
  *     Determine if two numbers are almost equal, allowing for a difference of a given
  *     number of units-in-the-last-place (ULPs).
+ *
+ * clamp():
+ *     Coerce a value to be within a given range.
  */
 
 /**

@@ -286,4 +286,78 @@ TEST_CASE("test within_ulp()", "[numerics]")
     REQUIRE(gul::within_ulp(543.0f, 543.0001f, 3) == true);
 }
 
+// Some classes to test clamp()
+// We need them public to be able to use operator<() (on B{}).
+class A {
+protected:
+    double m1;
+    double m2;
+public:
+    A(double v1, double v2)
+        : m1{ v1 }
+        , m2{ v2 }
+    {
+    }
+    double product() const { return m1 * m2; }
+};
+
+class B : public A {
+public:
+    B(double v1, double v2) : A(v1, v2)
+    {
+    }
+    double val() const { return m1; }
+    auto friend operator<(B const& a, B const& b) {
+        return a.product() < b.product();
+    }
+};
+
+TEST_CASE("test clamp()", "[numerics]")
+{
+    // Simplest test
+    auto r1 = gul::clamp(5, 3, 7);
+    auto r2 = gul::clamp(2, 3, 7);
+    auto r3 = gul::clamp(9, 3, 7);
+    REQUIRE(r1 == 5);
+    REQUIRE(r2 == 3);
+    REQUIRE(r3 == 7);
+
+    // Test with user class, compare by products with lambda
+    auto llimit_a = A{ 3.0, 4.2 };
+    auto ulimit_a = A{ 23.1, 32.7 };
+    auto v1 = A{ 1.0, 33.3 };
+    auto v2 = A{ 1.2, 0.6 };
+    auto v3 = A{ 52.1, 22.8 };
+
+    auto x1 = gul::clamp(v1, llimit_a, ulimit_a, [](auto const& a, auto const& b) { return a.product() < b.product(); });
+    auto x2 = gul::clamp(v2, llimit_a, ulimit_a, [](auto const& a, auto const& b) { return a.product() < b.product(); });
+    auto x3 = gul::clamp(v3, llimit_a, ulimit_a, [](auto const& a, auto const& b) { return a.product() < b.product(); });
+    REQUIRE(x1.product() == v1.product());
+    REQUIRE(x2.product() == llimit_a.product());
+    REQUIRE(x3.product() == ulimit_a.product());
+
+    // Test with user class, compare by products with operator<()
+    // (std::min and std::max will be used)
+    auto llimit_b = B{ 3.0, 4.2 };
+    auto ulimit_b = B{ 23.1, 32.7 };
+    auto v4 = B{ 1.0, 33.3 };
+    auto v5 = B{ 1.2, 0.6 };
+    auto v6 = B{ 52.1, 22.8 };
+
+    auto x4 = gul::clamp(v4, llimit_b, ulimit_b);
+    auto x5 = gul::clamp(v5, llimit_b, ulimit_b);
+    auto x6 = gul::clamp(v6, llimit_b, ulimit_b);
+    REQUIRE(x4.product() == v4.product());
+    REQUIRE(x5.product() == llimit_b.product());
+    REQUIRE(x6.product() == ulimit_b.product());
+
+    // Test with user class, compare by products with lambda
+    auto x7 = gul::clamp(v4, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
+    auto x8 = gul::clamp(v5, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
+    auto x9 = gul::clamp(v6, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
+    REQUIRE(x7.product() == llimit_b.product());
+    REQUIRE(x8.product() == llimit_b.product());
+    REQUIRE(x9.product() == ulimit_b.product());
+}
+
 // vi:ts=4:sw=4:et
