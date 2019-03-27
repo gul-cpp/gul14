@@ -144,6 +144,8 @@ bool within_ulp(NumT a, NumT b, unsigned int ulp)
  * Check if value v is between (including) lo and hi. If it is too low, lo is returned. If it
  * is too high, hi is returned.
  *
+ * \a lo must not be greater than \a hi. \a lo might be equal to \a hi.
+ *
  * Only operator<() is used for this, so it has to be defined for NumT.
  *
  * \tparam NumT Type of the objects to compare. Need to have operator<() defined.
@@ -181,8 +183,7 @@ constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi) {
  */
 template<class NumT, class Compare>
 constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi, Compare comp) {
-return assert( !comp(hi, lo) ),
-    comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+    return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
 }
 
 } // namespace gul

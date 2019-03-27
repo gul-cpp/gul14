@@ -351,7 +351,7 @@ TEST_CASE("test clamp()", "[numerics]")
     REQUIRE(x5.product() == llimit_b.product());
     REQUIRE(x6.product() == ulimit_b.product());
 
-    // Test with user class, compare by products with lambda
+    // Test with user class, compare by member value with lambda
     auto x7 = gul::clamp(v4, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
     auto x8 = gul::clamp(v5, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
     auto x9 = gul::clamp(v6, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
