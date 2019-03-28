@@ -58,6 +58,7 @@ namespace gul {
  * Member types:
  *   value_type          Type of the elements
  *   container_type      Type of the underlying container (i.e. std::array<value_type, ..>)
+ *   size_type           Unsigned integer type (usually std::size_t)
  *
  * Member functions:
  *   Element access:
@@ -102,15 +103,19 @@ template<typename ElementT, std::size_t BufferSize,
         std::vector<ElementT>>::type
 >
 class SlidingBuffer : public Container {
-private:
-    std::size_t next_element_{ 0u };
-    bool full_{ false };
-
 public:
     /// Type of the underlying container (e.g. std::array<value_type, ..>)
     using container_type = Container;
     /// Type of the elements in the underlying container
     using value_type = ElementT;
+    /// Unsigned integer type (usually std::size_t)
+    using size_type = typename Container::size_type;
+
+private:
+    size_type next_element_{ 0u };
+    bool full_{ false };
+
+public:
 
     /**
      * Insert one element item into the buffer.
@@ -118,7 +123,7 @@ public:
      * Think of this as appending to the end. Probably an element from the front is
      * dropped to make room in the fixed size buffer.
      */
-    auto push_back(ElementT&& in) -> void
+    auto push_back(value_type&& in) -> void
     {
         container_type::operator[](next_element_) = std::move(in);
         ++next_element_;
@@ -131,7 +136,7 @@ public:
     /**
      * \overload
      */
-    auto push_back(const ElementT& in) -> void
+    auto push_back(const value_type& in) -> void
     {
         auto in_copy = in;
         push_back(std::move(in_copy));
@@ -151,9 +156,9 @@ public:
      * If the buffer is not yet full it may be possible that the function has nothing to
      * return and so a default constructed Element is returned.
      */
-    auto operator[] (const std::size_t i) const -> const ElementT&
+    auto operator[] (const size_type i) const -> const value_type&
     {
-        const std::size_t idx = next_element_ + capacity() - (i % capacity()) - 1;
+        const size_type idx = next_element_ + capacity() - (i % capacity()) - 1;
         // If the element has ever been filled or not is ignored. A default
         // constructed ELEMENT will be returned on unset elements
         return container_type::operator[](idx % capacity());
@@ -164,7 +169,7 @@ public:
      *
      * This is a read-only operation.
      */
-    auto front() const noexcept -> const ElementT&
+    auto front() const noexcept -> const value_type&
     {
         return container_type::operator[](next_element_);
     }
@@ -174,7 +179,7 @@ public:
      *
      * This is a read-only operation.
      */
-    auto back() const noexcept -> const ElementT&
+    auto back() const noexcept -> const value_type&
     {
         return operator[](0);
     }
@@ -236,7 +241,7 @@ public:
     }
 
     /**
-     * Return a const reverse iterator to the first element of the reversed
+     * Return a constant reverse iterator to the first element of the reversed
      * underlying container.
      *
      * It corresponds to the last element of the non-reversed container.
@@ -262,7 +267,7 @@ public:
      * In the startup phase it can be 0 and up to the BufferSize, after startup (filled() == true)
      * it will always return BufferSize (capacity()).
      */
-    auto size() const noexcept -> std::size_t
+    auto size() const noexcept -> size_type
     {
         if (full_)
             return capacity();
@@ -276,7 +281,7 @@ public:
      * its capacity, because only the active elements (i.e. size) participate
      * in the sliding buffer.
      */
-    auto constexpr capacity() const noexcept -> std::size_t
+    auto constexpr capacity() const noexcept -> size_type
     {
         return BufferSize ? BufferSize : Container::size();
     }
@@ -301,8 +306,8 @@ public:
     {
         full_ = false;
         next_element_ = 0u;
-        // Need to fill with 'empty' data so that operator[] etc work as expected
-        fill(ElementT{});
+        // Fill with new empty elements to possibly trigger RAII in the elements
+        fill(value_type{});
     }
 
     /**
@@ -318,12 +323,11 @@ public:
      *
      * \param count    New maximum size / capacity of the sliding buffer
      * \param value    Will be ignored if specified
-     *
      */
     template <typename = std::enable_if<(BufferSize == 0u)>>
-    auto resize(std::size_t count, ElementT const& value = {}) -> void
+    auto resize(size_type count, value_type const& value = {}) -> void
     {
-        count = std::max(count, std::size_t{ 1 });
+        count = std::max(count, size_type{ 1 });
         static_cast<void>(value); // Ignore, but we want to have it named for Doxygen
         auto const old_count = capacity();
         if (count == old_count)
@@ -382,12 +386,12 @@ public:
     /**
      * Dump all (also unfilled) buffer elements and which element is to be replaced next.
      *
-     * Needs the Elements to be dumpable to an ostream.
+     * Needs the Elements to be dump-able to an ostream.
      */
-    auto friend operator<< (std::ostream& s, const SlidingBuffer<ElementT, BufferSize>& buffer) -> std::ostream&
+    auto friend operator<< (std::ostream& s, const SlidingBuffer<value_type, BufferSize>& buffer) -> std::ostream&
     {
         auto const len = buffer.capacity();
-        for (std::size_t i{0}; i < len; ++i) {
+        for (size_type i{0}; i < len; ++i) {
             s << buffer.at(i);
             if (i == buffer.next_element_)
                 s << "* ";
@@ -400,7 +404,7 @@ public:
 private:
     // Shuffle elements so that we have the most trivial representation
     // next_element_ has to be possibly corrected afterwards
-    auto make_indices_trivial(const std::size_t count) -> void
+    auto make_indices_trivial(const size_type count) -> void
     {
         auto const limit = count - 1;
         for (auto i = decltype(limit){0}; i <= limit; i++) {
