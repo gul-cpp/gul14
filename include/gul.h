@@ -338,12 +338,11 @@ namespace gul {
 
 /**
  * \page container_utilities Useful containers
- * \brief.
  *
  * The General Utility Library provides some additional containers.
  *
- * SlidingBuffer
- *     A fixed size container to use as sliding window on a data stream
+ * SlidingBuffer:
+ *     A container to use as sliding window on a data stream
  */
 
 } // namespace gul
