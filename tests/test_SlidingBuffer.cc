@@ -387,8 +387,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 8 -> 12
         // Change size 8 -> 5
         // Change size 8 -> 4
-        auto buff = gul::SlidingBuffer<int, 0>{};
-        buff.resize(8);
+        auto buff = gul::SlidingBuffer<int, 0>(8);
         buff.push_back(3);
         buff.push_back(3);
         buff.push_back(3);

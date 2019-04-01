@@ -87,8 +87,8 @@ namespace gul {
  * * If the size is known at compile time, instanziate it with that number as BufferSize. The
  *   underlying container will be a std::array.
  * * If a flexible size is desired, specify BufferSize zero (0). The underlying container will
- *   be a std::vector. You need to set the capacity afterwards with resize(). The default size
- *   is just 1 element.
+ *   be a std::vector. You need to use a constructor that sets a certain capacity or set the
+ *   capacity afterwards with resize(). The default size is 0 elements, which is unusable.
  * Apart from the ability of the later to resize()/reserve() all
  * is identical.
  *
@@ -110,6 +110,8 @@ public:
     using value_type = ElementT;
     /// Unsigned integer type (usually std::size_t)
     using size_type = typename Container::size_type;
+    /// Inherit all underlying container's ctors
+    using Container::Container;
 
 private:
     size_type next_element_{ 0u };
