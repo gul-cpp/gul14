@@ -238,7 +238,7 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
 
     if (len == 0)
         return std::numeric_limits<DataT>::quiet_NaN();
-    auto mean_val = mean(container);
+    auto mean_val = mean(container, accessor);
     if (len == 1)
         return mean_val;
 
