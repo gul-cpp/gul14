@@ -68,13 +68,6 @@ auto bit(int bit) -> unsigned int
     return 1u << bit;
 }
 
-TEST_CASE("Lars' wish list for statistics functions", "[statistics]")
-{
-    std::vector<double> v = { 0.0, 1.0, 2.0, -1.0, -2.0 };
-    REQUIRE(gul::mean(v) == Approx(0.0)); // This works already, great!
-    REQUIRE(gul::mean(v.begin(), v.end()) == Approx(0.0)); // Does not work yet.
-}
-
 TEST_CASE("Container Statistics Tests", "[statistics]")
 {
     using namespace gul;
@@ -87,6 +80,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto accessor = StatisticsElementAccessor<decltype(fifo)>();
         // No data -> return NAN
         REQUIRE(std::isnan(mean(fifo, accessor)));
+        REQUIRE(std::isnan(rms(fifo, accessor)));
         REQUIRE(std::isnan(median(fifo, accessor)));
         REQUIRE(accumulate(fifo, op_max, acc_state) == 0u);
         REQUIRE(std::isnan(min_max(fifo, accessor).min));
@@ -97,6 +91,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto const state1 = bit(1);
         fifo.push_back({value1, state1});
         REQUIRE(mean(fifo, accessor) == value1);
+        REQUIRE(rms(fifo, accessor) == value1);
         REQUIRE(median(fifo, accessor) == value1);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state1);
         REQUIRE(min_max(fifo, accessor).min == value1);
@@ -106,6 +101,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto const state2 = bit(8);
         fifo.push_back({value2, state2});
         REQUIRE(mean(fifo, accessor) == (value1 + value2) / 2.0);
+        auto rmsval = std::sqrt((value1 * value1 + value2 * value2) / 2.0);
+        REQUIRE(rms(fifo, accessor) == std::sqrt((value1 * value1 + value2 * value2) / 2.0));
         REQUIRE(median(fifo, accessor) == (value1 + value2) / 2.0);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
         REQUIRE(min_max(fifo, accessor).min == value2);
@@ -119,6 +116,9 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         fifo.push_back(elem);
         REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3) / 3.0);
         REQUIRE(mean(fifo.begin(), fifo.end(), accessor) == (value1 + value2 + value3) / 3.0);
+        rmsval = std::sqrt((value1 * value1 + value2 * value2 + value3 * value3) / 3.0);
+        REQUIRE(rms(fifo, accessor) == rmsval);
+        REQUIRE(rms(fifo.begin(), fifo.end(), accessor) == rmsval);
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(median(fifo.cbegin(), fifo.cend(), accessor) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
@@ -137,6 +137,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto const state5 = bit(3);
         fifo.push_back({value5, state5});
         REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3 + value4 + value5) / 5.0);
+        rmsval = std::sqrt((value1 * value1 + value2 * value2 + value3 * value3 + value4 * value4 + value5 * value5) / 5.0);
+        REQUIRE(rms(fifo, accessor) == rmsval);
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
         // For some reason stuff from standard header <numeric> seem to be in our namespace,
@@ -155,6 +157,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto vec = std::vector<double>{{ 1.2, 3.4, 5.6, 7.4, 9.1 }};
         REQUIRE_THAT(mean(vec), Catch::Matchers::WithinAbs(5.34, 0.001));
         REQUIRE_THAT(mean(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(5.34, 0.001));
+        REQUIRE_THAT(rms(vec), Catch::Matchers::WithinAbs(6.032, 0.001));
+        REQUIRE_THAT(rms(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(6.032, 0.001));
         REQUIRE(median(vec) == 5.6); // exactly
         REQUIRE(median(vec.begin(), vec.end()) == 5.6);
         REQUIRE(min_max(vec).min == 1.2);

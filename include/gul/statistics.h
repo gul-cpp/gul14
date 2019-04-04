@@ -94,6 +94,22 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
+auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    auto const sum = std::accumulate(
+            container.cbegin(), container.cend(),
+            DataT{ },
+            [accessor] (const DataT& accu, const ElementT& el) {
+                return accu + std::pow(accessor(el), 2); } );
+    return std::sqrt(sum / container.size());
+}
+
+template <typename ContainerT,
+          typename ElementT = typename ContainerT::value_type,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename DataT = typename std::result_of_t<Accessor(ElementT)>,
+          typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
+         >
 auto median(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     auto const len = container.size();
@@ -283,6 +299,16 @@ auto mean(const IteratorT& begin, const IteratorT& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return mean(make_view(begin, end), accessor);
+}
+
+template <typename IteratorT,
+          typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename DataT = std::result_of_t<Accessor(ElementT)>>
+auto rms(const IteratorT& begin, const IteratorT& end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    return rms(make_view(begin, end), accessor);
 }
 
 template <typename IteratorT,
