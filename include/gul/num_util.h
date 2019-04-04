@@ -141,20 +141,21 @@ bool within_ulp(NumT a, NumT b, unsigned int ulp)
 /**
  * Coerce a value to be within a given range.
  *
- * Check if value v is between (including) lo and hi. If it is too low, lo is returned. If it
- * is too high, hi is returned.
+ * Check if value `v` is between (including) `lo` and `hi`. If it is too low, `lo` is
+ * returned. If it is too high, `hi` is returned.
  *
- * \a lo must not be greater than \a hi. \a lo might be equal to \a hi.
+ * `lo` must not be greater than `hi`, but they are allowed to be equal.
  *
- * Only operator<() is used for this, so it has to be defined for NumT.
+ * Only `operator<()` is used for this, so it has to be defined for `NumT`.
  *
- * \tparam NumT Type of the objects to compare. Need to have operator<() defined.
+ * \tparam NumT Type of the objects to compare. Needs to have `operator<()` defined.
  *
  * \param v     The value to clamp
- * \param lo    The lower boundary to clamp v to
- * \param hi    The upper boundary to clamp v to
+ * \param lo    The lower boundary to clamp `v` to
+ * \param hi    The upper boundary to clamp `v` to
  *
- * \returns     Reference to lo if v is less than lo, reference to hi if hi is less than v, otherwise reference to v.
+ * \returns     a reference to `lo` if `v` is less than `lo`, a reference to `hi` if `hi`
+ *              is less than `v`, or a reference to `v` otherwise.
  */
 template<class NumT>
 constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi) {
@@ -163,23 +164,25 @@ constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi) {
 /**
  * \overload
  *
- * \tparam NumT Type of the objects to compare. Need to have operator<() defined.
+ * \tparam NumT Type of the objects to compare. Needs to have `operator<()` defined.
  * \tparam Compare Type of the comparison function. See notes below.
  *
  * \param v     The value to clamp
- * \param lo    The lower boundary to clamp v to
- * \param hi    The upper boundary to clamp v to
- * \param comp  Comparison function object which returns true if the first argument is less than the second.
+ * \param lo    The lower boundary to clamp `v` to
+ * \param hi    The upper boundary to clamp `v` to
+ * \param comp  Comparison function object which returns true if the first argument is
+ *              less than the second.
  *
  * The signature of the comparison function should be equivalent to the following:
  * \code
  * bool cmp(const Type1& a, const Type2& b);
  * \endcode
- * While the signature does not need to have \a const&, the function must not modify the objects passed to it and
- * must be able to accept all values of type (possibly const) \a Type1 and \a Type2 regardless of value category
- * (thus, \a Type1& iss not allowed, nor is \a Type1 unless for \a Type1 a move is equivalent to a copy).
- * The types \a Type1 and \a Type2 must be such that an object of type \a T can be implicitly converted to
- * both of them.
+ * While the signature does not explicitly require passing the arguments by const
+ * reference, the function must not modify the objects passed to it and must be able to
+ * accept all values of type (possibly const) `Type1` and `Type2` regardless of value
+ * category. This means that neither `Type1 &` nor `Type1` are allowed unless a move is
+ * equivalent to a copy for `Type1`. The types `Type1` and `Type2` must be such that an
+ * object of type `T` can be implicitly converted to both of them.
  */
 template<class NumT, class Compare>
 constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi, Compare comp) {
