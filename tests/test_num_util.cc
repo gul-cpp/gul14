@@ -332,9 +332,9 @@ TEST_CASE("test clamp()", "[numerics]")
     auto x1 = gul::clamp(v1, llimit_a, ulimit_a, [](auto const& a, auto const& b) { return a.product() < b.product(); });
     auto x2 = gul::clamp(v2, llimit_a, ulimit_a, [](auto const& a, auto const& b) { return a.product() < b.product(); });
     auto x3 = gul::clamp(v3, llimit_a, ulimit_a, [](auto const& a, auto const& b) { return a.product() < b.product(); });
-    REQUIRE(x1.product() == v1.product());
-    REQUIRE(x2.product() == llimit_a.product());
-    REQUIRE(x3.product() == ulimit_a.product());
+    REQUIRE(x1.product() == Approx(v1.product()));
+    REQUIRE(x2.product() == Approx(llimit_a.product()));
+    REQUIRE(x3.product() == Approx(ulimit_a.product()));
 
     // Test with user class, compare by products with operator<()
     // (std::min and std::max will be used)
@@ -347,17 +347,17 @@ TEST_CASE("test clamp()", "[numerics]")
     auto x4 = gul::clamp(v4, llimit_b, ulimit_b);
     auto x5 = gul::clamp(v5, llimit_b, ulimit_b);
     auto x6 = gul::clamp(v6, llimit_b, ulimit_b);
-    REQUIRE(x4.product() == v4.product());
-    REQUIRE(x5.product() == llimit_b.product());
-    REQUIRE(x6.product() == ulimit_b.product());
+    REQUIRE(x4.product() == Approx(v4.product()));
+    REQUIRE(x5.product() == Approx(llimit_b.product()));
+    REQUIRE(x6.product() == Approx(ulimit_b.product()));
 
     // Test with user class, compare by member value with lambda
     auto x7 = gul::clamp(v4, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
     auto x8 = gul::clamp(v5, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
     auto x9 = gul::clamp(v6, llimit_b, ulimit_b, [](auto const& a, auto const& b) { return a.val() < b.val(); });
-    REQUIRE(x7.product() == llimit_b.product());
-    REQUIRE(x8.product() == llimit_b.product());
-    REQUIRE(x9.product() == ulimit_b.product());
+    REQUIRE(x7.product() == Approx(llimit_b.product()));
+    REQUIRE(x8.product() == Approx(llimit_b.product()));
+    REQUIRE(x9.product() == Approx(ulimit_b.product()));
 }
 
 // vi:ts=4:sw=4:et
