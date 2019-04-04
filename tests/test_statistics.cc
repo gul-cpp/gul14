@@ -24,6 +24,45 @@
 #include <gul.h>
 #include <sstream>
 
+template <typename DataT, typename StateT = void>
+struct StatisticsElement {
+    using has_state = std::true_type;
+    using data_type = DataT;
+    using state_type = StateT;
+    DataT val{ std::numeric_limits<DataT>::quiet_NaN() };
+    StateT sta{ 0 };
+
+    auto value() -> DataT
+    {
+        return val;
+    }
+
+    auto friend operator<< (std::ostream& s, const StatisticsElement<DataT, StateT>& e) -> std::ostream&
+    {
+        return s << e.val;
+    }
+};
+
+template <typename DataT>
+struct StatisticsElement<DataT, void> {
+    using has_state = std::false_type;
+    using data_type = DataT;
+    DataT val{ std::numeric_limits<DataT>::quiet_NaN() };
+
+    auto friend operator<< (std::ostream& s, const StatisticsElement<DataT, void>& e) -> std::ostream&
+    {
+        return s << e.val;
+    }
+};
+
+template <typename ContainerT,
+          typename ElementT = typename ContainerT::value_type,
+          typename DataT = typename ElementT::data_type>
+auto StatisticsElementAccessor() -> DataT(*)(const ElementT&)
+{
+    return [](const ElementT& el) { return el.val; };
+}
+
 auto bit(int bit) -> unsigned int
 {
     return 1u << bit;
@@ -38,31 +77,32 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
     SECTION("data analysis tests on std::deque") {
         auto fifo = std::deque<StatisticsElement<double, unsigned int>>{};
+        auto accessor = StatisticsElementAccessor<decltype(fifo)>();
         // No data -> return NAN
-        REQUIRE(std::isnan(mean(fifo)));
-        REQUIRE(std::isnan(median(fifo)));
+        REQUIRE(std::isnan(mean(fifo, accessor)));
+        REQUIRE(std::isnan(median(fifo, accessor)));
         REQUIRE(accumulate(fifo, op_max, acc_state) == 0u);
-        REQUIRE(std::isnan(min_max(fifo).min));
-        REQUIRE(std::isnan(min_max(fifo).max));
-        REQUIRE(std::isnan(standard_deviation(fifo)));
+        REQUIRE(std::isnan(min_max(fifo, accessor).min));
+        REQUIRE(std::isnan(min_max(fifo, accessor).max));
+        REQUIRE(std::isnan(standard_deviation(fifo, accessor)));
 
         auto const value1 = 10.0;
         auto const state1 = bit(1);
         fifo.push_back({value1, state1});
-        REQUIRE(mean(fifo) == value1);
-        REQUIRE(median(fifo) == value1);
+        REQUIRE(mean(fifo, accessor) == value1);
+        REQUIRE(median(fifo, accessor) == value1);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state1);
-        REQUIRE(min_max(fifo).min == value1);
-        REQUIRE(min_max(fifo).max == value1);
+        REQUIRE(min_max(fifo, accessor).min == value1);
+        REQUIRE(min_max(fifo, accessor).max == value1);
 
         auto const value2 = 7.7;
         auto const state2 = bit(8);
         fifo.push_back({value2, state2});
-        REQUIRE(mean(fifo) == (value1 + value2) / 2.0);
-        REQUIRE(median(fifo) == (value1 + value2) / 2.0);
+        REQUIRE(mean(fifo, accessor) == (value1 + value2) / 2.0);
+        REQUIRE(median(fifo, accessor) == (value1 + value2) / 2.0);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
-        REQUIRE(min_max(fifo).min == value2);
-        REQUIRE(min_max(fifo).max == value1);
+        REQUIRE(min_max(fifo, accessor).min == value2);
+        REQUIRE(min_max(fifo, accessor).max == value1);
 
         auto const value3 = 9.1;
         auto const state3 = bit(3);
@@ -70,15 +110,15 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         elem.val = value3;
         elem.sta = state3;
         fifo.push_back(elem);
-        REQUIRE(mean(fifo) == (value1 + value2 + value3) / 3.0);
-        REQUIRE(mean_it(fifo.begin(), fifo.end()) == (value1 + value2 + value3) / 3.0);
-        REQUIRE(median(fifo) == value3);
-        REQUIRE(median_it(fifo.cbegin(), fifo.cend()) == value3);
+        REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3) / 3.0);
+        REQUIRE(mean_it(fifo.begin(), fifo.end(), accessor) == (value1 + value2 + value3) / 3.0);
+        REQUIRE(median(fifo, accessor) == value3);
+        REQUIRE(median_it(fifo.cbegin(), fifo.cend(), accessor) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
-        REQUIRE(min_max(fifo).min == value2);
-        REQUIRE(min_max(fifo).max == value1);
-        REQUIRE(min_max_it(fifo.rbegin(), fifo.rend()).min == value2);
-        REQUIRE(min_max_it(fifo.rbegin(), fifo.rend()).max == value1);
+        REQUIRE(min_max(fifo, accessor).min == value2);
+        REQUIRE(min_max(fifo, accessor).max == value1);
+        REQUIRE(min_max_it(fifo.rbegin(), fifo.rend(), accessor).min == value2);
+        REQUIRE(min_max_it(fifo.rbegin(), fifo.rend(), accessor).max == value1);
         REQUIRE(fifo.size() == 3);
 
         // Add two more values, one above and one below value3,
@@ -89,16 +129,16 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto const value5 = 9.3;
         auto const state5 = bit(3);
         fifo.push_back({value5, state5});
-        REQUIRE(mean(fifo) == (value1 + value2 + value3 + value4 + value5) / 5.0);
-        REQUIRE(median(fifo) == value3);
+        REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3 + value4 + value5) / 5.0);
+        REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
         REQUIRE(accumulate_it(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
         REQUIRE(accumulate(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
-        REQUIRE(min_max(fifo).min == value2);
-        REQUIRE(min_max(fifo).max == value1);
-        REQUIRE_THAT(standard_deviation(fifo), Catch::Matchers::WithinAbs(0.975, 0.001));
-        REQUIRE_THAT(standard_deviation(remove_outliers(fifo, 1)), Catch::Matchers::WithinAbs(0.816, 0.001));
-        REQUIRE_THAT(standard_deviation_it(fifo.begin(), fifo.end()), Catch::Matchers::WithinAbs(0.975, 0.001));
+        REQUIRE(min_max(fifo, accessor).min == value2);
+        REQUIRE(min_max(fifo, accessor).max == value1);
+        REQUIRE_THAT(standard_deviation(fifo, accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
+        REQUIRE_THAT(standard_deviation(remove_outliers(fifo, 1, accessor), accessor), Catch::Matchers::WithinAbs(0.816, 0.001));
+        REQUIRE_THAT(standard_deviation_it(fifo.begin(), fifo.end(), accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
 
     }
 
@@ -162,7 +202,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
             std::vector<chargedata> my_data = { { 1102.2f, 3u }, { 1023.4f, 2u }, { 1077.3f, 5u } };
 
-            auto durchschnitt_c = mean(my_data);
+            auto durchschnitt_c = mean(my_data, [](chargedata const& el) { return el.val; });
 
             REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinAbs(1067.63342f, 0.00001));
         }
@@ -204,7 +244,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
                 { 128ul, { { 1660.9f,  3 }, { 1974.3f,  4 }, { 1595.3f,  4 }, { 1771.7f,  4 } } } };
 
             auto trainrange = min_max(my_trains, [](const auto& e){ return e.id; } );
-            auto mean_of_median_c = mean(my_trains, [](const auto& e){ return median(e.meas); } );
+            auto mean_of_median_c = mean(my_trains, [](const auto& e){ return median(e.meas,
+                                                        [] (const auto& e){ return e.val;}); } );
             auto lasermax = min_max(my_trains, [](const auto& e){ return min_max(e.meas,
                                                     [](const auto& e){ return e.laser; }).max; } );
 

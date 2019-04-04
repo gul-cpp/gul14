@@ -27,44 +27,9 @@
 
 namespace gul {
 
-template <typename DataT, typename StateT = void>
-struct StatisticsElement {
-    using has_state = std::true_type;
-    using data_type = DataT;
-    using state_type = StateT;
-    DataT val{ std::numeric_limits<DataT>::quiet_NaN() };
-    StateT sta{ 0 };
-
-    auto friend operator<< (std::ostream& s, const StatisticsElement<DataT, StateT>& e) -> std::ostream&
-    {
-        return s << e.val;
-    }
-};
-
-template <typename DataT>
-struct StatisticsElement<DataT, void> {
-    using has_state = std::false_type;
-    using data_type = DataT;
-    DataT val{ std::numeric_limits<DataT>::quiet_NaN() };
-
-    auto friend operator<< (std::ostream& s, const StatisticsElement<DataT, void>& e) -> std::ostream&
-    {
-        return s << e.val;
-    }
-};
-
-
 namespace {
 
     // Here just to be able to have good default accessors
-
-    template <typename ElementT>
-    auto ElementAccessor() -> std::enable_if_t<not std::is_fundamental<ElementT>::value,
-                                               decltype(std::declval<ElementT>().val)(*)(const ElementT&)>
-    {
-            return [](const ElementT& el) { return el.val; };
-    }
-
     template <typename ElementT>
     auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
                                                ElementT(*)(const ElementT&)>
