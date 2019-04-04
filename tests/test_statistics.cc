@@ -68,6 +68,13 @@ auto bit(int bit) -> unsigned int
     return 1u << bit;
 }
 
+TEST_CASE("Lars' wish list for statistics functions", "[statistics]")
+{
+    std::vector<double> v = { 0.0, 1.0, 2.0, -1.0, -2.0 };
+    REQUIRE(gul::mean(v) == Approx(0.0)); // This works already, great!
+    REQUIRE(gul::mean(v.begin(), v.end()) == Approx(0.0)); // Does not work yet.
+}
+
 TEST_CASE("Container Statistics Tests", "[statistics]")
 {
     using namespace gul;
@@ -111,14 +118,14 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         elem.sta = state3;
         fifo.push_back(elem);
         REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3) / 3.0);
-        REQUIRE(mean_it(fifo.begin(), fifo.end(), accessor) == (value1 + value2 + value3) / 3.0);
+        REQUIRE(mean(fifo.begin(), fifo.end(), accessor) == (value1 + value2 + value3) / 3.0);
         REQUIRE(median(fifo, accessor) == value3);
-        REQUIRE(median_it(fifo.cbegin(), fifo.cend(), accessor) == value3);
+        REQUIRE(median(fifo.cbegin(), fifo.cend(), accessor) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
-        REQUIRE(min_max_it(fifo.rbegin(), fifo.rend(), accessor).min == value2);
-        REQUIRE(min_max_it(fifo.rbegin(), fifo.rend(), accessor).max == value1);
+        REQUIRE(min_max(fifo.rbegin(), fifo.rend(), accessor).min == value2);
+        REQUIRE(min_max(fifo.rbegin(), fifo.rend(), accessor).max == value1);
         REQUIRE(fifo.size() == 3);
 
         // Add two more values, one above and one below value3,
@@ -132,26 +139,28 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3 + value4 + value5) / 5.0);
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
-        REQUIRE(accumulate_it(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
+        // For some reason stuff from standard header <numeric> seem to be in our namespace,
+        // so we need to specify that we want to use GUL's accumulate rather than std::accumulate
+        REQUIRE(gul::accumulate(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
         REQUIRE(accumulate(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
         REQUIRE_THAT(standard_deviation(fifo, accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
         REQUIRE_THAT(standard_deviation(remove_outliers(fifo, 1, accessor), accessor), Catch::Matchers::WithinAbs(0.816, 0.001));
-        REQUIRE_THAT(standard_deviation_it(fifo.begin(), fifo.end(), accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
+        REQUIRE_THAT(standard_deviation(fifo.begin(), fifo.end(), accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
 
     }
 
     SECTION("data analysis tests on std::vector") {
         auto vec = std::vector<double>{{ 1.2, 3.4, 5.6, 7.4, 9.1 }};
         REQUIRE_THAT(mean(vec), Catch::Matchers::WithinAbs(5.34, 0.001));
-        REQUIRE_THAT(mean_it(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(5.34, 0.001));
+        REQUIRE_THAT(mean(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(5.34, 0.001));
         REQUIRE(median(vec) == 5.6); // exactly
-        REQUIRE(median_it(vec.begin(), vec.end()) == 5.6);
+        REQUIRE(median(vec.begin(), vec.end()) == 5.6);
         REQUIRE(min_max(vec).min == 1.2);
-        REQUIRE(min_max_it(vec.begin(), vec.end()).min == 1.2);
+        REQUIRE(min_max(vec.begin(), vec.end()).min == 1.2);
         REQUIRE_THAT(standard_deviation(vec), Catch::Matchers::WithinAbs(3.136, 0.001));
-        REQUIRE_THAT(standard_deviation_it(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(3.136, 0.001));
+        REQUIRE_THAT(standard_deviation(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(3.136, 0.001));
 
         // Copy version of remove_outliers
         auto vec2 = remove_outliers(vec, 1);

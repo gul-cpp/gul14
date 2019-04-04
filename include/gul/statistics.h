@@ -279,7 +279,7 @@ template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
-auto mean_it(const IteratorT& begin, const IteratorT& end,
+auto mean(const IteratorT& begin, const IteratorT& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return mean(make_view(begin, end), accessor);
@@ -289,7 +289,7 @@ template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
-auto median_it(const IteratorT& begin, const IteratorT& end,
+auto median(const IteratorT& begin, const IteratorT& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return median(make_view(begin, end), accessor);
@@ -299,7 +299,7 @@ template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
-auto min_max_it(const IteratorT& begin, const IteratorT& end,
+auto min_max(const IteratorT& begin, const IteratorT& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> MinMax<DataT>
 {
     return min_max(make_view(begin, end), accessor);
@@ -309,7 +309,7 @@ template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
-auto remove_outliers_it(const IteratorT& begin, const IteratorT& end,
+auto remove_outliers(const IteratorT& begin, const IteratorT& end,
         std::size_t outliers, Accessor accessor = ElementAccessor<ElementT>()) -> std::vector<ElementT>
 {
     return remove_outliers(make_view(begin, end), outliers, accessor);
@@ -319,7 +319,7 @@ template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
-auto standard_deviation_it(const IteratorT& begin, const IteratorT& end,
+auto standard_deviation(const IteratorT& begin, const IteratorT& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return standard_deviation(make_view(begin, end), accessor);
@@ -330,7 +330,7 @@ template <typename IteratorT,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>,
           typename OpClosure>
-auto accumulate_it(const IteratorT& begin, const IteratorT& end, OpClosure op,
+auto accumulate(const IteratorT& begin, const IteratorT& end, OpClosure op,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return accumulate(make_view(begin, end), op, accessor);
