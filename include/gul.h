@@ -244,6 +244,9 @@ namespace gul {
  * abs():
  *     Calculate the absolute value, even for unsigned types.
  *
+ * clamp():
+ *     Coerce a value to be within a given range.
+ *
  * within_abs():
  *     Determine if two numbers are almost equal, allowing for an absolute difference.
  *
@@ -253,9 +256,6 @@ namespace gul {
  * within_ulp():
  *     Determine if two numbers are almost equal, allowing for a difference of a given
  *     number of units-in-the-last-place (ULPs).
- *
- * clamp():
- *     Coerce a value to be within a given range.
  */
 
 /**
