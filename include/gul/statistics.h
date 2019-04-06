@@ -28,14 +28,18 @@
 namespace gul {
 
 namespace {
-
-    //////
-    //
-    // Until we have concepts ;-)
-    //
-
-    // Helper to identify containers, i.e. types that have
-    // cbegin(), cend(), value_type
+    /**
+     * Helper type trait object to determine of a type is a container.
+     *
+     * A container is identified by the presense of ``cbegin()`` and ``cend()``
+     * member functions and a ``value_type`` type alias.
+     *
+     * If the type specified as template parameter has the required members
+     * std::true_type is returned, otherwise std::false_type.
+     *
+     * \tparam T    Type to check
+     * \returns     std::true_type if the type is probably a container
+     */
     template <typename T, typename = int>
     struct IsContainerLike : std::false_type { };
 
@@ -51,6 +55,21 @@ namespace {
 
 } // namespace anonymous
 
+/**
+ * Return a mock element accessor for containers of fundamental types.
+ *
+ * All functions in statistics.h access the elements of the containers they
+ * work on through accessor functions. If the container is simple, i.e. contains
+ * just fundamental types (like std::vector<double>) we can automate the
+ * generation of the accessor function, so that the user does not need to specify
+ * it.
+ *
+ * The type returned from the accessor should be an fundamental and arithmetic type.
+ * As this is expected the element's content is returned by value and not be reference.
+ *
+ * \tparam ElementT   Type of the elements in the container
+ * \returns           Pointer to accessor function
+ */
 template <typename ElementT>
 auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
                                            ElementT(*)(const ElementT&)>
@@ -58,10 +77,21 @@ auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
         return [](const ElementT& el) { return el; };
 }
 
+/**
+ * Object that is designed to holds two values: minimum and maximum of something
+ *
+ * DataT must be an arithmetic type.
+ *
+ * Default constructed the members have these possibly useful values:
+ * * min: Not-a-Number or maximum value representable with DataT
+ * * max: Not-a-Number or minimum value representable with DataT
+ *
+ * \tparam DataT     Type of the contained values
+ */
 template <typename DataT, typename = void, typename = std::enable_if<std::is_arithmetic<DataT>::value>>
 struct MinMax {
-    DataT min{ std::numeric_limits<DataT>::max() };
-    DataT max{ std::numeric_limits<DataT>::lowest() };
+    DataT min{ std::numeric_limits<DataT>::max() }; ///< Minimum value
+    DataT max{ std::numeric_limits<DataT>::lowest() }; ///< Maximum value
 };
 
 template <typename DataT>
@@ -70,6 +100,23 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
     DataT max{ NAN };
 };
 
+/////////// Main statistics functions following
+
+/**
+ * Calculate arithmetic mean of all elements in a container.
+ *
+ * The mean value is calculated by dividing the sum of all elements by the number
+ * of elements: ``mean -> sum 0..n-1 (element i) / n``
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            Arithmetic mean value
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -86,6 +133,22 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
     return sum / container.size();
 }
 
+/**
+ * Calculate root mean square of all elements in a container.
+ *
+ * The mean value is calculated by taking the square root of the the sum of all
+ * squared elements divided by the number of elements:
+ * ``rms -> sqrt (sum 0..n-1 (element i * element i) / n)``
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            RMS value
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -102,6 +165,27 @@ auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<Elemen
     return std::sqrt(sum / container.size());
 }
 
+/**
+ * Find the median of all elements in a container.
+ *
+ * The median element is the element that has an equal number of elements higher and
+ * lower in value.
+ * If the container has an even number of elements there can be no 'middle' element. In
+ * this case the two 'middlemost' elements are taken and the arithmetic mean of the two
+ * is returned.
+ *
+ * Because we need to sort all elements the function works with a temporary container that
+ * holds all numerical values of the original container.
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            Median value or arithmetic mean of the two middlemost (in value) elements
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -141,6 +225,20 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
 
 }
 
+/**
+ * Find the minimum and maximum elements of a container.
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            Minimum and maximum values as MinMax object
+ *
+ * The elements are returned by value.
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -167,6 +265,27 @@ auto min_max(const ContainerT& container, Accessor accessor = ElementAccessor<El
     return sum;
 }
 
+/**
+ * Remove elements that are far away from other elements.
+ *
+ * The element which's value differs the most from the arithmetic mean of all
+ * elements is removed. This process is repeated if more than one outlier is
+ * to be removed - specifically the mean is again calculated from the remaining
+ * elements.
+ *
+ * The original container is modified.
+ * The container needs to be modifiable and have the ``erase()`` member function.
+ *
+ * \param cont         Container of the elements to examine
+ * \param outliers     How many outliers shall be removed
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            Container without outliers
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -185,6 +304,12 @@ auto remove_outliers(ContainerT&& cont, std::size_t outliers,
     return cont;
 }
 
+/**
+ * \overload
+ *
+ * The original container is not modified.
+ * A copy of the original container with the outerlier elements removed is returned.
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -199,6 +324,21 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
     return remove_outliers(std::move(c), outliers, accessor);
 }
 
+/**
+ * Calculate the standard deviation of all elements in a container.
+ *
+ * The corrected sample standard deviation is calculated, i.e.
+ * ``std_dev -> sqrt (sum 0..n-1 ((element i - mean) * (element i - mean)) / (n - 1))``
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            Container without outliers
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -225,6 +365,25 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
     return std::sqrt(sum);
 }
 
+/**
+ * Calculate some aggregate value from all elements of a container.
+ *
+ * This is similar to std::accumulate, but
+ * * Works on a whole container
+ * * Accesses the value of the container elements through a accessor function
+ * * Applies the binary operator op to a running 'sum' and each element's value
+ * * The initial value of the sum is just the default constructed value
+ *
+ * \param container    Container of the elements to examine
+ * \param op           Binary operator to aggregate two values into one value
+ * \param accessor     Helper function to access the numeric value of one container element
+ * \returns            Container without outliers
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -283,6 +442,13 @@ namespace {
 
 } // namespace anonymous
 
+/**
+ * \overload
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -293,6 +459,13 @@ auto mean(const IteratorT& begin, const IteratorT& end,
     return mean(make_view(begin, end), accessor);
 }
 
+/**
+ * \overload
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -303,6 +476,13 @@ auto rms(const IteratorT& begin, const IteratorT& end,
     return rms(make_view(begin, end), accessor);
 }
 
+/**
+ * \overload
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -313,6 +493,13 @@ auto median(const IteratorT& begin, const IteratorT& end,
     return median(make_view(begin, end), accessor);
 }
 
+/**
+ * \overload
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -323,6 +510,17 @@ auto min_max(const IteratorT& begin, const IteratorT& end,
     return min_max(make_view(begin, end), accessor);
 }
 
+/**
+ * \overload
+ *
+ * The original container is not modified.
+ * A copy of the original container with the outerlier elements removed is returned.
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param outliers     How many outliers shall be removed
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -333,6 +531,13 @@ auto remove_outliers(const IteratorT& begin, const IteratorT& end,
     return remove_outliers(make_view(begin, end), outliers, accessor);
 }
 
+/**
+ * \overload
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
@@ -343,6 +548,14 @@ auto standard_deviation(const IteratorT& begin, const IteratorT& end,
     return standard_deviation(make_view(begin, end), accessor);
 }
 
+/**
+ * \overload
+ *
+ * \param begin        Iterator to first elements to examine in the container
+ * \param end          Iterator past the last element to examine in the container
+ * \param op           Binary operator to aggregate two values into one value
+ * \param accessor     Helper function to access the numeric value of one container element
+ */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),

@@ -240,37 +240,34 @@ namespace gul {
 
 /**
  * \page statistics_utilities Statistics Utilities
- * \brief.
  *
  * The General Utility Library offers some utilities to perform statistical
  * examination of data in an arbitrary container:
  *
- * StatisticsElement<DataT, StateT>{}:
- *     Type that can be useful to keep data with states. Holds one sub-element of arithmetic
- *     type and optionally one sub-element of integral type for status information purposes.
- *     This is in fact rather an example.
- *
- * MinMax<DataT>{}:
+ * \ref gul::MinMax "MinMax":
  *     Holds a pair of two values, typically the minimum and maximum element of something.
  *
- * mean(container):
+ * mean():
  *     Calculates the mean value of all elements in the container.
  *
- * median(container):
+ * rms():
+ *     Calculates the root-mean-square value of all elements in the container.
+ *
+ * median():
  *     Calculates the median value of all elements in the container.
  *
- * min_max(container):
+ * min_max():
  *     Returns the minimum and maximum value of all elements in the container.
  *
- * standard_deviation(container):
+ * standard_deviation():
  *     Returns the standard deviation calculated of all elements in the container
  *     after optionally removing outliers.
  *
- * accumulate(container):
+ * accumulate():
  *     Returns the values of all elements somehow combined. A closure has to be
  *     specified to describe how to values are combined.
  *
- * remove_outliers(container, amount):
+ * remove_outliers():
  *     Removes the data points that are the furthest from the mean of all data points.
  *     If more than one point is to be removed this will done recursively with
  *     intermediate recalculations of the mean.
