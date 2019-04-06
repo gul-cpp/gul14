@@ -175,11 +175,9 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto remove_outliers(const ContainerT& container, std::size_t outliers,
-        Accessor accessor = ElementAccessor<ElementT>()) -> std::vector<ElementT>
+auto remove_outliers(ContainerT&& cont, std::size_t outliers,
+        Accessor accessor = ElementAccessor<ElementT>()) -> ContainerT
 {
-    auto cont = std::vector<ElementT>(container.size());
-    std::copy(container.cbegin(), container.cend(), cont.begin());
     while (outliers-- > 0 and cont.size() > 0) {
         auto max_distant = std::max_element(cont.begin(), cont.end(),
                 [mean = mean(cont, accessor), accessor] (const ElementT& a, const ElementT& b)
@@ -195,16 +193,12 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto remove_outliers(ContainerT&& cont, std::size_t outliers,
-        Accessor accessor = ElementAccessor<ElementT>()) -> ContainerT
+auto remove_outliers(const ContainerT& cont, std::size_t outliers,
+        Accessor accessor = ElementAccessor<ElementT>()) -> std::vector<ElementT>
 {
-    while (outliers-- > 0 and cont.size() > 0) {
-        auto max_distant = std::max_element(cont.begin(), cont.end(),
-                [mean = mean(cont, accessor), accessor] (const ElementT& a, const ElementT& b)
-                { return std::abs(accessor(a) - mean) < std::abs(accessor(b) - mean); });
-        cont.erase(max_distant);
-    }
-    return cont;
+    auto c = std::vector<ElementT>(cont.size());
+    std::copy(cont.cbegin(), cont.cend(), c.begin());
+    return remove_outliers(std::move(c), outliers, accessor);
 }
 
 template <typename ContainerT,
