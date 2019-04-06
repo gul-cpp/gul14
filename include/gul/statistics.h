@@ -60,7 +60,7 @@ namespace {
 } // namespace anonymous
 
 
-template <typename DataT, typename = void>
+template <typename DataT, typename = void, typename = std::enable_if<std::is_arithmetic<DataT>::value>>
 struct MinMax {
     DataT min{ std::numeric_limits<DataT>::max() };
     DataT max{ std::numeric_limits<DataT>::lowest() };
