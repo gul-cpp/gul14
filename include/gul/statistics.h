@@ -29,14 +29,6 @@ namespace gul {
 
 namespace {
 
-    // Here just to be able to have good default accessors
-    template <typename ElementT>
-    auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
-                                               ElementT(*)(const ElementT&)>
-    {
-            return [](const ElementT& el) { return el; };
-    }
-
     //////
     //
     // Until we have concepts ;-)
@@ -59,6 +51,12 @@ namespace {
 
 } // namespace anonymous
 
+template <typename ElementT>
+auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
+                                           ElementT(*)(const ElementT&)>
+{
+        return [](const ElementT& el) { return el; };
+}
 
 template <typename DataT, typename = void, typename = std::enable_if<std::is_arithmetic<DataT>::value>>
 struct MinMax {
