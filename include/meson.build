@@ -20,6 +20,7 @@ install_headers(
     'gul/tokenize.h',
     'gul/Trigger.h',
     'gul/trim.h',
+    'gul/type_name.h',
     'gul/version.h',
     subdir : 'gul'
 )

@@ -28,6 +28,7 @@ tests = [
     'test_tokenize.cc',
     'test_Trigger.cc',
     'test_trim.cc',
+    'test_type_name.cc',
 ]
 
 test('all',

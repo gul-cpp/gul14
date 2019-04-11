@@ -36,6 +36,7 @@
 #include "gul/tokenize.h"
 #include "gul/trim.h"
 #include "gul/Trigger.h"
+#include "gul/type_name.h"
 #include "gul/version.h"
 
 /// Namespace gul contains all functions and classes of the General Utility Library.
@@ -325,6 +326,12 @@ namespace gul {
  *
  * hexdump() & \ref gul::hexdump_stream "hexdump_stream()":
  *     Generate an ASCII hex dump of a container, a range, or a piece of memory.
+ *
+ * type_name():
+ *     Generate a human readable string describing a type.
+ *
+ * \ref gul::FailToInstantiate "FailToInstantiate":
+ *     Class to help debug types
  */
 
 } // namespace gul
