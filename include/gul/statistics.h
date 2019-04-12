@@ -423,6 +423,7 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * \param accessor     Helper function to access the numeric value of one container element
  * \returns            The aggregate value
  *
+ * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
