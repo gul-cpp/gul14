@@ -85,7 +85,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == 0u);
         REQUIRE(std::isnan(min_max(fifo, accessor).min));
         REQUIRE(std::isnan(min_max(fifo, accessor).max));
-        REQUIRE(std::isnan(standard_deviation(fifo, accessor)));
+        REQUIRE(std::isnan(standard_deviation(fifo, accessor).sigma));
 
         auto const value1 = 10.0;
         auto const state1 = bit(1);
@@ -147,9 +147,19 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(accumulate<unsigned int>(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
-        REQUIRE_THAT(standard_deviation(fifo, accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
-        REQUIRE_THAT(standard_deviation(remove_outliers(fifo, 1, accessor), accessor), Catch::Matchers::WithinAbs(0.816, 0.001));
-        REQUIRE_THAT(standard_deviation(fifo.begin(), fifo.end(), accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
+
+        REQUIRE_THAT(standard_deviation(fifo, accessor).sigma,
+                Catch::Matchers::WithinAbs(0.975, 0.001));
+        // check cast operator
+        float standard_dev = standard_deviation(fifo, accessor);
+        REQUIRE_THAT(standard_dev, Catch::Matchers::WithinAbs(0.975, 0.001));
+        double standard_dev = standard_deviation(fifo, accessor);
+        REQUIRE_THAT(standard_dev, Catch::Matchers::WithinAbs(0.975, 0.001));
+
+        REQUIRE_THAT(standard_deviation(remove_outliers(fifo, 1, accessor), accessor).sigma,
+                Catch::Matchers::WithinAbs(0.816, 0.001));
+        REQUIRE_THAT(standard_deviation(fifo.begin(), fifo.end(), accessor).sigma,
+                Catch::Matchers::WithinAbs(0.975, 0.001));
 
     }
 
@@ -163,8 +173,10 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(median(vec.begin(), vec.end()) == 5.6);
         REQUIRE(min_max(vec).min == 1.2);
         REQUIRE(min_max(vec.begin(), vec.end()).min == 1.2);
-        REQUIRE_THAT(standard_deviation(vec), Catch::Matchers::WithinAbs(3.136, 0.001));
-        REQUIRE_THAT(standard_deviation(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(3.136, 0.001));
+        REQUIRE_THAT(standard_deviation(vec).sigma,
+                Catch::Matchers::WithinAbs(3.136, 0.001));
+        REQUIRE_THAT(standard_deviation(vec.begin(), vec.end()).sigma,
+                Catch::Matchers::WithinAbs(3.136, 0.001));
 
         // Copy version of remove_outliers
         auto vec2 = remove_outliers(vec, 1);

@@ -103,6 +103,39 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
     DataT max{ NAN };
 };
 
+/**
+ * Object that holds two values: standard_deviation and mean
+ *
+ * DataT must be an arithmetic type.
+ *
+ * Default constructed the members have these possibly useful values:
+ * * sigma: Not-a-Number or zero
+ * * mean: Not-a-Number or zero
+ *
+ * The object can be cast to DataT in which case it is results in the sigma value.
+ *
+ * \tparam DataT     Type of the contained values
+ */
+template <typename DataT, typename = void, typename = std::enable_if<std::is_arithmetic<DataT>::value>>
+struct StandardDeviation {
+    DataT sigma{ 0 }; ///< The standard deviation (sigma) value
+    DataT mean{ 0 }; ///< The mean value
+
+    operator DataT() { ///< Cast to DataT results in the sigma member
+        return sigma;
+    }
+};
+
+template <typename DataT>
+struct StandardDeviation<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
+    DataT sigma{ NAN };
+    DataT mean{ NAN };
+
+    operator DataT() {
+        return sigma;
+    }
+};
+
 /////////// Main statistics functions following
 
 /**
@@ -341,7 +374,7 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Container without outliers
+ * \returns            The standard deviation and mean values as StandardDeviation object
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
@@ -356,15 +389,15 @@ template <typename ResultT = statistics_result_type,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
+auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviation<ResultT>
 {
     auto const len = container.size();
 
     if (len == 0)
-        return std::numeric_limits<ResultT>::quiet_NaN();
+        return { };
     auto mean_val = mean<ResultT>(container, accessor);
     if (len == 1)
-        return mean_val;
+        return { mean_val, mean_val };
 
     auto sum = std::accumulate(container.cbegin(), container.cend(),
         ResultT{ },
@@ -373,7 +406,7 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
 
     sum /= container.size() - 1;
 
-    return std::sqrt(sum);
+    return { std::sqrt(sum), mean_val };
 }
 
 /**
@@ -388,7 +421,7 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * \param container    Container of the elements to examine
  * \param op           Binary operator to aggregate two values into one value
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Container without outliers
+ * \returns            The aggregate value
  *
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
@@ -559,7 +592,7 @@ template <typename ResultT = statistics_result_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto standard_deviation(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
+        Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviation<ResultT>
 {
     return standard_deviation<ResultT>(make_view(begin, end), accessor);
 }
