@@ -190,7 +190,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
             auto durchschnitt = mean(my_data);
 
-            REQUIRE_THAT(durchschnitt, Catch::Matchers::WithinAbs(5.54000f, 0.00001));
+            REQUIRE_THAT(durchschnitt, Catch::Matchers::WithinULP(5.54000f, 3));
         }
         { // example with accessors
             struct measurement {
@@ -203,10 +203,10 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
             auto durchschnitt_i = mean(my_data, [](const auto& e){ return e.intensity; });
             auto durchschnitt_c = mean(my_data, [](const auto& e){ return e.charge; } );
 
-            REQUIRE_THAT(durchschnitt_i, Catch::Matchers::WithinAbs(2.73333f, 0.00001));
-            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinAbs(1067.63342f, 0.00001));
+            REQUIRE_THAT(durchschnitt_i, Catch::Matchers::WithinULP(2.73333333f, 3));
+            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
         }
-        { // lazy custom struct (using member val)
+        { // small custom struct
             using LaserType = unsigned int;
             struct chargedata {
                 float val;
@@ -217,7 +217,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
             auto durchschnitt_c = mean(my_data, [](chargedata const& el) { return el.val; });
 
-            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinAbs(1067.63342f, 0.00001));
+            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
         }
         { // embedding one struct into another
             using LaserType = unsigned int;
@@ -234,7 +234,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
             auto durchschnitt_c = mean(my_data, [](const auto& e){ return e.meas.charge; } );
 
-            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinAbs(1062.80005f, 0.00001));
+            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1062.80000f, 3));
         }
         { // convoluted expressions
             using LaserMode = int;
@@ -248,13 +248,13 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
                 std::vector<chargedata> meas;
             };
 
-            std::vector<train> my_trains = {
-                { 123ul, { { 1969.1f,  3 }, { 1643.2f,  9 }, { 1306.1f,  1 }, { 1616.0f,  5 } } },
-                { 124ul, { { 1862.2f, 15 }, { 1742.6f,  2 }, { 1033.5f,  3 }, { 1360.9f,  1 } } },
-                { 125ul, { { 1358.1f,  4 }, { 1577.3f,  2 }, { 1222.4f, 17 }, { 1275.5f,  6 } } },
-                { 126ul, { { 1832.6f,  8 }, { 1983.9f, 17 }, { 1324.8f,  6 }, { 1521.6f,  8 } } },
-                { 127ul, { { 1663.7f, 16 }, { 1050.8f,  5 }, { 1826.9f,  9 }, { 1786.6f, 15 } } },
-                { 128ul, { { 1660.9f,  3 }, { 1974.3f,  4 }, { 1595.3f,  4 }, { 1771.7f,  4 } } } };
+            std::vector<train> my_trains = { // comment: hand calculated median
+                { 123ul, { { 1969.1f,  3 }, { 1643.2f,  9 }, { 1306.1f,  1 }, { 1616.0f,  5 } } }, // 1629.6
+                { 124ul, { { 1862.2f, 15 }, { 1742.6f,  2 }, { 1033.5f,  3 }, { 1360.9f,  1 } } }, // 1551.75
+                { 125ul, { { 1358.1f,  4 }, { 1577.3f,  2 }, { 1222.4f, 17 }, { 1275.5f,  6 } } }, // 1316.8
+                { 126ul, { { 1832.6f,  8 }, { 1983.9f, 17 }, { 1324.8f,  6 }, { 1521.6f,  8 } } }, // 1677.1
+                { 127ul, { { 1663.7f, 16 }, { 1050.8f,  5 }, { 1826.9f,  9 }, { 1786.6f, 15 } } }, // 1725.15
+                { 128ul, { { 1660.9f,  3 }, { 1974.3f,  4 }, { 1595.3f,  4 }, { 1771.7f,  4 } } } }; // 1716.3
 
             auto trainrange = min_max(my_trains, [](const auto& e){ return e.id; } );
             auto mean_of_median_c = mean(my_trains, [](const auto& e){ return median(e.meas,
@@ -264,7 +264,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
             REQUIRE(trainrange.min == 123ul);
             REQUIRE(trainrange.max == 128ul);
-            REQUIRE_THAT(mean_of_median_c, Catch::Matchers::WithinAbs(1602.78333f, 0.00001));
+            REQUIRE_THAT(mean_of_median_c, Catch::Matchers::WithinULP(1602.78333f, 5)); // 5 because many operations
             REQUIRE(lasermax.max == 17u);
         }
         { // Show how even character sequences work: Outlier magic

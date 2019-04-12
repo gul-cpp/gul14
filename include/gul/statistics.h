@@ -28,6 +28,9 @@
 namespace gul {
 
 namespace {
+
+    using statistics_result_type = double; ///< Type used to return statistic properties
+
     /**
      * Helper type trait object to determine of a type is a container.
      *
@@ -123,12 +126,12 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
-            DataT{ },
-            [accessor] (const DataT& accu, const ElementT& el) {
+            statistics_result_type{ },
+            [accessor] (const statistics_result_type& accu, const ElementT& el) {
                 return accu + accessor(el); } );
     return sum / container.size();
 }
@@ -155,13 +158,13 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
-            DataT{ },
-            [accessor] (const DataT& accu, const ElementT& el) {
-                return accu + std::pow(accessor(el), 2); } );
+            statistics_result_type{ },
+            [accessor] (const statistics_result_type& accu, const ElementT& el) {
+                return accu + std::pow(static_cast<statistics_result_type>(accessor(el)), 2); } );
     return std::sqrt(sum / container.size());
 }
 
@@ -192,11 +195,11 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto median(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto median(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     auto const len = container.size();
     if (len == 0)
-        return std::numeric_limits<DataT>::quiet_NaN();
+        return std::numeric_limits<statistics_result_type>::quiet_NaN();
 
     // work with a copy of the data
     // because nth_element() partially sorts the input data
@@ -212,13 +215,13 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
     // What is the middle element?
     auto middle = data_copy.begin() + (len / 2);
     std::nth_element(data_copy.begin(), middle, data_copy.end());
-    auto median = *middle;
+    auto median = statistics_result_type{ *middle };
 
     // If we have an even number of elements we need to do more:
     // We calculate the mean value of the two 'middle' elements
     if (0 == len % 2) {
         std::nth_element(data_copy.begin(), middle - 1, data_copy.end());
-        median = (median / 2) + (*(middle - 1) / 2);
+        median = (median / 2) + (static_cast<statistics_result_type>(*(middle - 1)) / 2);
     }
 
     return median;
@@ -345,19 +348,19 @@ template <typename ContainerT,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     auto const len = container.size();
 
     if (len == 0)
-        return std::numeric_limits<DataT>::quiet_NaN();
+        return std::numeric_limits<statistics_result_type>::quiet_NaN();
     auto mean_val = mean(container, accessor);
     if (len == 1)
         return mean_val;
 
     auto sum = std::accumulate(container.cbegin(), container.cend(),
-        DataT{ },
-        [mean_val, accessor] (const DataT& accu, const ElementT& el)
+        statistics_result_type{ },
+        [mean_val, accessor] (const statistics_result_type& accu, const ElementT& el)
         { return accu + std::pow(accessor(el) - mean_val, 2); });
 
     sum /= container.size() - 1;
@@ -454,7 +457,7 @@ template <typename IteratorT,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto mean(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+        Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     return mean(make_view(begin, end), accessor);
 }
@@ -471,7 +474,7 @@ template <typename IteratorT,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto rms(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+        Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     return rms(make_view(begin, end), accessor);
 }
@@ -488,7 +491,7 @@ template <typename IteratorT,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto median(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+        Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
 {
     return median(make_view(begin, end), accessor);
 }
