@@ -82,7 +82,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(std::isnan(mean(fifo, accessor)));
         REQUIRE(std::isnan(rms(fifo, accessor)));
         REQUIRE(std::isnan(median(fifo, accessor)));
-        REQUIRE(accumulate(fifo, op_max, acc_state) == 0u);
+        REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == 0u);
         REQUIRE(std::isnan(min_max(fifo, accessor).min));
         REQUIRE(std::isnan(min_max(fifo, accessor).max));
         REQUIRE(std::isnan(standard_deviation(fifo, accessor)));
@@ -93,7 +93,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(mean(fifo, accessor) == value1);
         REQUIRE(rms(fifo, accessor) == value1);
         REQUIRE(median(fifo, accessor) == value1);
-        REQUIRE(accumulate(fifo, op_max, acc_state) == state1);
+        REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state1);
         REQUIRE(min_max(fifo, accessor).min == value1);
         REQUIRE(min_max(fifo, accessor).max == value1);
 
@@ -104,7 +104,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto rmsval = std::sqrt((value1 * value1 + value2 * value2) / 2.0);
         REQUIRE(rms(fifo, accessor) == std::sqrt((value1 * value1 + value2 * value2) / 2.0));
         REQUIRE(median(fifo, accessor) == (value1 + value2) / 2.0);
-        REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
+        REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
 
@@ -121,7 +121,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(rms(fifo.begin(), fifo.end(), accessor) == rmsval);
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(median(fifo.cbegin(), fifo.cend(), accessor) == value3);
-        REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
+        REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
         REQUIRE(min_max(fifo.rbegin(), fifo.rend(), accessor).min == value2);
@@ -140,11 +140,11 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         rmsval = std::sqrt((value1 * value1 + value2 * value2 + value3 * value3 + value4 * value4 + value5 * value5) / 5.0);
         REQUIRE(rms(fifo, accessor) == rmsval);
         REQUIRE(median(fifo, accessor) == value3);
-        REQUIRE(accumulate(fifo, op_max, acc_state) == state2);
+        REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         // For some reason stuff from standard header <numeric> seem to be in our namespace,
         // so we need to specify that we want to use GUL's accumulate rather than std::accumulate
-        REQUIRE(gul::accumulate(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
-        REQUIRE(accumulate(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
+        REQUIRE(gul::accumulate<unsigned int>(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
+        REQUIRE(accumulate<unsigned int>(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
         REQUIRE_THAT(standard_deviation(fifo, accessor), Catch::Matchers::WithinAbs(0.975, 0.001));
@@ -155,8 +155,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
     SECTION("data analysis tests on std::vector") {
         auto vec = std::vector<double>{{ 1.2, 3.4, 5.6, 7.4, 9.1 }};
-        REQUIRE_THAT(mean(vec), Catch::Matchers::WithinAbs(5.34, 0.001));
-        REQUIRE_THAT(mean(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(5.34, 0.001));
+        REQUIRE_THAT(mean(vec), Catch::Matchers::WithinULP(5.34, 3));
+        REQUIRE_THAT(mean(vec.begin(), vec.end()), Catch::Matchers::WithinULP(5.34, 3));
         REQUIRE_THAT(rms(vec), Catch::Matchers::WithinAbs(6.032, 0.001));
         REQUIRE_THAT(rms(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(6.032, 0.001));
         REQUIRE(median(vec) == 5.6); // exactly
@@ -205,6 +205,12 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
             REQUIRE_THAT(durchschnitt_i, Catch::Matchers::WithinULP(2.73333333f, 3));
             REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
+
+            auto durchschnitt_i2 = mean<int>(my_data, [](const auto& e){ return e.intensity; });
+            auto durchschnitt_c2 = mean<int>(my_data, [](const auto& e){ return e.charge; } );
+
+            REQUIRE(durchschnitt_i2 == 2);
+            REQUIRE(durchschnitt_c2 == 1067);
         }
         { // small custom struct
             using LaserType = unsigned int;

@@ -115,23 +115,25 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
  * \param accessor     Helper function to access the numeric value of one container element
  * \returns            Arithmetic mean value
  *
+ * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  */
-template <typename ContainerT,
+template <typename ResultT = statistics_result_type,
+          typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
-            statistics_result_type{ },
-            [accessor] (const statistics_result_type& accu, const ElementT& el) {
+            ResultT{ },
+            [accessor] (const ResultT& accu, const ElementT& el) {
                 return accu + accessor(el); } );
     return sum / container.size();
 }
@@ -147,24 +149,26 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
  * \param accessor     Helper function to access the numeric value of one container element
  * \returns            RMS value
  *
+ * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  */
-template <typename ContainerT,
+template <typename ResultT = statistics_result_type,
+          typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
-            statistics_result_type{ },
-            [accessor] (const statistics_result_type& accu, const ElementT& el) {
-                return accu + std::pow(static_cast<statistics_result_type>(accessor(el)), 2); } );
+            ResultT{ },
+            [accessor] (const ResultT& accu, const ElementT& el) {
+                return accu + std::pow(static_cast<ResultT>(accessor(el)), 2); } );
     return std::sqrt(sum / container.size());
 }
 
@@ -184,22 +188,24 @@ auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<Elemen
  * \param accessor     Helper function to access the numeric value of one container element
  * \returns            Median value or arithmetic mean of the two middlemost (in value) elements
  *
+ * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  */
-template <typename ContainerT,
+template <typename ResultT = statistics_result_type,
+          typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto median(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+auto median(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const len = container.size();
     if (len == 0)
-        return std::numeric_limits<statistics_result_type>::quiet_NaN();
+        return std::numeric_limits<ResultT>::quiet_NaN();
 
     // work with a copy of the data
     // because nth_element() partially sorts the input data
@@ -215,13 +221,13 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
     // What is the middle element?
     auto middle = data_copy.begin() + (len / 2);
     std::nth_element(data_copy.begin(), middle, data_copy.end());
-    auto median = statistics_result_type{ *middle };
+    auto median = ResultT{ *middle };
 
     // If we have an even number of elements we need to do more:
     // We calculate the mean value of the two 'middle' elements
     if (0 == len % 2) {
         std::nth_element(data_copy.begin(), middle - 1, data_copy.end());
-        median = (median / 2) + (static_cast<statistics_result_type>(*(middle - 1)) / 2);
+        median = (median / 2) + (static_cast<ResultT>(*(middle - 1)) / 2);
     }
 
     return median;
@@ -337,30 +343,32 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * \param accessor     Helper function to access the numeric value of one container element
  * \returns            Container without outliers
  *
+ * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  */
-template <typename ContainerT,
+template <typename ResultT = statistics_result_type,
+          typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const len = container.size();
 
     if (len == 0)
-        return std::numeric_limits<statistics_result_type>::quiet_NaN();
-    auto mean_val = mean(container, accessor);
+        return std::numeric_limits<ResultT>::quiet_NaN();
+    auto mean_val = mean<ResultT>(container, accessor);
     if (len == 1)
         return mean_val;
 
     auto sum = std::accumulate(container.cbegin(), container.cend(),
-        statistics_result_type{ },
-        [mean_val, accessor] (const statistics_result_type& accu, const ElementT& el)
+        ResultT{ },
+        [mean_val, accessor] (const ResultT& accu, const ElementT& el)
         { return accu + std::pow(accessor(el) - mean_val, 2); });
 
     sum /= container.size() - 1;
@@ -387,19 +395,20 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  */
-template <typename ContainerT,
+template <typename ResultT = statistics_result_type,
+          typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename OpClosure,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto accumulate(const ContainerT& container, OpClosure op, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto accumulate(const ContainerT& container, OpClosure op, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
-            DataT{ },
-            [accessor, op] (const DataT& accu, const ElementT& el) {
+            ResultT{ },
+            [accessor, op] (const ResultT& accu, const ElementT& el) {
                 return op(accu, accessor(el)); } );
     return sum;
 }
@@ -452,14 +461,15 @@ namespace {
  * \param end          Iterator past the last element to examine in the container
  * \param accessor     Helper function to access the numeric value of one container element
  */
-template <typename IteratorT,
+template <typename ResultT = statistics_result_type,
+          typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto mean(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+        Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
-    return mean(make_view(begin, end), accessor);
+    return mean<ResultT>(make_view(begin, end), accessor);
 }
 
 /**
@@ -469,14 +479,15 @@ auto mean(const IteratorT& begin, const IteratorT& end,
  * \param end          Iterator past the last element to examine in the container
  * \param accessor     Helper function to access the numeric value of one container element
  */
-template <typename IteratorT,
+template <typename ResultT = statistics_result_type,
+          typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto rms(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+        Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
-    return rms(make_view(begin, end), accessor);
+    return rms<ResultT>(make_view(begin, end), accessor);
 }
 
 /**
@@ -486,14 +497,15 @@ auto rms(const IteratorT& begin, const IteratorT& end,
  * \param end          Iterator past the last element to examine in the container
  * \param accessor     Helper function to access the numeric value of one container element
  */
-template <typename IteratorT,
+template <typename ResultT = statistics_result_type,
+          typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto median(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> statistics_result_type
+        Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
-    return median(make_view(begin, end), accessor);
+    return median<ResultT>(make_view(begin, end), accessor);
 }
 
 /**
@@ -541,14 +553,15 @@ auto remove_outliers(const IteratorT& begin, const IteratorT& end,
  * \param end          Iterator past the last element to examine in the container
  * \param accessor     Helper function to access the numeric value of one container element
  */
-template <typename IteratorT,
+template <typename ResultT = statistics_result_type,
+          typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto standard_deviation(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+        Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
-    return standard_deviation(make_view(begin, end), accessor);
+    return standard_deviation<ResultT>(make_view(begin, end), accessor);
 }
 
 /**
@@ -559,15 +572,16 @@ auto standard_deviation(const IteratorT& begin, const IteratorT& end,
  * \param op           Binary operator to aggregate two values into one value
  * \param accessor     Helper function to access the numeric value of one container element
  */
-template <typename IteratorT,
+template <typename ResultT = statistics_result_type,
+          typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>,
           typename OpClosure>
 auto accumulate(const IteratorT& begin, const IteratorT& end, OpClosure op,
-        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+        Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
-    return accumulate(make_view(begin, end), op, accessor);
+    return accumulate<ResultT>(make_view(begin, end), op, accessor);
 }
 
 } // namespace gul
