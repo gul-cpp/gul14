@@ -62,14 +62,16 @@ namespace gul {
  *
  * Member functions:
  *   Element access:
- *     push_back         Insert an element into the buffer
+ *     push_front        Insert an element into the buffer
  *     operator[]        Access element relative to most recent element in buffer, bounds corrected, read only
  *     at                Note: Not overloaded, gives access to underlying container
- *     front             Access first (next to be pushed out) element
- *     back              Acces last (most recently pushed in) element
+ *     front             Access first (next to be pushed out) element (i.e. [size() - 1]
+ *     back              Acces last (most recently pushed in) element (i.e. [0])
  *   Iterators:
- *     end, cend         Returns iterator to end of used space in the container
- *     rbegin, crbegin   Returns reverse iterator to beginning of used space in the container
+ *     begin, cbegin     Note: Not overloaded, returns iterator to first element in underlying container
+ *     end, cend         Returns iterator to end of used space in the underlying container
+ *     rbegin, crbegin   Returns reverse iterator to beginning of used space in the reversed underlying container
+ *     rend, crend       Note: Not overloaded, returns reverse iterator to the end of the reversed underlying container
  *   Capacity:
  *     size              Returns number of used elements
  *     capacity          Returns maximum number of elements
@@ -82,6 +84,15 @@ namespace gul {
  * Non-member functions:
  *   operator<<          Dump the raw data of the buffer to an ostream
  * \endcode
+ *
+ * Only the member functions ``operator[]()``, ``front()``, and ``back()`` are aware of the
+ * wrapping nature of the sliding buffer and access elements relative to when they were
+ * pushed in.
+ * The other member functions access the underlying container without reordering, so the
+ * elements are accessed in unknown order by
+ * * all of the iterators ``begin()``, ``end()``, ``rbegin()``, ``rend()``, ...
+ * * ``at()``
+ * * range based ``for`` (as this uses ``begin()`` and ``end()``)
  *
  * The sliding buffer can be instantiated in two different underlying container versions:
  * * If the size is known at compile time, instanziate it with that number as BufferSize. The
@@ -122,10 +133,10 @@ public:
     /**
      * Insert one element item into the buffer.
      *
-     * Think of this as appending to the end. Probably an element from the front is
+     * Think of this as inserting in the front. Probably an element at the back is
      * dropped to make room in the fixed size buffer.
      */
-    auto push_back(value_type&& in) -> void
+    auto push_front(value_type&& in) -> void
     {
         container_type::operator[](next_element_) = std::move(in);
         ++next_element_;
@@ -138,7 +149,7 @@ public:
     /**
      * \overload
      */
-    auto push_back(const value_type& in) -> void
+    auto push_front(const value_type& in) -> void
     {
         auto in_copy = in;
         push_back(std::move(in_copy));
@@ -149,11 +160,9 @@ public:
      * element.
      *
      * The index 0 is the most recent element, 1 is the element before that
-     * and so on. One can think of i as being implicitly interpreted as always being
-     * negative.
-     * i := >=0, but works on the i-th previous element
+     * and so on.
      *
-     * i in coerced to be inside the size of the buffer, wrapping around by the buffer size.
+     * `i` is coerced to be inside the size of the buffer, wrapping around by the buffer size.
      *
      * If the buffer is not yet full it may be possible that the function has nothing to
      * return and so a default constructed Element is returned.
@@ -167,7 +176,7 @@ public:
     }
 
     /**
-     * Return the oldest ('left most') Element in the buffer.
+     * Return the oldest ('right most') Element in the buffer.
      *
      * This is a read-only operation.
      */
@@ -177,7 +186,7 @@ public:
     }
 
     /**
-     * Return the youngest / most recent ('right most') Element in the buffer.
+     * Return the youngest / most recent ('left most') Element in the buffer.
      *
      * This is a read-only operation.
      */
@@ -187,8 +196,10 @@ public:
     }
 
     /**
-     * Return an iterator to the element following the last element of the underlying
-     * container.
+     * Returns an iterator to the element following the last element in the used
+     * space of the underlying container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
      *
      * This accesses the underlying container in its order. The iterators do not know
      * where the sliding starts and ends. Use the iterators only if you want to access
@@ -205,8 +216,10 @@ public:
     }
 
     /**
-     * Return a constant iterator to the element following the last element of the
-     * underlying container.
+     * Return a constant iterator to the element following the last element in the
+     * used space of the underlying container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
      *
      * This accesses the underlying container in its order. The iterators do not know
      * where the sliding starts and ends. Use the iterators only if you want to access
@@ -223,7 +236,7 @@ public:
     }
 
     /**
-     * Return a reverse iterator to the first element of the reversed underlying container.
+     * Return a reverse iterator to the first used element of the reversed underlying container.
      *
      * It corresponds to the last element of the non-reversed container.
      * If the container is empty, the returned iterator is equal to rend().
@@ -243,7 +256,7 @@ public:
     }
 
     /**
-     * Return a constant reverse iterator to the first element of the reversed
+     * Return a constant reverse iterator to the first used element of the reversed
      * underlying container.
      *
      * It corresponds to the last element of the non-reversed container.
@@ -416,6 +429,14 @@ private:
         next_element_ = count;
     }
 
+    // Hide the following functions in case Container is std::vector
+    // There is a certain possibility that users use these instead of the
+    // correct push_front() function. This is just to make misusing the class hard(er),
+    auto push_back(const value_type&) -> void { /* "push_back() not allowed on SlidingBuffer" */ }
+    auto push_back(value_type&&) -> void { /* "push_back() not allowed on SlidingBuffer" */ }
+    template <typename... Args>
+    auto emplace_back(Args&&...) -> void { /* "emplace_back() not allowed on SlidingBuffer" */ }
+    auto pop_back() -> void { /* "pop_back() not allowed on SlidingBuffer" */ }
 };
 
 } // namespace gul

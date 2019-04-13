@@ -78,7 +78,7 @@ void do_queueing_tests(T& buff)
             [](auto) { return random_double(); } );
 
     for (auto el : nums)
-        buff.push_back({el,0});
+        buff.push_front({el,0});
 
     // Check last put element
     REQUIRE(buff.back().val == nums.at(nums.size() - 1));
@@ -87,17 +87,17 @@ void do_queueing_tests(T& buff)
     auto const signature = 1.234E5;
     for (auto i = 0u; i < buffer_size; ++i) {
         REQUIRE(buff.front().val == nums.at(nums.size() - buffer_size + i));
-        buff.push_back({signature, 0u});
+        buff.push_front({signature, 0u});
         REQUIRE(buff.back().val == signature);
     }
     // Now zero elements should come out...
     static_assert(buffer_size > 3, "Fifo too small for test case");
     REQUIRE(buff.front().val == signature);
-    buff.push_back({0.0, 0u});
+    buff.push_front({0.0, 0u});
     REQUIRE(buff.front().val == signature);
-    buff.push_back({0.0, 0u});
+    buff.push_front({0.0, 0u});
     REQUIRE(buff.front().val == signature);
-    buff.push_back({0.0, 0u});
+    buff.push_front({0.0, 0u});
 }
 
 template <typename T>
@@ -110,7 +110,7 @@ void do_dumping_tests(T& buff)
                 Catch::CaseSensitive::No));
 
     for (auto i = 0; i < 15; ++i)
-        buff.push_back({ static_cast<double>(i)*10 + static_cast<double>(i)/10, static_cast<unsigned int>(i) });
+        buff.push_front({ static_cast<double>(i)*10 + static_cast<double>(i)/10, static_cast<unsigned int>(i) });
 
     std::stringstream s2{ };
     s2 << buff;
@@ -157,13 +157,13 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 5 -> 4
         auto buff = gul::SlidingBuffer<int, 0>{};
         buff.resize(5);
-        buff.push_back(6);
-        buff.push_back(6);
-        buff.push_back(6);
-        buff.push_back(7);
-        buff.push_back(8);
-        buff.push_back(9);
-        buff.push_back(10);
+        buff.push_front(6);
+        buff.push_front(6);
+        buff.push_front(6);
+        buff.push_front(7);
+        buff.push_front(8);
+        buff.push_front(9);
+        buff.push_front(10);
         REQUIRE(buff.filled() == true);
         REQUIRE(buff.size() == 5);
         REQUIRE(buff.capacity() == 5);
@@ -248,15 +248,15 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 8 -> 1
         auto buff = gul::SlidingBuffer<int, 0>{};
         buff.resize(8);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(4);
-        buff.push_back(5);
-        buff.push_back(6);
-        buff.push_back(7);
-        buff.push_back(8);
-        buff.push_back(9);
-        buff.push_back(10);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(4);
+        buff.push_front(5);
+        buff.push_front(6);
+        buff.push_front(7);
+        buff.push_front(8);
+        buff.push_front(9);
+        buff.push_front(10);
         REQUIRE(buff.filled() == true);
         REQUIRE(buff.size() == 8);
         REQUIRE(buff.capacity() == 8);
@@ -388,21 +388,21 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 8 -> 5
         // Change size 8 -> 4
         auto buff = gul::SlidingBuffer<int, 0>(8);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(3);
-        buff.push_back(4);
-        buff.push_back(5);
-        buff.push_back(6);
-        buff.push_back(7);
-        buff.push_back(8);
-        buff.push_back(9);
-        buff.push_back(10);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(3);
+        buff.push_front(4);
+        buff.push_front(5);
+        buff.push_front(6);
+        buff.push_front(7);
+        buff.push_front(8);
+        buff.push_front(9);
+        buff.push_front(10);
         REQUIRE(buff.filled() == true);
         REQUIRE(buff.size() == 8);
         REQUIRE(buff.capacity() == 8);
