@@ -151,10 +151,10 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE_THAT(standard_deviation(fifo, accessor).sigma,
                 Catch::Matchers::WithinAbs(0.975, 0.001));
         // check cast operator
-        float standard_dev = standard_deviation(fifo, accessor);
-        REQUIRE_THAT(standard_dev, Catch::Matchers::WithinAbs(0.975, 0.001));
-        double standard_dev = standard_deviation(fifo, accessor);
-        REQUIRE_THAT(standard_dev, Catch::Matchers::WithinAbs(0.975, 0.001));
+        float standard_dev1 = standard_deviation(fifo, accessor);
+        REQUIRE_THAT(standard_dev1, Catch::Matchers::WithinAbs(0.975, 0.001));
+        double standard_dev2 = standard_deviation(fifo, accessor);
+        REQUIRE_THAT(standard_dev2, Catch::Matchers::WithinAbs(0.975, 0.001));
 
         REQUIRE_THAT(standard_deviation(remove_outliers(fifo, 1, accessor), accessor).sigma,
                 Catch::Matchers::WithinAbs(0.816, 0.001));
