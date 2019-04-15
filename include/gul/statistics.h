@@ -22,8 +22,12 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
 #include <numeric>
 #include <type_traits>
+#include <vector>
 
 namespace gul {
 
