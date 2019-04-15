@@ -272,11 +272,20 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
 }
 
 /**
- * Find the minimum and maximum elements of a container.
+ * Find the minimum and maximum element values of a container.
+ *
+ * The value of each element is determined by the accessor function.
+ * The minimum and the maximum of these values are returned.
+ *
+ * The type of the values (i.e. the return type of the accessor) must
+ * have operator<().
+ *
+ * Hint: If the elements with the minimum and maximum values themselfs are
+ * searched `std::minmax_element()` is the appropriate function.
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Minimum and maximum values as MinMax object
+ * \returns            Minimum and maximum values as MinMax<DataT> object
  *
  * The elements are returned by value.
  *
