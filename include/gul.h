@@ -241,36 +241,40 @@ namespace gul {
 /**
  * \page statistics_utilities Statistics Utilities
  *
- * The General Utility Library offers some utilities to perform statistical
- * examination of data in an arbitrary container:
+ * The General Utility Library offers some utilities to calculate statistics on data
+ * in arbitrary containers. All of the functions are templated and allow specifying an
+ * optional accessor function so that they can be used on practically any data type.
+ *
+ * <h3>Functions</h3>
+ *
+ * accumulate():
+ *     Return the values of all elements somehow combined. A closure has to be specified
+ *     to describe how to values are combined.
+ *
+ * mean():
+ *     Calculate the arithmetic mean.
+ *
+ * median():
+ *     Calculate the median.
+ *
+ * min_max():
+ *     Return the minimum and maximum value.
+ *
+ * remove_outliers():
+ *     Remove the data points that are the furthest from the mean of all data points.
+ *     If more than one point is to be removed this is done recursively with intermediate
+ *     recalculations of the mean.
+ *
+ * rms():
+ *     Calculate the root-mean-square value.
+ *
+ * standard_deviation():
+ *     Calculate the standard deviation.
+ *
+ * <h3>Classes</h3>
  *
  * \ref gul::MinMax "MinMax":
  *     Holds a pair of two values, typically the minimum and maximum element of something.
- *
- * mean():
- *     Calculates the mean value of all elements in the container.
- *
- * rms():
- *     Calculates the root-mean-square value of all elements in the container.
- *
- * median():
- *     Calculates the median value of all elements in the container.
- *
- * min_max():
- *     Returns the minimum and maximum value of all elements in the container.
- *
- * standard_deviation():
- *     Returns the standard deviation calculated of all elements in the container
- *     after optionally removing outliers.
- *
- * accumulate():
- *     Returns the values of all elements somehow combined. A closure has to be
- *     specified to describe how to values are combined.
- *
- * remove_outliers():
- *     Removes the data points that are the furthest from the mean of all data points.
- *     If more than one point is to be removed this will done recursively with
- *     intermediate recalculations of the mean.
  */
 
 /**

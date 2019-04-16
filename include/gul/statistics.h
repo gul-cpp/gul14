@@ -1,8 +1,9 @@
 /**
  * \file    statistics.h
- * \brief   Declarations of statistical utility functions/objects for the General Utility Library.
+ * \brief   Declaration of statistical utility functions and classes for the General
+ *          Utility Library.
  * \authors \ref contributors
- * \date    Created on 7 Feb 2019
+ * \date    Created on 7 February 2019
  *
  * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -81,7 +82,7 @@ template <typename ElementT>
 auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
                                            ElementT(*)(const ElementT&)>
 {
-        return [](const ElementT& el) { return el; };
+    return [](const ElementT& el) { return el; };
 }
 
 /**
@@ -108,7 +109,7 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
 };
 
 /**
- * Object that holds two values: standard_deviation and mean
+ * A struct holding a standard deviation and a mean value.
  *
  * DataT must be an arithmetic type.
  *
@@ -143,20 +144,26 @@ struct StandardDeviation<DataT, std::enable_if_t<std::is_floating_point<DataT>::
 /////////// Main statistics functions following
 
 /**
- * Calculate arithmetic mean of all elements in a container.
+ * Calculate the arithmetic mean value of all elements in a container.
  *
  * The mean value is calculated by dividing the sum of all elements by the number
- * of elements: ``mean -> sum 0..n-1 (element i) / n``
+ * of elements:
+ * \f[
+ *     \bar x = \sum_0^{n-1} x_i / n
+ * \f]
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Arithmetic mean value
+ * \returns            the arithmetic mean value.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see mean(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead
+ *      of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
@@ -176,21 +183,27 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
 }
 
 /**
- * Calculate root mean square of all elements in a container.
+ * Calculate the root mean square of all elements in a container.
  *
- * The mean value is calculated by taking the square root of the the sum of all
- * squared elements divided by the number of elements:
- * ``rms -> sqrt (sum 0..n-1 (element i * element i) / n)``
+ * The rms value is calculated as the square root of the the sum of all squared elements
+ * divided by the number of elements:
+ * \f[
+ *     \mathrm{rms}(x) = \sqrt{ \sum_0^{n-1} (x_i)^2 / n }
+ * \f]
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            RMS value
+ * \returns            the rms value.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see rms(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ *      a container.
+
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
@@ -212,24 +225,26 @@ auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<Elemen
 /**
  * Find the median of all elements in a container.
  *
- * The median element is the element that has an equal number of elements higher and
- * lower in value.
- * If the container has an even number of elements there can be no 'middle' element. In
- * this case the two 'middlemost' elements are taken and the arithmetic mean of the two
- * is returned.
+ * The median element is the element that has an equal number of elements higher and lower
+ * in value. If the container has an even number of elements there can be no 'middle'
+ * element. In this case the two 'middlemost' elements are taken and the arithmetic mean
+ * of the two is returned.
  *
- * Because we need to sort all elements the function works with a temporary container that
- * holds all numerical values of the original container.
+ * Because all elements need to be sorted, the function works with a temporary copy of the
+ * original container.
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Median value or arithmetic mean of the two middlemost (in value) elements
+ * \returns            the median value.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see median(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead
+ *      of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
@@ -272,27 +287,26 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
 }
 
 /**
- * Find the minimum and maximum element values of a container.
+ * Find the minimum and maximum element values in a container.
  *
- * The value of each element is determined by the accessor function.
- * The minimum and the maximum of these values are returned.
+ * The value of each element is determined through the accessor function. The minimum and
+ * the maximum of these values are returned. The element type (i.e. the return type of the
+ * accessor) must provide `operator<()`.
  *
- * The type of the values (i.e. the return type of the accessor) must
- * have operator<().
- *
- * Hint: If the elements with the minimum and maximum values themselfs are
- * searched `std::minmax_element()` is the appropriate function.
+ * Hint: If looking for iterators to the minimum and maximum element instead of their
+ * values, use `std::minmax_element()` from the STL algorithm collection.
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Minimum and maximum values as MinMax<DataT> object
- *
- * The elements are returned by value.
+ * \returns            the minimum and maximum values stored in a MinMax<DataT> object.
  *
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see min_max(const IteratorT&, const IteratorT&, Accessor) accepts two iterators
+ *      instead of a container.
  */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
@@ -323,10 +337,9 @@ auto min_max(const ContainerT& container, Accessor accessor = ElementAccessor<El
 /**
  * Remove elements that are far away from other elements.
  *
- * The element which's value differs the most from the arithmetic mean of all
- * elements is removed. This process is repeated if more than one outlier is
- * to be removed - specifically the mean is again calculated from the remaining
- * elements.
+ * The element whose value differs the most from the arithmetic mean of all elements is
+ * removed. This process is repeated if more than one outlier is to be removed;
+ * specifically, the mean is recalculated from the remaining elements.
  *
  * The original container is modified.
  * The container needs to be modifiable and have the ``erase()`` member function.
@@ -334,7 +347,7 @@ auto min_max(const ContainerT& container, Accessor accessor = ElementAccessor<El
  * \param cont         Container of the elements to examine
  * \param outliers     How many outliers shall be removed
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            Container without outliers
+ * \returns            the container passed in as `cont` after removal of outliers.
  *
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
@@ -363,7 +376,7 @@ auto remove_outliers(ContainerT&& cont, std::size_t outliers,
  * \overload
  *
  * The original container is not modified.
- * A copy of the original container with the outerlier elements removed is returned.
+ * A copy of the original container without the outlier elements is returned.
  */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
@@ -382,18 +395,27 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
 /**
  * Calculate the standard deviation of all elements in a container.
  *
- * The corrected sample standard deviation is calculated, i.e.
- * ``std_dev -> sqrt (sum 0..n-1 ((element i - mean) * (element i - mean)) / (n - 1))``
+ * The corrected sample standard deviation is calculated:
+ * \f[
+ *     \sigma(x) = \sqrt{ \sum_0^{n-1} \left(x_i - \bar x\right)^2 / (n - 1) }
+ * \f]
+ * For this calculation, also the mean value needs to be determined:
+ * \f[
+ *     \bar x = \sum_0^{n-1} x_i / n
+ * \f]
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            The standard deviation and mean values as StandardDeviation object
+ * \returns            the standard deviation and mean values as a StandardDeviation object.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see standard_deviation(const IteratorT&, const IteratorT&, Accessor) accepts two
+ *      iterators instead of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
@@ -426,21 +448,24 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * Calculate some aggregate value from all elements of a container.
  *
  * This is similar to std::accumulate, but
- * * Works on a whole container
- * * Accesses the value of the container elements through a accessor function
- * * Applies the binary operator op to a running 'sum' and each element's value
- * * The initial value of the sum is just the default constructed value
+ * * works on a whole container,
+ * * accesses the container elements through an accessor function,
+ * * applies the binary operator `op` to a running sum and each element value, and
+ * * the initial value of the sum is its default constructed value.
  *
  * \param container    Container of the elements to examine
  * \param op           Binary operator to aggregate two values into one value
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            The aggregate value
+ * \returns            the aggregate value.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see accumulate(const IteratorT&, const IteratorT&, OpClosure, Accessor) accepts two
+ *      iterators instead of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
@@ -504,9 +529,11 @@ namespace {
 /**
  * \overload
  *
- * \param begin        Iterator to first elements to examine in the container
- * \param end          Iterator past the last element to examine in the container
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see mean(const ContainerT&, Accessor) accepts a container instead of iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
@@ -522,9 +549,11 @@ auto mean(const IteratorT& begin, const IteratorT& end,
 /**
  * \overload
  *
- * \param begin        Iterator to first elements to examine in the container
- * \param end          Iterator past the last element to examine in the container
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see rms(const ContainerT&, Accessor) accepts a container instead of iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
@@ -540,9 +569,11 @@ auto rms(const IteratorT& begin, const IteratorT& end,
 /**
  * \overload
  *
- * \param begin        Iterator to first elements to examine in the container
- * \param end          Iterator past the last element to examine in the container
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see median(const ContainerT&, Accessor) accepts a container instead of iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
@@ -558,9 +589,11 @@ auto median(const IteratorT& begin, const IteratorT& end,
 /**
  * \overload
  *
- * \param begin        Iterator to first elements to examine in the container
- * \param end          Iterator past the last element to examine in the container
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see min_max(const ContainerT&, Accessor) accepts a container instead of iterators.
  */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
@@ -596,9 +629,12 @@ auto remove_outliers(const IteratorT& begin, const IteratorT& end,
 /**
  * \overload
  *
- * \param begin        Iterator to first elements to examine in the container
- * \param end          Iterator past the last element to examine in the container
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see standard_deviation(const ContainerT&, Accessor) accepts a container instead of
+ *      iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
@@ -614,10 +650,13 @@ auto standard_deviation(const IteratorT& begin, const IteratorT& end,
 /**
  * \overload
  *
- * \param begin        Iterator to first elements to examine in the container
- * \param end          Iterator past the last element to examine in the container
- * \param op           Binary operator to aggregate two values into one value
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param op        Binary operator to aggregate two values into one value
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see accumulate(const ContainerT&, OpClosure, Accessor) accepts a container instead of
+ *      iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
