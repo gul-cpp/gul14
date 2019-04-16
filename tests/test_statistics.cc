@@ -2,7 +2,7 @@
  * \file   test_statistics.cc
  * \author \ref contributors
  * \date   Created on Feb 7, 2019
- * \brief  Test suite for Fifo
+ * \brief  Test suite for statistics functions.
  *
  * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -100,9 +100,10 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto const value2 = 7.7;
         auto const state2 = bit(8);
         fifo.push_back({value2, state2});
-        REQUIRE(mean(fifo, accessor) == (value1 + value2) / 2.0);
+        REQUIRE(mean(fifo, accessor) == Approx((value1 + value2) / 2.0));
         auto rmsval = std::sqrt((value1 * value1 + value2 * value2) / 2.0);
-        REQUIRE(rms(fifo, accessor) == std::sqrt((value1 * value1 + value2 * value2) / 2.0));
+        REQUIRE(rms(fifo, accessor) ==
+                Approx(std::sqrt((value1 * value1 + value2 * value2) / 2.0)));
         REQUIRE(median(fifo, accessor) == (value1 + value2) / 2.0);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         REQUIRE(min_max(fifo, accessor).min == value2);
@@ -114,11 +115,12 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         elem.val = value3;
         elem.sta = state3;
         fifo.push_back(elem);
-        REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3) / 3.0);
-        REQUIRE(mean(fifo.begin(), fifo.end(), accessor) == (value1 + value2 + value3) / 3.0);
+        REQUIRE(mean(fifo, accessor) == Approx((value1 + value2 + value3) / 3.0));
+        REQUIRE(mean(fifo.begin(), fifo.end(), accessor) ==
+                Approx((value1 + value2 + value3) / 3.0));
         rmsval = std::sqrt((value1 * value1 + value2 * value2 + value3 * value3) / 3.0);
-        REQUIRE(rms(fifo, accessor) == rmsval);
-        REQUIRE(rms(fifo.begin(), fifo.end(), accessor) == rmsval);
+        REQUIRE(rms(fifo, accessor) == Approx(rmsval));
+        REQUIRE(rms(fifo.begin(), fifo.end(), accessor) == Approx(rmsval));
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(median(fifo.cbegin(), fifo.cend(), accessor) == value3);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
@@ -136,9 +138,10 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto const value5 = 9.3;
         auto const state5 = bit(3);
         fifo.push_back({value5, state5});
-        REQUIRE(mean(fifo, accessor) == (value1 + value2 + value3 + value4 + value5) / 5.0);
+        REQUIRE(mean(fifo, accessor) ==
+                Approx((value1 + value2 + value3 + value4 + value5) / 5.0));
         rmsval = std::sqrt((value1 * value1 + value2 * value2 + value3 * value3 + value4 * value4 + value5 * value5) / 5.0);
-        REQUIRE(rms(fifo, accessor) == rmsval);
+        REQUIRE(rms(fifo, accessor) == Approx(rmsval));
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         // For some reason stuff from standard header <numeric> seem to be in our namespace,
@@ -160,7 +163,6 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
                 Catch::Matchers::WithinAbs(0.816, 0.001));
         REQUIRE_THAT(standard_deviation(fifo.begin(), fifo.end(), accessor).sigma,
                 Catch::Matchers::WithinAbs(0.975, 0.001));
-
     }
 
     SECTION("data analysis tests on std::vector") {
