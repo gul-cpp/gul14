@@ -302,6 +302,13 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
  * the maximum of these values are returned. The element type (i.e. the return type of the
  * accessor) must provide `operator<()`.
  *
+ * This behaves like (symbolic code):
+ * \code
+ * std::minmax_element(std::transform(mycontainer, accessor))
+ * \endcode
+ * without constructing a temporary container and without the ownership problems that
+ * would arise from minmax_element usage on a temporary container.
+ *
  * Hint: If looking for iterators to the minimum and maximum element instead of their
  * values, use `std::minmax_element()` from the STL algorithm collection.
  *
@@ -412,6 +419,20 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * \f[
  *     \bar x = \sum_0^{n-1} x_i / n
  * \f]
+ *
+ * The returned StandardDeviationMean object can be used in this ways:
+ * \code
+ * const StandardDeviationMean std_and_mean = standard_deviation(something);
+ * const double std = std_and_mean.sigma();
+ * const double mean = std_and_mean.mean();
+ *
+ * // The cast operator is for people that want to ignore the complicated stuff like this
+ * const double std = standard_deviation(something);
+ * const float std = standard_deviation(something); // implicit conversions possible
+ *
+ * // Structured binding (C++17)
+ * const auto [std, mean] = standard_deviation(something);
+ * \endcode
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
