@@ -110,33 +110,43 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
 /**
  * A struct holding a standard deviation and a mean value.
  *
- * DataT must be an arithmetic type.
+ * DataT must be a floating point type.
  *
- * Default constructed the members have these possibly useful values:
- * * sigma: Not-a-Number or zero
- * * mean: Not-a-Number or zero
+ * Default constructed the contained values are Not-a-Number.
  *
  * The object can be cast to DataT in which case it is results in the sigma value.
+ * DataT is usually statistics_result_type.
+ *
+ * The data members are public to allow structured bindings.
  *
  * \tparam DataT     Type of the contained values
  */
-template <typename DataT, typename = void, typename = std::enable_if<std::is_arithmetic<DataT>::value>>
-struct StandardDeviation {
-    DataT sigma{ 0 }; ///< The standard deviation (sigma) value
-    DataT mean{ 0 }; ///< The mean value
+template <typename DataT, typename = std::enable_if<std::is_floating_point<DataT>::value>>
+class StandardDeviationMean {
+public:
+    DataT sigma_{ NAN }; ///< The standard deviation (sigma) value
+    DataT mean_{ NAN }; ///< The mean value
 
-    operator DataT() { ///< Cast to DataT results in the sigma member
-        return sigma;
-    }
-};
-
-template <typename DataT>
-struct StandardDeviation<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
-    DataT sigma{ NAN };
-    DataT mean{ NAN };
-
+    /**
+     * Cast to DataT results in standard deviation value
+     *
+     * The conversion operator is not explicit, so any implicit conversion
+     * from DataT to the desired type is also conducted.
+     *
+     * For example the following works:
+     * \code
+     * auto sdm = StandardDeviationMean<float>{ 3.0, 4.0 };
+     * long double sigma = sdm; // implicit conversion from float to long double
+     * \endcode
+     */
     operator DataT() {
-        return sigma;
+        return sigma_;
+    }
+    auto sigma() -> DataT { ///< Get the standard deviation value
+        return sigma_;
+    }
+    auto mean() -> DataT { ///< Get the arithmetic mean value
+        return mean_;
     }
 };
 
@@ -405,7 +415,7 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
- * \returns            the standard deviation and mean values as a StandardDeviation object.
+ * \returns            the standard deviation and mean values as a StandardDeviationMean object.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
@@ -423,7 +433,7 @@ template <typename ResultT = statistics_result_type,
           typename DataT = typename std::result_of_t<Accessor(ElementT)>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviation<ResultT>
+auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviationMean<ResultT>
 {
     auto const len = container.size();
 
@@ -641,7 +651,7 @@ template <typename ResultT = statistics_result_type,
           typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
           typename DataT = std::result_of_t<Accessor(ElementT)>>
 auto standard_deviation(const IteratorT& begin, const IteratorT& end,
-        Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviation<ResultT>
+        Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviationMean<ResultT>
 {
     return standard_deviation<ResultT>(make_view(begin, end), accessor);
 }
