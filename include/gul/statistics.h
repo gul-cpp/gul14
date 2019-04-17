@@ -157,9 +157,7 @@ public:
  *
  * The mean value is calculated by dividing the sum of all elements by the number
  * of elements:
- * \f[
- *     \bar x = \sum_0^{n-1} x_i / n
- * \f]
+ * ``mean -> sum 0..n-1 (element i) / n``
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
@@ -196,9 +194,7 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
  *
  * The rms value is calculated as the square root of the the sum of all squared elements
  * divided by the number of elements:
- * \f[
- *     \mathrm{rms}(x) = \sqrt{ \sum_0^{n-1} (x_i)^2 / n }
- * \f]
+ * ``rms -> sqrt (sum 0..n-1 (element i * element i) / n)``
  *
  * \param container    Container of the elements to examine
  * \param accessor     Helper function to access the numeric value of one container element
@@ -412,13 +408,7 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * Calculate the standard deviation of all elements in a container.
  *
  * The corrected sample standard deviation is calculated:
- * \f[
- *     \sigma(x) = \sqrt{ \sum_0^{n-1} \left(x_i - \bar x\right)^2 / (n - 1) }
- * \f]
- * For this calculation, also the mean value needs to be determined:
- * \f[
- *     \bar x = \sum_0^{n-1} x_i / n
- * \f]
+ * ``std_dev -> sqrt (sum 0..n-1 ((element i - mean) * (element i - mean)) / (n - 1))``
  *
  * The returned StandardDeviationMean object can be used in this ways:
  * \code
