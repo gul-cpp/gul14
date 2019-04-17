@@ -410,7 +410,7 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * The corrected sample standard deviation is calculated:
  * ``std_dev -> sqrt (sum 0..n-1 ((element i - mean) * (element i - mean)) / (n - 1))``
  *
- * The returned StandardDeviationMean object can be used in this ways:
+ * The returned StandardDeviationMean object can be used like this:
  * \code
  * const StandardDeviationMean std_and_mean = standard_deviation(something);
  * const double std = std_and_mean.sigma();
