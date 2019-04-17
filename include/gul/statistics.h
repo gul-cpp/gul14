@@ -139,13 +139,13 @@ public:
      * long double sigma = sdm; // implicit conversion from float to long double
      * \endcode
      */
-    operator DataT() {
+    operator DataT() const noexcept {
         return sigma_;
     }
-    auto sigma() -> DataT { ///< Get the standard deviation value
+    auto sigma() const noexcept -> DataT { ///< Get the standard deviation value
         return sigma_;
     }
-    auto mean() -> DataT { ///< Get the arithmetic mean value
+    auto mean() const noexcept -> DataT { ///< Get the arithmetic mean value
         return mean_;
     }
 };
