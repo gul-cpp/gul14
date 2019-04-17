@@ -275,6 +275,10 @@ namespace gul {
  *
  * \ref gul::MinMax "MinMax":
  *     Holds a pair of two values, typically the minimum and maximum element of something.
+ *
+ * \ref gul::StandardDeviationMean "StandardDeviationMean":
+ *     Holds a pair of two values, typically the standard deviation and the mean value of
+ *     something.
  */
 
 /**

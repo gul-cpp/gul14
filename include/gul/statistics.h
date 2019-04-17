@@ -120,6 +120,8 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
  * The data members are public to allow structured bindings.
  *
  * \tparam DataT     Type of the contained values
+ *
+ * \see standard_deviation()
  */
 template <typename DataT, typename = std::enable_if<std::is_floating_point<DataT>::value>>
 class StandardDeviationMean {
@@ -142,10 +144,12 @@ public:
     operator DataT() const noexcept {
         return sigma_;
     }
-    auto sigma() const noexcept -> DataT { ///< Get the standard deviation value
+    /// Get the standard deviation value
+    auto sigma() const noexcept -> DataT {
         return sigma_;
     }
-    auto mean() const noexcept -> DataT { ///< Get the arithmetic mean value
+    /// Get the arithmetic mean value
+    auto mean() const noexcept -> DataT {
         return mean_;
     }
 };
