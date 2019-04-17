@@ -32,10 +32,9 @@
 
 namespace gul {
 
-namespace {
-
     using statistics_result_type = double; ///< Type used to return statistic properties
 
+namespace {
     /**
      * Helper type trait object to determine of a type is a container.
      *
