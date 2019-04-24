@@ -96,18 +96,19 @@ namespace gul {
  * The sliding buffer can be instantiated in two different underlying container versions:
  * * If the size is known at compile time, instanziate it with that number as BufferSize. The
  *   underlying container will be a std::array.
- * * If a flexible size is desired, specify BufferSize zero (0). The underlying container will
+ * * If a flexible size is desired, omit the template parameter BufferSize. It will be
+ *   defaulted to zero (0). The underlying container will then
  *   be a std::vector. You need to use a constructor that sets a certain capacity or set the
- *   capacity afterwards with resize(). The default size is 0 elements, which is unusable.
+ *   capacity afterwards with resize(). If the size is really 0 elements the buffer is unusable.
  * Apart from the ability of the later to resize()/reserve() all
  * is identical.
  *
  * \tparam ElemenT       Type of elements in the buffer
- * \tparam BufferSize    Maximum number of elements in the buffer
+ * \tparam BufferSize    Maximum number of elements in the buffer, zero if unspecified
  * \tparam Container     Type of the underlying container, usually not specified
  *
  */
-template<typename ElementT, std::size_t BufferSize,
+template<typename ElementT, std::size_t BufferSize = 0u,
     typename Container = typename std::conditional<(BufferSize >= 1u),
         std::array<ElementT, BufferSize>,
         std::vector<ElementT>>::type

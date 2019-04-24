@@ -139,11 +139,17 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
         buff_vector.resize(buffer_size);
         do_dumping_tests(buff_vector);
     }
-    SECTION("vector tests") {
-        auto buff = gul::SlidingBuffer<TestElement<double, unsigned int>, 0>{};
-        REQUIRE(buff.capacity() == 0);
-        buff.resize(10);
-        REQUIRE(buff.capacity() == 10);
+    SECTION("vector construction tests") {
+        auto buff1 = gul::SlidingBuffer<TestElement<double, unsigned int>, 0>{};
+        REQUIRE(buff1.capacity() == 0);
+        buff1.resize(10);
+        REQUIRE(buff1.capacity() == 10);
+        auto buff2 = gul::SlidingBuffer<TestElement<double, unsigned int>>{};
+        REQUIRE(buff2.capacity() == 0);
+        auto buff3 = gul::SlidingBuffer<TestElement<double, unsigned int>>{ 11 };
+        REQUIRE(buff3.capacity() == 11);
+        auto buff4 = gul::SlidingBuffer<TestElement<double, unsigned int>>(12);
+        REQUIRE(buff4.capacity() == 12);
     }
 }
 
