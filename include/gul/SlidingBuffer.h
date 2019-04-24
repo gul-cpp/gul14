@@ -504,15 +504,6 @@ private:
         }
         next_element_ = count;
     }
-
-    // Hide the following functions in case Container is std::vector
-    // There is a certain possibility that users use these instead of the
-    // correct push_front() function. This is just to make misusing the class hard(er),
-    auto push_back(const value_type&) -> void { /* "push_back() not allowed on SlidingBuffer" */ }
-    auto push_back(value_type&&) -> void { /* "push_back() not allowed on SlidingBuffer" */ }
-    template <typename... Args>
-    auto emplace_back(Args&&...) -> void { /* "emplace_back() not allowed on SlidingBuffer" */ }
-    auto pop_back() -> void { /* "pop_back() not allowed on SlidingBuffer" */ }
 };
 
 } // namespace gul
