@@ -61,17 +61,17 @@ namespace gul {
  *   size_type           Unsigned integer type (usually std::size_t)
  *
  * Member functions:
+ *     SlidingBuffer     Constructor
  *   Element access:
  *     push_front        Insert an element into the buffer
  *     operator[]        Access element relative to most recent element in buffer, bounds corrected, read only
- *     at                Note: Not overloaded, gives access to underlying container
  *     front             Access first (next to be pushed out) element (i.e. [size() - 1]
  *     back              Acces last (most recently pushed in) element (i.e. [0])
  *   Iterators:
- *     begin, cbegin     Note: Not overloaded, returns iterator to first element in underlying container
+ *     begin, cbegin     Returns iterator to first element in underlying container
  *     end, cend         Returns iterator to end of used space in the underlying container
  *     rbegin, crbegin   Returns reverse iterator to beginning of used space in the reversed underlying container
- *     rend, crend       Note: Not overloaded, returns reverse iterator to the end of the reversed underlying container
+ *     rend, crend       Returns reverse iterator to the end of the reversed underlying container
  *   Capacity:
  *     size              Returns number of used elements
  *     capacity          Returns maximum number of elements
@@ -91,7 +91,6 @@ namespace gul {
  * The other member functions access the underlying container without reordering, so the
  * elements are accessed in unknown order by
  * * all of the iterators ``begin()``, ``end()``, ``rbegin()``, ``rend()``, ...
- * * ``at()``
  * * range based ``for`` (as this uses ``begin()`` and ``end()``)
  *
  * The sliding buffer can be instantiated in two different underlying container versions:
@@ -113,7 +112,7 @@ template<typename ElementT, std::size_t BufferSize,
         std::array<ElementT, BufferSize>,
         std::vector<ElementT>>::type
 >
-class SlidingBuffer : public Container {
+class SlidingBuffer {
 public:
     /// Type of the underlying container (e.g. std::array<value_type, ..>)
     using container_type = Container;
@@ -121,12 +120,38 @@ public:
     using value_type = ElementT;
     /// Unsigned integer type (usually std::size_t)
     using size_type = typename Container::size_type;
-    /// Inherit all underlying container's ctors
-    using Container::Container;
+
+    /**
+     * Constructs a new sliding buffer.
+     *
+     * The buffer is initially empty
+     * The capacity is given by the BufferSize template parameter.
+     *
+     * If that template argument is not zero a std::array based SlidingBuffer
+     * with that (unchangeable) capacity is created.
+     *
+     * If it is zero a std::vector based SlidingBuffer is generated with a capacity
+     * that is zero elements. Use the other constructor or resize() afterwards to
+     * get a std::vector bases SlidingBuffer with capacity.
+     */
+    SlidingBuffer() = default;
+
+    /**
+     * \overload
+     *
+     * Only available for sliding buffers that base on std::vector.
+     *
+     * Constructs a sliding buffer with a specified capacity.
+     *
+     * For std::array based sliding buffers the capacity is specified by the BufferSize template parameter.
+     */
+    SlidingBuffer(size_type count) : storage_(count) {}
 
 private:
     size_type next_element_{ 0u };
     bool full_{ false };
+protected:
+    Container storage_{ }; ///< Actual data is stored here, the underlying container.
 
 public:
 
@@ -138,7 +163,7 @@ public:
      */
     auto push_front(value_type&& in) -> void
     {
-        container_type::operator[](next_element_) = std::move(in);
+        storage_[next_element_] = std::move(in);
         ++next_element_;
         if (next_element_ >= capacity()) {
             next_element_ = 0;
@@ -172,7 +197,7 @@ public:
         const size_type idx = next_element_ + capacity() - (i % capacity()) - 1;
         // If the element has ever been filled or not is ignored. A default
         // constructed ELEMENT will be returned on unset elements
-        return container_type::operator[](idx % capacity());
+        return storage_[idx % capacity()];
     }
 
     /**
@@ -182,7 +207,7 @@ public:
      */
     auto front() const noexcept -> const value_type&
     {
-        return container_type::operator[](next_element_);
+        return storage_[next_element_];
     }
 
     /**
@@ -193,6 +218,31 @@ public:
     auto back() const noexcept -> const value_type&
     {
         return operator[](0);
+    }
+
+    /**
+     * Return an iterator to the first element of the underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     */
+    auto begin() noexcept -> typename container_type::iterator
+    {
+        return storage_.begin();
+    }
+
+    /**
+     * Return a constant iterator to the first element of the
+     * underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     */
+    auto cbegin() const noexcept -> typename container_type::const_iterator
+    {
+        return storage_.cbegin();
     }
 
     /**
@@ -208,11 +258,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto end() noexcept -> decltype(container_type::end())
+    auto end() noexcept -> typename container_type::iterator
     {
         if (full_)
-            return container_type::end();
-        return container_type::begin() + next_element_;
+            return storage_.end();
+        return storage_.begin() + next_element_;
     }
 
     /**
@@ -228,11 +278,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto cend() const noexcept -> decltype(container_type::cend())
+    auto cend() const noexcept -> typename container_type::const_iterator
     {
         if (full_)
-            return container_type::cend();
-        return container_type::cbegin() + next_element_;
+            return storage_.cend();
+        return storage_.cbegin() + next_element_;
     }
 
     /**
@@ -248,11 +298,11 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto rbegin() noexcept -> decltype(container_type::rbegin())
+    auto rbegin() noexcept -> typename container_type::reverse_iterator
     {
         if (not full_ and next_element_ == 0)
-            return container_type::rend();
-        return container_type::rbegin() + capacity() - next_element_;
+            return storage_.rend();
+        return storage_.rbegin() + capacity() - next_element_;
     }
 
     /**
@@ -269,12 +319,38 @@ public:
      * It does, however, take not yet filled buffers into account and returns iterators
      * only to elements really filled.
      */
-    auto crbegin() const noexcept -> decltype (container_type::crbegin())
+    auto crbegin() const noexcept -> typename container_type::const_reverse_iterator
     {
         if (not full_ and next_element_ == 0)
-            return container_type::rcend();
-        return container_type::crbegin() + capacity() - next_element_;
+            return storage_.rcend();
+        return storage_.crbegin() + capacity() - next_element_;
     }
+
+    /**
+     * Return an iterator to the last element of the reversed underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     */
+    auto rend() noexcept -> typename container_type::reverse_iterator
+    {
+        return storage_.rend();
+    }
+
+    /**
+     * Return a constant iterator to the last element of the reversed
+     * underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     */
+    auto crend() const noexcept -> typename container_type::const_reverse_iterator
+    {
+        return storage_.crend();
+    }
+
 
     /**
      * Return the number of elements in the container, i.e. std::distance(begin(), end()).
@@ -298,7 +374,7 @@ public:
      */
     auto constexpr capacity() const noexcept -> size_type
     {
-        return BufferSize ? BufferSize : Container::size();
+        return BufferSize ? BufferSize : storage_.size();
     }
 
     /**
@@ -351,7 +427,7 @@ public:
         //////
         // Growing
         if (count > old_count) {
-            Container::resize(count);
+            storage_.resize(count);
             if (not full_) {
                 return;
             }
@@ -364,7 +440,7 @@ public:
         //////
         // Shrinking
         if (not full_ and next_element_ <= count) {
-            Container::resize(count);
+            storage_.resize(count);
             if (next_element_ > 0) {
                 next_element_ %= count;
                 full_ = (next_element_ == 0);
@@ -376,11 +452,11 @@ public:
             make_indices_trivial(old_count);
             next_element_ = 0;
         }
-        std::move(container_type::begin() + (old_count - count),
-                container_type::end(),
-                container_type::begin());
+        std::move(storage_.begin() + (old_count - count),
+                storage_.end(),
+                storage_.begin());
         next_element_ = 0;
-        Container::resize(count);
+        storage_.resize(count);
     }
 
     /**
@@ -407,7 +483,7 @@ public:
     {
         auto const len = buffer.capacity();
         for (size_type i{0}; i < len; ++i) {
-            s << buffer.at(i);
+            s << buffer.storage_.at(i);
             if (i == buffer.next_element_)
                 s << "* ";
             else
@@ -424,7 +500,7 @@ private:
         auto const limit = count - 1;
         for (auto i = decltype(limit){0}; i <= limit; i++) {
             auto const j = std::min(limit, next_element_ + i);
-            std::swap(container_type::operator[](i), container_type::operator[](j));
+            std::swap(storage_[i], storage_[j]);
         }
         next_element_ = count;
     }
