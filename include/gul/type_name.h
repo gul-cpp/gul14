@@ -60,97 +60,6 @@ namespace gul {
 template <typename T>
 class FailToInstantiate;
 
-namespace detail {
-
-/**
- * A constexpr string
- *
- * That means a constexpr string literal that can be cut arbitrarily.
- * The string is not necessarily null terminated, as that would require
- * writing something when the string is cut.
- *
- * \code
- * Member functions:
- *   Element access:
- *     operator[]        Access element, index is bound checked
- *     data              Address of first element, note: string not null terminated
- *   Iterators:
- *     begin             Iterator to the first character
- *     end               Iterator one past the last character
- *   Capacity:
- *     size              Length of the string
- * \endcode
- */
-class static_string
-{
-    char const* const string_; ///< Pointer to begin of string literal or string data
-    std::size_t const size_; ///< Length of this string
-
-public:
-    using const_iterator = char const*; ///< Type used to iterate over the constexpr string
-
-    /**
-     * Constructor from string literal
-     *
-     * \param lit String literal to reference
-     */
-    template <std::size_t N>
-    constexpr static_string(char const(&lit)[N]) noexcept
-        : string_(lit)
-        , size_(N-1)
-    {}
-
-    /**
-     * Constructor from pointer/iterator and size
-     *
-     * The new length is not checked and has to be shorter than
-     * or equal to the length of the source string of course.
-     *
-     * \param begin Begin of the string to store (iterator or pointer)
-     * \param length Length of the new string
-     */
-    explicit constexpr static_string(char const* begin, std::size_t length) noexcept
-        : string_(begin)
-        , size_(length)
-    {}
-
-    /// Return a pointer to the begin of the string.
-    ///
-    /// Be careful, the string is not null terminated.
-    constexpr char const* data() const noexcept
-    {
-        return string_;
-    }
-
-    /// Return the length of the string.
-    constexpr std::size_t size() const noexcept
-    {
-        return size_;
-    }
-
-    /// Return an iterator to the begin of the string.
-    constexpr const_iterator begin() const noexcept
-    {
-        return string_;
-    }
-
-    /// Return an iterator one past the last character of the string.
-    constexpr const_iterator end() const noexcept
-    {
-        return string_ + size_;
-    }
-
-    /// Access one character within the string.
-    ///
-    /// The index is bounds checked and access outside will throw an exception.
-    constexpr char operator[](std::size_t n) const
-    {
-        return n < size_ ? string_[n] : throw std::out_of_range("static_string");
-    }
-};
-
-} // namespace detail
-
 /**
  * Generate a human readable string describing a type.
  *
@@ -160,32 +69,26 @@ public:
  *
  * \tparam T Type that shall be described
  *
- * \returns A constexpr string that describes the type of the template parameter
+ * \returns a string view that describes the type of the template parameter
  *
  */
 template <class T>
-constexpr detail::static_string type_name()
+constexpr string_view type_name()
 {
 #ifdef __clang__
-    auto p = detail::static_string{ __PRETTY_FUNCTION__ };
-    return detail::static_string{ p.data() + 40, p.size() - 40 - 1 };
+    auto p = string_view{ __PRETTY_FUNCTION__ };
+    return string_view{ p.data() + 35, p.size() - 35 - 1 };
 
 #elif defined(__GNUC__)
-    auto p = detail::static_string{ __PRETTY_FUNCTION__ };
-    return detail::static_string{ p.data() + 55, p.size() - 55 - 1 };
+    auto p = string_view{ __PRETTY_FUNCTION__ };
+    return string_view{ p.data() + 50, p.size() - 50 - 1 };
 
 #elif defined(_MSC_VER)
-    auto p = detail::static_string{ __FUNCSIG__ };
-    return detail::static_string{ p.data() + 47, p.size() - 47 - 7 };
+    auto p = string_view{ __FUNCSIG__ };
+    return string_view{ p.data() + 42, p.size() - 42 - 7 };
 #endif
 }
 
 } // namespace gul
-
-/// Output a constexpr string to a stream
-inline std::ostream& operator<<(std::ostream& os, gul::detail::static_string const& s)
-{
-    return os.write(s.data(), s.size());
-}
 
 // vi:ts=4:sw=4:et:sts=4
