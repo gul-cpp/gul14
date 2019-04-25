@@ -187,17 +187,43 @@ public:
      * The index 0 is the most recent element, 1 is the element before that
      * and so on.
      *
+     * If the buffer is not yet full it may be possible that the function has nothing to
+     * return and so a default constructed Element is returned.
+     *
+     * Access to elements outside the capacity is not allowed and results in undefined
+     * behavior.
+     *
+     */
+    auto operator[] (size_type i) const -> const value_type&
+    {
+        ++i;
+        auto offset = next_element_;
+        if (offset < i)
+            offset += capacity();
+        offset -= i;
+
+        return storage_[offset];
+    }
+
+    /**
+     * Access (read) one element in the buffer, relative to the most recently `push`ed
+     * element.
+     *
+     * The index 0 is the most recent element, 1 is the element before that
+     * and so on.
+     *
      * `i` is coerced to be inside the size of the buffer, wrapping around by the buffer size.
      *
      * If the buffer is not yet full it may be possible that the function has nothing to
      * return and so a default constructed Element is returned.
      */
-    auto operator[] (const size_type i) const -> const value_type&
+    auto at(const size_type i) const -> const value_type&
     {
-        const size_type idx = next_element_ + capacity() - (i % capacity()) - 1;
+        const auto capa = capacity();
+        const size_type idx = next_element_ - 1 + capa - i;
         // If the element has ever been filled or not is ignored. A default
         // constructed ELEMENT will be returned on unset elements
-        return storage_[idx % capacity()];
+        return storage_[idx % capa];
     }
 
     /**
