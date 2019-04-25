@@ -23,7 +23,6 @@
 #pragma once
 
 #include <array>
-#include <iostream>
 #include <vector>
 
 namespace gul {
