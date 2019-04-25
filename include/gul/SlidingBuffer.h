@@ -518,6 +518,45 @@ public:
         return s << '\n';
     }
 
+    struct iterator {
+        /// One of the @link iterator_tags tag types@endlink.
+        using iterator_category = std::forward_iterator_tag;
+        /// The type "pointed to" by the iterator.
+        using value_type = ElementT;
+        /// Distance between iterators is represented as this type.
+        using difference_type = std::ptrdiff_t;
+        /// This type represents a pointer-to-value_type.
+        using pointer = value_type const*;
+        /// This type represents a reference-to-value_type.
+        using reference = value_type const&;
+
+    private:
+        /// This is the logical index we are currently pointing at.
+        difference_type where_{ 0 };
+        /// A reference to the container holding the actual data.
+        SlidingBuffer<ElementT, BufferSize, Container> const& buffer_;
+
+    public:
+        explicit iterator(SlidingBuffer<ElementT, BufferSize, Container> const& buff, std::ptrdiff_t num = 0)
+            : where_{ num }
+            , buffer_{ buff }
+        {
+        }
+
+        reference operator*() const
+        {
+            return buffer_[where_];
+        }
+
+        iterator& operator++() { where_ = where_ + 1; return *this; }
+        iterator operator++(int) { auto previous = *this; ++(*this); return previous; }
+        bool operator==(iterator other) const { return where_ == other.where_ and std::addressof(buffer_) == std::addressof(other.buffer_); }
+        bool operator!=(iterator other) const {return !(*this == other);}
+    };
+
+    iterator begin_() { return iterator(*this, 0); }
+    iterator end_() { return iterator(*this, size()); }
+
 private:
     // Shuffle elements so that we have the most trivial representation
     // next_element_ has to be possibly corrected afterwards

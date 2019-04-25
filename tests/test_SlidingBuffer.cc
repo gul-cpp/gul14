@@ -151,6 +151,21 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
         auto buff4 = gul::SlidingBuffer<TestElement<double, unsigned int>>(12);
         REQUIRE(buff4.capacity() == 12);
     }
+    SECTION("iterator tests") {
+        auto buff1 = gul::SlidingBuffer<TestElement<double, unsigned int>>{ 10 };
+        do_dumping_tests(buff1); // fill with stuff
+        auto it = buff1.begin_();
+        auto end = buff1.end_();
+        auto i = 0;
+        for (; it != end; ++it, ++i) {
+            REQUIRE(buff1[i].val == buff1.at(i).val);
+            REQUIRE((*it).val == buff1.at(i).val);
+        }
+        // auto j = 0;
+        // for (auto const& e : buff1) {
+        //     REQUIRE(e.val == buff1[j++].val);
+        // }
+    }
 }
 
 TEST_CASE("SlidingBuffer resize", "[sliding]")
@@ -205,6 +220,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "6  7  8  9  10  0\\* 0  0  0  0  0"));
+        REQUIRE(*buff.begin_() == 10);
 
         buff.resize(6);
         REQUIRE(buff.filled() == false);
