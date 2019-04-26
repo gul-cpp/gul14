@@ -387,7 +387,7 @@ public:
     }
 
     struct iterator {
-        /// One of the @link iterator_tags tag types@endlink.
+        /// Blah blah blah
         using iterator_category = std::forward_iterator_tag;
         /// The type "pointed to" by the iterator.
         using value_type = ElementT;
@@ -399,31 +399,55 @@ public:
         using reference = value_type const&;
 
     private:
-        /// This is the logical index we are currently pointing at.
-        difference_type where_{ 0 };
-        /// A reference to the container holding the actual data.
-        SlidingBuffer<ElementT, BufferSize, Container> const& buffer_;
+        /// This is to be documented
+        typename container_type::const_iterator internal_it_;
+        typename container_type::const_iterator begin_;
+        typename container_type::const_iterator end_;
+        bool skip_;
 
     public:
-        explicit iterator(SlidingBuffer<ElementT, BufferSize, Container> const& buff, std::ptrdiff_t num = 0)
-            : where_{ num }
-            , buffer_{ buff }
+        explicit iterator(SlidingBuffer<ElementT, BufferSize, Container> const* buff,
+                typename container_type::const_iterator it,
+                bool skip = false)
+            : internal_it_{ std::move(it) }
+            , begin_{ buff->storage_.cbegin() }
+            , end_{ buff->storage_.cend() }
+            , skip_{ skip }
         {
         }
 
-        reference operator*() const
+        iterator& operator++()
         {
-            return buffer_[where_];
+            if (internal_it_ == begin_) {
+                skip_ = false;
+                internal_it_ = end_;
+            }
+            --internal_it_;
+            return *this;
         }
 
-        iterator& operator++() { where_ = where_ + 1; return *this; }
+        reference operator*() const { return *internal_it_; }
+        pointer operator->() const { return &*internal_it_; }
+
         iterator operator++(int) { auto previous = *this; ++(*this); return previous; }
-        bool operator==(iterator other) const { return where_ == other.where_ and std::addressof(buffer_) == std::addressof(other.buffer_); }
-        bool operator!=(iterator other) const {return !(*this == other);}
+        bool operator==(iterator other) const { return internal_it_ == other.internal_it_ and skip_ == other.skip_; }
+        bool operator!=(iterator other) const { return !(*this == other); }
     };
 
-    iterator begin_() { return iterator(*this, 0); }
-    iterator end_() { return iterator(*this, size()); }
+    iterator begin() const {
+        if (next_element_ != 0)
+            return iterator{ this, storage_.cbegin() + next_element_ -1, filled() };
+        if (filled())
+            return iterator{ this, storage_.cbegin() + storage_.size() - 1, filled() };
+        return iterator{ this, storage_.cbegin(), filled() };
+    }
+    iterator end() const {
+        if (not filled())
+            return iterator{ this, storage_.cend() - 1 };
+        if (next_element_ == 0)
+            return iterator{ this, storage_.cbegin() + storage_.size() - 1 };
+        return iterator{ this, storage_.cbegin() + next_element_ - 1 };
+    }
 
 private:
     // Shuffle elements so that we have the most trivial representation

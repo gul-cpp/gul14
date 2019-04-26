@@ -154,17 +154,61 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
     SECTION("iterator tests") {
         auto buff1 = gul::SlidingBuffer<TestElement<double, unsigned int>>{ 10 };
         do_dumping_tests(buff1); // fill with stuff
-        auto it = buff1.begin_();
-        auto end = buff1.end_();
+        auto it = buff1.begin();
+        auto end = buff1.end();
         auto i = 0;
         for (; it != end; ++it, ++i) {
-            REQUIRE(buff1[i].val == buff1.at(i).val);
-            REQUIRE((*it).val == buff1.at(i).val);
+            auto ref = buff1.at(i).val;
+            REQUIRE(buff1[i].val == ref);
+            REQUIRE((*it).val == ref);
+            REQUIRE(it->val == ref);
         }
-        // auto j = 0;
-        // for (auto const& e : buff1) {
-        //     REQUIRE(e.val == buff1[j++].val);
-        // }
+        REQUIRE(i == 10);
+
+        auto j = 0;
+        for (auto const& e : buff1) {
+            REQUIRE(e.val == buff1[j++].val);
+        }
+
+        auto buff2 = gul::SlidingBuffer<int, 10>{ };
+        buff2.push_front(0);
+        buff2.push_front(1);
+        buff2.push_front(2);
+        buff2.push_front(3);
+        auto k = 3;
+        for (auto const& e : buff2)
+            REQUIRE(e == k--);
+        REQUIRE(k == -1);
+
+        buff2.push_front(4);
+        buff2.push_front(5);
+        buff2.push_front(6);
+        buff2.push_front(7);
+        buff2.push_front(8);
+        k = 8;
+        for (auto const& e : buff2)
+            REQUIRE(e == k--);
+        REQUIRE(k == -1);
+
+        buff2.push_front(9);
+        k = 9;
+        for (auto const& e : buff2)
+            REQUIRE(e == k--);
+        REQUIRE(k == -1);
+
+        buff2.push_front(10);
+        k = 10;
+        for (auto const& e : buff2)
+            REQUIRE(e == k--);
+        REQUIRE(k == 0);
+
+        buff2.push_front(11);
+        buff2.push_front(12);
+        buff2.push_front(13);
+        k = 13;
+        for (auto const& e : buff2)
+            REQUIRE(e == k--);
+        REQUIRE(k == 3);
     }
 }
 
@@ -220,7 +264,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "6  7  8  9  10  0\\* 0  0  0  0  0"));
-        REQUIRE(*buff.begin_() == 10);
+        REQUIRE(*buff.begin() == 10);
 
         buff.resize(6);
         REQUIRE(buff.filled() == false);
