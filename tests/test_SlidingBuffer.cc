@@ -154,7 +154,8 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
     SECTION("iterator tests") {
         auto buff1 = gul::SlidingBuffer<TestElement<double, unsigned int>>{ 10 };
         do_dumping_tests(buff1); // fill with stuff
-        auto it = buff1.begin();
+        auto it12 = buff1.begin();
+        decltype(it12) it{ it12 }; // copy ctor
         auto end = buff1.end();
         auto i = 0;
         for (; it != end; ++it, ++i) {
@@ -167,6 +168,7 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
 
         auto it2 = buff1.rbegin();
         auto end2 = buff1.rend();
+        end2 = buff1.rend();
         i = 0;
         for (; it2 != end2; ++it2, ++i) {
             auto ref = buff1.at(9-i).val;

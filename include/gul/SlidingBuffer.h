@@ -139,9 +139,9 @@ public:
     /// Pointer to a constant elemenet
     using const_pointer = typename Container::const_pointer;
     /// Iterator to an element
-    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>&>;
+    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>*>;
     /// Iterator to a const element
-    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const&>;
+    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const*>;
     /// Iterator to an element in reversed container
     using reverse_iterator = std::reverse_iterator<iterator>;
     /// Iterator to a const element in reversed container
@@ -451,16 +451,16 @@ public:
      * slots. After this end() has to be re-aquired. Other iterators still
      * point to the same slots.
      *
-     * \tparam BufferReference Type of the reference used to access the SlidingBuffer
+     * \tparam BufferPointer Type of the pointer used to access the SlidingBuffer
      */
-    template <typename BufferReference>
+    template <typename BufferPointer>
     struct SlidingBufferIterator : std::iterator<std::bidirectional_iterator_tag, value_type> {
     protected:
         /// This is the logical index we are currently pointing at.
         size_type position_{ 0 };
     private:
         /// A reference to the container holding the actual data.
-        BufferReference buffer_;
+        BufferPointer buffer_;
 
     public:
         /**
@@ -469,7 +469,7 @@ public:
          * \param buff Reference to the SlidingBuffer the iterator points into.
          * \param num  Index of the element the iterator points to.
          */
-        explicit SlidingBufferIterator(BufferReference buff, size_type num = 0)
+        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0)
             : position_{ num }
             , buffer_{ buff }
         {
@@ -507,18 +507,18 @@ public:
 
         /// Access element pointed to by the iterator
         auto operator*() const -> typename std::conditional_t<
-            std::is_const<std::remove_reference_t<BufferReference>>::value,
+            std::is_const<std::remove_pointer_t<BufferPointer>>::value,
             const_reference, reference>
         {
-            return buffer_[position_];
+            return (*buffer_)[position_];
         }
 
         /// Access member of element pointed to by the iterator
         auto operator->() const -> typename std::conditional_t<
-            std::is_const<std::remove_reference_t<BufferReference>>::value,
+            std::is_const<std::remove_pointer_t<BufferPointer>>::value,
             const_pointer, pointer>
         {
-            return &buffer_[position_];
+            return &(*buffer_)[position_];
         }
 
         /// Compare two iterators for equality.
@@ -547,7 +547,7 @@ public:
      */
     auto begin() noexcept -> iterator
     {
-        return iterator{ *this, 0 };
+        return iterator{ this, 0 };
     }
 
     /**
@@ -557,7 +557,7 @@ public:
      */
     auto rbegin() noexcept -> reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ *this, size() });
+        return std::make_reverse_iterator(iterator{ this, size() });
     }
 
     /**
@@ -567,7 +567,7 @@ public:
      */
     auto end() noexcept -> iterator
     {
-        return iterator{ *this, size() };
+        return iterator{ this, size() };
     }
 
     /**
@@ -577,7 +577,7 @@ public:
      */
     auto rend() noexcept -> reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ *this, 0 });
+        return std::make_reverse_iterator(iterator{ this, 0 });
     }
 
     /**
@@ -587,7 +587,7 @@ public:
      */
     auto cbegin() const noexcept -> const_iterator
     {
-        return const_iterator{ *this, 0 };
+        return const_iterator{ this, 0 };
     }
 
     /**
@@ -597,7 +597,7 @@ public:
      */
     auto crbegin() const noexcept -> const_reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ *this, size() });
+        return std::make_reverse_iterator(iterator{ this, size() });
     }
 
     /**
@@ -607,7 +607,7 @@ public:
      */
     auto cend() const noexcept -> const_iterator
     {
-        return const_iterator{ *this, size() };
+        return const_iterator{ this, size() };
     }
 
     /**
@@ -617,7 +617,7 @@ public:
      */
     auto crend() const noexcept -> const_reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ *this, 0 });
+        return std::make_reverse_iterator(iterator{ this, 0 });
     }
 
 private:
