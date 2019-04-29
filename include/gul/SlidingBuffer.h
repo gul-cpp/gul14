@@ -81,8 +81,10 @@ namespace gul {
  *     front             Access first (most recently pushed in) element (i.e. [0]
  *     back              Access last (next to be pushed out) element (i.e. [size() - 1]
  *   Iterators:
- *     begin, cbegin     Returns iterator to first element in underlying container
- *     end, cend         Returns iterator to end of used space in the underlying container
+ *     begin, cbegin     Returns an iterator to the first element of the container
+ *     end, cend         Returns an iterator to the element following the last element of the container
+ *     rbegin, crbegin   Returns an iterator to the first element of the reversed container
+ *     rend, crend       Returns an iterator to the element following the last element of the reversed container
  *   Capacity:
  *     size              Returns number of used elements
  *     capacity          Returns maximum number of elements
