@@ -58,6 +58,13 @@ namespace gul {
  *   value_type          Type of the elements
  *   container_type      Type of the underlying container (i.e. std::array<value_type, ..>)
  *   size_type           Unsigned integer type (usually std::size_t)
+ *   difference_type     Signed integer type (usually std::ptrdiff_t)
+ *   reference           value_type&
+ *   const_reference     value_type const&
+ *   pointer             value_type*
+ *   const_pointer       value_type const*
+ *   iterator            SlidingBufferIterator
+ *   const_iterator      SlidingBufferIterator const
  *
  * Member functions:
  *     SlidingBuffer     Constructor
@@ -102,16 +109,18 @@ namespace gul {
  * Apart from the ability of the later to resize()/reserve() all
  * is identical.
  *
- * \tparam ElemenT       Type of elements in the buffer
+ * The elements (ElementT) must be default constructible, if clear() will be used.
+ *
+ * \tparam ElementT       Type of elements in the buffer
  * \tparam BufferSize    Maximum number of elements in the buffer, zero if unspecified
  * \tparam Container     Type of the underlying container, usually not specified
  *
  */
 template<typename ElementT, std::size_t BufferSize = 0u,
-    typename Container = typename std::conditional<(BufferSize >= 1u),
+    typename Container = typename std::conditional_t<(BufferSize >= 1u),
         std::array<ElementT, BufferSize>,
-        std::vector<ElementT>>::type
->
+        std::vector<ElementT>>
+    >
 class SlidingBuffer {
 public:
     /// Type of the underlying container (e.g. std::array<value_type, ..>)
@@ -120,6 +129,20 @@ public:
     using value_type = ElementT;
     /// Unsigned integer type (usually std::size_t)
     using size_type = typename Container::size_type;
+    /// Signed integer type (usually std::ptrdiff_t)
+    using difference_type = typename Container::difference_type;
+    /// Reference to an element
+    using reference = typename Container::reference;
+    /// Reference to a constant element
+    using const_reference = typename Container::const_reference;
+    /// Pointer to an element
+    using pointer = typename Container::pointer;
+    /// Pointer to a constant elemenet
+    using const_pointer = typename Container::const_pointer;
+    /// Iterator to an element
+    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>&>;
+    /// Iterator to a const element
+    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const&>;
 
     /**
      * Constructs a new sliding buffer.
@@ -465,4 +488,4 @@ private:
 
 } // namespace gul
 
-// vi:ts=4:sw=4:et
+// vi:ts=4:sw=4:sts=4:et
