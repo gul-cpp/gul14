@@ -165,6 +165,15 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
         }
         REQUIRE(i == 10);
 
+        auto it2 = buff1.rbegin();
+        auto end2 = buff1.rend();
+        i = 0;
+        for (; it2 != end2; ++it2, ++i) {
+            auto ref = buff1.at(9-i).val;
+            REQUIRE((*it2).val == ref);
+        }
+        REQUIRE(i == 10);
+
         auto j = 0;
         for (auto const& e : buff1) {
             REQUIRE(e.val == buff1[j++].val);

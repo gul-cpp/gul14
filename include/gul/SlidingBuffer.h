@@ -61,16 +61,18 @@ namespace gul {
  *   push_front                  If size incresed end()
  *
  * Member types:
- *   value_type          Type of the elements
- *   container_type      Type of the underlying container (i.e. std::array<value_type, ..>)
- *   size_type           Unsigned integer type (usually std::size_t)
- *   difference_type     Signed integer type (usually std::ptrdiff_t)
- *   reference           value_type&
- *   const_reference     value_type const&
- *   pointer             value_type*
- *   const_pointer       value_type const*
- *   iterator            SlidingBufferIterator
- *   const_iterator      SlidingBufferIterator const
+ *   value_type                  Type of the elements
+ *   container_type              Type of the underlying container (i.e. std::array<value_type, ..>)
+ *   size_type                   Unsigned integer type (usually std::size_t)
+ *   difference_type             Signed integer type (usually std::ptrdiff_t)
+ *   reference                   value_type&
+ *   const_reference             value_type const&
+ *   pointer                     value_type*
+ *   const_pointer               value_type const*
+ *   iterator                    \ref gul::SlidingBuffer::SlidingBufferIterator
+ *   const_iterator              SlidingBufferIterator const
+ *   reverse_iterator            SlidingBufferIterator
+ *   const_reverse_iterator      SlidingBufferIterator const
  *
  * Member functions:
  *     SlidingBuffer     Constructor
@@ -142,6 +144,10 @@ public:
     using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>&>;
     /// Iterator to a const element
     using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const&>;
+    /// Iterator to an element in reversed container
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    /// Iterator to a const element in reversed container
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     /**
      * Constructs a new sliding buffer.
@@ -429,6 +435,26 @@ public:
         return s << '\n';
     }
 
+    /**
+     * Iterator of the SlidingBuffer.
+     *
+     * This is a bidirectional iterator.
+     *
+     * It has the following guarantees:
+     * * No invalidation on any read
+     * * No invalidation after push_front() after container filled
+     * * Only end() invalidated on size increase
+     * * Only all iterators pointing past the new end() invalidated on size decrease
+     *
+     * An iterator always points to the same logical slot in the SlidingBuffer.
+     *
+     * If the buffer grows by one element the iterator end() now (often) points
+     * to the oldest element, because that has been pushed right in the logical
+     * slots. After this end() has to be re-aquired. Other iterators still
+     * point to the same slots.
+     *
+     * \tparam BufferReference Type of the reference used to access the SlidingBuffer
+     */
     template <typename BufferReference>
     struct SlidingBufferIterator : std::iterator<std::bidirectional_iterator_tag, value_type> {
     private:
@@ -450,22 +476,26 @@ public:
         {
         }
 
+        /// Pre-increment iterator by one position
         auto operator++() noexcept -> SlidingBufferIterator&
         {
             ++position_;
             return *this;
         }
+        /// Post-increment iterator by one position
         auto operator++(int) noexcept -> SlidingBufferIterator
         {
             auto previous = *this;
             ++(*this);
             return previous;
         }
+        /// Pre-decrement iterator by one position
         auto operator--() noexcept -> SlidingBufferIterator&
         {
             --position_;
             return *this;
         }
+        /// Post-decrement iterator by one position
         auto operator--(int) noexcept -> SlidingBufferIterator
         {
             auto previous = *this;
@@ -473,6 +503,7 @@ public:
             return previous;
         }
 
+        /// Access element pointed to by the iterator
         auto operator*() const -> typename std::conditional_t<
             std::is_const<std::remove_reference_t<BufferReference>>::value,
             const_reference, reference>
@@ -480,6 +511,7 @@ public:
             return buffer_[position_];
         }
 
+        /// Access member of element pointed to by the iterator
         auto operator->() const -> typename std::conditional_t<
             std::is_const<std::remove_reference_t<BufferReference>>::value,
             const_pointer, pointer>
@@ -487,11 +519,14 @@ public:
             return &buffer_[position_];
         }
 
+        /// Compare two iterators for equality
         auto operator==(SlidingBufferIterator other) const noexcept -> bool
         {
             return position_ == other.position_
                 and std::addressof(buffer_) == std::addressof(other.buffer_);
         }
+
+        /// Compare two iterators for inequality
         auto operator!=(SlidingBufferIterator other) const noexcept -> bool
         {
             return not (*this == other);
@@ -503,32 +538,79 @@ public:
      *
      * If the container is empty, the returned iterator will be equal to end()
      */
-    auto begin() noexcept -> iterator {
+    auto begin() noexcept -> iterator
+    {
         return iterator{ *this, 0 };
     }
+
+    /**
+     * Returns an iterator to the first element of the reversed container.
+     *
+     * If the container is empty, the returned iterator will be equal to end()
+     */
+    auto rbegin() noexcept -> reverse_iterator
+    {
+        return std::make_reverse_iterator(iterator{ *this, size() });
+    }
+
     /**
      * Returns an iterator to the element following the last element of the container.
      *
      * This element acts as a placeholder; attempting to access it results in undefined behavior.
      */
-    auto end() noexcept -> iterator {
+    auto end() noexcept -> iterator
+    {
         return iterator{ *this, size() };
     }
+
+    /**
+     * Returns an iterator to the element following the last element of the reversed container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     */
+    auto rend() noexcept -> reverse_iterator
+    {
+        return std::make_reverse_iterator(iterator{ *this, 0 });
+    }
+
     /**
      * Returns a read only iterator to the first element of the container.
      *
      * If the container is empty, the returned iterator will be equal to cend()
      */
-    auto cbegin() const noexcept -> const_iterator {
+    auto cbegin() const noexcept -> const_iterator
+    {
         return const_iterator{ *this, 0 };
     }
+
+    /**
+     * Returns a read only iterator to the first element of the reversed container.
+     *
+     * If the container is empty, the returned iterator will be equal to cend()
+     */
+    auto crbegin() const noexcept -> const_reverse_iterator
+    {
+        return std::make_reverse_iterator(iterator{ *this, size() });
+    }
+
     /**
      * Returns a read only iterator to the element following the last element of the container.
      *
      * This element acts as a placeholder; attempting to access it results in undefined behavior.
      */
-    auto cend() const noexcept -> const_iterator {
+    auto cend() const noexcept -> const_iterator
+    {
         return const_iterator{ *this, size() };
+    }
+
+    /**
+     * Returns a read only iterator to the element following the last element of the reversed container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     */
+    auto crend() const noexcept -> const_reverse_iterator
+    {
+        return std::make_reverse_iterator(iterator{ *this, 0 });
     }
 
 private:
