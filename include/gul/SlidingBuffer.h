@@ -54,6 +54,12 @@ namespace gul {
  * interface. Be careful if you use members not mentioned here.
  *
  * \code
+ * Iterator invalidation:
+ *   All read only operations    None
+ *   clear                       All iterators except begin()
+ *   reserve, resize             If shrank: All behind the new end (incl end()).
+ *   push_front                  If size incresed end()
+ *
  * Member types:
  *   value_type          Type of the elements
  *   container_type      Type of the underlying container (i.e. std::array<value_type, ..>)
@@ -77,8 +83,6 @@ namespace gul {
  *   Iterators:
  *     begin, cbegin     Returns iterator to first element in underlying container
  *     end, cend         Returns iterator to end of used space in the underlying container
- *     rbegin, crbegin   Returns reverse iterator to beginning of used space in the reversed underlying container
- *     rend, crend       Returns reverse iterator to the end of the reversed underlying container
  *   Capacity:
  *     size              Returns number of used elements
  *     capacity          Returns maximum number of elements
@@ -91,14 +95,6 @@ namespace gul {
  * Non-member functions:
  *   operator<<          Dump the raw data of the buffer to an ostream
  * \endcode
- *
- * Only the member functions ``operator[]()``, ``front()``, and ``back()`` are aware of the
- * wrapping nature of the sliding buffer and access elements relative to when they were
- * pushed in.
- * The other member functions access the underlying container without reordering, so the
- * elements are accessed in unknown order by
- * * all of the iterators ``begin()``, ``end()``, ``rbegin()``, ``rend()``, ...
- * * range based ``for`` (as this uses ``begin()`` and ``end()``)
  *
  * The sliding buffer can be instantiated in two different underlying container versions:
  * * If the size is known at compile time, instanziate it with that number as BufferSize. The
@@ -124,6 +120,8 @@ template<typename ElementT, std::size_t BufferSize = 0u,
     >
 class SlidingBuffer {
 public:
+    template <typename BufferReference>
+    struct SlidingBufferIterator;
     /// Type of the underlying container (e.g. std::array<value_type, ..>)
     using container_type = Container;
     /// Type of the elements in the underlying container
@@ -184,6 +182,11 @@ public:
      *
      * Think of this as inserting in the front. Probably an element at the back is
      * dropped to make room in the fixed size buffer.
+     *
+     * Iterator end() is invalidated if the size of the buffer increaded (i.e.
+     * in the startup phase where filled() == false).
+     * All other iterators still point to the same logical element, while the
+     * contents of all logical elements is shifted.
      */
     auto push_front(value_type&& in) -> void
     {
@@ -426,67 +429,106 @@ public:
         return s << '\n';
     }
 
-    struct iterator {
-        /// Blah blah blah
-        using iterator_category = std::forward_iterator_tag;
-        /// The type "pointed to" by the iterator.
-        using value_type = ElementT;
-        /// Distance between iterators is represented as this type.
-        using difference_type = std::ptrdiff_t;
-        /// This type represents a pointer-to-value_type.
-        using pointer = value_type const*;
-        /// This type represents a reference-to-value_type.
-        using reference = value_type const&;
-
+    template <typename BufferReference>
+    struct SlidingBufferIterator : std::iterator<std::bidirectional_iterator_tag, value_type> {
     private:
-        /// This is to be documented
-        typename container_type::const_iterator internal_it_;
-        typename container_type::const_iterator begin_;
-        typename container_type::const_iterator end_;
-        bool skip_;
+        /// This is the logical index we are currently pointing at.
+        size_type position_{ 0 };
+        /// A reference to the container holding the actual data.
+        BufferReference buffer_;
 
     public:
-        explicit iterator(SlidingBuffer<ElementT, BufferSize, Container> const* buff,
-                typename container_type::const_iterator it,
-                bool skip = false)
-            : internal_it_{ std::move(it) }
-            , begin_{ buff->storage_.cbegin() }
-            , end_{ buff->storage_.cend() }
-            , skip_{ skip }
+        /**
+         * Create an iterator pointing into a SlidingBuffer.
+         *
+         * \param buff Reference to the SlidingBuffer the iterator points into.
+         * \param num  Index of the element the iterator points to.
+         */
+        explicit SlidingBufferIterator(BufferReference buff, size_type num = 0)
+            : position_{ num }
+            , buffer_{ buff }
         {
         }
 
-        iterator& operator++()
+        auto operator++() noexcept -> SlidingBufferIterator&
         {
-            if (internal_it_ == begin_) {
-                skip_ = false;
-                internal_it_ = end_;
-            }
-            --internal_it_;
+            ++position_;
             return *this;
         }
+        auto operator++(int) noexcept -> SlidingBufferIterator
+        {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+        auto operator--() noexcept -> SlidingBufferIterator&
+        {
+            --position_;
+            return *this;
+        }
+        auto operator--(int) noexcept -> SlidingBufferIterator
+        {
+            auto previous = *this;
+            --(*this);
+            return previous;
+        }
 
-        reference operator*() const { return *internal_it_; }
-        pointer operator->() const { return &*internal_it_; }
+        auto operator*() const -> typename std::conditional_t<
+            std::is_const<std::remove_reference_t<BufferReference>>::value,
+            const_reference, reference>
+        {
+            return buffer_[position_];
+        }
 
-        iterator operator++(int) { auto previous = *this; ++(*this); return previous; }
-        bool operator==(iterator other) const { return internal_it_ == other.internal_it_ and skip_ == other.skip_; }
-        bool operator!=(iterator other) const { return !(*this == other); }
+        auto operator->() const -> typename std::conditional_t<
+            std::is_const<std::remove_reference_t<BufferReference>>::value,
+            const_pointer, pointer>
+        {
+            return &buffer_[position_];
+        }
+
+        auto operator==(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return position_ == other.position_
+                and std::addressof(buffer_) == std::addressof(other.buffer_);
+        }
+        auto operator!=(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return not (*this == other);
+        }
     };
 
-    iterator begin() const {
-        if (next_element_ != 0)
-            return iterator{ this, storage_.cbegin() + next_element_ -1, filled() };
-        if (filled())
-            return iterator{ this, storage_.cbegin() + storage_.size() - 1, filled() };
-        return iterator{ this, storage_.cbegin(), filled() };
+    /**
+     * Returns an iterator to the first element of the container.
+     *
+     * If the container is empty, the returned iterator will be equal to end()
+     */
+    auto begin() noexcept -> iterator {
+        return iterator{ *this, 0 };
     }
-    iterator end() const {
-        if (not filled())
-            return iterator{ this, storage_.cend() - 1 };
-        if (next_element_ == 0)
-            return iterator{ this, storage_.cbegin() + storage_.size() - 1 };
-        return iterator{ this, storage_.cbegin() + next_element_ - 1 };
+    /**
+     * Returns an iterator to the element following the last element of the container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     */
+    auto end() noexcept -> iterator {
+        return iterator{ *this, size() };
+    }
+    /**
+     * Returns a read only iterator to the first element of the container.
+     *
+     * If the container is empty, the returned iterator will be equal to cend()
+     */
+    auto cbegin() const noexcept -> const_iterator {
+        return const_iterator{ *this, 0 };
+    }
+    /**
+     * Returns a read only iterator to the element following the last element of the container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     */
+    auto cend() const noexcept -> const_iterator {
+        return const_iterator{ *this, size() };
     }
 
 private:

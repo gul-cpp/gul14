@@ -170,6 +170,12 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
             REQUIRE(e.val == buff1[j++].val);
         }
 
+        auto x = buff1.begin();
+        x->val = 1;
+        REQUIRE(buff1.front().val == 1);
+        x->val = 2;
+        REQUIRE(buff1.front().val == 2);
+
         auto buff2 = gul::SlidingBuffer<int, 10>{ };
         buff2.push_front(0);
         buff2.push_front(1);
