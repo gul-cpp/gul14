@@ -26,126 +26,6 @@
 #include <vector>
 
 namespace gul {
-/**
- * Iterator of the SlidingBuffer.
- *
- * This is a bidirectional iterator.
- *
- * It has the following guarantees:
- * * No invalidation on any read
- * * No invalidation after push_front() when container filled
- * * Only end() invalidated on size increase
- * * Only all iterators pointing past the new end() invalidated on size decrease
- *
- * An iterator always points to the same logical slot in the SlidingBuffer.
- *
- * If the buffer grows by one element the iterator end() now (often) points
- * to the oldest element, because that has been pushed right in the logical
- * slots. After this end() has to be re-aquired. Other iterators still
- * point to the same slots.
- *
- * \tparam BufferReference     Type of the reference used to access the SlidingBuffer
- * \tparam ElementT            Type of one element in the SlidingBuffer
- * \tparam SizeType            The size_type of the referenced SlidingBuffer
- * \tparam ReferenceType       Reference to an element in the SlidingBuffer
- * \tparam ConstReferenceType  Reference to a constant element in the SlidingBuffer
- * \tparam PointerType         Pointer to an element in the SlidingBuffer
- * \tparam ConstPointerType    Pointer to a constant elemenet in the SlidingBuffer
- */
-template <typename BufferReference, typename ElementT, typename SizeType,
-         typename ReferenceType, typename ConstReferenceType,
-         typename PointerType, typename ConstPointerType>
-struct SlidingBufferIterator : std::iterator<std::bidirectional_iterator_tag, ElementT> {
-    /// The size_type of the referenced SlidingBuffer
-    using size_type = SizeType;
-    /// Reference to an element
-    using reference = ReferenceType;
-    /// Reference to a constant element
-    using const_reference = ConstReferenceType;
-    /// Pointer to an element
-    using pointer = PointerType;
-    /// Pointer to a constant elemenet
-    using const_pointer = ConstPointerType;
-
-protected:
-    /// This is the logical index we are currently pointing at.
-    size_type position_{ 0 };
-private:
-    /// A reference to the container holding the actual data.
-    BufferReference buffer_;
-
-public:
-    /**
-     * Create an iterator pointing into a SlidingBuffer.
-     *
-     * \param buff Reference to the SlidingBuffer the iterator points into.
-     * \param num  Index of the element the iterator points to.
-     */
-    explicit SlidingBufferIterator(BufferReference buff, size_type num = 0)
-        : position_{ num }
-        , buffer_{ buff }
-    {
-    }
-
-    /// Pre-increment iterator by one position
-    auto operator++() noexcept -> SlidingBufferIterator&
-    {
-        ++position_;
-        return *this;
-    }
-
-    /// Post-increment iterator by one position
-    auto operator++(int) noexcept -> SlidingBufferIterator
-    {
-        auto previous = *this;
-        ++(*this);
-        return previous;
-    }
-
-    /// Pre-decrement iterator by one position
-    auto operator--() noexcept -> SlidingBufferIterator&
-    {
-        --position_;
-        return *this;
-    }
-
-    /// Post-decrement iterator by one position
-    auto operator--(int) noexcept -> SlidingBufferIterator
-    {
-        auto previous = *this;
-        --(*this);
-        return previous;
-    }
-
-    /// Access element pointed to by the iterator
-    auto operator*() const -> typename std::conditional_t<
-        std::is_const<std::remove_reference_t<BufferReference>>::value,
-        const_reference, reference>
-    {
-        return buffer_[position_];
-    }
-
-    /// Access member of element pointed to by the iterator
-    auto operator->() const -> typename std::conditional_t<
-        std::is_const<std::remove_reference_t<BufferReference>>::value,
-        const_pointer, pointer>
-    {
-        return &buffer_[position_];
-    }
-
-    /// Compare two iterators for equality
-    auto operator==(SlidingBufferIterator other) const noexcept -> bool
-    {
-        return position_ == other.position_
-            and std::addressof(buffer_) == std::addressof(other.buffer_);
-    }
-
-    /// Compare two iterators for inequality
-    auto operator!=(SlidingBufferIterator other) const noexcept -> bool
-    {
-        return not (*this == other);
-    }
-};
 
 /**
  * A simple data buffer with a (semi) fixed size to use as sliding window on a data stream
@@ -240,8 +120,8 @@ template<typename ElementT, std::size_t BufferSize = 0u,
     >
 class SlidingBuffer {
 public:
-    template <typename, typename, typename, typename, typename, typename, typename>
-    friend struct SlidingBufferIterator;
+    template <typename>
+    struct SlidingBufferIterator;
     /// Type of the underlying container (e.g. std::array<value_type, ..>)
     using container_type = Container;
     /// Type of the elements in the underlying container
@@ -259,11 +139,9 @@ public:
     /// Pointer to a constant elemenet
     using const_pointer = typename Container::const_pointer;
     /// Iterator to an element
-    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>&,
-                        ElementT, size_type, reference, const_reference, pointer, const_pointer>;
+    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>&>;
     /// Iterator to a const element
-    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const&,
-                        ElementT, size_type, reference, const_reference, pointer, const_pointer>;
+    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const&>;
     /// Iterator to an element in reversed container
     using reverse_iterator = std::reverse_iterator<iterator>;
     /// Iterator to a const element in reversed container
@@ -554,6 +432,108 @@ public:
         }
         return s << '\n';
     }
+
+    /**
+     * Iterator of the SlidingBuffer.
+     *
+     * This is a bidirectional iterator.
+     *
+     * It has the following guarantees:
+     * * No invalidation on any read
+     * * No invalidation after push_front() after container filled
+     * * Only end() invalidated on size increase
+     * * Only all iterators pointing past the new end() invalidated on size decrease
+     *
+     * An iterator always points to the same logical slot in the SlidingBuffer.
+     *
+     * If the buffer grows by one element the iterator end() now (often) points
+     * to the oldest element, because that has been pushed right in the logical
+     * slots. After this end() has to be re-aquired. Other iterators still
+     * point to the same slots.
+     *
+     * \tparam BufferReference Type of the reference used to access the SlidingBuffer
+     */
+    template <typename BufferReference>
+    struct SlidingBufferIterator : std::iterator<std::bidirectional_iterator_tag, value_type> {
+    protected:
+        /// This is the logical index we are currently pointing at.
+        size_type position_{ 0 };
+    private:
+        /// A reference to the container holding the actual data.
+        BufferReference buffer_;
+
+    public:
+        /**
+         * Create an iterator pointing into a SlidingBuffer.
+         *
+         * \param buff Reference to the SlidingBuffer the iterator points into.
+         * \param num  Index of the element the iterator points to.
+         */
+        explicit SlidingBufferIterator(BufferReference buff, size_type num = 0)
+            : position_{ num }
+            , buffer_{ buff }
+        {
+        }
+
+        /// Pre-increment iterator by one position
+        auto operator++() noexcept -> SlidingBufferIterator&
+        {
+            ++position_;
+            return *this;
+        }
+
+        /// Post-increment iterator by one position
+        auto operator++(int) noexcept -> SlidingBufferIterator
+        {
+            auto previous = *this;
+            ++(*this);
+            return previous;
+        }
+
+        /// Pre-decrement iterator by one position
+        auto operator--() noexcept -> SlidingBufferIterator&
+        {
+            --position_;
+            return *this;
+        }
+
+        /// Post-decrement iterator by one position
+        auto operator--(int) noexcept -> SlidingBufferIterator
+        {
+            auto previous = *this;
+            --(*this);
+            return previous;
+        }
+
+        /// Access element pointed to by the iterator
+        auto operator*() const -> typename std::conditional_t<
+            std::is_const<std::remove_reference_t<BufferReference>>::value,
+            const_reference, reference>
+        {
+            return buffer_[position_];
+        }
+
+        /// Access member of element pointed to by the iterator
+        auto operator->() const -> typename std::conditional_t<
+            std::is_const<std::remove_reference_t<BufferReference>>::value,
+            const_pointer, pointer>
+        {
+            return &buffer_[position_];
+        }
+
+        /// Compare two iterators for equality
+        auto operator==(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return position_ == other.position_
+                and std::addressof(buffer_) == std::addressof(other.buffer_);
+        }
+
+        /// Compare two iterators for inequality
+        auto operator!=(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return not (*this == other);
+        }
+    };
 
     /**
      * Returns an iterator to the first element of the container.
