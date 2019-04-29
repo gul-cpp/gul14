@@ -521,14 +521,19 @@ public:
             return &buffer_[position_];
         }
 
-        /// Compare two iterators for equality
+        /// Compare two iterators for equality.
+        ///
+        /// Both iterators must be from the same container, or the result is
+        /// undefined.
         auto operator==(SlidingBufferIterator other) const noexcept -> bool
         {
-            return position_ == other.position_
-                and std::addressof(buffer_) == std::addressof(other.buffer_);
+            return position_ == other.position_;
         }
 
-        /// Compare two iterators for inequality
+        /// Compare two iterators for inequality.
+        ///
+        /// Both iterators must be from the same container, or the result is
+        /// undefined.
         auto operator!=(SlidingBufferIterator other) const noexcept -> bool
         {
             return not (*this == other);
