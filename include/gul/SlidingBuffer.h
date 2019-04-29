@@ -70,7 +70,8 @@ namespace gul {
  *     SlidingBuffer     Constructor
  *   Element access:
  *     push_front        Insert an element into the buffer
- *     operator[]        Access element relative to most recent element in buffer, bounds corrected, read only
+ *     operator[]        Access element relative to most recent element in buffer
+ *     at                Access element relative to most recent element in buffer, bounds corrected
  *     front             Access first (most recently pushed in) element (i.e. [0]
  *     back              Access last (next to be pushed out) element (i.e. [size() - 1]
  *   Iterators:
@@ -217,15 +218,23 @@ public:
      * behavior.
      *
      */
-    auto operator[] (size_type i) const -> const value_type&
+    auto operator[](const size_type idx) -> reference
     {
-        ++i;
-        auto offset = next_element_;
-        if (offset < i)
-            offset += capacity();
-        offset -= i;
+        if (next_element_ <= idx)
+            return storage_[next_element_ - idx - 1 + capacity()];
+        else
+            return storage_[next_element_ - idx - 1];
+    }
 
-        return storage_[offset];
+    /**
+     * \overload
+     */
+    auto operator[](const size_type idx) const -> const_reference
+    {
+        if (next_element_ <= idx)
+            return storage_[next_element_ - idx - 1 + capacity()];
+        else
+            return storage_[next_element_ - idx - 1];
     }
 
     /**
@@ -240,21 +249,29 @@ public:
      * If the buffer is not yet full it may be possible that the function has nothing to
      * return and so a default constructed Element is returned.
      */
-    auto at(const size_type i) const -> const value_type&
+    auto at(const size_type idx) -> reference
     {
-        const auto capa = capacity();
-        const size_type idx = next_element_ - 1 + capa - i;
         // If the element has ever been filled or not is ignored. A default
         // constructed ELEMENT will be returned on unset elements
-        return storage_[idx % capa];
+        return storage_[(next_element_ - idx - 1 + capacity()) % capacity()];
     }
 
     /**
-     * Return the youngest / most recent ('left most') Element in the buffer.
+     * \overload
+     */
+    auto at(const size_type idx) const -> const_reference
+    {
+        // If the element has ever been filled or not is ignored. A default
+        // constructed ELEMENT will be returned on unset elements
+        return storage_[(next_element_ - idx - 1 + capacity()) % capacity()];
+    }
+
+    /**
+     * Return the oldest ('right most') Element in the buffer.
      *
      * This is a read-only operation.
      */
-    auto front() const noexcept -> const value_type&
+    auto front() const noexcept -> const_reference
     {
         return operator[](0);
     }
@@ -264,7 +281,7 @@ public:
      *
      * This is a read-only operation.
      */
-    auto back() const noexcept -> const value_type&
+    auto back() const noexcept -> const_reference
     {
         return storage_[next_element_];
     }

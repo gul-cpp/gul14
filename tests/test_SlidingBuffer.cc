@@ -78,7 +78,7 @@ void do_queueing_tests(T& buff)
             [](auto) { return random_double(); } );
 
     for (auto el : nums)
-        buff.push_front({el,0});
+        buff.push_front({ el, 0 });
 
     // Check last put element
     REQUIRE(buff.front().val == nums.at(nums.size() - 1));
