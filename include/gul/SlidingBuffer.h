@@ -64,8 +64,8 @@ namespace gul {
  *   Element access:
  *     push_front        Insert an element into the buffer
  *     operator[]        Access element relative to most recent element in buffer, bounds corrected, read only
- *     front             Access first (next to be pushed out) element (i.e. [size() - 1]
- *     back              Acces last (most recently pushed in) element (i.e. [0])
+ *     front             Access first (most recently pushed in) element (i.e. [0]
+ *     back              Access last (next to be pushed out) element (i.e. [size() - 1]
  *   Iterators:
  *     begin, cbegin     Returns iterator to first element in underlying container
  *     end, cend         Returns iterator to end of used space in the underlying container
@@ -227,23 +227,23 @@ public:
     }
 
     /**
-     * Return the oldest ('right most') Element in the buffer.
+     * Return the youngest / most recent ('left most') Element in the buffer.
      *
      * This is a read-only operation.
      */
     auto front() const noexcept -> const value_type&
     {
-        return storage_[next_element_];
+        return operator[](0);
     }
 
     /**
-     * Return the youngest / most recent ('left most') Element in the buffer.
+     * Return the oldest ('right most') Element in the buffer.
      *
      * This is a read-only operation.
      */
     auto back() const noexcept -> const value_type&
     {
-        return operator[](0);
+        return storage_[next_element_];
     }
 
     /**

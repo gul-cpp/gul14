@@ -81,22 +81,22 @@ void do_queueing_tests(T& buff)
         buff.push_front({el,0});
 
     // Check last put element
-    REQUIRE(buff.back().val == nums.at(nums.size() - 1));
+    REQUIRE(buff.front().val == nums.at(nums.size() - 1));
 
     // Stuff Elements in and see if outcoming elements are as expected
     auto const signature = 1.234E5;
     for (auto i = 0u; i < buffer_size; ++i) {
-        REQUIRE(buff.front().val == nums.at(nums.size() - buffer_size + i));
+        REQUIRE(buff.back().val == nums.at(nums.size() - buffer_size + i));
         buff.push_front({signature, 0u});
-        REQUIRE(buff.back().val == signature);
+        REQUIRE(buff.front().val == signature);
     }
     // Now zero elements should come out...
     static_assert(buffer_size > 3, "Fifo too small for test case");
-    REQUIRE(buff.front().val == signature);
+    REQUIRE(buff.back().val == signature);
     buff.push_front({0.0, 0u});
-    REQUIRE(buff.front().val == signature);
+    REQUIRE(buff.back().val == signature);
     buff.push_front({0.0, 0u});
-    REQUIRE(buff.front().val == signature);
+    REQUIRE(buff.back().val == signature);
     buff.push_front({0.0, 0u});
 }
 
