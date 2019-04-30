@@ -49,7 +49,8 @@ namespace gul {
  * A typical application would be to analyze an incoming stream of elements in a finite
  * impulse response filter.
  *
- * There is the SlidingBufferIterator to use.
+ * There is the SlidingBufferIterator to use. See SlidingBufferExposed for a variant with
+ * a different (more direct) iterator interface.
  *
  * \code
  * Iterator invalidation:
@@ -175,11 +176,15 @@ public:
      */
     SlidingBuffer(size_type count) : storage_(count) {}
 
-private:
-    size_type next_element_{ 0u };
-    bool full_{ false };
 protected:
-    Container storage_{ }; ///< Actual data is stored here, the underlying container.
+
+    /// Index of the element in the underlying container that will be written to next.
+    size_type next_element_{ 0u };
+    /// Indicates if the buffer is completely filled with elements
+    /// (i.e. elements with indices higher than next_element_ are valid).
+    bool full_{ false };
+    /// Actual data is stored here, the underlying container.
+    Container storage_{ };
 
 public:
 
@@ -634,6 +639,217 @@ private:
             std::swap(storage_[i], storage_[j]);
         }
         next_element_ = count;
+    }
+};
+
+/**
+ * A simple data buffer with a (semi) fixed size to use as sliding window on a data stream
+ *
+ * This is a variant of SlidingBuffer that exposes the underlying container through its
+ * iterator interface. For a complete description see SlidingBuffer; here are the differences
+ * only:
+ *
+ * \code
+ * Iterator invalidation:
+ *   All read only operations    None
+ *   clear                       All iterators except begin()
+ *   reserve, resize             If shrank: All behind the new end (incl end()); if grown: all
+ *   push_front                  If size incresed end()
+ *
+ * Member types:
+ *   iterator                    container_type::iterator
+ *   const_iterator              container_type::const_iterator
+ *   reverse_iterator            container_type::reverse_iterator
+ *   const_reverse_iterator      container_type::const_reverse_iterator
+ *
+ * Member functions:
+ *   Iterators:
+ *     begin, cbegin     Returns an iterator to the first element of the container
+ *     end, cend         Returns an iterator to the element following the last element of the container
+ *     rbegin, crbegin   Returns an iterator to the first element of the reversed container
+ *     rend, crend       Returns an iterator to the element following the last element of the reversed container
+ *
+ * Non-member functions:
+ *   operator<<          Dump the raw data of the buffer to an ostream
+ * \endcode
+ *
+ * \tparam ElementT       Type of elements in the buffer
+ * \tparam BufferSize    Maximum number of elements in the buffer, zero if unspecified
+ * \tparam Container     Type of the underlying container, usually not specified
+ *
+ */
+template<typename ElementT, std::size_t BufferSize = 0u,
+    typename Container = typename std::conditional_t<(BufferSize >= 1u),
+        std::array<ElementT, BufferSize>,
+        std::vector<ElementT>>
+    >
+class SlidingBufferExposed : public SlidingBuffer<ElementT, BufferSize, Container> {
+public:
+    /// Iterator to an element
+    using iterator = typename Container::iterator;
+    /// Iterator to a const element
+    using const_iterator = typename Container::const_iterator;
+    /// Iterator to an element in reversed container
+    using reverse_iterator = typename Container::reverse_iterator;
+    /// Iterator to a const element in reversed container
+    using const_reverse_iterator = typename Container::const_reverse_iterator;
+
+    // Inherit member types
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::container_type;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::value_type;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::size_type;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::difference_type;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::reference;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::const_reference;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::pointer;
+    using typename SlidingBuffer<ElementT, BufferSize, Container>::const_pointer;
+
+    // Inherit constructors
+    using SlidingBuffer<ElementT, BufferSize, Container>::SlidingBuffer;
+
+    // Inherit members
+    using SlidingBuffer<ElementT, BufferSize, Container>::storage_;
+    using SlidingBuffer<ElementT, BufferSize, Container>::next_element_;
+    using SlidingBuffer<ElementT, BufferSize, Container>::full_;
+    using SlidingBuffer<ElementT, BufferSize, Container>::capacity;
+
+    /**
+     * Return an iterator to the first element of the underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * If the container is empty, the returned iterator will be equal to end()
+     */
+    auto begin() noexcept -> iterator
+    {
+        return storage_.begin();
+    }
+
+    /**
+     * Return a constant iterator to the first element of the
+     * underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * If the container is empty, the returned iterator will be equal to cend()
+     */
+    auto cbegin() const noexcept -> const_iterator
+    {
+        return storage_.cbegin();
+    }
+
+    /**
+     * Returns an iterator to the element following the last element in the used
+     * space of the underlying container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
+     */
+    auto end() noexcept -> iterator
+    {
+        if (full_)
+            return storage_.end();
+        return storage_.begin() + next_element_;
+    }
+
+    /**
+     * Return a constant iterator to the element following the last element in the
+     * used space of the underlying container.
+     *
+     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
+     */
+    auto cend() const noexcept -> const_iterator
+    {
+        if (full_)
+            return storage_.cend();
+        return storage_.cbegin() + next_element_;
+    }
+
+    /**
+     * Return a reverse iterator to the first used element of the reversed underlying container.
+     *
+     * It corresponds to the last element of the non-reversed container.
+     * If the container is empty, the returned iterator is equal to rend().
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
+     *
+     * If the container is empty, the returned iterator will be equal to end()
+     */
+    auto rbegin() noexcept -> reverse_iterator
+    {
+        if (full_)
+            return storage_.rbegin();
+        return storage_.rbegin() + capacity() - next_element_;
+    }
+
+    /**
+     * Return a constant reverse iterator to the first used element of the reversed
+     * underlying container.
+     *
+     * It corresponds to the last element of the non-reversed container.
+     * If the container is empty, the returned iterator is equal to rend().
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     *
+     * It does, however, take not yet filled buffers into account and returns iterators
+     * only to elements really filled.
+     *
+     * If the container is empty, the returned iterator will be equal to cend()
+     */
+    auto crbegin() const noexcept -> const_reverse_iterator
+    {
+        if (full_)
+            return storage_.rbegin();
+        return storage_.rbegin() + capacity() - next_element_;
+    }
+
+    /**
+     * Return an iterator to the last element of the reversed underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     */
+    auto rend() noexcept -> reverse_iterator
+    {
+        return storage_.rend();
+    }
+
+    /**
+     * Return a constant iterator to the last element of the reversed
+     * underlying container.
+     *
+     * This accesses the underlying container in its order. The iterators do not know
+     * where the sliding starts and ends. Use the iterators only if you want to access
+     * all elements in unknown order.
+     */
+    auto crend() const noexcept -> const_reverse_iterator
+    {
+        return storage_.crend();
     }
 };
 

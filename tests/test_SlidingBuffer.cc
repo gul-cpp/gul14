@@ -517,4 +517,63 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
     }
 }
 
+TEST_CASE("SlidingBufferExposed test", "[sliding]")
+{
+    SECTION("queueing tests") {
+        auto constexpr buffer_size = 12u;
+
+        auto buff_array = gul::SlidingBufferExposed<TestElement<double, unsigned int>, buffer_size>{};
+        do_queueing_tests<buffer_size>(buff_array);
+
+        auto buff_vector = gul::SlidingBufferExposed<TestElement<double, unsigned int>, 0>{};
+        buff_vector.resize(buffer_size);
+        do_queueing_tests<buffer_size>(buff_vector);
+    }
+    SECTION("dumping tests") {
+        auto constexpr buffer_size = 10u;
+        auto buff_array = gul::SlidingBufferExposed<TestElement<double, unsigned int>, 10>{};
+        do_dumping_tests(buff_array);
+
+        auto buff_vector = gul::SlidingBufferExposed<TestElement<double, unsigned int>, 0>{};
+        buff_vector.resize(buffer_size);
+        do_dumping_tests(buff_vector);
+    }
+    SECTION("iterator tests") {
+        auto buff1 = gul::SlidingBufferExposed<TestElement<double, unsigned int>>{ 10 };
+        do_dumping_tests(buff1); // fill with stuff
+        auto it12 = buff1.begin();
+        decltype(it12) it{ it12 }; // copy ctor
+        auto end = buff1.end();
+        auto i = 0;
+        auto iterator_data = std::vector<double>{ };
+        for (; it != end; ++it, ++i) {
+            auto ref = (*it).val;
+            REQUIRE(it->val == ref);
+            iterator_data.push_back(ref);
+        }
+        std::sort(iterator_data.begin(), iterator_data.end());
+
+        REQUIRE(i == 10);
+        auto index_data = std::vector<double>{ };
+        for (; i--;) {
+            auto ref = buff1.at(i).val;
+            REQUIRE(buff1[i].val == ref);
+            index_data.push_back(ref);
+        }
+        std::sort(index_data.begin(), index_data.end());
+        REQUIRE(index_data == iterator_data);
+
+        auto it2 = buff1.rbegin();
+        auto end2 = buff1.rend();
+        end2 = buff1.rend();
+        i = 0;
+        auto iterator2_data = std::vector<double>{ };
+        for (; it2 != end2; ++it2, ++i) {
+            iterator2_data.push_back((*it2).val);
+        }
+        std::sort(iterator2_data.begin(), iterator2_data.end());
+        REQUIRE(i == 10);
+        REQUIRE(index_data == iterator2_data);
+    }
+}
 // vi:ts=4:sw=4:sts=4:et

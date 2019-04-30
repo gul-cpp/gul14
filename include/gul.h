@@ -343,6 +343,9 @@ namespace gul {
  *
  * SlidingBuffer:
  *     A container to use as sliding window on a data stream
+ *
+ * SlidingBufferExposed:
+ *     A container to use as sliding window on a data stream with the underlying container exposed
  */
 
 } // namespace gul
