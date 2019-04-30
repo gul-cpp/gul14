@@ -422,7 +422,8 @@ public:
      *
      * Needs the Elements to be dump-able to an ostream.
      */
-    auto friend operator<< (std::ostream& s, const SlidingBuffer<value_type, BufferSize>& buffer) -> std::ostream&
+    auto friend operator<< (std::ostream& s,
+            const SlidingBuffer<value_type, BufferSize, container_type>& buffer) -> std::ostream&
     {
         auto const len = buffer.capacity();
         for (size_type i{0}; i < len; ++i) {
