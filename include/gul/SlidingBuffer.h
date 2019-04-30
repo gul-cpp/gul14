@@ -565,7 +565,7 @@ public:
      */
     auto rbegin() noexcept -> reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ this, size() });
+        return std::make_reverse_iterator(end());
     }
 
     /**
@@ -585,7 +585,7 @@ public:
      */
     auto rend() noexcept -> reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ this, 0 });
+        return std::make_reverse_iterator(begin());
     }
 
     /**
@@ -605,7 +605,7 @@ public:
      */
     auto crbegin() const noexcept -> const_reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ this, size() });
+        return std::make_reverse_iterator(cend());
     }
 
     /**
@@ -625,7 +625,7 @@ public:
      */
     auto crend() const noexcept -> const_reverse_iterator
     {
-        return std::make_reverse_iterator(iterator{ this, 0 });
+        return std::make_reverse_iterator(cbegin());
     }
 
 private:
@@ -799,9 +799,7 @@ public:
      */
     auto rbegin() noexcept -> reverse_iterator
     {
-        if (full_)
-            return storage_.rbegin();
-        return storage_.rbegin() + capacity() - next_element_;
+        return std::make_reverse_iterator(end());
     }
 
     /**
@@ -822,9 +820,7 @@ public:
      */
     auto crbegin() const noexcept -> const_reverse_iterator
     {
-        if (full_)
-            return storage_.rbegin();
-        return storage_.rbegin() + capacity() - next_element_;
+        return std::make_reverse_iterator(cend());
     }
 
     /**
@@ -836,7 +832,7 @@ public:
      */
     auto rend() noexcept -> reverse_iterator
     {
-        return storage_.rend();
+        return std::make_reverse_iterator(begin());
     }
 
     /**
@@ -849,7 +845,7 @@ public:
      */
     auto crend() const noexcept -> const_reverse_iterator
     {
-        return storage_.crend();
+        return std::make_reverse_iterator(cbegin());
     }
 };
 
