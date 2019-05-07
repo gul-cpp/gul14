@@ -164,10 +164,15 @@ public:
      * get a std::vector bases SlidingBuffer with capacity.
      */
     SlidingBuffer() = default;
-    SlidingBuffer(SlidingBuffer&&) = default;
+    /// Default copy constructor.
     SlidingBuffer(SlidingBuffer const&) = default;
+    /// Default move constructor.
+    SlidingBuffer(SlidingBuffer&&) = default;
+    /// Default copy assignment operator.
     SlidingBuffer& operator=(SlidingBuffer const&) = default;
+    /// Default move assignment operator.
     SlidingBuffer& operator=(SlidingBuffer &&) = default;
+    /// Default Destructor.
     virtual ~SlidingBuffer() = default;
 
     /**
@@ -507,10 +512,15 @@ public:
         }
 
         // No default constructor
-        SlidingBufferIterator(SlidingBufferIterator&&) = default;
+        /// Default copy constructor.
         SlidingBufferIterator(SlidingBufferIterator const&) = default;
+        /// Default move constructor.
+        SlidingBufferIterator(SlidingBufferIterator&&) = default;
+        /// Default copy assignment operator.
         SlidingBufferIterator& operator=(SlidingBufferIterator const&) = default;
+        /// Default move assignment operator.
         SlidingBufferIterator& operator=(SlidingBufferIterator &&) = default;
+        /// Default Destructor.
         virtual ~SlidingBufferIterator() = default;
 
         /// Pre-increment iterator by one position
