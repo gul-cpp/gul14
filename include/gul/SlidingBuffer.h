@@ -78,9 +78,9 @@ namespace gul {
  *   Element access:
  *     push_front        Insert an element into the buffer
  *     operator[]        Access element relative to most recent element in buffer
- *     at                Access element relative to most recent element in buffer, bounds corrected
- *     front             Access first (most recently pushed in) element (i.e. [0]
- *     back              Access last (next to be pushed out) element (i.e. [size() - 1]
+ *     at                Access element relative to most recent element in buffer, with bounds checking
+ *     front             Access first (most recently pushed in) element (i.e. [0])
+ *     back              Access last (next to be pushed out) element (i.e. [size() - 1])
  *   Iterators:
  *     begin, cbegin     Returns an iterator to the first element of the container
  *     end, cend         Returns an iterator to the element following the last element of the container
@@ -229,6 +229,8 @@ public:
      *
      * Access to elements outside the capacity is not allowed and results in undefined
      * behavior.
+     *
+     * \returns     Reference to the requested element
      */
     auto operator[](const size_type idx) -> reference
     {
@@ -251,31 +253,44 @@ public:
 
     /**
      * Access one element in the buffer, relative to the most recently `push`ed
-     * element.
+     * element, with bounds checking.
      *
      * The index 0 is the most recent element, 1 is the element before that
      * and so on.
      *
-     * `i` is coerced to be inside the size of the buffer, wrapping around by the buffer size.
+     * If idx is not within the range of the container,
+     * an exception of type std::out_of_range is thrown.
      *
-     * If the buffer is not yet full it may be possible that the function has nothing to
-     * return and so a default constructed Element is returned.
+     * \param idx   Index of the element to return
+     * \returns     Reference to the requested element
      */
-    auto at(const size_type idx) -> reference
+    auto at(const size_type idx) noexcept(false) -> reference
     {
-        // If the element has ever been filled or not is ignored. A default
-        // constructed ELEMENT will be returned on unset elements
-        return storage_[(next_element_ - idx - 1 + capacity()) % capacity()];
+        auto const s = size();
+        if (idx >= s) {
+            auto msg = std::stringstream{};
+            msg << "SlidingBuffer::" << __func__
+                << ": idx (which is " << idx
+                << ") >= this->size() (which is " << s << ")";
+            throw std::out_of_range(msg.str().c_str());
+        }
+        return operator[](idx);
     }
 
     /**
      * \overload
      */
-    auto at(const size_type idx) const -> const_reference
+    auto at(const size_type idx) const noexcept(false) -> const_reference
     {
-        // If the element has ever been filled or not is ignored. A default
-        // constructed ELEMENT will be returned on unset elements
-        return storage_[(next_element_ - idx - 1 + capacity()) % capacity()];
+        auto const s = size();
+        if (idx >= s) {
+            auto msg = std::stringstream{};
+            msg << "SlidingBuffer::" << __func__
+                << ": idx (which is " << idx
+                << ") >= this->size() (which is " << s << ")";
+            throw std::out_of_range(msg.str().c_str());
+        }
+        return operator[](idx);
     }
 
     /**

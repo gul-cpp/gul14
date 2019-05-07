@@ -517,7 +517,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
     }
 }
 
-TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear()", "[SlidingBuffer]")
+TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at()", "[SlidingBuffer]")
 {
     gul::SlidingBuffer<double, 2> buf;
 
@@ -534,6 +534,11 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear()", "[SlidingBuff
     REQUIRE(buf.size() == 2);
     REQUIRE(buf[0] == 2.0);
     REQUIRE(buf[1] == 1.0);
+    REQUIRE(buf.at(0) == 2.0);
+    REQUIRE(buf.at(1) == 1.0);
+    REQUIRE_THROWS(buf.at(2));
+    REQUIRE_THROWS(buf.at(5));
+    REQUIRE_THROWS(buf.at(-1));
 
     buf.push_front(3.0);
     //REQUIRE(!buf.empty());
