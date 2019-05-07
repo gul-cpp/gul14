@@ -551,6 +551,69 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at()", "[Slidi
     REQUIRE(buf.size() == 0);
 }
 
+TEST_CASE("SlidingBuffer copying and moving", "[sliding]")
+{
+    auto buffer = gul::SlidingBuffer<TestElement<double, unsigned int>>(6);
+    for (auto i = 0u; i < 20; ++i)
+        buffer.push_front({ 100.0 + 1.0 * i, i });
+
+    auto it = buffer.begin();
+    REQUIRE(buffer.at(0).val == 119.0);
+    REQUIRE(it++->val == 119.0);
+    REQUIRE(buffer.at(1).val == 118.0);
+    REQUIRE(it++->val == 118.0);
+    REQUIRE(buffer.at(2).val == 117.0);
+    REQUIRE(it++->val == 117.0);
+    REQUIRE(buffer.at(3).val == 116.0);
+    REQUIRE(it++->val == 116.0);
+    REQUIRE(buffer.at(4).val == 115.0);
+    REQUIRE(it++->val == 115.0);
+    REQUIRE(buffer.at(5).val == 114.0);
+    REQUIRE(it++->val == 114.0);
+    REQUIRE_THROWS(buffer.at(6).val);
+    REQUIRE(it == buffer.end());
+
+    REQUIRE(buffer.size() == 6);
+    REQUIRE(buffer.filled() == true);
+
+    SECTION("copy assignment") {
+        decltype(buffer) buf_copy{};
+        buf_copy = buffer;
+        REQUIRE(buffer.at(3).val == 116.0);
+        REQUIRE(buf_copy.at(3).val == 116.0);
+        buf_copy[3].val = 50.0;
+        REQUIRE(buffer.at(3).val == 116.0);
+        REQUIRE(buf_copy.at(3).val == 50.0);
+        buf_copy[4] = decltype(buf_copy)::value_type{ 66.0, 77 };
+        REQUIRE(buffer.at(4).val == 115.0);
+        REQUIRE(buf_copy.at(4).val == 66.0);
+    }
+    SECTION("copy constructor") {
+        auto buf_copy{ buffer };
+        REQUIRE(buffer.at(3).val == 116.0);
+        REQUIRE(buf_copy.at(3).val == 116.0);
+        buf_copy[3].val = 50.0;
+        REQUIRE(buffer.at(3).val == 116.0);
+        REQUIRE(buf_copy.at(3).val == 50.0);
+        buf_copy[4] = decltype(buf_copy)::value_type{ 66.0, 77 };
+        REQUIRE(buffer.at(4).val == 115.0);
+        REQUIRE(buf_copy.at(4).val == 66.0);
+    }
+    SECTION("move assignment") {
+        auto original = buffer;
+        auto original_address = std::addressof(original.at(3));
+        decltype(original) new_original{};
+        new_original = std::move(original);
+        REQUIRE(std::addressof(new_original.at(3)) == original_address);
+    }
+    SECTION("move constructor") {
+        auto original = buffer;
+        auto original_address = std::addressof(original.at(3));
+        auto new_original{ std::move(original) };
+        REQUIRE(std::addressof(new_original.at(3)) == original_address);
+    }
+}
+
 TEST_CASE("SlidingBufferExposed test", "[sliding]")
 {
     SECTION("queueing tests") {
