@@ -164,6 +164,11 @@ public:
      * get a std::vector bases SlidingBuffer with capacity.
      */
     SlidingBuffer() = default;
+    SlidingBuffer(SlidingBuffer&&) = default;
+    SlidingBuffer(SlidingBuffer const&) = default;
+    SlidingBuffer& operator=(SlidingBuffer const&) = default;
+    SlidingBuffer& operator=(SlidingBuffer &&) = default;
+    virtual ~SlidingBuffer() = default;
 
     /**
      * \overload
