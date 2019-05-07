@@ -90,6 +90,7 @@ namespace gul {
  *     size              Returns number of used elements
  *     capacity          Returns maximum number of elements
  *     filled            Checks whether the buffer is completely filled
+ *     empty             Checks whether the buffer is empty
  *     resize            Change the maximum number of elements (only for std::vector based buffers)
  *     reserve           Change the maximum number of elements (only for std::vector based buffers)
  *   Modifiers:
@@ -433,6 +434,16 @@ public:
     auto reserve(size_type size) -> void
     {
         resize(size);
+    }
+
+    /**
+     * Checks if the buffer has no elements, i.e. whether begin() == end().
+     *
+     * \returns true if the container is empty, false otherwise
+     */
+    auto empty() noexcept -> bool
+    {
+        return (not full_) and (next_element_ == 0);
     }
 
     /**
