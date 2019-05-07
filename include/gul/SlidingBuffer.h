@@ -269,11 +269,8 @@ public:
     {
         auto const s = size();
         if (idx >= s) {
-            auto msg = std::stringstream{};
-            msg << "SlidingBuffer::" << __func__
-                << ": idx (which is " << idx
-                << ") >= this->size() (which is " << s << ")";
-            throw std::out_of_range(msg.str().c_str());
+            throw std::out_of_range(gul::cat("SlidingBuffer::", __func__,
+                ": idx (which is ", idx, ") >= this->size() (which is ", s, ")"));
         }
         return operator[](idx);
     }
@@ -285,11 +282,8 @@ public:
     {
         auto const s = size();
         if (idx >= s) {
-            auto msg = std::stringstream{};
-            msg << "SlidingBuffer::" << __func__
-                << ": idx (which is " << idx
-                << ") >= this->size() (which is " << s << ")";
-            throw std::out_of_range(msg.str().c_str());
+            throw std::out_of_range(gul::cat("SlidingBuffer::", __func__,
+                ": idx (which is ", idx, ") >= this->size() (which is ", s, ")"));
         }
         return operator[](idx);
     }
@@ -368,7 +362,7 @@ public:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * Shrinking: The oldes excess elements are just dropped instantly.
+     * Shrinking: The oldest excess elements are just dropped instantly.
      * Growing: The capacity changes, but the (used) size not. It will grow
      * gradually when elements are pushed, as in the startup phase.
      *
