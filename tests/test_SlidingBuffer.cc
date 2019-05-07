@@ -612,6 +612,20 @@ TEST_CASE("SlidingBuffer copying and moving", "[sliding]")
         auto new_original{ std::move(original) };
         REQUIRE(std::addressof(new_original.at(3)) == original_address);
     }
+    SECTION("copy assign iterators") {
+        auto it1 = buffer.begin();
+        auto it2 = it1++;
+        REQUIRE(std::addressof(it1->val) != std::addressof(it2->val));
+        it2 = it1;
+        REQUIRE(std::addressof(it1->val) == std::addressof(it2->val));
+    }
+    SECTION("copy construct iterators") {
+        auto it1 = buffer.begin();
+        auto it2{ it1++ };
+        REQUIRE(std::addressof(it1->val) != std::addressof(it2->val));
+        it2 = it1;
+        REQUIRE(std::addressof(it1->val) == std::addressof(it2->val));
+    }
 }
 
 TEST_CASE("SlidingBufferExposed test", "[sliding]")

@@ -506,6 +506,13 @@ public:
         {
         }
 
+        // No default constructor
+        SlidingBufferIterator(SlidingBufferIterator&&) = default;
+        SlidingBufferIterator(SlidingBufferIterator const&) = default;
+        SlidingBufferIterator& operator=(SlidingBufferIterator const&) = default;
+        SlidingBufferIterator& operator=(SlidingBufferIterator &&) = default;
+        virtual ~SlidingBufferIterator() = default;
+
         /// Pre-increment iterator by one position
         auto operator++() noexcept -> SlidingBufferIterator&
         {
