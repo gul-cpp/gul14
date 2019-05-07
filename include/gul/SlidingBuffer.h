@@ -56,8 +56,8 @@ namespace gul {
  * Iterator invalidation:
  *   All read only operations    None
  *   clear                       All iterators except begin()
- *   reserve, resize             If shrank: All behind the new end (incl end()).
- *   push_front                  If size incresed end()
+ *   reserve, resize             If shrunk: All behind the new end (incl end()).
+ *   push_front                  If size increased end()
  *
  * Member types:
  *   value_type                  Type of the elements
@@ -100,21 +100,20 @@ namespace gul {
  * \endcode
  *
  * The sliding buffer can be instantiated in two different underlying container versions:
- * * If the size is known at compile time, instanziate it with that number as BufferSize. The
- *   underlying container will be a std::array.
+ * * If the size is known at compile time, instantiate it with that number as BufferSize.
+ *   The underlying container will be a std::array.
  * * If a flexible size is desired, omit the template parameter BufferSize. It will be
- *   defaulted to zero (0). The underlying container will then
- *   be a std::vector. You need to use a constructor that sets a certain capacity or set the
- *   capacity afterwards with resize(). If the size is really 0 elements the buffer is unusable.
- * Apart from the ability of the later to resize()/reserve() all
- * is identical.
+ *   defaulted to zero (0). The underlying container will then be a std::vector. You need
+ *   to use a constructor that sets a certain capacity or set the capacity afterwards with
+ *   resize(). If the size is really 0 elements, the buffer is unusable.
+ * Apart from the ability of the latter to resize()/reserve() all functionality is
+ * identical.
  *
  * The elements (ElementT) must be default constructible, if clear() will be used.
  *
- * \tparam ElementT       Type of elements in the buffer
+ * \tparam ElementT      Type of elements in the buffer
  * \tparam BufferSize    Maximum number of elements in the buffer, zero if unspecified
  * \tparam Container     Type of the underlying container, usually not specified
- *
  */
 template<typename ElementT, std::size_t BufferSize = 0u,
     typename Container = typename std::conditional_t<(BufferSize >= 1u),
@@ -153,7 +152,7 @@ public:
     /**
      * Constructs a new sliding buffer.
      *
-     * The buffer is initially empty
+     * The buffer is initially empty.
      * The capacity is given by the BufferSize template parameter.
      *
      * If that template argument is not zero a std::array based SlidingBuffer
@@ -168,7 +167,7 @@ public:
     /**
      * \overload
      *
-     * Only available for sliding buffers that base on std::vector.
+     * Only available for sliding buffers based on std::vector.
      *
      * Constructs a sliding buffer with a specified capacity.
      *
@@ -219,7 +218,7 @@ public:
     }
 
     /**
-     * Access (read) one element in the buffer, relative to the most recently `push`ed
+     * Access one element in the buffer, relative to the most recently `push`ed
      * element.
      *
      * The index 0 is the most recent element, 1 is the element before that
@@ -230,7 +229,6 @@ public:
      *
      * Access to elements outside the capacity is not allowed and results in undefined
      * behavior.
-     *
      */
     auto operator[](const size_type idx) -> reference
     {
@@ -252,7 +250,7 @@ public:
     }
 
     /**
-     * Access (read) one element in the buffer, relative to the most recently `push`ed
+     * Access one element in the buffer, relative to the most recently `push`ed
      * element.
      *
      * The index 0 is the most recent element, 1 is the element before that
