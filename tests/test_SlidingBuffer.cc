@@ -517,6 +517,35 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
     }
 }
 
+TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear()", "[SlidingBuffer]")
+{
+    gul::SlidingBuffer<double, 2> buf;
+
+    //REQUIRE(buf.empty());
+    REQUIRE(buf.size() == 0);
+
+    buf.push_front(1.0);
+    //REQUIRE(!buf.empty());
+    REQUIRE(buf.size() == 1);
+    REQUIRE(buf[0] == 1.0);
+
+    buf.push_front(2.0);
+    //REQUIRE(!buf.empty());
+    REQUIRE(buf.size() == 2);
+    REQUIRE(buf[0] == 2.0);
+    REQUIRE(buf[1] == 1.0);
+
+    buf.push_front(3.0);
+    //REQUIRE(!buf.empty());
+    REQUIRE(buf.size() == 2);
+    REQUIRE(buf[0] == 3.0);
+    REQUIRE(buf[1] == 2.0);
+
+    buf.clear();
+    //REQUIRE(buf.empty());
+    REQUIRE(buf.size() == 0);
+}
+
 TEST_CASE("SlidingBufferExposed test", "[sliding]")
 {
     SECTION("queueing tests") {
