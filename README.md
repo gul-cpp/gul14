@@ -3,12 +3,15 @@
 The general utility library contains often-used utility functions and types that form the
 foundation for other libraries and programs. The main fields covered by the library are:
 
-  * String utilities
-  * Concurrency utilities
-  * Time utilities
-  * Debugging utilities
-  * Numeric utilities
+  * String handling
+  * Concurrency
+  * Time
+  * Statistics and numerics
+  * Containers
+  * Debugging
   * Backports from new standard library extensions
+
+To get started, have a look at the [documentation website](http://tesla.desy.de/libraries/gul/html/).
 
 Here you find more detailed information on:
 
