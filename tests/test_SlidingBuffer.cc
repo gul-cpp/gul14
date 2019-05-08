@@ -318,6 +318,15 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "8\\* 9  10"));
+
+        buff.resize(0);
+        REQUIRE(buff.filled() == false);
+        REQUIRE(buff.size() == 0);
+        REQUIRE(buff.capacity() == 0);
+        buff.push_front(1);
+        REQUIRE(buff.filled() == true);
+        REQUIRE(buff.size() == 0);
+        REQUIRE(buff.capacity() == 0);
     }
     SECTION("filling pattern 2") {
         // Try a different filling pattern

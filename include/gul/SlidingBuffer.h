@@ -360,6 +360,9 @@ public:
      *
      * If the buffer is used in filter contexts this means the filter is fully
      * initialized and working.
+     *
+     * If the buffer has zero capacity it will be filled after one element (that
+     * is not memorized) has been pushed into it.
      */
     auto filled() const noexcept -> bool
     {
@@ -388,19 +391,23 @@ public:
      * Growing: The capacity changes, but the (used) size not. It will grow
      * gradually when elements are pushed, as in the startup phase.
      *
-     * Shrinking to less than one element is not possible.
-     *
      * \param count    New maximum size / capacity of the sliding buffer
-     * \param value    Will be ignored if specified
      */
     template <typename = std::enable_if<(BufferSize == 0u)>>
-    auto resize(size_type count, value_type const& value = {}) -> void
+    auto resize(size_type count) -> void
     {
-        count = std::max(count, size_type{ 1 });
-        static_cast<void>(value); // Ignore, but we want to have it named for Doxygen
         auto const old_count = capacity();
         if (count == old_count)
             return;
+
+        //////
+        // Vanishing
+        if (count == 0) {
+            storage_.resize(count);
+            next_element_ = 0;
+            full_ = false;
+            return;
+        }
 
         //////
         // Growing
