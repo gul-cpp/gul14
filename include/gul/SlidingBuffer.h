@@ -300,8 +300,14 @@ public:
 
     /**
      * Return the most recently pushed element.
-     *
-     * This is a read-only operation.
+     */
+    auto front() noexcept -> reference
+    {
+        return operator[](0);
+    }
+
+    /**
+     * \overload
      */
     auto front() const noexcept -> const_reference
     {
@@ -310,8 +316,14 @@ public:
 
     /**
      * Return the oldest element in the buffer (i.e. the one with the highest valid index).
-     *
-     * This is a read-only operation.
+     */
+    auto back() noexcept -> reference
+    {
+        return storage_[next_element_];
+    }
+
+    /**
+     * \overload
      */
     auto back() const noexcept -> const_reference
     {
