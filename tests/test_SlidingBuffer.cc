@@ -523,6 +523,8 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at()", "[Slidi
 
     REQUIRE(buf.empty());
     REQUIRE(buf.size() == 0);
+    REQUIRE_THROWS(buf.at(0));
+
 
     buf.push_front(1.0);
     REQUIRE(!buf.empty());
