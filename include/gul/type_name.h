@@ -25,11 +25,6 @@
 
 #pragma once
 
-#include <cstddef>
-#include <stdexcept>
-#include <cstring>
-#include <ostream>
-
 namespace gul {
 
 /**
@@ -67,6 +62,14 @@ class FailToInstantiate;
  * the stuff that contains information on the function itself, leaving just the
  * description of the template parameter.
  *
+ * Note: `__FUNCSIG__` with MSVC.
+ *
+ * Use like this:
+ * \code
+ * auto& literal = "test";
+ * std::cout << "The type is " << gul::type_name<decltype(literal)>() << '\n';
+ * \endcode
+ *
  * \tparam T Type that shall be described
  *
  * \returns a string view that describes the type of the template parameter
@@ -75,18 +78,24 @@ class FailToInstantiate;
 template <class T>
 constexpr string_view type_name()
 {
-#ifdef __clang__
-    auto p = string_view{ __PRETTY_FUNCTION__ };
-    return string_view{ p.data() + 35, p.size() - 35 - 1 };
-
-#elif defined(__GNUC__)
-    auto p = string_view{ __PRETTY_FUNCTION__ };
-    return string_view{ p.data() + 50, p.size() - 50 - 1 };
+#if defined(__GNUC__)
+    // Clang returns something like "return_type function_name() [T = template_parameter; ...]"
+    // GCC returns something like "return_type function_name() [with T = template_parameter]"
+    auto const s = string_view{ __PRETTY_FUNCTION__ };
+    auto const start_idx = s.find(" = ") + sizeof(" = ") - 1;
+    auto const colon_idx = s.find(';', start_idx);
+    auto const end_idx = colon_idx != gul::string_view::npos ? colon_idx - 1 : s.length() - 2;
+    return s.substr(start_idx, end_idx - start_idx + 1);
 
 #elif defined(_MSC_VER)
-    auto p = string_view{ __FUNCSIG__ };
-    return string_view{ p.data() + 42, p.size() - 42 - 7 };
+    // MSVC returns something like "return_type function_name<template_parameter>()"
+    auto const s = string_view{ __FUNCSIG__ };
+    auto const start_idx = s.find("gul::type_name<") + sizeof("gul::type_name<") - 1;
+    auto const end_idx = s.find_last_of('>') - 1;
+    return s.substr(start_idx, end_idx - start_idx + 1);
+
 #endif
+    return "";
 }
 
 } // namespace gul
