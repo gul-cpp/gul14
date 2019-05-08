@@ -101,9 +101,9 @@ namespace gul {
  * \endcode
  *
  * The sliding buffer can be instantiated in two different underlying container versions:
- * * If the size is known at compile time, instantiate it with that number as BufferSize.
+ * * If the size is known at compile time, instantiate it with that number as buffer_size.
  *   The underlying container will be a std::array.
- * * If a flexible size is desired, omit the template parameter BufferSize. It will be
+ * * If a flexible size is desired, omit the template parameter buffer_size. It will be
  *   defaulted to zero (0). The underlying container will then be a std::vector. You need
  *   to use a constructor that sets a certain capacity or set the capacity afterwards with
  *   resize(). If the size is really 0 elements, the buffer is unusable.
@@ -113,12 +113,12 @@ namespace gul {
  * The elements (ElementT) must be default constructible, if clear() will be used.
  *
  * \tparam ElementT      Type of elements in the buffer
- * \tparam BufferSize    Maximum number of elements in the buffer, zero if unspecified
+ * \tparam buffer_size    Maximum number of elements in the buffer, zero if unspecified
  * \tparam Container     Type of the underlying container, usually not specified
  */
-template<typename ElementT, std::size_t BufferSize = 0u,
-    typename Container = typename std::conditional_t<(BufferSize >= 1u),
-        std::array<ElementT, BufferSize>,
+template<typename ElementT, std::size_t buffer_size = 0u,
+    typename Container = typename std::conditional_t<(buffer_size >= 1u),
+        std::array<ElementT, buffer_size>,
         std::vector<ElementT>>
     >
 class SlidingBuffer {
@@ -142,9 +142,9 @@ public:
     /// Pointer to a constant element
     using const_pointer = typename Container::const_pointer;
     /// Iterator to an element
-    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>*>;
+    using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, buffer_size, Container>*>;
     /// Iterator to a const element
-    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container> const*>;
+    using const_iterator = SlidingBufferIterator<SlidingBuffer<ElementT, buffer_size, Container> const*>;
     /// Iterator to an element in reversed container
     using reverse_iterator = std::reverse_iterator<iterator>;
     /// Iterator to a const element in reversed container
@@ -154,7 +154,7 @@ public:
      * Constructs a new sliding buffer.
      *
      * The buffer is initially empty.
-     * The capacity is given by the BufferSize template parameter.
+     * The capacity is given by the buffer_size template parameter.
      *
      * If that template argument is not zero a std::array based SlidingBuffer
      * with that (unchangeable) capacity is created.
@@ -182,7 +182,7 @@ public:
      *
      * Constructs a sliding buffer with a specified capacity.
      *
-     * For std::array based sliding buffers the capacity is specified by the BufferSize template parameter.
+     * For std::array based sliding buffers the capacity is specified by the buffer_size template parameter.
      */
     SlidingBuffer(size_type count) : storage_(count) {}
 
@@ -333,8 +333,8 @@ public:
     /**
      * Return the number of elements in the container, i.e. std::distance(begin(), end()).
      *
-     * In the startup phase it can be 0 and up to the BufferSize, after startup (filled() == true)
-     * it will always return BufferSize (capacity()).
+     * In the startup phase it can be 0 and up to the buffer_size, after startup (filled() == true)
+     * it will always return buffer_size (capacity()).
      */
     auto size() const noexcept -> size_type
     {
@@ -352,7 +352,7 @@ public:
      */
     auto constexpr capacity() const noexcept -> size_type
     {
-        return BufferSize ? BufferSize : storage_.size();
+        return buffer_size ? buffer_size : storage_.size();
     }
 
     /**
@@ -393,7 +393,7 @@ public:
      *
      * \param count    New maximum size / capacity of the sliding buffer
      */
-    template <typename = std::enable_if<(BufferSize == 0u)>>
+    template <typename = std::enable_if<(buffer_size == 0u)>>
     auto resize(size_type count) -> void
     {
         auto const old_count = capacity();
@@ -453,7 +453,7 @@ public:
      *
      * \param size   New maximum size / capacity of the sliding buffer
      */
-    template <typename = std::enable_if<(BufferSize == 0u)>>
+    template <typename = std::enable_if<(buffer_size == 0u)>>
     auto reserve(size_type size) -> void
     {
         resize(size);
@@ -475,7 +475,7 @@ public:
      * Needs the elements to be dump-able to an ostream.
      */
     auto friend operator<< (std::ostream& s,
-            const SlidingBuffer<value_type, BufferSize, container_type>& buffer) -> std::ostream&
+            const SlidingBuffer<value_type, buffer_size, container_type>& buffer) -> std::ostream&
     {
         auto const len = buffer.capacity();
         for (size_type i{0}; i < len; ++i) {
@@ -733,16 +733,16 @@ private:
  * \endcode
  *
  * \tparam ElementT       Type of elements in the buffer
- * \tparam BufferSize    Maximum number of elements in the buffer, zero if unspecified
+ * \tparam buffer_size    Maximum number of elements in the buffer, zero if unspecified
  * \tparam Container     Type of the underlying container, usually not specified
  *
  */
-template<typename ElementT, std::size_t BufferSize = 0u,
-    typename Container = typename std::conditional_t<(BufferSize >= 1u),
-        std::array<ElementT, BufferSize>,
+template<typename ElementT, std::size_t buffer_size = 0u,
+    typename Container = typename std::conditional_t<(buffer_size >= 1u),
+        std::array<ElementT, buffer_size>,
         std::vector<ElementT>>
     >
-class SlidingBufferExposed : public SlidingBuffer<ElementT, BufferSize, Container> {
+class SlidingBufferExposed : public SlidingBuffer<ElementT, buffer_size, Container> {
 public:
     /// Iterator to an element
     using iterator = typename Container::iterator;
@@ -754,23 +754,23 @@ public:
     using const_reverse_iterator = typename Container::const_reverse_iterator;
 
     // Inherit member types
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::container_type;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::value_type;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::size_type;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::difference_type;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::reference;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::const_reference;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::pointer;
-    using typename SlidingBuffer<ElementT, BufferSize, Container>::const_pointer;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::container_type;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::value_type;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::size_type;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::difference_type;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::reference;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::const_reference;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::pointer;
+    using typename SlidingBuffer<ElementT, buffer_size, Container>::const_pointer;
 
     // Inherit constructors
-    using SlidingBuffer<ElementT, BufferSize, Container>::SlidingBuffer;
+    using SlidingBuffer<ElementT, buffer_size, Container>::SlidingBuffer;
 
     // Inherit members
-    using SlidingBuffer<ElementT, BufferSize, Container>::storage_;
-    using SlidingBuffer<ElementT, BufferSize, Container>::next_element_;
-    using SlidingBuffer<ElementT, BufferSize, Container>::full_;
-    using SlidingBuffer<ElementT, BufferSize, Container>::capacity;
+    using SlidingBuffer<ElementT, buffer_size, Container>::storage_;
+    using SlidingBuffer<ElementT, buffer_size, Container>::next_element_;
+    using SlidingBuffer<ElementT, buffer_size, Container>::full_;
+    using SlidingBuffer<ElementT, buffer_size, Container>::capacity;
 
     /**
      * Return an iterator to the first element of the underlying container.
