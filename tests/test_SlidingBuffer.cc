@@ -340,10 +340,12 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 8 -> 1
         auto buff = gul::SlidingBuffer<int, 0>{};
         buff.resize(8);
-        buff.push_front(3);
+        buff.push_front(2);
         buff.push_front(3);
         buff.push_front(4);
         buff.push_front(5);
+        REQUIRE(buff.front() == 5);
+        REQUIRE(buff.back() == 2);
         buff.push_front(6);
         buff.push_front(7);
         buff.push_front(8);
@@ -352,6 +354,8 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         REQUIRE(buff.filled() == true);
         REQUIRE(buff.size() == 8);
         REQUIRE(buff.capacity() == 8);
+        REQUIRE(buff.front() == 10);
+        REQUIRE(buff.back() == 3);
         std::stringstream s{ };
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(

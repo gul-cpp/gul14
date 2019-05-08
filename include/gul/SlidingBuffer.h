@@ -319,6 +319,8 @@ public:
      */
     auto back() noexcept -> reference
     {
+        if (not full_)
+            return storage_[0];
         return storage_[next_element_];
     }
 
@@ -327,6 +329,8 @@ public:
      */
     auto back() const noexcept -> const_reference
     {
+        if (not full_)
+            return storage_[0];
         return storage_[next_element_];
     }
 
