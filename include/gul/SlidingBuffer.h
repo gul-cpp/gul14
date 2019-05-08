@@ -139,7 +139,7 @@ public:
     using const_reference = typename Container::const_reference;
     /// Pointer to an element
     using pointer = typename Container::pointer;
-    /// Pointer to a constant elemenet
+    /// Pointer to a constant element
     using const_pointer = typename Container::const_pointer;
     /// Iterator to an element
     using iterator = SlidingBufferIterator<SlidingBuffer<ElementT, BufferSize, Container>*>;
@@ -204,7 +204,7 @@ public:
      * Think of this as inserting in the front. Probably an element at the back is
      * dropped to make room in the fixed size buffer.
      *
-     * Iterator end() is invalidated if the size of the buffer increaded (i.e.
+     * Iterator end() is invalidated if the size of the buffer increased (i.e.
      * in the startup phase where filled() == false).
      * All other iterators still point to the same logical element, while the
      * contents of all logical elements is shifted.
@@ -236,7 +236,7 @@ public:
      * and so on.
      *
      * If the buffer is not yet full it may be possible that the function has nothing to
-     * return and so a default constructed Element is returned.
+     * return and so a default constructed element is returned.
      *
      * Access to elements outside the capacity is not allowed and results in undefined
      * behavior.
@@ -299,7 +299,7 @@ public:
     }
 
     /**
-     * Return the oldest ('right most') Element in the buffer.
+     * Return the most recently pushed element.
      *
      * This is a read-only operation.
      */
@@ -309,7 +309,7 @@ public:
     }
 
     /**
-     * Return the oldest ('right most') Element in the buffer.
+     * Return the oldest element in the buffer (i.e. the one with the highest valid index).
      *
      * This is a read-only operation.
      */
@@ -453,7 +453,7 @@ public:
     /**
      * Dump all (also unfilled) buffer elements and which element is to be replaced next.
      *
-     * Needs the Elements to be dump-able to an ostream.
+     * Needs the elements to be dump-able to an ostream.
      */
     auto friend operator<< (std::ostream& s,
             const SlidingBuffer<value_type, BufferSize, container_type>& buffer) -> std::ostream&
