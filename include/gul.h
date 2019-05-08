@@ -121,7 +121,7 @@ namespace gul {
  *
  * <dl>
  * <dt>catch.h</dt>
- * <dd>Copyright Phil Nash, Martin Hořeňovský et al. 2010-2019.
+ * <dd>Copyright 2019 Two Blue Cubes Ltd.
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     https://github.com/catchorg/Catch2 for details).</dd>
  *
