@@ -332,8 +332,10 @@ namespace gul {
  * type_name():
  *     Generate a human readable string describing a type.
  *
+ * <h3>Classes</h3>
+ *
  * \ref gul::FailToInstantiate "FailToInstantiate":
- *     Class to help debug types
+ *     Class to help debug types.
  */
 
 /**
