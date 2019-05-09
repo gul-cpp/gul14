@@ -474,21 +474,19 @@ public:
     }
 
     /**
-     * Dump all (also unfilled) buffer elements and which element is to be replaced next.
+     * Dump all buffer elements.
+     *
+     * Shown on the left is front(), on the right back().
      *
      * Needs the elements to be dump-able to an ostream.
      */
     auto friend operator<< (std::ostream& s,
             const SlidingBuffer<value_type, buffer_size, container_type>& buffer) -> std::ostream&
     {
-        auto const len = buffer.capacity();
-        for (size_type i{0}; i < len; ++i) {
-            s << buffer.storage_.at(i);
-            if (i == buffer.next_element_)
-                s << "* ";
-            else
-                s << "  ";
-        }
+        auto const size = buffer.size();
+        // We can not use range-for here, because of SlidingBufferExposed<>'s un-wrapped iterators
+        for (auto i = size_type{ 0 }; i < size; ++i)
+            s << buffer[i] << "  ";
         return s << '\n';
     }
 
