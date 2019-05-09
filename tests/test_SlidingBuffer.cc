@@ -25,6 +25,57 @@
 #include <sstream>
 #include <random>
 
+// A SlidingBuffer variant that allows to dump the underlying container
+// and the state of the buffer all in one to a stream.
+// We use this to inspect the operations, if they handled internally as expected.
+template<typename ElementT, std::size_t buffer_size = 0u,
+    typename Container = typename std::conditional_t<(buffer_size >= 1u),
+        std::array<ElementT, buffer_size>,
+        std::vector<ElementT>>
+    >
+class SlidingBufferDebug : public gul::SlidingBuffer<ElementT, buffer_size, Container> {
+public:
+    using gul::SlidingBuffer<ElementT, buffer_size, Container>::SlidingBuffer;
+    using typename gul::SlidingBuffer<ElementT, buffer_size, Container>::size_type;
+
+    auto debugdump(std::ostream& s) -> std::ostream&
+    {
+        auto const len = this->capacity();
+        for (size_type i{0}; i < len; ++i) {
+            s << this->storage_.at(i);
+            if (i == this->next_element_)
+                s << "* ";
+            else
+                s << "  ";
+        }
+        return s << '\n';
+    }
+};
+
+template<typename ElementT, std::size_t buffer_size = 0u,
+    typename Container = typename std::conditional_t<(buffer_size >= 1u),
+        std::array<ElementT, buffer_size>,
+        std::vector<ElementT>>
+    >
+class SlidingBufferExposedDebug : public gul::SlidingBufferExposed<ElementT, buffer_size, Container> {
+public:
+    using gul::SlidingBufferExposed<ElementT, buffer_size, Container>::SlidingBufferExposed;
+    using typename gul::SlidingBufferExposed<ElementT, buffer_size, Container>::size_type;
+
+    auto debugdump(std::ostream& s) -> std::ostream&
+    {
+        auto const len = this->capacity();
+        for (size_type i{0}; i < len; ++i) {
+            s << this->storage_.at(i);
+            if (i == this->next_element_)
+                s << "* ";
+            else
+                s << "  ";
+        }
+        return s << '\n';
+    }
+};
+
 auto random_double() -> double
 {
     using bit_type = int64_t;
@@ -105,6 +156,11 @@ void do_dumping_tests(T& buff)
 {
     std::stringstream s1{ };
 
+    buff.debugdump(s1);
+    REQUIRE_THAT(s1.str(), Catch::Matchers::StartsWith(
+                "nan* nan  nan  nan  nan  nan  nan  nan  nan  nan",
+                Catch::CaseSensitive::No));
+
     for (auto i = 0; i < 15; ++i)
         buff.push_front({ static_cast<double>(i)*10 + static_cast<double>(i)/10, static_cast<unsigned int>(i) });
 
@@ -112,6 +168,10 @@ void do_dumping_tests(T& buff)
     s2 << buff;
     REQUIRE_THAT(gul::trim(s2.str()), Catch::Matchers::Matches(
                 "141.4  131.3  121.2  111.1  101  90.9  80.8  70.7  60.6  50.5"));
+    std::stringstream s3{ };
+    buff.debugdump(s3);
+    REQUIRE(gul::trim(s3.str()) ==
+                "101  111.1  121.2  131.3  141.4  50.5* 60.6  70.7  80.8  90.9");
 }
 
 TEST_CASE("SlidingBuffer test", "[sliding]")
@@ -128,10 +188,10 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
     }
     SECTION("dumping tests") {
         auto constexpr buffer_size = 10u;
-        auto buff_array = gul::SlidingBuffer<TestElement<double, unsigned int>, 10>{};
+        auto buff_array = SlidingBufferDebug<TestElement<double, unsigned int>, 10>{};
         do_dumping_tests(buff_array);
 
-        auto buff_vector = gul::SlidingBuffer<TestElement<double, unsigned int>, 0>{};
+        auto buff_vector = SlidingBufferDebug<TestElement<double, unsigned int>, 0>{};
         buff_vector.resize(buffer_size);
         do_dumping_tests(buff_vector);
     }
@@ -148,7 +208,7 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
         REQUIRE(buff4.capacity() == 12);
     }
     SECTION("iterator tests") {
-        auto buff1 = gul::SlidingBuffer<TestElement<double, unsigned int>>{ 10 };
+        auto buff1 = SlidingBufferDebug<TestElement<double, unsigned int>>{ 10 };
         do_dumping_tests(buff1); // fill with stuff
         auto it12 = buff1.begin();
         decltype(it12) it{ it12 }; // copy ctor
@@ -233,7 +293,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         //
         // Change size 5 -> 8 -> 11 -> 6 -> 5 -> 3
         // Change size 5 -> 4
-        auto buff = gul::SlidingBuffer<int, 0>{};
+        auto buff = SlidingBufferDebug<int, 0>{};
         buff.resize(5);
         buff.push_front(6);
         buff.push_front(6);
@@ -249,6 +309,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "9  10  6* 7  8");
         auto buffa = buff;
 
         buff.resize(5);
@@ -259,6 +322,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "9  10  6* 7  8");
 
         buff.resize(8);
         REQUIRE(buff.filled() == false);
@@ -268,6 +334,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "6  7  8  9  10  0* 0  0");
 
         buff.resize(11);
         REQUIRE(buff.filled() == false);
@@ -277,6 +346,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "6  7  8  9  10  0* 0  0  0  0  0");
         REQUIRE(*buff.begin() == 10);
 
         buff.resize(6);
@@ -287,6 +359,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "6  7  8  9  10  0*");
 
         buff.resize(5);
         REQUIRE(buff.filled() == true);
@@ -296,6 +371,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "6* 7  8  9  10");
 
         buffa.resize(4);
         REQUIRE(buffa.filled() == true);
@@ -305,6 +383,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buffa;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7"));
+        s.str("");
+        buffa.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "7* 8  9  10");
 
         buff.resize(3);
         REQUIRE(buff.filled() == true);
@@ -314,6 +395,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "8* 9  10");
 
         buff.resize(0);
         REQUIRE(buff.filled() == false);
@@ -334,7 +418,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 8 -> 13
         // [...]
         // Change size 8 -> 1
-        auto buff = gul::SlidingBuffer<int, 0>{};
+        auto buff = SlidingBufferDebug<int, 0>{};
         buff.resize(8);
         buff.push_front(2);
         buff.push_front(3);
@@ -356,6 +440,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "10  3* 4  5  6  7  8  9");
 
         auto buffa = buff;
 
@@ -367,6 +454,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");
 
         buff.resize(12);
         REQUIRE(buff.filled() == false);
@@ -376,6 +466,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");
 
         buff.resize(15);
         REQUIRE(buff.filled() == false);
@@ -385,6 +478,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0  0  0  0");
 
         buff = buffa;
         buff.resize(14);
@@ -392,84 +488,126 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0  0  0");
         buff = buffa;
         buff.resize(13);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0  0");
         buff = buffa;
         buff.resize(12);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");
         buff = buffa;
         buff.resize(11);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0");
         buff = buffa;
         buff.resize(10);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0");
         buff = buffa;
         buff.resize(9);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0*");
         buff = buffa;
         buff.resize(8); // no change
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "10  3* 4  5  6  7  8  9");
         buff = buffa;
         buff.resize(7);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "4* 5  6  7  8  9  10");
         buff = buffa;
         buff.resize(6);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "5* 6  7  8  9  10");
         buff = buffa;
         buff.resize(5);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "6* 7  8  9  10");
         buff = buffa;
         buff.resize(4);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "7* 8  9  10");
         buff = buffa;
         buff.resize(3);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "8* 9  10");
         buff = buffa;
         buff.resize(2);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "9* 10");
         buff = buffa;
         buff.resize(1);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "10*");
     }
     SECTION("filling pattern 3") {
         // Try a different filling pattern
@@ -479,7 +617,7 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         // Change size 8 -> 12
         // Change size 8 -> 5
         // Change size 8 -> 4
-        auto buff = gul::SlidingBuffer<int, 0>(8);
+        auto buff = SlidingBufferDebug<int, 0>(8);
         buff.push_front(3);
         buff.push_front(3);
         buff.push_front(3);
@@ -502,6 +640,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "4  5  6  7  8  9  10  3*");
 
         auto buffa = buff;
         buff.resize(12);
@@ -509,6 +650,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");
 
         buff = buffa;
         buff.resize(5);
@@ -516,6 +660,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "6* 7  8  9  10");
 
         buff = buffa;
         buff.resize(4);
@@ -523,6 +670,9 @@ TEST_CASE("SlidingBuffer resize", "[sliding]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7"));
+        s.str("");
+        buff.debugdump(s);
+        REQUIRE(gul::trim(s.str()) == "7* 8  9  10");
     }
 }
 
@@ -653,15 +803,15 @@ TEST_CASE("SlidingBufferExposed test", "[sliding]")
     }
     SECTION("dumping tests") {
         auto constexpr buffer_size = 10u;
-        auto buff_array = gul::SlidingBufferExposed<TestElement<double, unsigned int>, 10>{};
+        auto buff_array = SlidingBufferExposedDebug<TestElement<double, unsigned int>, 10>{};
         do_dumping_tests(buff_array);
 
-        auto buff_vector = gul::SlidingBufferExposed<TestElement<double, unsigned int>, 0>{};
+        auto buff_vector = SlidingBufferExposedDebug<TestElement<double, unsigned int>, 0>{};
         buff_vector.resize(buffer_size);
         do_dumping_tests(buff_vector);
     }
     SECTION("iterator tests") {
-        auto buff1 = gul::SlidingBufferExposed<TestElement<double, unsigned int>>{ 10 };
+        auto buff1 = SlidingBufferExposedDebug<TestElement<double, unsigned int>>{ 10 };
         do_dumping_tests(buff1); // fill with stuff
         auto it12 = buff1.begin();
         decltype(it12) it{ it12 }; // copy ctor
