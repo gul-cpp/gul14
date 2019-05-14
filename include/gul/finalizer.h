@@ -103,9 +103,18 @@ public:
  * \param f The lambda or function to be called on destruction.
  */
 template <typename F>
-FinalAction<F> finally(const F& f) noexcept
-{
+FinalAction<F> finally(const F& f) noexcept {
     return FinalAction<F>(f);
+}
+
+/**
+ * finally() - convenience function to generate a FinalAction
+ *
+ * \param f The lambda or function to be called on destruction.
+ */
+template <typename F>
+FinalAction<F> finally(F&& f) noexcept {
+    return FinalAction<F>(std::forward<F>(f));
 }
 
 } /* namespace gul */

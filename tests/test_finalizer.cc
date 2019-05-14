@@ -55,4 +55,22 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
 
 }
 
+// Some preparation for function use-case
+static auto global_foo{ 0 };
+
+static void helper() {
+    global_foo += 2;
+}
+
+TEST_CASE("Finalizer with function", "[finalizer]")
+{
+    SECTION("Basic block leave test") {
+        global_foo = 1;
+        {
+            auto _ = gul::finally(&helper);
+        }
+        REQUIRE(global_foo == 3);
+    }
+}
+
 // vi:et:sts=4:sw=4:ts=4
