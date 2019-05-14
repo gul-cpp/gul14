@@ -8,6 +8,7 @@ install_headers(
     'gul/cat.h',
     'gul/catch.h',
     'gul/escape.h',
+    'gul/finalizer.h',
     'gul/hexdump.h',
     'gul/join_split.h',
     'gul/num_util.h',

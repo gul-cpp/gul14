@@ -17,6 +17,7 @@ tests = [
     'test_backports.cc',
     'test_cat.cc',
     'test_escape.cc',
+    'test_finalizer.cc',
     'test_hexdump.cc',
     'test_join_split.cc',
     'test_main.cc',

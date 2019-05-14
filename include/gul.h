@@ -24,6 +24,7 @@
 
 #include "gul/cat.h"
 #include "gul/escape.h"
+#include "gul/finalizer.h"
 #include "gul/hexdump.h"
 #include "gul/join_split.h"
 #include "gul/num_util.h"
@@ -331,6 +332,9 @@ namespace gul {
  *
  * type_name():
  *     Generate a human readable string describing a type.
+ *
+ * finally():
+ *     Execute something when we leave the scope.
  *
  * <h3>Classes</h3>
  *
