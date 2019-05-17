@@ -22,11 +22,11 @@ else
 endif
 
 override_dh_auto_clean:
-	@ninja clean
+	@ninja @NINJA-ARGS@ clean
 
 override_dh_auto_build:
-	@ninja
+	@ninja @NINJA-ARGS@
 
 override_dh_auto_install:
-	@DESTDIR=${PWD}/debian/tmp ninja install
+	@DESTDIR=${PWD}/debian/tmp ninja @NINJA-ARGS@ install
 

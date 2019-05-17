@@ -26,6 +26,11 @@ if changelg_run.returncode() != 0
     error(changelg_run.stdout())
 endif
 
+# Find out if we run on ARM, and limit ninja if we do
+if build_machine.cpu_family() == 'arm' or build_machine.cpu_family() == 'aarch64'
+    deb_ninja_args = '-j 1'
+endif
+
 # Configure all the debian files
 deb_conf = configuration_data()
 deb_conf.set('PREFIX', get_option('prefix'))
@@ -39,6 +44,7 @@ deb_conf.set('CONFLICTS-DEV', '')
 deb_conf.set('VERSION', get_variable('git_version_num', libgul_api_version)
                         + get_variable('git_patch', ''))
 deb_conf.set('CONFIG_CHECKER', meson.build_root() + '/@0@'.format(config_checker))
+deb_conf.set('NINJA-ARGS', get_variable('deb_ninja_args', ''))
 
 # Mark a conflict, if we generate a non standard debian package
 # This is not a perfect, but at least some protection against
