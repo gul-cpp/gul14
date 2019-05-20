@@ -119,6 +119,24 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         }
         REQUIRE(global_foo == 3);
     }
+
+    SECTION("Basic block leave test") {
+         global_foo = 1;
+         {
+             // Lazy man's version, implicit conversion to function pointer
+             auto _ = gul::finally(helper);
+         }
+         REQUIRE(global_foo == 3);
+    }
+
+    SECTION("Basic block leave test") {
+        global_foo = 1;
+        {
+            // Use FinalAction directly
+            auto _ = gul::FinalAction<decltype(&helper)>(helper);
+        }
+        REQUIRE(global_foo == 3);
+    }
 }
 
 // vi:et:sts=4:sw=4:ts=4

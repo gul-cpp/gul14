@@ -147,7 +147,7 @@ public:
  * \param f    The closure or pointer to function to be called on destruction.
  */
 template <typename F>
-FinalAction<F> finally(const F& f) noexcept {
+std::enable_if_t<not std::is_function<F>::value, FinalAction<F>> finally(const F& f) noexcept {
     return FinalAction<F>(f);
 }
 
@@ -159,6 +159,16 @@ FinalAction<F> finally(const F& f) noexcept {
 template <typename F>
 std::enable_if_t<std::is_move_assignable<F>::value, FinalAction<F>> finally(F&& f) noexcept {
     return FinalAction<F>(std::forward<F>(f));
+}
+
+/**
+ * \overload
+ *
+ * Variant for \b f that are functions.
+ */
+template <typename F>
+std::enable_if_t<std::is_function<F>::value, FinalAction<F&>> finally(const F& f) noexcept {
+    return FinalAction<F&>(f);
 }
 
 } /* namespace gul */
