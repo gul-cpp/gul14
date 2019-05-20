@@ -10,6 +10,7 @@ endif
 ifeq "$(shell uname -s)" "Darwin"
 MESON_EXTRA_ARGS += -D 'cpp_args=-arch i386 -arch x86_64'
 MESON_EXTRA_ARGS += -D 'cpp_link_args=-arch i386 -arch x86_64'
+PREFIX ?= /local
 endif
 
 BUILDTYPE = release
@@ -65,7 +66,7 @@ debug: build/$(ARCH)/debug/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	ninja $(NINJA_ARGS) -C build/$(ARCH)/debug
 
-doc:	$(BUILDDIR)/build.ninja
+doc: $(BUILDDIR)/build.ninja
 	@echo $(INTRO) $@ $(OUTRO)
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) data/docs
 
@@ -101,7 +102,7 @@ build/$(ARCH)/debug/build.ninja:
 
 build/$(ARCH)/doocs-release/build.ninja:
 	@echo $(INTRO) $@ $(OUTRO)
-	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=/export/doocs \
+	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=$(PREFIX) \
 	      --libdir=lib --includedir=lib/include -D deb-vers-tag='DOOCSVERSION_' \
 	      -D deb-vers-pack=true -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@ \
 	      $(MESON_EXTRA_ARGS)
