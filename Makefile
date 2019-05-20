@@ -28,8 +28,8 @@ DOOCS_PATHS = --libdir 'lib' --includedir 'lib/include'
 JUNIT_XML_FILE ?= $(BUILDDIR)/test.xml
 
 # Colorful toys
-INTRO = "\033[1;34m------------"
-OUTRO = "------------\033[0m"
+INTRO = \033[1;34m------------
+OUTRO = ------------\033[0m
 
 
 help:
@@ -56,63 +56,63 @@ help:
 
 # Needed for NetBeans IDE
 build-tests:
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 
 clean: $(BUILDDIR)/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) clean
 
 debug: build/$(ARCH)/debug/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C build/$(ARCH)/debug
 
 doc: $(BUILDDIR)/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) data/docs
 
 doocs-release: build/$(ARCH)/doocs-release/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C build/$(ARCH)/doocs-release
 
 localinstall: $(LOCALINSTDIR)/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C $(LOCALINSTDIR) install
 
 mrproper:
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	rm -rf build
 
 release: build/$(ARCH)/release/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C build/$(ARCH)/release
 
 test: $(BUILDDIR)/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) test
 
 test-junit: $(BUILDDIR)/build.ninja
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	ninja $(NINJA_ARGS) -C $(BUILDDIR) tests/libgul-test
 	@$(BUILDDIR)/tests/libgul-test -r junit >$(JUNIT_XML_FILE)
 	@echo Test results in JUnit format written to $(JUNIT_XML_FILE)
 
 build/$(ARCH)/debug/build.ninja:
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	meson build/$(ARCH)/debug --buildtype=debug $(MESON_EXTRA_ARGS)
 
 build/$(ARCH)/doocs-release/build.ninja:
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=$(PREFIX) \
 	      --libdir=lib --includedir=lib/include -D deb-vers-tag='DOOCSVERSION_' \
 	      -D deb-vers-pack=true -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@ \
 	      $(MESON_EXTRA_ARGS)
 
 build/$(ARCH)/release/build.ninja:
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	meson build/$(ARCH)/release --buildtype=release $(MESON_EXTRA_ARGS)
 
 $(LOCALINSTDIR)/build.ninja:
-	@echo $(INTRO) $@ $(OUTRO)
+	@printf "$(INTRO) $@ $(OUTRO)\n"
 	meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
               --buildtype=release ${LOCALINSTDIR} $(MESON_EXTRA_ARGS)
 
