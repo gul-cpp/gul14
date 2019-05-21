@@ -25,8 +25,15 @@
 namespace gul {
 
 /**
- * FinalAction allows use to execute something if we leave the scope.
- * (implementation is quite similar to what the Guideline-Support-Library)
+ * FinalAction allows us to execute something if the FinalAction object leaves the scope.
+ *
+ * A FinalAction can be used to add RAII like behavior for non RAII object or to do
+ * timing measurements.
+ *
+ * To generate this object you can use the function \ref finally, that leverages
+ * template argument deduction of the action's type. This simplifies instantiation a lot.
+ *
+ * (Implementation is quite similar to what's in the Guideline-Support-Library.)
  *
  * A good example is time measurement:
  * \code
@@ -52,6 +59,27 @@ namespace gul {
  *      cout << "Normal exit\n";
  *  }
  * \endcode
+ *
+ * A (bad; use containers instead) example is allocation with RAII:
+ * \code
+ *  #include <string>
+ *  #include <new>
+ *
+ *  std::string bar(float some_float) {
+ *      char* buffer = new char[100];
+ *      if (buffer == nullptr)
+ *          return;
+ *      auto _ = gul::finally([&] { delete[] buffer; buffer = nullptr; });
+ *
+ *      // do stuff that might throw here
+ *
+ *      snprintf(buffer, 100, "%.1f", some_float);
+ *      return { buffer };
+ *      // get rid of buffer automagically
+ *  }
+ * \endcode
+ *
+ * \tparam F The type of the closure/function to be called.
  */
 template <typename F>
 class FinalAction
@@ -63,7 +91,14 @@ public:
     /**
      * Creates a new FinalAction object
      *
-     * \param f The lambda or function to be called on destruction.
+     * It takes any callable as action to be called when the FinalAction destructs
+     * (lifetime ends / leaves the scope).
+     *
+     * The template parameter \b F has to be specified; this can be avoided by using
+     * the convenience function \ref finally.
+     *
+     * \tparam F The type of the closure/function to be called.
+     * \param f The closure or function to be called on destruction.
      */
     explicit FinalAction(F f) noexcept
         : action_(std::move(f))
@@ -87,10 +122,12 @@ public:
         return *this;
     }
 
-    FinalAction() = delete;
-    FinalAction(const FinalAction&) = delete;
-    FinalAction& operator=(const FinalAction&) = delete;
+    FinalAction() = delete; ///< FinalAction is not is_default_constructible
+    FinalAction(const FinalAction&) = delete; ///< FinalAction is not copyable
+    FinalAction& operator=(const FinalAction&) = delete; ///< FinalAction is not copyable
 
+    /// Destructor
+    /// Calls \b action except when in move contexts.
     ~FinalAction() noexcept {
         if (invoke_)
             action_();
@@ -100,7 +137,11 @@ public:
 /**
  * finally() - convenience function to generate a FinalAction
  *
- * \param f The lambda or function to be called on destruction.
+ * A FinalAction can be used to add RAII like behavior for non RAII object or to do
+ * timing measurements. More information given in the FinalAction documentation.
+ *
+ * \tparam F   The type of the closure/function to be called (normally autodeduced).
+ * \param f    The closure or pointer to function to be called on destruction.
  */
 template <typename F>
 FinalAction<F> finally(const F& f) noexcept {
@@ -108,9 +149,9 @@ FinalAction<F> finally(const F& f) noexcept {
 }
 
 /**
- * finally() - convenience function to generate a FinalAction
+ * \overload
  *
- * \param f The lambda or function to be called on destruction.
+ * Variant for \b f that can be "moved", i.e. xvalues like temporaries.
  */
 template <typename F>
 FinalAction<F> finally(F&& f) noexcept {
@@ -119,4 +160,4 @@ FinalAction<F> finally(F&& f) noexcept {
 
 } /* namespace gul */
 
-/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+// vi:et:sts=4:sw=4:ts=4

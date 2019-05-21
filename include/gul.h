@@ -62,6 +62,7 @@ namespace gul {
  *  - \ref debugging_utilities
  *  - \ref numeric_utilities
  *  - \ref container_utilities
+ *  - \ref GSL_utilities
  *  - \ref backports of standard library features that are not yet available on common
  *    compilers
  *
@@ -320,6 +321,22 @@ namespace gul {
  */
 
 /**
+ * \page GSL_utilities GSL excerpts
+ *
+ * Excerpts of the Guidelines Support Library which contains functions and types
+ * that are suggested by the
+ * [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines).
+ *
+ * Some items of the [GSL](https://github.com/Microsoft/GSL) useful enough that
+ * GUL provides equivalent solutions. Most frequent use-cases can then be solved
+ * without actually including the proper GSL.
+ * Note that the implementation can differ from the same-named entities in GSL.
+ *
+ * finally() & \ref gul::FinalAction "FinalAction":
+ *     Execute something when we leave the scope.
+ */
+
+/**
  * \page debugging_utilities Debugging Utilities
  *
  * The General Utility Library provides some utilities that are mainly, but not
@@ -333,7 +350,7 @@ namespace gul {
  * type_name():
  *     Generate a human readable string describing a type.
  *
- * finally():
+ * finally() & \ref gul::FinalAction "FinalAction":
  *     Execute something when we leave the scope.
  *
  * <h3>Classes</h3>
