@@ -154,10 +154,11 @@ std::enable_if_t<not std::is_function<F>::value, FinalAction<F>> finally(const F
 /**
  * \overload
  *
- * Variant for \b f that can be "moved", i.e. xvalues like temporaries.
+ * Variant for \b f that can be "moved", i.e. rvalue reference like temporaries.
  */
 template <typename F>
-std::enable_if_t<std::is_move_assignable<F>::value, FinalAction<F>> finally(F&& f) noexcept {
+std::enable_if_t<not std::is_lvalue_reference<F>::value, FinalAction<F>> finally(F&& f) noexcept {
+    // Restrict universal reference to rvalues references.
     return FinalAction<F>(std::forward<F>(f));
 }
 
