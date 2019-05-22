@@ -19,24 +19,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <new>
-#include <string>
-#include "catch.h"
 
 #include <gul/finalizer.h>
 
+#include <new>
+#include <functional>
+#include <string>
+
+#include "catch.h"
+
 TEST_CASE("Finalizer Tests", "[finalizer]")
 {
-    SECTION("Basic block leave test 1") {
+    SECTION("Closure as temporary") {
         int foo = 1;
         {
-            // closure as temporary
             auto _ = gul::finally([&] { foo += 2; });
         }
         REQUIRE(foo == 3);
     }
 
-    SECTION("Basic block leave test 2") {
+    SECTION("Closure as lvalue") {
         int foo = 1;
         {
             // materialized and copied
@@ -48,7 +50,26 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
         REQUIRE(foo == 3);
     }
 
-    SECTION("Basic block leave test 3") {
+    SECTION("Closure as lvalue 2") {
+        // Same test as before, but we want to check if the closure is really copied
+        // by the code we use, so we need an closure internal memory ('called')
+        int foo = 1;
+        {
+            // materialized and copied
+            auto xxx = [&foo, called = 0]() mutable { foo += 2; ++called; return called; };
+            REQUIRE(xxx() == 1);
+            foo = 1;
+            {
+                auto yyy{ xxx };
+                auto _ = gul::finally(yyy);
+            }
+            REQUIRE(foo == 3);
+            REQUIRE(xxx() == 2);
+        }
+        REQUIRE(foo == 5);
+    }
+
+    SECTION("Direct closure as lvalue") {
         int foo = 1;
         {
             // Use FinalAction directly
@@ -60,7 +81,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
         REQUIRE(foo == 3);
     }
 
-    SECTION("Basic block leave on exception") {
+    SECTION("Call on exception") {
         int foo = 1;
         try {
             auto _ = gul::finally([&] { foo += 2; });
@@ -101,6 +122,23 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
 
     }
 
+    SECTION("Closure move") {
+        int foo = 1;
+        {
+            auto _1 = gul::finally([&]() { foo += 2; });
+            {
+                auto _2 = std::move(_1);
+                REQUIRE(foo == 1);
+            }
+            CHECK(foo == 3);
+            {
+                auto _2 = std::move(_1);
+                REQUIRE(foo == 3);
+            }
+            REQUIRE(foo == 3);
+        }
+        REQUIRE(foo == 3);
+    }
 }
 
 // Some preparation for function use-case
@@ -110,9 +148,13 @@ static void helper() {
     global_foo += 2;
 }
 
+static void helper2(int& foo) {
+    foo += 2;
+}
+
 TEST_CASE("Finalizer with function", "[finalizer]")
 {
-    SECTION("Basic block leave test") {
+    SECTION("Function pointer temporary") {
         global_foo = 1;
         {
             auto _ = gul::finally(&helper);
@@ -120,7 +162,16 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         REQUIRE(global_foo == 3);
     }
 
-    SECTION("Basic block leave test") {
+    SECTION("Function pointer lvalue") {
+        global_foo = 1;
+        {
+            auto x = &helper;
+            auto _ = gul::finally(x);
+        }
+        REQUIRE(global_foo == 3);
+    }
+
+    SECTION("Function decays to function pointer temporary") {
          global_foo = 1;
          {
              // Lazy man's version, implicit conversion to function pointer
@@ -129,13 +180,41 @@ TEST_CASE("Finalizer with function", "[finalizer]")
          REQUIRE(global_foo == 3);
     }
 
-    SECTION("Basic block leave test") {
+    SECTION("Direct function pointer temporary") {
         global_foo = 1;
         {
             // Use FinalAction directly
             auto _ = gul::FinalAction<decltype(&helper)>(helper);
         }
         REQUIRE(global_foo == 3);
+    }
+
+    SECTION("Direct function pointer lvalue") {
+        global_foo = 1;
+        {
+            // Use FinalAction directly
+            auto x = &helper;
+            auto _ = gul::FinalAction<decltype(x)>(helper);
+        }
+        REQUIRE(global_foo == 3);
+    }
+
+    SECTION("Direct function decays to function pointer temporary") {
+        global_foo = 1;
+        {
+            // Use FinalAction directly
+            auto _ = gul::FinalAction<decltype(&helper)>(helper);
+        }
+        REQUIRE(global_foo == 3);
+    }
+
+    SECTION("finally with std::bind") {
+        int foo = 1;
+        {
+            auto _ = gul::finally(std::bind(&helper2, std::ref(foo)));
+            CHECK(foo == 1);
+        }
+        CHECK(foo == 3);
     }
 }
 
