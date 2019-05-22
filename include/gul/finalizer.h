@@ -147,16 +147,6 @@ public:
  * \param f    The closure or pointer to function to be called on destruction.
  */
 template <typename F>
-std::enable_if_t<not std::is_function<F>::value, FinalAction<F>> finally(const F& f) noexcept {
-    return FinalAction<F>(f);
-}
-
-/**
- * \overload
- *
- * Variant for \b f that can be "moved", i.e. rvalue reference like temporaries.
- */
-template <typename F>
 std::enable_if_t<not std::is_lvalue_reference<F>::value, FinalAction<F>> finally(F&& f) noexcept {
     // Restrict universal reference to rvalues references.
     return FinalAction<F>(std::forward<F>(f));
@@ -165,11 +155,14 @@ std::enable_if_t<not std::is_lvalue_reference<F>::value, FinalAction<F>> finally
 /**
  * \overload
  *
- * Variant for \b f that are functions.
+ * Variant for some rare \b f that can not be "moved", i.e.
+ * - \b f is a function
+ * - \b f is a function-reference lvalue
+ * - \b f is a closure lvalue
  */
 template <typename F>
-std::enable_if_t<std::is_function<F>::value, FinalAction<F&>> finally(const F& f) noexcept {
-    return FinalAction<F&>(f);
+FinalAction<typename std::decay_t<F>> finally(const F& f) noexcept {
+    return FinalAction<typename std::decay_t<F>>(f);
 }
 
 } /* namespace gul */
