@@ -22,6 +22,9 @@
 
 #pragma once
 
+#include <type_traits>
+#include <utility>
+
 namespace gul {
 
 /**
@@ -154,7 +157,7 @@ FinalAction<F> finally(const F& f) noexcept {
  * Variant for \b f that can be "moved", i.e. xvalues like temporaries.
  */
 template <typename F>
-FinalAction<F> finally(F&& f) noexcept {
+std::enable_if_t<std::is_move_assignable<F>::value, FinalAction<F>> finally(F&& f) noexcept {
     return FinalAction<F>(std::forward<F>(f));
 }
 

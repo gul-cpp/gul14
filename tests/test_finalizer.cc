@@ -19,16 +19,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <new>
+#include <string>
 #include "catch.h"
 
 #include <gul/finalizer.h>
 
 TEST_CASE("Finalizer Tests", "[finalizer]")
 {
-    SECTION("Basic block leave test") {
+    SECTION("Basic block leave test 1") {
         int foo = 1;
         {
+            // closure as temporary
             auto _ = gul::finally([&] { foo += 2; });
+        }
+        REQUIRE(foo == 3);
+    }
+
+    SECTION("Basic block leave test 2") {
+        int foo = 1;
+        {
+            // materialized and copied
+            auto xxx = [&] { foo += 2; };
+            auto yyy { xxx };
+
+            auto _ = gul::finally(yyy);
+        }
+        REQUIRE(foo == 3);
+    }
+
+    SECTION("Basic block leave test 3") {
+        int foo = 1;
+        {
+            // Use FinalAction directly
+            auto xxx = [&] { foo += 2; };
+            auto yyy { xxx };
+
+            auto _ = gul::FinalAction<decltype(yyy)>(yyy);
         }
         REQUIRE(foo == 3);
     }
@@ -48,9 +75,30 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
         int foo = 1;
         {
             auto a = gul::finally([&] { foo += 2; });
-            auto b = std::move(a);
+            auto b = std::move(a); // must be movable
         }
         REQUIRE(foo == 3);
+    }
+
+    SECTION("String filling example") {
+        std::string some_string {};
+        char* buffer = nullptr;
+        float some_float = 123.45;
+        do {
+            buffer = new char[100];
+            if (buffer == nullptr)
+                break;
+            auto _ = gul::finally([&] { delete[] buffer; buffer = nullptr; });
+
+            snprintf(buffer, 100, "%.1f", some_float);
+            some_string = buffer;
+            // get rid of buffer automagically
+        }
+        while (false);
+
+        REQUIRE(some_string == "123.4");
+        REQUIRE(buffer == nullptr);
+
     }
 
 }
