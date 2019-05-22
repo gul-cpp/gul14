@@ -15,6 +15,8 @@ HEADERLIST=`find ../include -type f -print | grep -v '/string_view.h$' | sed 's/
 
 echo clang-tidy $@
 
-clang-tidy '-checks=bugprone*,cppcore*,readability*,performance*,modernize*,misc*,clang-analyzer*,-clang-analyzer-alpha.core.CastToStruct' \
+clang-tidy \
+	-config="{Checks: 'bugprone*,cppcore*,readability*,performance*,modernize*,misc*,clang-analyzer*,-clang-analyzer-alpha.core.CastToStruct', \
+	CheckOptions: [{ key: readability-braces-around-statements.ShortStatementLines, value: '3' }]}" \
 	'-header-filter=.*' -line-filter=[${HEADERLIST}] $@ \
 	-- -I../include  -I../include/gul -std=c++14
