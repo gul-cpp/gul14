@@ -343,7 +343,7 @@ namespace gul {
  */
 
 /**
- * \page GSL_utilities GSL excerpts
+ * \page GSL_utilities GSL Excerpts
  *
  * Excerpts of the Guidelines Support Library which contains functions and types
  * that are suggested by the
@@ -382,7 +382,7 @@ namespace gul {
  */
 
 /**
- * \page container_utilities Useful containers
+ * \page container_utilities Containers
  *
  * The General Utility Library provides some additional containers.
  *
@@ -390,7 +390,8 @@ namespace gul {
  *     A container to use as sliding window on a data stream
  *
  * SlidingBufferExposed:
- *     A container to use as sliding window on a data stream with the underlying container exposed
+ *     A container to use as sliding window on a data stream with the underlying container
+ *     exposed
  */
 
 } // namespace gul
