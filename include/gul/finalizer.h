@@ -38,28 +38,26 @@ namespace gul {
  *
  * (Implementation is quite similar to what's in the Guideline-Support-Library.)
  *
- * A good example is time measurement:
+ * A good example is function call duration measurement. The FinalAction just needs to
+ * be created in the beginning of a function and no hassle with diverse possible return
+ * points.
  * \code
- *  #include <chrono>
- *  #include <iostream>
- *
- *  using namespace std::chrono;
+ *  #include <cstdlib>
+ *  #include <ctime>
+ *  #include <gul/time_util.h>
  *
  *  void foo() {
- *
- *      const auto start = system_clock::now();
- *      const auto _ = finally([start] {
- *          cerr << "function took "
- *               << duration_cast<milliseconds>(system_clock::now() - start).count()
- *               << "ms\n";
+ *      auto _ = gul::finally([start = gul::tic()] {
+ *          std::cerr << "Function foo() took " << gul::toc(start) << "s.\n";
  *      });
  *
- *      if (rand() % 2) {
- *          sleep(10);
- *          cout << "Delayed exit\n";
+ *      std::srand(std::time(nullptr));
+ *      if (std::rand() % 2) {
+ *          std::cout << "Premature exit\n";
  *          return;
  *      }
- *      cout << "Normal exit\n";
+ *      gul::sleep(10); // do important stuff (like sleeping)
+ *      std::cout << "Normal exit\n";
  *  }
  * \endcode
  *
