@@ -24,6 +24,7 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 #include "gul/string_view.h"
 
 namespace gul {
@@ -100,12 +101,10 @@ std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2,
 std::string cat(std::initializer_list<ConvertingStringView> pieces);
 
 /// \see cat()
-template <typename... Args>
-inline std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2,
-                       const ConvertingStringView& s3, const ConvertingStringView& s4,
-                       const Args&... args)
+template <typename... Args, typename = std::enable_if<(sizeof...(Args) > 3)>>
+inline std::string cat(const Args&... args)
 {
-    return cat({s1, s2, s3, s4, args...});
+    return cat({ args... });
 }
 
 } // namespace gul
