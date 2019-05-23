@@ -87,22 +87,22 @@ private:
 inline std::string cat() { return std::string(); }
 
 /// \see cat()
-inline std::string cat(ConvertingStringView s) { return std::string(s); }
+inline std::string cat(const ConvertingStringView& s) { return std::string(s); }
 
 /// \see cat()
-std::string cat(ConvertingStringView s1, ConvertingStringView s2);
+std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2);
 
 /// \see cat()
-std::string cat(ConvertingStringView s1, ConvertingStringView s2,
-                ConvertingStringView s3);
+std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2,
+                const ConvertingStringView& s3);
 
 /// \see cat()
 std::string cat(std::initializer_list<ConvertingStringView> pieces);
 
 /// \see cat()
 template <typename... Args>
-inline std::string cat(ConvertingStringView s1, ConvertingStringView s2,
-                       ConvertingStringView s3, ConvertingStringView s4,
+inline std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2,
+                       const ConvertingStringView& s3, const ConvertingStringView& s4,
                        const Args&... args)
 {
     return cat({s1, s2, s3, s4, args...});

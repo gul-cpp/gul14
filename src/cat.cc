@@ -25,7 +25,7 @@
 namespace gul {
 
 
-std::string cat(ConvertingStringView s1, ConvertingStringView s2)
+std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2)
 {
     std::string str;
     str.reserve(s1.length() + s2.length());
@@ -34,7 +34,7 @@ std::string cat(ConvertingStringView s1, ConvertingStringView s2)
     return str;
 }
 
-std::string cat(ConvertingStringView s1, ConvertingStringView s2, ConvertingStringView s3)
+std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2, const ConvertingStringView& s3)
 {
     std::string str;
     str.reserve(s1.length() + s2.length() + s3.length());
