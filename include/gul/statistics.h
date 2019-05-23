@@ -377,7 +377,7 @@ template <typename ContainerT,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
 auto remove_outliers(ContainerT&& cont, std::size_t outliers,
-        Accessor accessor = ElementAccessor<ElementT>()) -> ContainerT
+        Accessor accessor = ElementAccessor<ElementT>()) -> ContainerT&
 {
     while (outliers-- > 0 and cont.size() > 0) {
         auto max_distant = std::max_element(cont.begin(), cont.end(),
