@@ -84,8 +84,30 @@ namespace gul {
  * GUL requires at least C++14. All utility functions and classes are enclosed in the
  * namespace \ref gul.
  *
- * \authors \ref contributors
- * \copyright \ref copyright_notice
+ * \section behind_the_scenes Behind the Scenes
+ *
+ * \version
+ * \ref release_notes
+ *
+ * \authors
+ * \ref contributors
+ *
+ * \copyright
+ * \ref copyright_notice
+ */
+
+/**
+ * \page release_notes Release Notes
+ *
+ * \section changelog_1_x 1.x Versions
+ *
+ * \subsection v1_1 Version 1.1
+ *
+ * - Add \ref FinalAction and \ref finally
+ *
+ * \subsection v1_0 Version 1.0
+ * - *Released with DOOCS 19.5.0*
+ * - First release version of GUL
  */
 
 /**
