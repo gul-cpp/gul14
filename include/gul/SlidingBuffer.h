@@ -167,11 +167,11 @@ public:
     /// Default copy constructor.
     SlidingBuffer(SlidingBuffer const&) = default;
     /// Default move constructor.
-    SlidingBuffer(SlidingBuffer&&) = default;
+    SlidingBuffer(SlidingBuffer&&) noexcept = default;
     /// Default copy assignment operator.
     SlidingBuffer& operator=(SlidingBuffer const&) = default;
     /// Default move assignment operator.
-    SlidingBuffer& operator=(SlidingBuffer &&) = default;
+    SlidingBuffer& operator=(SlidingBuffer &&) noexcept = default;
     /// Default Destructor.
     virtual ~SlidingBuffer() = default;
 
@@ -245,10 +245,9 @@ public:
      */
     auto operator[](const size_type idx) -> reference
     {
-        if (next_element_ <= idx)
-            return storage_[next_element_ - idx - 1 + capacity()];
-        else
-            return storage_[next_element_ - idx - 1];
+        return (next_element_ <= idx) ?
+            storage_[next_element_ - idx - 1 + capacity()] :
+            storage_[next_element_ - idx - 1];
     }
 
     /**
@@ -256,10 +255,9 @@ public:
      */
     auto operator[](const size_type idx) const -> const_reference
     {
-        if (next_element_ <= idx)
-            return storage_[next_element_ - idx - 1 + capacity()];
-        else
-            return storage_[next_element_ - idx - 1];
+        return (next_element_ <= idx) ?
+            storage_[next_element_ - idx - 1 + capacity()] :
+            storage_[next_element_ - idx - 1];
     }
 
     /**
@@ -356,7 +354,7 @@ public:
      */
     auto constexpr capacity() const noexcept -> size_type
     {
-        return buffer_size ? buffer_size : storage_.size();
+        return (buffer_size > 0) ? buffer_size : storage_.size();
     }
 
     /**
@@ -536,11 +534,11 @@ public:
         /// Default copy constructor.
         SlidingBufferIterator(SlidingBufferIterator const&) = default;
         /// Default move constructor.
-        SlidingBufferIterator(SlidingBufferIterator&&) = default;
+        SlidingBufferIterator(SlidingBufferIterator&&) noexcept = default;
         /// Default copy assignment operator.
         SlidingBufferIterator& operator=(SlidingBufferIterator const&) = default;
         /// Default move assignment operator.
-        SlidingBufferIterator& operator=(SlidingBufferIterator &&) = default;
+        SlidingBufferIterator& operator=(SlidingBufferIterator &&) noexcept = default;
         /// Default Destructor.
         virtual ~SlidingBufferIterator() = default;
 

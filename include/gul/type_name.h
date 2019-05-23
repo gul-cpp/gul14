@@ -72,7 +72,7 @@ namespace {
  */
 constexpr std::size_t constexpr_strlen(const char* str)
 {
-    return *str ? 1 + constexpr_strlen(str + 1) : 0;
+    return (*str != '\0') ? 1 + constexpr_strlen(str + 1) : 0;
 }
 
 /**

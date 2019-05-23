@@ -100,17 +100,19 @@ bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(fal
 template<typename NumT>
 bool within_abs(NumT a, NumT b, NumT tol) noexcept {
     tol = gul::abs(tol); // Negative diff does not make sense
+    bool ret{};
     if (a > b) {
         if (std::is_floating_point<NumT>::value)
-            return a - tol <= b; // different formula needed because of inf/-inf and subnormal values
+            ret = a - tol <= b; // different formula needed because of inf/-inf and subnormal values
         else
-            return a - b <= tol;
+            ret = a - b <= tol;
     } else {
         if (std::is_floating_point<NumT>::value)
-            return b - tol <= a;
+            ret = b - tol <= a;
         else
-            return b - a <= tol;
+            ret = b - a <= tol;
     }
+    return ret;
 }
 
 /**
