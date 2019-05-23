@@ -1,10 +1,12 @@
 # Select which files are to be installed together with the library
 
-install_headers(
-    'gul.h'
-)
+libgul_main_header = files([
+    'gul.h',
+])
 
-install_headers(
+install_headers(libgul_main_header)
+
+libgul_sub_headers = files([
     'gul/cat.h',
     'gul/catch.h',
     'gul/escape.h',
@@ -24,6 +26,10 @@ install_headers(
     'gul/trim.h',
     'gul/type_name.h',
     'gul/version.h',
+])
+
+install_headers(
+    libgul_sub_headers,
     subdir : 'gul'
 )
 

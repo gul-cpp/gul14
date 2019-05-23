@@ -1,6 +1,6 @@
 # Process all the source files of the library
 
-libgul_src = [
+libgul_src = files([
     'cat.cc',
     'escape.cc',
     'join_split.cc',
@@ -9,7 +9,7 @@ libgul_src = [
     'tokenize.cc',
     'Trigger.cc',
     'trim.cc',
-]
+])
 
 inc += include_directories('.')
 
