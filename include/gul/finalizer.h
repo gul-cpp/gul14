@@ -106,8 +106,8 @@ public:
     {}
     /// Move constructor
     FinalAction(FinalAction&& other) noexcept
-        : action_(std::move(other.action_))
-        , invoke_(other.invoke_)
+        : action_{ std::move(other.action_) }
+        , invoke_{ other.invoke_ }
     {
         // don't call callback on moved from FinalAction
         other.invoke_ = false;
@@ -115,8 +115,8 @@ public:
     /// Move assignment operator
     FinalAction& operator=(FinalAction&& other) noexcept {
         if (this != &other) {
-            this->action_(std::move(other.action_));
-            this->invoke_ = other.invoke_;
+            this->action_ = std::move(other.action_);
+            this->invoke_ = std::move(other.invoke_);
             // don't call callback on moved from FinalAction
             other.invoke_ = false;
         }

@@ -92,15 +92,6 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
         REQUIRE(foo == 4);
     }
 
-    SECTION("Assignment operator test") {
-        int foo = 1;
-        {
-            auto a = gul::finally([&] { foo += 2; });
-            auto b = std::move(a); // must be movable
-        }
-        REQUIRE(foo == 3);
-    }
-
     SECTION("String filling example") {
         std::string some_string {};
         char* buffer = nullptr;
@@ -167,6 +158,21 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         {
             auto x = &helper;
             auto _ = gul::finally(x);
+        }
+        REQUIRE(global_foo == 3);
+    }
+
+    SECTION("Assignment operator test") {
+        global_foo = 1;
+        {
+            auto x = &helper;
+            auto a = gul::finally(x);
+            {
+                auto b = gul::finally(x);
+                b = std::move(a);
+                REQUIRE(global_foo == 1);
+            }
+            REQUIRE(global_foo == 3);
         }
         REQUIRE(global_foo == 3);
     }
