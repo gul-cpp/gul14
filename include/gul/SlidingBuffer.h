@@ -379,8 +379,9 @@ public:
     {
         full_ = false;
         next_element_ = 0u;
+
         // Fill with new empty elements to possibly trigger RAII in the elements
-        storage_.fill(value_type{});
+        std::fill(storage_.begin(), storage_.end(), value_type{});
     }
 
     /**

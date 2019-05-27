@@ -676,7 +676,8 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
     }
 }
 
-TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at()", "[SlidingBuffer]")
+TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at() on array-based buffer",
+          "[SlidingBuffer]")
 {
     gul::SlidingBuffer<double, 2> buf;
 
@@ -710,6 +711,22 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at()", "[Slidi
     buf.clear();
     REQUIRE(buf.empty());
     REQUIRE(buf.size() == 0);
+}
+
+TEST_CASE("SlidingBuffer: empty(), clear() on vector-based buffer", "[SlidingBuffer]")
+{
+    const gul::SlidingBuffer<int> buf;
+    REQUIRE(buf.empty()); // can be called in a const context
+
+    gul::SlidingBuffer<int> buf2;
+    buf2.resize(2);
+    REQUIRE(buf2.empty());
+
+    buf2.push_front(1);
+    REQUIRE(!buf2.empty());
+
+    buf2.clear();
+    REQUIRE(buf2.empty());
 }
 
 TEST_CASE("SlidingBuffer copying and moving", "[SlidingBuffer]")
@@ -847,21 +864,6 @@ TEST_CASE("SlidingBufferExposed test", "[SlidingBuffer]")
         REQUIRE(i == 10);
         REQUIRE(index_data == iterator2_data);
     }
-}
-
-TEST_CASE("SlidingBuffer: empty()", "[SlidingBuffer]")
-{
-    const gul::SlidingBuffer<int> buf;
-    REQUIRE(buf.empty()); // can be called in a const context
-
-    gul::SlidingBuffer<int> buf2;
-    REQUIRE(buf2.empty());
-
-    buf2.push_front(1);
-    REQUIRE(!buf2.empty());
-
-    buf2.clear();
-    REQUIRE(buf2.empty());
 }
 
 // vi:ts=4:sw=4:sts=4:et
