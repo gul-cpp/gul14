@@ -159,9 +159,9 @@ public:
      * with that (unchangeable) capacity is created.
      *
      * If the template argument is zero, a SlidingBuffer based on std::vector with a
-     * capacity of zero elements is generated. Use the \ref SlidingBuffer(int) constructor
-     * or call the resize() function afterwards to get a SlidingBuffer based on
-     * std::vector with nonzero capacity.
+     * capacity of zero elements is generated. Use the \ref SlidingBuffer(size_type)
+     * constructor or call the resize() function afterwards to get a SlidingBuffer
+     * based on std::vector with nonzero capacity.
      */
     SlidingBuffer() = default;
     /// Default copy constructor.
