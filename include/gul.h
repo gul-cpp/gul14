@@ -117,8 +117,7 @@ namespace gul {
  *
  * The following individuals contributed to the General Utility Library:
  *
- * > Lars Fröhlich, Sören Grunewald, Olaf Hensler, Fini Jastrow, Tobias Tempel,
- * > Josef Wilgen
+ * > Lars Fröhlich, Sören Grunewald, Olaf Hensler, Fini Jastrow, Josef Wilgen
  *
  * Additional code distributed with this library was written by authors listed under
  * \ref additional_copyright_notices below.
@@ -387,11 +386,11 @@ namespace gul {
  * The General Utility Library provides some additional containers.
  *
  * SlidingBuffer:
- *     A container to use as sliding window on a data stream
+ *     A container to use as sliding window on a data stream.
  *
  * SlidingBufferExposed:
  *     A container to use as sliding window on a data stream with the underlying container
- *     exposed
+ *     exposed.
  */
 
 } // namespace gul
