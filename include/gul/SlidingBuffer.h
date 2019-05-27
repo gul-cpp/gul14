@@ -151,17 +151,16 @@ public:
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     /**
-     * Constructs a new sliding buffer.
+     * Construct an empty sliding buffer.
      *
-     * The buffer is initially empty.
-     * The capacity is given by the buffer_size template parameter.
-     *
-     * If that template argument is not zero a std::array based SlidingBuffer
+     * The capacity of the buffer is given by the buffer_size template parameter.
+     * If that template argument is not zero, a std::array based SlidingBuffer
      * with that (unchangeable) capacity is created.
      *
-     * If it is zero a std::vector based SlidingBuffer is generated with a capacity
-     * that is zero elements. Use the other constructor or resize() afterwards to
-     * get a std::vector bases SlidingBuffer with capacity.
+     * If the template argument is zero, a SlidingBuffer based on std::vector with a
+     * capacity of zero elements is generated. Use the \ref SlidingBuffer(int) constructor
+     * or call the resize() function afterwards to get a SlidingBuffer based on
+     * std::vector with nonzero capacity.
      */
     SlidingBuffer() = default;
     /// Default copy constructor.
@@ -466,7 +465,7 @@ public:
      *
      * \returns true if the container is empty, false otherwise
      */
-    auto empty() noexcept -> bool
+    auto empty() const noexcept -> bool
     {
         return (not full_) and (next_element_ == 0);
     }
