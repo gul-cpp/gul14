@@ -174,7 +174,7 @@ void do_dumping_tests(T& buff)
                 "101  111.1  121.2  131.3  141.4  50.5* 60.6  70.7  80.8  90.9");
 }
 
-TEST_CASE("SlidingBuffer test", "[sliding]")
+TEST_CASE("SlidingBuffer test", "[SlidingBuffer]")
 {
     SECTION("queueing tests") {
         auto constexpr buffer_size = 12u;
@@ -285,7 +285,7 @@ TEST_CASE("SlidingBuffer test", "[sliding]")
     }
 }
 
-TEST_CASE("SlidingBuffer resize", "[sliding]")
+TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
 {
     SECTION("filling pattern 1") {
         // Create buffer with 5 places, filled with 7 elements
@@ -712,7 +712,7 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at()", "[Slidi
     REQUIRE(buf.size() == 0);
 }
 
-TEST_CASE("SlidingBuffer copying and moving", "[sliding]")
+TEST_CASE("SlidingBuffer copying and moving", "[SlidingBuffer]")
 {
     auto buffer = gul::SlidingBuffer<TestElement<double, unsigned int>>(6);
     for (auto i = 0u; i < 20; ++i)
@@ -789,7 +789,7 @@ TEST_CASE("SlidingBuffer copying and moving", "[sliding]")
     }
 }
 
-TEST_CASE("SlidingBufferExposed test", "[sliding]")
+TEST_CASE("SlidingBufferExposed test", "[SlidingBuffer]")
 {
     SECTION("queueing tests") {
         auto constexpr buffer_size = 12u;
@@ -848,4 +848,20 @@ TEST_CASE("SlidingBufferExposed test", "[sliding]")
         REQUIRE(index_data == iterator2_data);
     }
 }
+
+TEST_CASE("SlidingBuffer: empty()", "[SlidingBuffer]")
+{
+    const gul::SlidingBuffer<int> buf;
+    REQUIRE(buf.empty()); // can be called in a const context
+
+    gul::SlidingBuffer<int> buf2;
+    REQUIRE(buf2.empty());
+
+    buf2.push_front(1);
+    REQUIRE(!buf2.empty());
+
+    buf2.clear();
+    REQUIRE(buf2.empty());
+}
+
 // vi:ts=4:sw=4:sts=4:et
