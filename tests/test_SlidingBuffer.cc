@@ -715,7 +715,7 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at() on array-
 
 TEST_CASE("SlidingBuffer: empty(), clear() on vector-based buffer", "[SlidingBuffer]")
 {
-    const gul::SlidingBuffer<int> buf;
+    const gul::SlidingBuffer<int> buf{};
     REQUIRE(buf.empty()); // can be called in a const context
 
     gul::SlidingBuffer<int> buf2;
