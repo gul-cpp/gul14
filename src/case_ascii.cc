@@ -66,4 +66,4 @@ std::string &uppercase_ascii_inplace(std::string &str) noexcept
 
 } // namespace gul
 
-/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+/* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
