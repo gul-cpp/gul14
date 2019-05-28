@@ -7,6 +7,7 @@ libgul_main_header = files([
 install_headers(libgul_main_header)
 
 libgul_sub_headers = files([
+    'gul/case_ascii.h',
     'gul/cat.h',
     'gul/catch.h',
     'gul/escape.h',

@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "gul/case_ascii.h"
 #include "gul/cat.h"
 #include "gul/escape.h"
 #include "gul/finalizer.h"
@@ -217,13 +218,17 @@ namespace gul {
  *          custom set of characters) from a string, returning a new std::string or a
  *          string_view.
  *
- * <h4>Dealing with Special Characters</h4>
+ * <h4>Character Conversions</h4>
  *
- * escape(): Replace non-printable characters in a string so that it looks like a C string
- *           literal.
+ * escape(), unescape(): Replace non-ASCII characters in a string so that it looks like a
+ *           C string literal (and vice versa).
  *
- * unescape(): Convert a string with escaped characters back to its original form.
+ * lowercase_ascii(), uppercase_ascii(): Return the ASCII lowercase/uppercase equivalent
+ *           of a given string or character. Non-ASCII characters are not modified.
  *
+ * lowercase_ascii_inplace(), uppercase_ascii_inplace(): Replace all ASCII characters in a
+ *           string by their lowercase/uppercase equivalents.
+ * 
  *
  * <h3>Classes</h3>
  *

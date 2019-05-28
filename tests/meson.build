@@ -15,6 +15,7 @@ thread_dep = dependency('threads')
 
 tests = [
     'test_backports.cc',
+    'test_case_ascii.cc',
     'test_cat.cc',
     'test_escape.cc',
     'test_finalizer.cc',

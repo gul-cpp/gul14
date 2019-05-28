@@ -1,6 +1,7 @@
 # Process all the source files of the library
 
 libgul_src = files([
+    'case_ascii.cc',
     'cat.cc',
     'escape.cc',
     'join_split.cc',
