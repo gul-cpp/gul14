@@ -26,58 +26,6 @@
 #include <string>
 #include "gul/string_view.h"
 
-// Anonymous namespace with constexpr helper objects
-namespace {
-
-class LookupTable
-{
-public:
-    constexpr char operator[](unsigned char c) const noexcept
-    {
-        return lookup_[c];
-    }
-
-protected:
-    char lookup_[256] = {};
-};
-
-class LowercaseLookupTable : public LookupTable
-{
-public:
-    constexpr LowercaseLookupTable() noexcept
-    {
-        for (auto c = 0u; c < 256; c++)
-        {
-            if (c >= static_cast<unsigned char>('A') && c <= static_cast<unsigned char>('Z'))
-                lookup_[c] = 'a' + c - 'A';
-            else
-                lookup_[c] = c;
-        }
-    }
-};
-
-class UppercaseLookupTable : public LookupTable
-{
-public:
-    constexpr UppercaseLookupTable() noexcept
-    {
-        for (auto c = 0u; c < 256; c++)
-        {
-            if (c >= static_cast<unsigned char>('a') && c <= static_cast<unsigned char>('z'))
-                lookup_[c] = 'A' + c - 'a';
-            else
-                lookup_[c] = c;
-        }
-    }
-};
-
-constexpr LowercaseLookupTable lowercase_lookup;
-constexpr UppercaseLookupTable uppercase_lookup;
-
-} // anonymous namespace
-
-
-
 namespace gul {
 
 /**
@@ -89,7 +37,10 @@ namespace gul {
  */
 constexpr char lowercase_ascii(char c) noexcept
 {
-    return lowercase_lookup[c];
+    if (c >= 'A' && c <= 'Z')
+        return c - 'A' + 'a';
+    else
+        return c;
 }
 
 
@@ -122,7 +73,10 @@ std::string &lowercase_ascii_inplace(std::string &str) noexcept;
  */
 constexpr char uppercase_ascii(char c) noexcept
 {
-    return uppercase_lookup[c];
+    if (c >= 'a' && c <= 'z')
+        return c - 'a' + 'A';
+    else
+        return c;
 }
 
 /**
@@ -147,4 +101,4 @@ std::string &uppercase_ascii_inplace(std::string &str) noexcept;
 
 } // namespace gul
 
-/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+/* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
