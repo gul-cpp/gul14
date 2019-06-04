@@ -1,10 +1,10 @@
 /**
  * \file    finalizer.h
- * \brief   Finalizer implementation for the General Utility Library.
+ * \brief   Implementation of FinalAction and finally().
  * \authors \ref contributors
  * \date    Created on 23 October 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -81,6 +81,8 @@ namespace gul {
  * \endcode
  *
  * \tparam F The type of the closure/function to be called.
+ *
+ * \since GUL version 1.1
  */
 template <typename F>
 class FinalAction
@@ -143,6 +145,8 @@ public:
  *
  * \tparam F   The type of the closure/function to be called (normally autodeduced).
  * \param f    The closure or pointer to function to be called on destruction.
+ *
+ * \since GUL version 1.1
  */
 template <typename F>
 FinalAction<typename std::decay_t<F>> finally(F&& f) noexcept {

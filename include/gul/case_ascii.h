@@ -32,6 +32,7 @@ namespace gul {
  * Return the ASCII lowercase equivalent of the given character (or the unchanged
  * character, if it is not an ASCII letter).
  * \param c  The original character.
+ * \since GUL version 1.2
  * \see lowercase_ascii(gul::string_view), lowercase_ascii_inplace(std::string &),
  *      uppercase_ascii(char)
  */
@@ -48,6 +49,7 @@ constexpr char lowercase_ascii(char c) noexcept
  * Return a copy of the given string in which all ASCII characters are replaced by their
  * lowercase equivalents.
  * \param str  The original string.
+ * \since GUL version 1.2
  * \see lowercase_ascii(char), lowercase_ascii_inplace(std::string &),
  *      uppercase_ascii(gul::string_view)
  */
@@ -59,6 +61,7 @@ std::string lowercase_ascii(gul::string_view str);
  * be helpful for chaining function calls).
  * \param str  The string to be modified.
  * \returns a reference to the string argument.
+ * \since GUL version 1.2
  * \see lowercase_ascii(char), lowercase_ascii(gul::string_view),
  *      uppercase_ascii_inplace(std::string &)
  */
@@ -68,6 +71,7 @@ std::string &lowercase_ascii_inplace(std::string &str) noexcept;
  * Return the ASCII uppercase equivalent of the given character (or the unchanged
  * character, if it is not an ASCII letter).
  * \param c  The original character.
+ * \since GUL version 1.2
  * \see uppercase_ascii(gul::string_view), uppercase_ascii_inplace(std::string &),
  *      lowercase_ascii(char)
  */
@@ -83,6 +87,7 @@ constexpr char uppercase_ascii(char c) noexcept
  * Return a copy of the given string in which all ASCII characters are replaced by their
  * uppercase equivalents.
  * \param str  The original string.
+ * \since GUL version 1.2
  * \see uppercase_ascii(char), uppercase_ascii_inplace(std::string &),
  *      lowercase_ascii(gul::string_view)
  */
@@ -94,6 +99,7 @@ std::string uppercase_ascii(gul::string_view str);
  * be helpful for chaining function calls).
  * \param str  The string to be modified.
  * \returns a reference to the string argument.
+ * \since GUL version 1.2
  * \see uppercase_ascii(char), uppercase_ascii(gul::string_view),
  *      lowercase_ascii_inplace(std::string &)
  */
