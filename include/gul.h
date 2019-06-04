@@ -102,6 +102,14 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_2 Version 1.2
+ *
+ * - Add lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),
+ *   uppercase_ascii_inplace()
+ * - Bugfixes for \ref gul::SlidingBuffer "SlidingBuffer":
+ *   \ref gul::SlidingBuffer::clear "clear()" did not work with variable-sized buffers,
+ *   \ref gul::SlidingBuffer::empty "empty()" was not const
+ *
  * \subsection v1_1 Version 1.1
  *
  * - Add \ref FinalAction and \ref finally
