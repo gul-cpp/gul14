@@ -866,4 +866,39 @@ TEST_CASE("SlidingBufferExposed test", "[SlidingBuffer]")
     }
 }
 
+TEST_CASE("SlidingBuffer: push_front(const T&) with nontrivial T", "[SlidingBuffer]")
+{
+    struct MyStruct {
+        int a;
+        std::string b;
+    };
+
+    MyStruct obj = { 1, "Hello" };
+
+    gul::SlidingBuffer<MyStruct, 4> buf;
+
+    buf.push_front(obj);
+
+    REQUIRE(buf[0].a == 1);
+    REQUIRE(buf[0].b == "Hello");
+}
+
+TEST_CASE("SlidingBuffer: push_front(T&&) with nontrivial T", "[SlidingBuffer]")
+{
+    struct MyStruct {
+        int a;
+        std::string b;
+    };
+
+    MyStruct obj = { 1, "Hello" };
+
+    gul::SlidingBuffer<MyStruct, 4> buf;
+
+    buf.push_front(std::move(obj));
+
+    REQUIRE(buf[0].a == 1);
+    REQUIRE(buf[0].b == "Hello");
+}
+
+
 // vi:ts=4:sw=4:sts=4:et
