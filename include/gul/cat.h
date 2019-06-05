@@ -101,7 +101,7 @@ std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2,
 std::string cat(std::initializer_list<ConvertingStringView> pieces);
 
 /// \see cat()
-template <typename... Args, typename = std::enable_if<(sizeof...(Args) > 3)>>
+template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 3)>>
 inline std::string cat(const Args&... args)
 {
     return cat({ args... });
