@@ -389,9 +389,10 @@ public:
      *
      * \param count    New maximum size / capacity of the sliding buffer
      */
-    template <typename = std::enable_if<(buffer_size == 0u)>>
     auto resize(size_type count) -> void
     {
+        static_assert(buffer_size == 0u,
+            "resize() only possible if the underlying container is resizable");
         auto const old_count = capacity();
         if (count == old_count)
             return;
@@ -449,9 +450,10 @@ public:
      *
      * \param size   New maximum size / capacity of the sliding buffer
      */
-    template <typename = std::enable_if<(buffer_size == 0u)>>
     auto reserve(size_type size) -> void
     {
+        static_assert(buffer_size == 0u,
+            "reserve() only possible if the underlying container is resizable");
         resize(size);
     }
 
