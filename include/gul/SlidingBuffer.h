@@ -229,19 +229,14 @@ public:
     }
 
     /**
-     * Access one element in the buffer, relative to the most recently `push`ed
-     * element.
+     * Access one element in the buffer, relative to the most recently `push`ed element.
      *
-     * The index 0 is the most recent element, 1 is the element before that
-     * and so on.
-     *
-     * If the buffer is not yet full it may be possible that the function has nothing to
-     * return and so a default constructed element is returned.
-     *
+     * Index 0 indicates the most recent element, 1 is the element before that and so on.
      * Access to elements outside the capacity is not allowed and results in undefined
-     * behavior.
+     * behavior. Access to elements inside the capacity is always allowed; a
+     * default-constructed element is returned if `idx >= size()`.
      *
-     * \returns     Reference to the requested element
+     * \returns a reference to the requested element.
      */
     auto operator[](const size_type idx) -> reference
     {
@@ -261,17 +256,15 @@ public:
     }
 
     /**
-     * Access one element in the buffer, relative to the most recently `push`ed
-     * element, with bounds checking.
+     * Access one element in the buffer, relative to the most recently `push`ed element,
+     * with bounds checking.
      *
-     * The index 0 is the most recent element, 1 is the element before that
-     * and so on.
-     *
-     * If idx is not within the range of the container,
-     * an exception of type std::out_of_range is thrown.
+     * Index 0 indicates the most recent element, 1 is the element before that and so on.
      *
      * \param idx   Index of the element to return
-     * \returns     Reference to the requested element
+     *
+     * \returns a reference to the requested element.
+     * \exception std::out_of_range is thrown if `idx >= size()`.
      */
     auto at(const size_type idx) noexcept(false) -> reference
     {
