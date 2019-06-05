@@ -225,7 +225,7 @@ public:
     auto push_front(const value_type& in) -> void
     {
         auto in_copy = in;
-        push_back(std::move(in_copy));
+        push_front(std::move(in_copy));
     }
 
     /**
