@@ -95,7 +95,7 @@ auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
  *
  * \tparam DataT     Type of the contained values
  */
-template <typename DataT, typename = void, typename = std::enable_if<std::is_arithmetic<DataT>::value>>
+template <typename DataT, typename = void, typename = std::enable_if_t<std::is_arithmetic<DataT>::value>>
 struct MinMax {
     DataT min{ std::numeric_limits<DataT>::max() }; ///< Minimum value
     DataT max{ std::numeric_limits<DataT>::lowest() }; ///< Maximum value
@@ -123,7 +123,7 @@ struct MinMax<DataT, std::enable_if_t<std::is_floating_point<DataT>::value>> {
  *
  * \see standard_deviation()
  */
-template <typename DataT, typename = std::enable_if<std::is_floating_point<DataT>::value>>
+template <typename DataT, typename = std::enable_if_t<std::is_floating_point<DataT>::value>>
 class StandardDeviationMean {
 public:
     DataT sigma_{ NAN }; ///< The standard deviation (sigma) value
