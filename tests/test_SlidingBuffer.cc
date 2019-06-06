@@ -28,15 +28,15 @@
 // A SlidingBuffer variant that allows to dump the underlying container
 // and the state of the buffer all in one to a stream.
 // We use this to inspect the operations, if they handled internally as expected.
-template<typename ElementT, std::size_t buffer_size = 0u,
-    typename Container = typename std::conditional_t<(buffer_size >= 1u),
-        std::array<ElementT, buffer_size>,
+template<typename ElementT, std::size_t fixed_capacity = 0u,
+    typename Container = typename std::conditional_t<(fixed_capacity >= 1u),
+        std::array<ElementT, fixed_capacity>,
         std::vector<ElementT>>
     >
-class SlidingBufferDebug : public gul::SlidingBuffer<ElementT, buffer_size, Container> {
+class SlidingBufferDebug : public gul::SlidingBuffer<ElementT, fixed_capacity, Container> {
 public:
-    using gul::SlidingBuffer<ElementT, buffer_size, Container>::SlidingBuffer;
-    using typename gul::SlidingBuffer<ElementT, buffer_size, Container>::size_type;
+    using gul::SlidingBuffer<ElementT, fixed_capacity, Container>::SlidingBuffer;
+    using typename gul::SlidingBuffer<ElementT, fixed_capacity, Container>::size_type;
 
     auto debugdump(std::ostream& s) -> std::ostream&
     {
@@ -52,15 +52,15 @@ public:
     }
 };
 
-template<typename ElementT, std::size_t buffer_size = 0u,
-    typename Container = typename std::conditional_t<(buffer_size >= 1u),
-        std::array<ElementT, buffer_size>,
+template<typename ElementT, std::size_t fixed_capacity = 0u,
+    typename Container = typename std::conditional_t<(fixed_capacity >= 1u),
+        std::array<ElementT, fixed_capacity>,
         std::vector<ElementT>>
     >
-class SlidingBufferExposedDebug : public gul::SlidingBufferExposed<ElementT, buffer_size, Container> {
+class SlidingBufferExposedDebug : public gul::SlidingBufferExposed<ElementT, fixed_capacity, Container> {
 public:
-    using gul::SlidingBufferExposed<ElementT, buffer_size, Container>::SlidingBufferExposed;
-    using typename gul::SlidingBufferExposed<ElementT, buffer_size, Container>::size_type;
+    using gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>::SlidingBufferExposed;
+    using typename gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>::size_type;
 
     auto debugdump(std::ostream& s) -> std::ostream&
     {
