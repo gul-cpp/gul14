@@ -41,6 +41,9 @@ message('GIT VERSION TAG         @0@'.format(git_version))
 if deb_install
     message('Debian package names    ' + deb_name + ', ' + deb_dev_name)
 endif
+if git_version == 'unknown'
+    message('Shared library version patchlevel can\'t be determined from git')
+endif
 message('Shared library version  ' + so_version)
 
 # Check if the git version (git tag starting with 'v') interpreted as
