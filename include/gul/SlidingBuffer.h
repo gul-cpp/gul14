@@ -852,32 +852,43 @@ public:
     using SlidingBuffer<ElementT, fixed_capacity, Container>::capacity;
 
     /**
-     * Return an iterator to the first element of the underlying container.
+     * Return an iterator to the first occupied element of the underlying container.
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
+     * The iterator accesses the underlying container in its native order. If the elements
+     * are stored in contiguous fashion (if only push_back() or only push_front() were
+     * used to add them), begin() returns an iterator pointing to the first occupied
+     * element. If the elements are non-contiguous (which can happen if push_front() and
+     * push_back() were mixed and the buffer is not yet full), begin() simply points to
+     * the start of the container and the range [begin(), end] may enclose
+     * default-constructed elements.
      *
      * If the container is empty, the returned iterator is equal to end().
      */
     auto begin() noexcept -> iterator
     {
-//        if (!this->full_ && (this->idx_end_ == 0 || idx_end_ >= idx_begin_))
-//            return
+        if (!full_ && (idx_end_ == 0 || idx_end_ >= idx_begin_))
+            return storage_.begin() + idx_begin_;
+
         return storage_.begin();
     }
 
+    /// \overload
+    auto begin() const noexcept -> const_iterator
+    {
+        return cbegin();
+    }
+
     /**
-     * Return a constant iterator to the first element of the underlying container.
+     * Return a constant iterator to the first occupied element of the underlying
+     * container.
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
-     *
-     * If the container is empty, the returned iterator will be equal to cend()
+     * \see begin() for details.
      */
     auto cbegin() const noexcept -> const_iterator
     {
+        if (!full_ && (idx_end_ == 0 || idx_end_ >= idx_begin_))
+            return storage_.cbegin() + idx_begin_;
+
         return storage_.cbegin();
     }
 
@@ -888,38 +899,39 @@ public:
      * This element acts as a placeholder; attempting to access it results in undefined
      * behavior.
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
-     *
-     * It does, however, take not yet filled buffers into account and returns iterators
-     * only to elements really filled.
+     * The iterator accesses the underlying container in its native order. If the elements
+     * are stored in contiguous fashion (if only push_back() or only push_front() were
+     * used to add them), end() returns an iterator pointing past the last occupied
+     * element. If the elements are non-contiguous (which can happen if push_front() and
+     * push_back() were mixed and the buffer is not yet full), end() simply points past
+     * the last element of the container and the range [begin(), end] may enclose
+     * default-constructed elements.
      */
     auto end() noexcept -> iterator
     {
-        if (full_)
+        if (full_ || idx_begin_ != 0)
             return storage_.end();
+
         return storage_.begin() + idx_end_;
+    }
+
+    /// \overload
+    auto end() const noexcept -> const_iterator
+    {
+        return cend();
     }
 
     /**
      * Return a constant iterator to the element following the last element in the used
      * space of the underlying container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined
-     * behavior.
-     *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
-     *
-     * It does, however, take not yet filled buffers into account and returns iterators
-     * only to elements really filled.
+     * \see end() for details.
      */
     auto cend() const noexcept -> const_iterator
     {
-        if (full_)
+        if (full_ || idx_begin_ != 0)
             return storage_.cend();
+
         return storage_.cbegin() + idx_end_;
     }
 
