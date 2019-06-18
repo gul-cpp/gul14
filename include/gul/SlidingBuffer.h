@@ -609,18 +609,6 @@ public:
         {
         }
 
-        // No default constructor
-        /// Default copy constructor.
-        SlidingBufferIterator(SlidingBufferIterator const&) = default;
-        /// Default move constructor.
-        SlidingBufferIterator(SlidingBufferIterator&&) noexcept = default;
-        /// Default copy assignment operator.
-        SlidingBufferIterator& operator=(SlidingBufferIterator const&) = default;
-        /// Default move assignment operator.
-        SlidingBufferIterator& operator=(SlidingBufferIterator &&) noexcept = default;
-        /// Default Destructor.
-        virtual ~SlidingBufferIterator() = default;
-
         /// Pre-increment iterator by one position
         auto operator++() noexcept -> SlidingBufferIterator&
         {
