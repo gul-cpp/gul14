@@ -502,26 +502,45 @@ public:
             return;
         }
 
-        // For growing or shrinking, make SlidingBuffer indices equal to those of the
-        // underlying container
-        std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
-        idx_begin_ = 0;
+        auto const right_align = (not full_) and (idx_end_ == 0) and (idx_begin_ != 0);
 
         //////
         // Growing
         if (new_capacity > old_capacity) {
-            storage_.resize(new_capacity);
-            full_ = false;
-            idx_end_ = old_size;
-            return;
+            if (right_align) {
+                // Pure right aligned un-full buffer; keep alignment by shifting elements to the new right
+                storage_.resize(new_capacity);
+                std::move_backward(storage_.begin() + idx_begin_, storage_.begin() + old_capacity, storage_.end());
+                idx_begin_ += new_capacity - old_capacity;
+                return;
+            } else {
+                // Make SlidingBuffer indices equal to those of the underlying container ('left align elements')
+                std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+                storage_.resize(new_capacity);
+                full_ = false;
+                idx_begin_ = 0;
+                idx_end_ = old_size;
+                return;
+            }
         }
 
         //////
         // Shrinking
+        if (right_align) {
+            // Pure right aligned un-full buffer; keep alignment by shifting elements to the new right
+            std::rotate(storage_.begin(), storage_.begin() + (old_capacity - new_capacity), storage_.end());
+            idx_begin_ -= old_capacity - new_capacity;
+        } else {
+            // Make SlidingBuffer indices equal to those of the underlying container ('left align elements')
+            std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+            idx_begin_ = 0;
+        }
+
         storage_.resize(new_capacity);
         if (old_size < new_capacity) {
             full_ = false;
-            idx_end_ = old_size;
+            if (not right_align)
+                idx_end_ = old_size;
         }
         else {
             full_ = true;

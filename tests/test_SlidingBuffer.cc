@@ -1001,4 +1001,59 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
     }
 }
 
+TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer]")
+{
+    SECTION("SlidingBufferExposed shrink right align") {
+        gul::SlidingBufferExposed<int> buf{7};
+        buf.push_front(1);
+        buf.push_front(2);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
+        buf.resize(6);
+        buf.push_front(10);
+        buf.push_front(11);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+        REQUIRE(buf[0] == 11);
+        REQUIRE(buf[3] == 1);
+    }
+
+    SECTION("SlidingBufferExposed grow right align") {
+        gul::SlidingBufferExposed<int> buf{7};
+        buf.push_front(1);
+        buf.push_front(2);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
+        buf.resize(10);
+        buf.push_front(10);
+        buf.push_front(11);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+        REQUIRE(buf[0] == 11);
+        REQUIRE(buf[3] == 1);
+    }
+
+    SECTION("SlidingBufferExposed shrink left align") {
+        gul::SlidingBufferExposed<int> buf{7};
+        buf.push_back(1);
+        buf.push_back(2);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
+        buf.resize(6);
+        buf.push_back(10);
+        buf.push_back(11);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+        REQUIRE(buf[0] == 1);
+        REQUIRE(buf[3] == 11);
+    }
+
+    SECTION("SlidingBufferExposed grow left align") {
+        gul::SlidingBufferExposed<int> buf{7};
+        buf.push_back(1);
+        buf.push_back(2);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
+        buf.resize(10);
+        buf.push_back(10);
+        buf.push_back(11);
+        REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+        REQUIRE(buf[0] == 1);
+        REQUIRE(buf[3] == 11);
+    }
+}
+
 // vi:ts=4:sw=4:sts=4:et
