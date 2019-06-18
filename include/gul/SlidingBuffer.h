@@ -211,7 +211,7 @@ public:
 protected:
 
     /// Index of the first SlidingBuffer element in the underlying container (the one
-    /// retrieved by SlidingBuffer::front().
+    /// retrieved by SlidingBuffer::front()).
     size_type idx_begin_{ 0u };
     /// Index pointing to the element in the underlying container that will be written to
     /// by the next call to push_back().
@@ -421,7 +421,7 @@ public:
     {
         if (full_)
             return capacity();
-        
+
         if (idx_end_ >= idx_begin_)
             return idx_end_ - idx_begin_;
         else
@@ -878,7 +878,7 @@ public:
      */
     auto begin() noexcept -> iterator
     {
-        if (!full_ && (idx_end_ == 0 || idx_end_ >= idx_begin_))
+        if (not full_ and (idx_end_ == 0 or idx_end_ >= idx_begin_))
             return storage_.begin() + idx_begin_;
 
         return storage_.begin();
@@ -898,7 +898,7 @@ public:
      */
     auto cbegin() const noexcept -> const_iterator
     {
-        if (!full_ && (idx_end_ == 0 || idx_end_ >= idx_begin_))
+        if (not full_ and (idx_end_ == 0 or idx_end_ >= idx_begin_))
             return storage_.cbegin() + idx_begin_;
 
         return storage_.cbegin();
@@ -921,7 +921,7 @@ public:
      */
     auto end() noexcept -> iterator
     {
-        if (full_ || idx_begin_ != 0)
+        if (full_ or idx_begin_ != 0)
             return storage_.end();
 
         return storage_.begin() + idx_end_;
@@ -941,7 +941,7 @@ public:
      */
     auto cend() const noexcept -> const_iterator
     {
-        if (full_ || idx_begin_ != 0)
+        if (full_ or idx_begin_ != 0)
             return storage_.cend();
 
         return storage_.cbegin() + idx_end_;
