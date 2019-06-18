@@ -1,7 +1,8 @@
-# libgul
+# General Utility Library
 
-The general utility library contains often-used utility functions and types that form the
-foundation for other libraries and programs. The main fields covered by the library are:
+The General Utility Library (GUL) for C++14 contains often-used utility functions and
+types that form the foundation for other libraries and programs. The main fields covered
+by the library are:
 
   * String handling
   * Concurrency
@@ -11,7 +12,7 @@ foundation for other libraries and programs. The main fields covered by the libr
   * Debugging
   * Backports from new standard library extensions
 
-To get started, have a look at the [documentation website](http://tesla.desy.de/libraries/gul/html/).
+To get started, have a look at the [documentation website](https://winweb.desy.de/mcs/docs/gul/).
 
 Here you find more detailed information on:
 
