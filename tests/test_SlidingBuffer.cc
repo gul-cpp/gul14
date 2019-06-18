@@ -975,5 +975,47 @@ TEST_CASE("SlidingBuffer: push_back(T&&) with nontrivial T", "[SlidingBuffer]")
     REQUIRE(buf[0].b == "Hello");
 }
 
+TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
+{
+    SECTION("SlidingBuffer") {
+        gul::SlidingBuffer<int, 7> buf;
+        REQUIRE(buf.size() == 0);
+        buf.push_front(1);
+        REQUIRE(buf.size() == 1);
+        buf.push_back(2);
+        REQUIRE(buf.size() == 2);
+
+        // content checks
+        REQUIRE(*buf.begin() == 1);
+        REQUIRE(*(++(buf.begin())) == 2);
+        REQUIRE(*(--buf.end()) == 2);
+        REQUIRE(buf[0] == 1);
+        REQUIRE(buf[1] == 2);
+        std::stringstream s{ };
+        s.str("");
+        s << buf;
+        REQUIRE(gul::trim(s.str()) == "1  2");
+    }
+    SECTION("SlidingBufferExposed") {
+        gul::SlidingBufferExposed<int, 7> buf;
+        REQUIRE(buf.size() == 0);
+        buf.push_front(1);
+        REQUIRE(buf.size() == 1);
+        buf.push_back(2);
+        REQUIRE(buf.size() == 2);
+
+        // content checks
+        REQUIRE(*buf.begin() == 1);
+        REQUIRE(*(++(buf.begin())) == 2);
+        REQUIRE(*(--buf.end()) == 2);
+        REQUIRE(buf[0] == 1);
+        REQUIRE(buf[1] == 2);
+        std::stringstream s{ };
+        s.str("");
+        s << buf;
+        REQUIRE(gul::trim(s.str()) == "1  2");
+    }
+}
+
 
 // vi:ts=4:sw=4:sts=4:et
