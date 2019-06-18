@@ -975,6 +975,72 @@ TEST_CASE("SlidingBuffer: push_back(T&&) with nontrivial T", "[SlidingBuffer]")
     REQUIRE(buf[0].b == "Hello");
 }
 
+TEST_CASE("SlidingBufferExposed: begin() and end() with push_back()",
+          "[SlidingBufferExposed]")
+{
+    gul::SlidingBufferExposed<int, 4> buf;
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
+    REQUIRE(std::find(buf.begin(), buf.end(), 1) == buf.end());
+
+    buf.push_back(1);
+    buf.push_back(2);
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
+    REQUIRE(std::find(buf.begin(), buf.end(), 1) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
+
+    buf.push_back(3);
+    buf.push_back(4);
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+    REQUIRE(std::find(buf.begin(), buf.end(), 1) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 3) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 4) != buf.end());
+
+    buf.push_back(5);
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+    REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 3) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 4) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 5) != buf.end());
+}
+
+TEST_CASE("SlidingBufferExposed: begin() and end() with push_front()",
+          "[SlidingBufferExposed]")
+{
+    gul::SlidingBufferExposed<int, 4> buf;
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
+    REQUIRE(std::find(buf.begin(), buf.end(), 1) == buf.end());
+
+    buf.push_front(1);
+    buf.push_front(2);
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
+    REQUIRE(std::find(buf.begin(), buf.end(), 1) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
+
+    buf.push_front(3);
+    buf.push_front(4);
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+    REQUIRE(std::find(buf.begin(), buf.end(), 1) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 3) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 4) != buf.end());
+
+    buf.push_front(5);
+
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
+    REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 3) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 4) != buf.end());
+    REQUIRE(std::find(buf.begin(), buf.end(), 5) != buf.end());
+}
+
 TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
 {
     SECTION("SlidingBuffer") {
@@ -996,6 +1062,7 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
         s << buf;
         REQUIRE(gul::trim(s.str()) == "1  2");
     }
+/* Tests items that are not guaranteed */
     SECTION("SlidingBufferExposed") {
         gul::SlidingBufferExposed<int, 7> buf;
         REQUIRE(buf.size() == 0);
@@ -1006,8 +1073,8 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
 
         // content checks
         REQUIRE(*buf.begin() == 1);
-        REQUIRE(*(++(buf.begin())) == 2);
-        REQUIRE(*(--buf.end()) == 2);
+        REQUIRE(*(std::next(buf.begin())) == 2);
+        REQUIRE(*(std::prev(buf.end())) == 2);
         REQUIRE(buf[0] == 1);
         REQUIRE(buf[1] == 2);
         std::stringstream s{ };
@@ -1016,6 +1083,5 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
         REQUIRE(gul::trim(s.str()) == "1  2");
     }
 }
-
 
 // vi:ts=4:sw=4:sts=4:et

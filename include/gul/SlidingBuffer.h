@@ -655,19 +655,21 @@ public:
             return &(*buffer_)[position_];
         }
 
-        /// Compare two iterators for equality.
-        ///
-        /// Both iterators must be from the same container, or the result is
-        /// undefined.
+        /**
+         * Compare two iterators for equality.
+         *
+         * Both iterators must be from the same container, or the result is undefined.
+         */
         auto operator==(SlidingBufferIterator other) const noexcept -> bool
         {
             return position_ == other.position_;
         }
 
-        /// Compare two iterators for inequality.
-        ///
-        /// Both iterators must be from the same container, or the result is
-        /// undefined.
+        /**
+         * Compare two iterators for inequality.
+         *
+         * Both iterators must be from the same container, or the result is undefined.
+         */
         auto operator!=(SlidingBufferIterator other) const noexcept -> bool
         {
             return not (*this == other);
@@ -675,9 +677,9 @@ public:
     };
 
     /**
-     * Returns an iterator to the first element of the container.
+     * Return an iterator to the first element of the container.
      *
-     * If the container is empty, the returned iterator will be equal to end()
+     * If the container is empty, the returned iterator will be equal to end().
      */
     auto begin() noexcept -> iterator
     {
@@ -685,9 +687,9 @@ public:
     }
 
     /**
-     * Returns an iterator to the first element of the reversed container.
+     * Return an iterator to the first element of the reversed container.
      *
-     * If the container is empty, the returned iterator will be equal to end()
+     * If the container is empty, the returned iterator will be equal to end().
      */
     auto rbegin() noexcept -> reverse_iterator
     {
@@ -695,9 +697,10 @@ public:
     }
 
     /**
-     * Returns an iterator to the element following the last element of the container.
+     * Return an iterator to the element following the last element of the container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     * This element acts as a placeholder; attempting to access it results in undefined
+     * behavior.
      */
     auto end() noexcept -> iterator
     {
@@ -705,9 +708,11 @@ public:
     }
 
     /**
-     * Returns an iterator to the element following the last element of the reversed container.
+     * Return an iterator to the element following the last element of the reversed
+     * container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     * This element acts as a placeholder; attempting to access it results in undefined
+     * behavior.
      */
     auto rend() noexcept -> reverse_iterator
     {
@@ -715,9 +720,9 @@ public:
     }
 
     /**
-     * Returns a read only iterator to the first element of the container.
+     * Return a read-only iterator to the first element of the container.
      *
-     * If the container is empty, the returned iterator will be equal to cend()
+     * If the container is empty, the returned iterator will be equal to cend().
      */
     auto cbegin() const noexcept -> const_iterator
     {
@@ -725,9 +730,9 @@ public:
     }
 
     /**
-     * Returns a read only iterator to the first element of the reversed container.
+     * Return a read-only iterator to the first element of the reversed container.
      *
-     * If the container is empty, the returned iterator will be equal to cend()
+     * If the container is empty, the returned iterator will be equal to cend().
      */
     auto crbegin() const noexcept -> const_reverse_iterator
     {
@@ -735,9 +740,11 @@ public:
     }
 
     /**
-     * Returns a read only iterator to the element following the last element of the container.
+     * Return a read-only iterator to the element following the last element of the
+     * container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     * This element acts as a placeholder; attempting to access it results in undefined
+     * behavior.
      */
     auto cend() const noexcept -> const_iterator
     {
@@ -745,9 +752,11 @@ public:
     }
 
     /**
-     * Returns a read only iterator to the element following the last element of the reversed container.
+     * Return a read-only iterator to the element following the last element of the
+     * reversed container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     * This element acts as a placeholder; attempting to access it results in undefined
+     * behavior.
      */
     auto crend() const noexcept -> const_reverse_iterator
     {
@@ -773,11 +782,9 @@ private:
 };
 
 /**
- * A simple data buffer with a (semi) fixed size to use as sliding window on a data stream
- *
- * This is a variant of SlidingBuffer that exposes the underlying container through its
- * iterator interface. For a complete description see SlidingBuffer; here are the differences
- * only:
+ * A variant of SlidingBuffer that exposes the underlying container through its iterator
+ * interface.
+ * For a complete description, see SlidingBuffer; here are the differences only:
  *
  * \code
  * Iterator invalidation:
@@ -837,8 +844,9 @@ public:
     // Inherit constructors
     using SlidingBuffer<ElementT, fixed_capacity, Container>::SlidingBuffer;
 
-    // Inherit members
+    // Inherit members for access without "this->"
     using SlidingBuffer<ElementT, fixed_capacity, Container>::storage_;
+    using SlidingBuffer<ElementT, fixed_capacity, Container>::idx_begin_;
     using SlidingBuffer<ElementT, fixed_capacity, Container>::idx_end_;
     using SlidingBuffer<ElementT, fixed_capacity, Container>::full_;
     using SlidingBuffer<ElementT, fixed_capacity, Container>::capacity;
@@ -850,16 +858,17 @@ public:
      * where the sliding starts and ends. Use the iterators only if you want to access
      * all elements in unknown order.
      *
-     * If the container is empty, the returned iterator will be equal to end()
+     * If the container is empty, the returned iterator is equal to end().
      */
     auto begin() noexcept -> iterator
     {
+//        if (!this->full_ && (this->idx_end_ == 0 || idx_end_ >= idx_begin_))
+//            return
         return storage_.begin();
     }
 
     /**
-     * Return a constant iterator to the first element of the
-     * underlying container.
+     * Return a constant iterator to the first element of the underlying container.
      *
      * This accesses the underlying container in its order. The iterators do not know
      * where the sliding starts and ends. Use the iterators only if you want to access
@@ -873,10 +882,11 @@ public:
     }
 
     /**
-     * Returns an iterator to the element following the last element in the used
-     * space of the underlying container.
+     * Return an iterator to the element following the last element in the used space of
+     * the underlying container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     * This element acts as a placeholder; attempting to access it results in undefined
+     * behavior.
      *
      * This accesses the underlying container in its order. The iterators do not know
      * where the sliding starts and ends. Use the iterators only if you want to access
@@ -893,10 +903,11 @@ public:
     }
 
     /**
-     * Return a constant iterator to the element following the last element in the
-     * used space of the underlying container.
+     * Return a constant iterator to the element following the last element in the used
+     * space of the underlying container.
      *
-     * This element acts as a placeholder; attempting to access it results in undefined behavior.
+     * This element acts as a placeholder; attempting to access it results in undefined
+     * behavior.
      *
      * This accesses the underlying container in its order. The iterators do not know
      * where the sliding starts and ends. Use the iterators only if you want to access
@@ -913,7 +924,8 @@ public:
     }
 
     /**
-     * Return a reverse iterator to the first used element of the reversed underlying container.
+     * Return a reverse iterator to the first used element of the reversed underlying
+     * container.
      *
      * It corresponds to the last element of the non-reversed container.
      * If the container is empty, the returned iterator is equal to rend().
