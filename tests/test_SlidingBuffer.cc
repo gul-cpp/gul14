@@ -51,8 +51,12 @@ public:
         auto const len = this->capacity();
         for (size_type i{0}; i < len; ++i) {
             s << this->storage_.at(i);
-            if (i == this->idx_end_)
+            if (i == this->idx_begin_ and i == this->idx_end_)
                 s << "* ";
+            else if (i == this->idx_begin_)
+                s << "b ";
+            else if (i == this->idx_end_)
+                s << "e ";
             else
                 s << "  ";
         }
@@ -75,8 +79,12 @@ public:
         auto const len = this->capacity();
         for (size_type i{0}; i < len; ++i) {
             s << this->storage_.at(i);
-            if (i == this->idx_end_)
+            if (i == this->idx_begin_ and i == this->idx_end_)
                 s << "* ";
+            else if (i == this->idx_begin_)
+                s << "b ";
+            else if (i == this->idx_end_)
+                s << "e ";
             else
                 s << "  ";
         }
