@@ -686,6 +686,12 @@ public:
         return iterator{ this, 0 };
     }
 
+    /// \overload
+    auto begin() const noexcept -> const_iterator
+    {
+        return const_iterator{ this, 0 };
+    }
+
     /**
      * Return an iterator to the first element of the reversed container.
      *
@@ -705,6 +711,12 @@ public:
     auto end() noexcept -> iterator
     {
         return iterator{ this, size() };
+    }
+
+    /// \overload
+    auto end() const noexcept -> const_iterator
+    {
+        return const_iterator{ this, size() };
     }
 
     /**

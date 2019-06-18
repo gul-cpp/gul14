@@ -176,10 +176,6 @@ void do_dumping_tests(T& buff)
     s2 << buff;
     REQUIRE_THAT(gul::trim(s2.str()), Catch::Matchers::Matches(
                 "141.4  131.3  121.2  111.1  101  90.9  80.8  70.7  60.6  50.5"));
-/*    std::stringstream s3{ };
-    buff.debugdump(s3);
-    REQUIRE(gul::trim(s3.str()) ==
-                "101  111.1  121.2  131.3  141.4  50.5* 60.6  70.7  80.8  90.9");*/
 }
 
 } // anonymous namespace
@@ -320,9 +316,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-        s.str("");
-/*        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "9  10  6* 7  8");*/
         auto buffa = buff;
 
         buff.resize(5);
@@ -333,9 +326,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-        /*s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "9  10  6* 7  8");*/
 
         buff.resize(8);
         REQUIRE(buff.filled() == false);
@@ -345,9 +335,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "6  7  8  9  10  0* 0  0");*/
 
         buff.resize(11);
         REQUIRE(buff.filled() == false);
@@ -357,9 +344,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "6  7  8  9  10  0* 0  0  0  0  0");*/
         REQUIRE(*buff.begin() == 10);
 
         buff.resize(6);
@@ -370,9 +354,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "6  7  8  9  10  0*");*/
 
         buff.resize(5);
         REQUIRE(buff.filled() == true);
@@ -382,9 +363,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "6* 7  8  9  10");*/
 
         buffa.resize(4);
         REQUIRE(buffa.filled() == true);
@@ -394,9 +372,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buffa;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7"));
-/*        s.str("");
-        buffa.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "7* 8  9  10");*/
 
         buff.resize(3);
         REQUIRE(buff.filled() == true);
@@ -406,18 +381,11 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "8* 9  10");*/
 
         buff.resize(0);
         REQUIRE(buff.filled() == false);
         REQUIRE(buff.size() == 0);
         REQUIRE(buff.capacity() == 0);
-/*        buff.push_front(1);   This is now UB
-        REQUIRE(buff.filled() == true);
-        REQUIRE(buff.size() == 0);
-        REQUIRE(buff.capacity() == 0); */
     }
     SECTION("filling pattern 2") {
         // Try a different filling pattern
@@ -451,9 +419,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "10  3* 4  5  6  7  8  9");*/
 
         auto buffa = buff;
 
@@ -465,9 +430,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");*/
 
         buff.resize(12);
         REQUIRE(buff.filled() == false);
@@ -477,9 +439,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");*/
 
         buff.resize(15);
         REQUIRE(buff.filled() == false);
@@ -489,9 +448,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0  0  0  0");*/
 
         buff = buffa;
         buff.resize(14);
@@ -499,126 +455,84 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0  0  0");*/
         buff = buffa;
         buff.resize(13);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0  0");*/
         buff = buffa;
         buff.resize(12);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");*/
         buff = buffa;
         buff.resize(11);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0");*/
         buff = buffa;
         buff.resize(10);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0");*/
         buff = buffa;
         buff.resize(9);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0*");*/
         buff = buffa;
         buff.resize(8); // no change
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "10  3* 4  5  6  7  8  9");*/
         buff = buffa;
         buff.resize(7);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "4* 5  6  7  8  9  10");*/
         buff = buffa;
         buff.resize(6);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "5* 6  7  8  9  10");*/
         buff = buffa;
         buff.resize(5);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "6* 7  8  9  10");*/
         buff = buffa;
         buff.resize(4);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "7* 8  9  10");*/
         buff = buffa;
         buff.resize(3);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "8* 9  10");*/
         buff = buffa;
         buff.resize(2);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "9* 10");*/
         buff = buffa;
         buff.resize(1);
         s.str("");
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "10*");*/
     }
     SECTION("filling pattern 3") {
         // Try a different filling pattern
@@ -651,9 +565,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "4  5  6  7  8  9  10  3*");*/
 
         auto buffa = buff;
         buff.resize(12);
@@ -661,9 +572,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6  5  4  3"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "3  4  5  6  7  8  9  10  0* 0  0  0");*/
 
         buff = buffa;
         buff.resize(5);
@@ -671,9 +579,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7  6"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "6* 7  8  9  10");*/
 
         buff = buffa;
         buff.resize(4);
@@ -681,9 +586,6 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
         s << buff;
         REQUIRE_THAT(gul::trim(s.str()), Catch::Matchers::Matches(
             "10  9  8  7"));
-/*        s.str("");
-        buff.debugdump(s);
-        REQUIRE(gul::trim(s.str()) == "7* 8  9  10");*/
     }
 }
 
@@ -737,7 +639,6 @@ TEST_CASE("SlidingBuffer: push_back(), empty(), size(), clear(), at() on array-b
     REQUIRE(buf.empty());
     REQUIRE(buf.size() == 0);
     REQUIRE_THROWS(buf.at(0));
-
 
     buf.push_back(1.0);
     REQUIRE(!buf.empty());
@@ -1006,6 +907,19 @@ TEST_CASE("SlidingBufferExposed: begin() and end() with push_back()",
     REQUIRE(std::find(buf.begin(), buf.end(), 3) != buf.end());
     REQUIRE(std::find(buf.begin(), buf.end(), 4) != buf.end());
     REQUIRE(std::find(buf.begin(), buf.end(), 5) != buf.end());
+}
+
+TEST_CASE("SlidingBuffer: begin() and end() on const buffer", "[SlidingBuffer]")
+{
+    const gul::SlidingBuffer<int, 4> buf;
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
+}
+
+TEST_CASE("SlidingBufferExposed: begin() and end() on const buffer",
+          "[SlidingBufferExposed]")
+{
+    const gul::SlidingBufferExposed<int, 4> buf;
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
 }
 
 TEST_CASE("SlidingBufferExposed: begin() and end() with push_front()",
