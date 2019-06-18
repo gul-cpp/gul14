@@ -29,15 +29,33 @@
 namespace gul {
 
 /**
- * A simple data buffer with a (semi) fixed size to use as sliding window on a data stream
+ * A circular data buffer of (semi-)fixed capacity to which elements can be added at the
+ * front or at the back.
  *
- * The SlidingBuffer augments a std::array (or a std::vector) with very few extra functions
- * to make it possible to use it as sliding window on some incoming data.
+ * A SlidingBuffer is a flat array containing zero to capacity() elements of an arbitrary
+ * type. The capacity can either be specified at compile time via a template parameter or
+ * at runtime via resize(). In the former case, the internal buffer is embedded in the
+ * object (std::array), in the latter case it is dynamically allocated (std::vector).
  *
- * The SlidingBuffer shares some properties with ring buffers: It has a fixed maximum size
- * and incoming elements are easily appended. But there is no way to pop elements out of
- * the buffer. They will drop out automatically if the capacity is not sufficient to hold
- * all encountered incoming elements.
+ * The SlidingBuffer shares many characteristics with traditional ring buffers: It has a
+ * fixed maximum size and new elements are added with push_front() or push_back().
+ * However, there is no way to *pop* elements out of the buffer. They drop out
+ * automatically at the other end of the sliding window if the capacity is reached:
+ *
+ * \code
+ * SlidingBuffer<int, 2> buf; // Create a buffer with up to 2 entries
+ *
+ * buf.push_back(1);
+ * buf.push_back(2);
+ * buf.push_back(3);
+ *
+ * std::cout << buf[0] << ", " << buf[1] << "\n";
+ * // prints "2, 3"
+ *
+ * buf.push_front(1);
+ * std::cout << buf[0] << ", " << buf[1] << "\n";
+ * // prints "1, 2"
+ * \endcode
  *
  * This buffer is not intended for producer-consumer problems. If the elements access is
  * atomic it is thread-safe though. All auxiliary functions that mutate the data are not
@@ -50,8 +68,9 @@ namespace gul {
  * A typical application would be to analyze an incoming stream of elements in a finite
  * impulse response filter.
  *
- * There is the SlidingBufferIterator to use. See SlidingBufferExposed for a variant with
- * a different (more direct) iterator interface.
+ * This container uses an accompanying iterator class called SlidingBufferIterator.
+ * See SlidingBufferExposed for a variant with a different (more performant) iterator
+ * interface.
  *
  * \code
  * Iterator invalidation:
@@ -77,23 +96,24 @@ namespace gul {
  * Member functions:
  *     SlidingBuffer     Constructor
  *   Element access:
- *     push_front        Insert an element into the buffer
- *     operator[]        Access element relative to most recent element in buffer
- *     at                Access element relative to most recent element in buffer, with bounds checking
- *     front             Access first (most recently pushed in) element (i.e. [0])
- *     back              Access last (next to be pushed out) element (i.e. [size() - 1])
+ *     push_back         Insert an element at the back of the buffer
+ *     push_front        Insert an element at the front of the buffer
+ *     operator[]        Access element by index, unchecked
+ *     at                Access element by index with bounds checking
+ *     front             Access foremost element (i.e. [0])
+ *     back              Access backmost element (i.e. [size() - 1])
  *   Iterators:
- *     begin, cbegin     Returns an iterator to the first element of the container
- *     end, cend         Returns an iterator to the element following the last element of the container
- *     rbegin, crbegin   Returns an iterator to the first element of the reversed container
- *     rend, crend       Returns an iterator to the element following the last element of the reversed container
+ *     begin, cbegin     Return an iterator to the first element of the container
+ *     end, cend         Return an iterator to the element following the last element of the container
+ *     rbegin, crbegin   Return an iterator to the first element of the reversed container
+ *     rend, crend       Return an iterator to the element following the last element of the reversed container
  *   Capacity:
- *     size              Returns number of used elements
- *     capacity          Returns maximum number of elements
- *     filled            Checks whether the buffer is completely filled
- *     empty             Checks whether the buffer is empty
- *     resize            Change the maximum number of elements (only for std::vector based buffers)
- *     reserve           Change the maximum number of elements (only for std::vector based buffers)
+ *     size              Return number of used elements
+ *     capacity          Return maximum number of elements
+ *     filled            Check whether the buffer is completely filled
+ *     empty             Check whether the buffer is empty
+ *     resize            Change the maximum number of elements (only if fixed_size==0)
+ *     reserve           Change the maximum number of elements (only if fixed_size==0)
  *   Modifiers:
  *     clear             Empty the buffer
  *
@@ -101,20 +121,21 @@ namespace gul {
  *   operator<<          Dump the raw data of the buffer to an ostream
  * \endcode
  *
- * The sliding buffer can be instantiated in two different underlying container versions:
- * * If the size is known at compile time, instantiate it with that number as fixed_capacity.
- *   The underlying container will be a std::array.
- * * If a flexible capacity is desired, omit the template parameter fixed_capacity. It will be
- *   defaulted to zero (0). The underlying container will then be a std::vector. You need
- *   to use a constructor that sets a certain capacity or set the capacity afterwards with
- *   resize(). If the size is really 0 elements, the buffer is unusable.
- * Apart from the ability of the latter to resize()/reserve() all functionality is
- * identical.
+ * The sliding buffer can be instantiated in two slightly different versions:
+ * * If the size is known at compile time, it can be specified as the `fixed_capacity`
+ *   template parameter. The elements are stored within the sliding buffer as in a
+ *   std::array.
+ * * If a flexible capacity is desired, `fixed_capacity` can be omitted. It defaults to
+ *   zero, and space for elements can subsequently be allocated dynamically as in a
+ *   std::vector. You need to use a constructor that sets a certain capacity or set the
+ *   capacity afterwards with resize(). As long as the capacity is zero, the buffer is
+ *   unusable and most operations result in undefined behavior.
  *
- * The elements (ElementT) must be default constructible, if clear() will be used.
+ * If clear() is to be used, `ElementT` must be default constructible.
  *
  * \tparam ElementT       Type of elements in the buffer
- * \tparam fixed_capacity Maximum number of elements in the buffer (i.e. capacity), zero if unspecified/dynamic
+ * \tparam fixed_capacity Maximum number of elements in the buffer (capacity), zero if
+ *                        unspecified/dynamic
  * \tparam Container      Type of the underlying container, usually not specified
  */
 template<typename ElementT, std::size_t fixed_capacity = 0u,
@@ -189,10 +210,13 @@ public:
 
 protected:
 
-    /// Index of the element in the underlying container that will be written to next.
-    size_type next_element_{ 0u };
-    /// Indicates if the buffer is completely filled with elements
-    /// (i.e. elements with indices higher than next_element_ are valid).
+    /// Index of the first SlidingBuffer element in the underlying container (the one
+    /// retrieved by SlidingBuffer::front().
+    size_type idx_begin_{ 0u };
+    /// Index pointing to the element in the underlying container that will be written to
+    /// by the next call to push_back().
+    size_type idx_end_{ 0u };
+    /// Indicates if the buffer is completely filled with elements.
     bool full_{ false };
     /// Actual data is stored here, the underlying container.
     Container storage_{ };
@@ -200,67 +224,119 @@ protected:
 public:
 
     /**
-     * Insert one element item into the buffer.
+     * Insert one element at the end of the buffer; if it is full, an element at the front
+     * is dropped to make room.
      *
-     * Think of this as inserting in the front. Probably an element at the back is
-     * dropped to make room in the fixed size buffer.
+     * Iterator end() is invalidated. Iterator begin() is only invalidated if the call
+     * causes the size of the buffer to increase (i.e. if it was not full yet).
+     * All other iterators still point to the same logical element, while the contents of
+     * all logical elements is shifted.
      *
-     * Iterator end() is invalidated if the size of the buffer increased (i.e.
-     * in the startup phase where filled() == false).
-     * All other iterators still point to the same logical element, while the
-     * contents of all logical elements is shifted.
+     * \warning
+     * Calling push_back() on a SlidingBuffer with zero capacity results in undefined
+     * behavior.
      */
-    auto push_front(value_type&& in) -> void
+    auto push_back(const value_type& in) -> void
     {
-        storage_[next_element_] = std::move(in);
-        ++next_element_;
-        if (next_element_ >= capacity()) {
-            next_element_ = 0;
+        storage_[idx_end_] = in;
+
+        increase_idx(idx_end_);
+        if (full_)
+            increase_idx(idx_begin_);
+
+        if (idx_end_ == idx_begin_)
             full_ = true;
-        }
     }
 
     /**
      * \overload
+     */
+    auto push_back(value_type&& in) -> void
+    {
+        storage_[idx_end_] = std::move(in);
+
+        increase_idx(idx_end_);
+        if (full_)
+            increase_idx(idx_begin_);
+
+        if (idx_end_ == idx_begin_)
+            full_ = true;
+    }
+
+    /**
+     * Insert one element at the front of the buffer; if it is full, an element at the
+     * back is dropped to make room.
+     *
+     * Iterator begin() is invalidated. Iterator end() is only invalidated if the call
+     * causes the size of the buffer to increase (i.e. if it was not full yet).
+     * All other iterators still point to the same logical element, while the contents of
+     * all logical elements is shifted.
+     *
+     * \warning
+     * Calling push_front() on a SlidingBuffer with zero capacity results in undefined
+     * behavior.
      */
     auto push_front(const value_type& in) -> void
     {
-        auto in_copy = in;
-        push_front(std::move(in_copy));
-    }
+        decrease_idx(idx_begin_);
 
-    /**
-     * Access one element in the buffer, relative to the most recently `push`ed element.
-     *
-     * Index 0 indicates the most recent element, 1 is the element before that and so on.
-     * Access to elements outside the capacity is not allowed and results in undefined
-     * behavior. Access to elements inside the capacity is always allowed; a
-     * default-constructed element is returned if `idx >= size()`.
-     *
-     * \returns a reference to the requested element.
-     */
-    auto operator[](const size_type idx) -> reference
-    {
-        return (next_element_ <= idx) ?
-            storage_[next_element_ - idx - 1 + capacity()] :
-            storage_[next_element_ - idx - 1];
+        if (full_)
+            decrease_idx(idx_end_);
+
+        storage_[idx_begin_] = in;
+
+        if (idx_end_ == idx_begin_)
+            full_ = true;
     }
 
     /**
      * \overload
      */
-    auto operator[](const size_type idx) const -> const_reference
+    auto push_front(value_type&& in) -> void
     {
-        return (next_element_ <= idx) ?
-            storage_[next_element_ - idx - 1 + capacity()] :
-            storage_[next_element_ - idx - 1];
+        decrease_idx(idx_begin_);
+
+        if (full_)
+            decrease_idx(idx_end_);
+
+        storage_[idx_begin_] = std::move(in);
+
+        if (idx_end_ == idx_begin_)
+            full_ = true;
     }
 
     /**
-     * Access one element in the buffer, relative to the most recently `push`ed element,
-     * with bounds checking.
+     * Access an element in the buffer by index without bounds checking.
      *
-     * Index 0 indicates the most recent element, 1 is the element before that and so on.
+     * Index 0 is the foremost element, `size() - 1` the backmost one. Access to elements
+     * outside the capacity is not allowed and results in undefined behavior. Access to
+     * elements inside the capacity is always allowed; a default-constructed element is
+     * returned if `idx >= size()`.
+     *
+     * \returns a reference to the requested element.
+     */
+    auto operator[](size_type idx) noexcept -> reference
+    {
+        idx += idx_begin_;
+
+        return (idx >= capacity()) ? storage_[idx - capacity()] : storage_[idx];
+    }
+
+    /**
+     * \overload
+     */
+    auto operator[](size_type idx) const noexcept -> const_reference
+    {
+        idx += idx_begin_;
+
+        return (idx >= capacity()) ? storage_[idx - capacity()] : storage_[idx];
+    }
+
+    /**
+     * Access an element in the buffer by index with bounds checking.
+     *
+     * Index 0 is the foremost element, `size() - 1` the backmost one. Access to elements
+     * beyond the last one causes an exception to be thrown.
      *
      * \param idx   Index of the element to return
      *
@@ -291,11 +367,14 @@ public:
     }
 
     /**
-     * Return the most recently pushed element.
+     * Return the foremost element (the one with index 0).
+     * This call does not check if an element has ever been pushed into the buffer, so it
+     * might return a default-constructed element. In the case of a SlidingBuffer with
+     * zero capacity, calling front() results in undefined behavior.
      */
     auto front() noexcept -> reference
     {
-        return operator[](0);
+        return storage_[idx_begin_];
     }
 
     /**
@@ -303,17 +382,21 @@ public:
      */
     auto front() const noexcept -> const_reference
     {
-        return operator[](0);
+        return storage_[idx_begin_];
     }
 
     /**
-     * Return the oldest element in the buffer (i.e. the one with the highest valid index).
+     * Return the backmost element (the one with the highest valid index).
+     * This call does not check if an element has ever been pushed into the buffer, so it
+     * might return a default-constructed element. In the case of a SlidingBuffer with
+     * zero capacity, calling back() results in undefined behavior.
      */
     auto back() noexcept -> reference
     {
-        if (not full_)
-            return storage_[0];
-        return storage_[next_element_];
+        if (idx_end_ == 0)
+            return storage_[capacity() - 1];
+        else
+            return storage_[idx_end_ - 1];
     }
 
     /**
@@ -321,9 +404,10 @@ public:
      */
     auto back() const noexcept -> const_reference
     {
-        if (not full_)
-            return storage_[0];
-        return storage_[next_element_];
+        if (idx_end_ == 0)
+            return storage_[capacity() - 1];
+        else
+            return storage_[idx_end_ - 1];
     }
 
     /**
@@ -337,7 +421,11 @@ public:
     {
         if (full_)
             return capacity();
-        return next_element_;
+        
+        if (idx_end_ >= idx_begin_)
+            return idx_end_ - idx_begin_;
+        else
+            return idx_end_ + capacity() - idx_begin_;
     }
 
     /**
@@ -374,7 +462,8 @@ public:
     auto clear() -> void
     {
         full_ = false;
-        next_element_ = 0u;
+        idx_begin_ = 0u;
+        idx_end_ = 0u;
 
         // Fill with new empty elements to possibly trigger RAII in the elements
         std::fill(storage_.begin(), storage_.end(), value_type{});
@@ -385,62 +474,59 @@ public:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * Shrinking: The oldest excess elements are just dropped instantly.
-     * Growing: The capacity changes, but the (used) size not. It will grow
+     * Shrinking: The excess elements with the highest indices are dropped.
+     * Growing: The capacity changes, but the (used) size does not. It will grow
      * gradually when elements are pushed, as in the startup phase.
      *
-     * \param count    New maximum size / capacity of the sliding buffer
+     * \param new_capacity  New capacity (maximum size) of the sliding buffer.
      */
-    auto resize(size_type count) -> void
+    auto resize(size_type new_capacity) -> void
     {
         static_assert(fixed_capacity == 0u,
             "resize() only possible if the underlying container is resizable");
-        auto const old_count = capacity();
-        if (count == old_count)
+        auto const old_capacity = capacity();
+        auto const old_size = size();
+
+        //////
+        // No change
+        if (new_capacity == old_capacity)
             return;
 
         //////
         // Vanishing
-        if (count == 0) {
-            storage_.resize(count);
-            next_element_ = 0;
+        if (new_capacity == 0) {
+            storage_.resize(0);
+            idx_begin_ = 0;
+            idx_end_ = 0;
             full_ = false;
             return;
         }
 
+        // For growing or shrinking, make SlidingBuffer indices equal to those of the
+        // underlying container
+        std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+        idx_begin_ = 0;
+
         //////
         // Growing
-        if (count > old_count) {
-            storage_.resize(count);
-            if (not full_) {
-                return;
-            }
-            // transform the completely filled state into an initial filling state (oldest = leftmost)
-            make_indices_trivial(old_count);
+        if (new_capacity > old_capacity) {
+            storage_.resize(new_capacity);
             full_ = false;
+            idx_end_ = old_size;
             return;
         }
 
         //////
         // Shrinking
-        if (not full_ and next_element_ <= count) {
-            storage_.resize(count);
-            if (next_element_ > 0) {
-                next_element_ %= count;
-                full_ = (next_element_ == 0);
-            }
-            return;
+        storage_.resize(new_capacity);
+        if (old_size < new_capacity) {
+            full_ = false;
+            idx_end_ = old_size;
         }
-        // transform current filling state to completely filled state
-        if (full_ and count < old_count) {
-            make_indices_trivial(old_count);
-            next_element_ = 0;
+        else {
+            full_ = true;
+            idx_end_ = 0;
         }
-        std::move(storage_.begin() + (old_count - count),
-                storage_.end(),
-                storage_.begin());
-        next_element_ = 0;
-        storage_.resize(count);
     }
 
     /**
@@ -450,7 +536,7 @@ public:
      *
      * This just calls resize(). See further explanations at resize().
      *
-     * \param size   New maximum size / capacity of the sliding buffer
+     * \param size   New capacity (maximum size) of the sliding buffer.
      */
     auto reserve(size_type size) -> void
     {
@@ -460,13 +546,13 @@ public:
     }
 
     /**
-     * Checks if the buffer has no elements, i.e. whether begin() == end().
+     * Check if the buffer contains no elements, i.e. whether begin() == end().
      *
-     * \returns true if the container is empty, false otherwise
+     * \returns true if the container is empty, false otherwise.
      */
     auto empty() const noexcept -> bool
     {
-        return (not full_) and (next_element_ == 0);
+        return (not full_) and (idx_begin_ == idx_end_);
     }
 
     /**
@@ -494,15 +580,10 @@ public:
      * It has the following guarantees:
      * * No invalidation on any read
      * * No invalidation after push_front() after container filled
-     * * Only end() invalidated on size increase
-     * * Only all iterators pointing past the new end() invalidated on size decrease
+     * * Only begin() invalidated on size increase by push_front()
+     * * Only end() invalidated on size increase by push_back()
      *
      * An iterator always points to the same logical slot in the SlidingBuffer.
-     *
-     * If the buffer grows by one element the iterator end() now (often) points
-     * to the oldest element, because that has been pushed right in the logical
-     * slots. After this end() has to be re-aquired. Other iterators still
-     * point to the same slots.
      *
      * \tparam BufferPointer Type of the pointer used to access the SlidingBuffer
      */
@@ -512,7 +593,7 @@ public:
         /// This is the logical index we are currently pointing at.
         size_type position_{ 0 };
     private:
-        /// A reference to the container holding the actual data.
+        /// A pointer to the container holding the actual data.
         BufferPointer buffer_;
 
     public:
@@ -686,16 +767,20 @@ public:
     }
 
 private:
-    // Shuffle elements so that we have the most trivial representation
-    // next_element_ has to be possibly corrected afterwards
-    auto make_indices_trivial(const size_type count) -> void
+    void decrease_idx(size_t &idx) noexcept
     {
-        auto const limit = count - 1;
-        for (auto i = decltype(limit){0}; i <= limit; i++) {
-            auto const j = std::min(limit, next_element_ + i);
-            std::swap(storage_[i], storage_[j]);
-        }
-        next_element_ = count;
+        if (idx == 0)
+            idx = capacity() - 1;
+        else
+            --idx;
+    }
+
+    void increase_idx(size_t &idx) noexcept
+    {
+        ++idx;
+
+        if (idx == capacity())
+            idx = 0;
     }
 };
 
@@ -766,7 +851,7 @@ public:
 
     // Inherit members
     using SlidingBuffer<ElementT, fixed_capacity, Container>::storage_;
-    using SlidingBuffer<ElementT, fixed_capacity, Container>::next_element_;
+    using SlidingBuffer<ElementT, fixed_capacity, Container>::idx_end_;
     using SlidingBuffer<ElementT, fixed_capacity, Container>::full_;
     using SlidingBuffer<ElementT, fixed_capacity, Container>::capacity;
 
@@ -816,7 +901,7 @@ public:
     {
         if (full_)
             return storage_.end();
-        return storage_.begin() + next_element_;
+        return storage_.begin() + idx_end_;
     }
 
     /**
@@ -836,7 +921,7 @@ public:
     {
         if (full_)
             return storage_.cend();
-        return storage_.cbegin() + next_element_;
+        return storage_.cbegin() + idx_end_;
     }
 
     /**
