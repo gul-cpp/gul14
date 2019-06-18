@@ -52,9 +52,9 @@ namespace gul {
  *
  * \section introduction Introduction
  *
- * The General Utility Library (GUL) contains often-used utility functions and types that
- * form the foundation for other libraries and programs. The main fields covered by the
- * library are:
+ * The General Utility Library (GUL) for C++14 contains often-used utility functions and
+ * types that form the foundation for other libraries and programs. The main fields
+ * covered by the library are:
  *
  *  - \ref string_utilities
  *  - \ref concurrency_utilities
@@ -84,6 +84,20 @@ namespace gul {
  *
  * GUL requires at least C++14. All utility functions and classes are enclosed in the
  * namespace \ref gul.
+ *
+ * \section source_code Obtaining the Source Code
+ *
+ * You can clone the current master branch of GUL from
+ * https://stash.desy.de/scm/gul/libgul.git . You can also head over to
+ * https://stash.desy.de/projects/GUL/repos/libgul to browse the source. If you have an
+ * account, you can submit pull requests and access development branches there, too. If
+ * you need an account, let us know.
+ *
+ * \section contributing Contributing
+ *
+ * Bug reports, feature requests and constructive criticism are always welcome. Patches
+ * are welcome if they come with a lot of tests. Just contact any of the \ref contributors
+ * (we are generally reachable under forename.surname@desy.de - you'll figure it out).
  *
  * \section behind_the_scenes Behind the Scenes
  *
