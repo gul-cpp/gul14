@@ -484,68 +484,7 @@ public:
     {
         static_assert(fixed_capacity == 0u,
             "resize() only possible if the underlying container is resizable");
-        auto const old_capacity = capacity();
-        auto const old_size = size();
-
-        //////
-        // No change
-        if (new_capacity == old_capacity)
-            return;
-
-        //////
-        // Vanishing
-        if (new_capacity == 0) {
-            storage_.resize(0);
-            idx_begin_ = 0;
-            idx_end_ = 0;
-            full_ = false;
-            return;
-        }
-
-        auto const right_align = (not full_) and (idx_end_ == 0) and (idx_begin_ != 0);
-
-        //////
-        // Growing
-        if (new_capacity > old_capacity) {
-            if (right_align) {
-                // Pure right aligned un-full buffer; keep alignment by shifting elements to the new right
-                storage_.resize(new_capacity);
-                std::move_backward(storage_.begin() + idx_begin_, storage_.begin() + old_capacity, storage_.end());
-                idx_begin_ += new_capacity - old_capacity;
-                return;
-            } else {
-                // Make SlidingBuffer indices equal to those of the underlying container ('left align elements')
-                std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
-                storage_.resize(new_capacity);
-                full_ = false;
-                idx_begin_ = 0;
-                idx_end_ = old_size;
-                return;
-            }
-        }
-
-        //////
-        // Shrinking
-        if (right_align) {
-            // Pure right aligned un-full buffer; keep alignment by shifting elements to the new right
-            std::rotate(storage_.begin(), storage_.begin() + (old_capacity - new_capacity), storage_.end());
-            idx_begin_ -= old_capacity - new_capacity;
-        } else {
-            // Make SlidingBuffer indices equal to those of the underlying container ('left align elements')
-            std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
-            idx_begin_ = 0;
-        }
-
-        storage_.resize(new_capacity);
-        if (old_size < new_capacity) {
-            full_ = false;
-            if (not right_align)
-                idx_end_ = old_size;
-        }
-        else {
-            full_ = true;
-            idx_end_ = 0;
-        }
+        change_capacity(new_capacity);
     }
 
     /**
@@ -561,7 +500,7 @@ public:
     {
         static_assert(fixed_capacity == 0u,
             "reserve() only possible if the underlying container is resizable");
-        resize(size);
+        change_capacity(size);
     }
 
     /**
@@ -813,6 +752,68 @@ private:
         if (idx == capacity())
             idx = 0;
     }
+
+protected:
+    /**
+     * Change the underlying container's capacity.
+     *
+     * Only possible if the underlying container is a std::vector.
+     *
+     * Before the container is resized the data will be moved around to make
+     * the SlidingBuffer indices equal to those of the underlying container.
+     *
+     * Shrinking: The excess elements with the highest indices are dropped.
+     * Growing: The capacity changes, but the (used) size does not. It will grow
+     * gradually when elements are pushed, as in the startup phase.
+     *
+     * \param new_capacity  New capacity (maximum size) of the sliding buffer.
+     */
+    auto change_capacity(size_type new_capacity) -> void
+    {
+        auto const old_capacity = capacity();
+        auto const old_size = size();
+
+        //////
+        // No change
+        if (new_capacity == old_capacity)
+            return;
+
+        //////
+        // Vanishing
+        if (new_capacity == 0) {
+            storage_.resize(0);
+            idx_begin_ = 0;
+            idx_end_ = 0;
+            full_ = false;
+            return;
+        }
+
+        // For growing or shrinking, make SlidingBuffer indices equal to those of the
+        // underlying container
+        std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+        idx_begin_ = 0;
+
+        //////
+        // Growing
+        if (new_capacity > old_capacity) {
+            storage_.resize(new_capacity);
+            full_ = false;
+            idx_end_ = old_size;
+            return;
+        }
+
+        //////
+        // Shrinking
+        storage_.resize(new_capacity);
+        if (old_size < new_capacity) {
+            full_ = false;
+            idx_end_ = old_size;
+        }
+        else {
+            full_ = true;
+            idx_end_ = 0;
+        }
+    }
 };
 
 /**
@@ -1034,6 +1035,76 @@ public:
     auto crend() const noexcept -> const_reverse_iterator
     {
         return std::make_reverse_iterator(cbegin());
+    }
+
+    /**
+     * Resize the container.
+     *
+     * Only possible if the underlying container is a std::vector.
+     *
+     * Shrinking: The excess elements with the highest indices are dropped.
+     * Growing: The capacity changes, but the (used) size does not. It will grow
+     * gradually when elements are pushed, as in the startup phase.
+     *
+     * \param new_capacity  New capacity (maximum size) of the sliding buffer.
+     */
+    auto resize(size_type new_capacity) -> void
+    {
+        static_assert(fixed_capacity == 0u,
+            "resize() only possible if the underlying container is resizable");
+
+        // We handle just one special case here: A pure right aligned un-full buffer
+        //
+        // I.e. only push_front() (not push_back()) has been used until now, and
+        // the buffer is not yet filled completely. Then the data will only occupy
+        // the 'right hand side' of the underlying container.
+        //
+        // In order to fulfill begin()'s and end()'s guarantee to include only
+        // filled elements we need to right-align the data in the new container.
+
+        auto const old_capacity = capacity();
+
+        auto const right_align =
+                (new_capacity > 0)
+            and (new_capacity != old_capacity)
+            and (not full_)
+            and (idx_end_ == 0)
+            and (idx_begin_ != 0);
+
+        if (not right_align)
+            return this->change_capacity(new_capacity);
+
+        //////
+        // Growing
+        if (new_capacity > old_capacity) {
+            storage_.resize(new_capacity);
+            std::move_backward(storage_.begin() + idx_begin_, storage_.begin() + old_capacity, storage_.end());
+            idx_begin_ += new_capacity - old_capacity;
+            return;
+        }
+
+        //////
+        // Shrinking
+        full_ = (this->size() >= new_capacity);
+        std::rotate(storage_.begin(), storage_.begin() + (old_capacity - new_capacity), storage_.end());
+        idx_begin_ -= old_capacity - new_capacity;
+        storage_.resize(new_capacity);
+    }
+
+    /**
+     * Resize the container.
+     *
+     * Only possible if the underlying container is a std::vector.
+     *
+     * This just calls resize(). See further explanations at resize().
+     *
+     * \param size   New capacity (maximum size) of the sliding buffer.
+     */
+    auto reserve(size_type size) -> void
+    {
+        static_assert(fixed_capacity == 0u,
+            "reserve() only possible if the underlying container is resizable");
+        resize(size);
     }
 };
 
