@@ -975,8 +975,10 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
 
         // content checks
         REQUIRE(*buf.begin() == 1);
-        REQUIRE(*(++(buf.begin())) == 2);
-        REQUIRE(*(--buf.end()) == 2);
+        auto buf_begin = buf.begin();
+        auto buf_end = buf.end();
+        REQUIRE(*(++buf_begin) == 2);
+        REQUIRE(*(--buf_end) == 2);
         REQUIRE(buf[0] == 1);
         REQUIRE(buf[1] == 2);
         std::stringstream s{ };
@@ -994,7 +996,7 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
         REQUIRE(buf.size() == 2);
 
         // The underlying buffer region must be at least 2 items long and it must contain
-        // out two elements - there are no other guarantees.
+        // our two elements - there are no other guarantees.
         REQUIRE(std::distance(buf.begin(), buf.end()) >= 2);
         REQUIRE(std::find(buf.begin(), buf.end(), 1) != buf.end());
         REQUIRE(std::find(buf.begin(), buf.end(), 2) != buf.end());
