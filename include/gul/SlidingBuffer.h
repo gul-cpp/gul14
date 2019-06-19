@@ -598,11 +598,14 @@ public:
      *
      * It has the following guarantees:
      * * No invalidation on any read
-     * * No invalidation after push_front() after container filled
+     * * No invalidation by push_front() or push_back() after the container is filled
      * * Only begin() invalidated on size increase by push_front()
      * * Only end() invalidated on size increase by push_back()
+     * * Only iterators pointing past the new end() invalidated on size decrease
      *
-     * An iterator always points to the same logical slot in the SlidingBuffer.
+     * The SlidingBufferIterator represents a logical index in the SlidingBuffer. In other
+     * words, the iterator does not "follow" the sliding data when push_back() or
+     * push_front() are used.
      *
      * \tparam BufferPointer Type of the pointer used to access the SlidingBuffer
      */
