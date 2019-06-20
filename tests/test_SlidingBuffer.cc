@@ -25,6 +25,8 @@
 #include <sstream>
 #include <random>
 
+#include <iostream>
+
 namespace {
 
 // A dummy struct for tests with nontrivial elements.
@@ -1056,6 +1058,61 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
         REQUIRE(buf[0] == 1);
         REQUIRE(buf[3] == 11);
     }
+}
+
+template <typename Buffer>
+void do_a_dump(Buffer&& buf, int start, int end, int omit_until, bool backwards, int resize_to, std::string const& head) {
+    if (omit_until > 0)
+        std::cout << head << "\n[...]\n";
+    else
+        buf.debugdump(std::cout << head << '\n');
+    for (auto i = start; i <= end; ++i) {
+        if (not backwards)
+            buf.push_front(i);
+        else
+            buf.push_back(i);
+        if (omit_until == 0 or i >= omit_until)
+            buf.debugdump(std::cout);
+    }
+    buf.resize(resize_to);
+    buf.debugdump(std::cout) << '\n';
+}
+
+TEST_CASE("SlidingBuffer: Show behavior", "[SlidingBuffer]")
+{
+    auto start = 1;
+    auto end = 7;
+
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, false, 4, "Normal - push_front");
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, true, 4, "Normal - push_back");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, false, 4, "Exposed - push_front");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, true, 4, "Exposed - push_back");
+
+    start = 10;
+    end = 30;
+
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, false, 4, "Normal - push_front");
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, true, 4, "Normal - push_back");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, false, 4, "Exposed - push_front");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, true, 4, "Exposed - push_back");
+
+    start = 1;
+    end = 7;
+
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, false, 12, "Normal - push_front");
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, true, 12, "Normal - push_back");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, false, 12, "Exposed - push_front");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, true, 12, "Exposed - push_back");
+
+    start = 10;
+    end = 30;
+
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, false, 12, "Normal - push_front");
+    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, true, 12, "Normal - push_back");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, false, 12, "Exposed - push_front");
+    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, true, 12, "Exposed - push_back");
+
+    REQUIRE(1==1);
 }
 
 // vi:ts=4:sw=4:sts=4:et
