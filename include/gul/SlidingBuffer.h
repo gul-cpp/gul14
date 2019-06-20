@@ -29,6 +29,30 @@
 namespace gul {
 
 /**
+ * Determine how a SlidingBuffer handles decreases of its size.
+ *
+ * When the buffer's capacity decreases below the actual size some elements
+ * have to be dropped. The user can choose between two strategies:
+ *
+ * 1. Keep the elements with the lower indices (\b `ShrinkBehavior::keep_front_elements`)
+ * 2. Keep the elements with the higher indices (\b `ShrinkBehavior::keep_back_elements`)
+ *
+ * Usually the more recent data shall be preserved, while older data can be
+ * dropped.
+ *
+ * * If SlidingBuffer::push_front has been used to fill the buffer the front
+ *   elements should then be kept.
+ * * If SlidingBuffer::push_back was the fill method the back elements are
+ *   usually better to keep.
+ * * If a mixture of SlidingBuffer::push_front and SlidingBuffer::push_back
+ *   has been used this is hard to decide.
+ *
+ * The behavior is utilized by SlidingBuffer::resize, SlidingBuffer::reserve,
+ * SlidingBufferExposed::resize, and SlidingBufferExposed::reserve.
+ */
+enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
+
+/**
  * A circular data buffer of (semi-)fixed capacity to which elements can be added at the
  * front or at the back.
  *
@@ -474,17 +498,18 @@ public:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * Shrinking: The excess elements with the highest indices are dropped.
-     * Growing: The capacity changes, but the (used) size does not. It will grow
-     * gradually when elements are pushed, as in the startup phase.
+     * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
+     * * Growing: The capacity changes, but the (used) size does not. It will grow
+     *   gradually when elements are pushed, as in the startup phase.
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior Specify the \ref ShrinkBehavior.
      */
-    auto resize(size_type new_capacity) -> void
+    auto resize(size_type new_capacity, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
         static_assert(fixed_capacity == 0u,
             "resize() only possible if the underlying container is resizable");
-        change_capacity(new_capacity);
+        change_capacity(new_capacity, shrink_behavior);
     }
 
     /**
@@ -495,12 +520,13 @@ public:
      * This just calls resize(). See further explanations at resize().
      *
      * \param size   New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior Specify the \ref ShrinkBehavior.
      */
-    auto reserve(size_type size) -> void
+    auto reserve(size_type size, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
         static_assert(fixed_capacity == 0u,
             "reserve() only possible if the underlying container is resizable");
-        change_capacity(size);
+        change_capacity(size, shrink_behavior);
     }
 
     /**
@@ -759,16 +785,14 @@ protected:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * Before the container is resized the data will be moved around to make
-     * the SlidingBuffer indices equal to those of the underlying container.
-     *
-     * Shrinking: The excess elements with the highest indices are dropped.
-     * Growing: The capacity changes, but the (used) size does not. It will grow
-     * gradually when elements are pushed, as in the startup phase.
+     * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
+     * * Growing: The capacity changes, but the (used) size does not. It will grow
+     *   gradually when elements are pushed, as in the startup phase.
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior Specify the \ref ShrinkBehavior.
      */
-    auto change_capacity(size_type new_capacity) -> void
+    auto change_capacity(size_type new_capacity, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
         auto const old_capacity = capacity();
         auto const old_size = size();
@@ -788,29 +812,38 @@ protected:
             return;
         }
 
-        // For growing or shrinking, make SlidingBuffer indices equal to those of the
-        // underlying container
-        std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
-        idx_begin_ = 0;
 
         //////
         // Growing
         if (new_capacity > old_capacity) {
+            // Make SlidingBuffer indices equal to those of the underlying container
+            std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
             storage_.resize(new_capacity);
-            full_ = false;
+            idx_begin_ = 0;
             idx_end_ = old_size;
+            full_ = false;
             return;
         }
 
         //////
         // Shrinking
-        storage_.resize(new_capacity);
         if (old_size < new_capacity) {
-            full_ = false;
+            // All data fits into new capacity, just move it there
+            std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+            storage_.resize(new_capacity);
+            idx_begin_ = 0;
             idx_end_ = old_size;
+            full_ = false;
         }
         else {
+            auto new_front = idx_begin_;
+            if (shrink_behavior == ShrinkBehavior::keep_back_elements)
+                new_front = (idx_end_ + old_capacity - new_capacity) % old_capacity;
+
+            std::rotate(storage_.begin(), storage_.begin() + new_front, storage_.end());
+            storage_.resize(new_capacity);
             full_ = true;
+            idx_begin_ = 0;
             idx_end_ = 0;
         }
     }
@@ -1042,13 +1075,14 @@ public:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * Shrinking: The excess elements with the highest indices are dropped.
-     * Growing: The capacity changes, but the (used) size does not. It will grow
-     * gradually when elements are pushed, as in the startup phase.
+     * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
+     * * Growing: The capacity changes, but the (used) size does not. It will grow
+     *   gradually when elements are pushed, as in the startup phase.
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior Specify the \ref ShrinkBehavior.
      */
-    auto resize(size_type new_capacity) -> void
+    auto resize(size_type new_capacity, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
         static_assert(fixed_capacity == 0u,
             "resize() only possible if the underlying container is resizable");
@@ -1065,14 +1099,15 @@ public:
         auto const old_capacity = capacity();
 
         auto const right_align =
-                (new_capacity > 0)
+            (shrink_behavior == ShrinkBehavior::keep_front_elements)
+            and (new_capacity > 0)
             and (new_capacity != old_capacity)
             and (not full_)
             and (idx_end_ == 0)
             and (idx_begin_ != 0);
 
         if (not right_align)
-            return this->change_capacity(new_capacity);
+            return this->change_capacity(new_capacity, shrink_behavior);
 
         //////
         // Growing
@@ -1100,12 +1135,13 @@ public:
      * This just calls resize(). See further explanations at resize().
      *
      * \param size   New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior Specify the \ref ShrinkBehavior.
      */
-    auto reserve(size_type size) -> void
+    auto reserve(size_type size, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
         static_assert(fixed_capacity == 0u,
             "reserve() only possible if the underlying container is resizable");
-        resize(size);
+        resize(size, shrink_behavior);
     }
 };
 

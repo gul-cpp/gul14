@@ -1016,7 +1016,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
         buf.push_front(1);
         buf.push_front(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
-        buf.resize(6);
+        buf.resize(6, gul::ShrinkBehavior::keep_front_elements);
         buf.push_front(10);
         buf.push_front(11);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
@@ -1029,7 +1029,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
         buf.push_front(1);
         buf.push_front(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
-        buf.resize(10);
+        buf.resize(10, gul::ShrinkBehavior::keep_front_elements);
         buf.push_front(10);
         buf.push_front(11);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
@@ -1042,7 +1042,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
         buf.push_back(1);
         buf.push_back(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
-        buf.resize(6);
+        buf.resize(6, gul::ShrinkBehavior::keep_back_elements);
         buf.push_back(10);
         buf.push_back(11);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
@@ -1055,7 +1055,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
         buf.push_back(1);
         buf.push_back(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
-        buf.resize(10);
+        buf.resize(10, gul::ShrinkBehavior::keep_back_elements);
         buf.push_back(10);
         buf.push_back(11);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 4);
