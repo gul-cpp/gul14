@@ -54,13 +54,15 @@ public:
         for (size_type i{0}; i < len; ++i) {
             s << this->storage_.at(i);
             if (i == this->idx_begin_ and i == this->idx_end_)
-                s << "* ";
+                s << "*";
             else if (i == this->idx_begin_)
-                s << "b ";
+                s << "b";
             else if (i == this->idx_end_)
-                s << "e ";
-            else
-                s << "  ";
+                s << "e";
+            else if (i + 1 < len)
+                s << " ";
+            if (i + 1 < len)
+                s << " ";
         }
         return s << '\n';
     }
@@ -82,13 +84,15 @@ public:
         for (size_type i{0}; i < len; ++i) {
             s << this->storage_.at(i);
             if (i == this->idx_begin_ and i == this->idx_end_)
-                s << "* ";
+                s << "*";
             else if (i == this->idx_begin_)
-                s << "b ";
+                s << "b";
             else if (i == this->idx_end_)
-                s << "e ";
-            else
-                s << "  ";
+                s << "e";
+            else if (i + 1 < len)
+                s << " ";
+            if (i + 1 < len)
+                s << " ";
         }
         return s << '\n';
     }
