@@ -27,6 +27,8 @@
 
 #include <iostream>
 
+using namespace std::literals::string_literals;
+
 namespace {
 
 // A dummy struct for tests with nontrivial elements.
@@ -1064,8 +1066,14 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
     }
 }
 
+//using gul::SlidingBuffer::ShrinkBehavior;
+
 template <typename Buffer>
-void do_a_dump(Buffer&& buf, int start, int end, int omit_until, bool backwards, int resize_to, std::string const& head) {
+auto do_a_dump(Buffer buf, int start, int end, bool backwards,
+        int resize_to, gul::ShrinkBehavior sb, std::string head) {
+    auto const omit_until = end - start >= 10 ? end - 4 : 0;
+    head += " - push_"s + (backwards ? "back"s : "front"s);
+    head += " - shrink_keep_"s + (sb == gul::ShrinkBehavior::keep_back_elements ? "back"s : "front"s);
     if (omit_until > 0)
         std::cout << head << "\n[...]\n";
     else
@@ -1078,45 +1086,165 @@ void do_a_dump(Buffer&& buf, int start, int end, int omit_until, bool backwards,
         if (omit_until == 0 or i >= omit_until)
             buf.debugdump(std::cout);
     }
-    buf.resize(resize_to);
+    buf.resize(resize_to, sb);
     buf.debugdump(std::cout) << '\n';
+
+    std::stringstream s{ };
+    for (auto it = buf.begin(); it != buf.end(); ++it)
+        s << *it << ' ';
+    return gul::join(gul::tokenize(s.str()), " ");
 }
 
-TEST_CASE("SlidingBuffer: Show behavior", "[SlidingBuffer]")
+TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
 {
-    auto start = 1;
-    auto end = 7;
+    auto a = std::string{};
 
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, false, 4, "Normal - push_front");
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, true, 4, "Normal - push_back");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, false, 4, "Exposed - push_front");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, true, 4, "Exposed - push_back");
+    auto const pf = false; // push_front
+    auto const pb = true; // push_back
+    auto const sf = gul::ShrinkBehavior::keep_front_elements;
+    auto const sb = gul::ShrinkBehavior::keep_back_elements;
+    auto const normal = "Normal";
 
-    start = 10;
-    end = 30;
+    SECTION("Buffer not yet filled, shrink with element loss") {
+        auto const start = 1;
+        auto const end = 7;
+        auto const start_size = 9;
+        auto const end_size = 4;
+        auto buf = SlidingBufferDebug<int>{ start_size };
 
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, false, 4, "Normal - push_front");
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, true, 4, "Normal - push_back");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, false, 4, "Exposed - push_front");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, true, 4, "Exposed - push_back");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "4 5 6 7");
+    }
 
-    start = 1;
-    end = 7;
+    SECTION("Buffer not yet filled, grow without element loss") {
+        auto const start = 1;
+        auto const end = 7;
+        auto const start_size = 9;
+        auto const end_size = 12;
+        auto buf = SlidingBufferDebug<int>{ start_size };
 
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, false, 12, "Normal - push_front");
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 0, true, 12, "Normal - push_back");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, false, 12, "Exposed - push_front");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 0, true, 12, "Exposed - push_back");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3 4 5 6 7");
+    }
 
-    start = 10;
-    end = 30;
+    SECTION("Buffer not yet filled, shrink without element loss") {
+        auto const start = 1;
+        auto const end = 3;
+        auto const start_size = 9;
+        auto const end_size = 5;
+        auto buf = SlidingBufferDebug<int>{ start_size };
 
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, false, 12, "Normal - push_front");
-    do_a_dump(SlidingBufferDebug<int>{ 9 }, start, end, 26, true, 12, "Normal - push_back");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, false, 12, "Exposed - push_front");
-    do_a_dump(SlidingBufferExposedDebug<int>{ 9 }, start, end, 26, true, 12, "Exposed - push_back");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
+    }
 
-    REQUIRE(1==1);
+    SECTION("Buffer filled, shrink with element loss") {
+        auto const start = 10;
+        auto const end = 30;
+        auto const start_size = 9;
+        auto const end_size = 4;
+        auto buf = SlidingBufferDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "27 28 29 30");
+    }
+
+    SECTION("Buffer filled, grow without element loss") {
+        auto const start = 10;
+        auto const end = 30;
+        auto const start_size = 9;
+        auto const end_size = 12;
+        auto buf = SlidingBufferDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25 26 27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "22 23 24 25 26 27 28 29 30");
+    }
+}
+
+TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
+{
+    auto a = std::string{};
+
+    auto const pf = false; // push_front
+    auto const pb = true; // push_back
+    auto const sf = gul::ShrinkBehavior::keep_front_elements;
+    auto const sb = gul::ShrinkBehavior::keep_back_elements;
+    auto const normal = "Exposed";
+
+    SECTION("Buffer not yet filled, shrink with element loss") {
+        auto const start = 1;
+        auto const end = 7;
+        auto const start_size = 9;
+        auto const end_size = 4;
+        auto buf = SlidingBufferExposedDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "4 5 6 7");
+    }
+
+    SECTION("Buffer not yet filled, grow without element loss") {
+        auto const start = 1;
+        auto const end = 7;
+        auto const start_size = 9;
+        auto const end_size = 12;
+        auto buf = SlidingBufferExposedDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3 4 5 6 7");
+    }
+
+    SECTION("Buffer not yet filled, shrink without element loss") {
+        auto const start = 1;
+        auto const end = 3;
+        auto const start_size = 9;
+        auto const end_size = 5;
+        auto buf = SlidingBufferExposedDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
+    }
+
+    SECTION("Buffer filled, shrink with element loss") {
+        auto const start = 10;
+        auto const end = 30;
+        auto const start_size = 9;
+        auto const end_size = 4;
+        auto buf = SlidingBufferExposedDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "27 28 29 30");
+    }
+
+    SECTION("Buffer filled, grow without element loss") {
+        auto const start = 10;
+        auto const end = 30;
+        auto const start_size = 9;
+        auto const end_size = 12;
+        auto buf = SlidingBufferExposedDebug<int>{ start_size };
+
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25 26 27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "22 23 24 25 26 27 28 29 30");
+    }
 }
 
 // vi:ts=4:sw=4:sts=4:et
