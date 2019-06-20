@@ -46,7 +46,7 @@ public:
     using gul::SlidingBuffer<ElementT, fixed_capacity, Container>::SlidingBuffer;
     using typename gul::SlidingBuffer<ElementT, fixed_capacity, Container>::size_type;
 
-    auto debugdump(std::ostream& s) -> std::ostream&
+    auto debugdump(std::ostream& s) const -> std::ostream&
     {
         auto const len = this->capacity();
         for (size_type i{0}; i < len; ++i) {
@@ -74,7 +74,7 @@ public:
     using gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>::SlidingBufferExposed;
     using typename gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>::size_type;
 
-    auto debugdump(std::ostream& s) -> std::ostream&
+    auto debugdump(std::ostream& s) const -> std::ostream&
     {
         auto const len = this->capacity();
         for (size_type i{0}; i < len; ++i) {
