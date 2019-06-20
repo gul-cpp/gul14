@@ -1086,8 +1086,9 @@ public:
         //////
         // Shrinking
         full_ = (this->size() >= new_capacity);
-        std::rotate(storage_.begin(), storage_.begin() + (old_capacity - new_capacity), storage_.end());
-        idx_begin_ -= old_capacity - new_capacity;
+        auto const required_shift = std::min(old_capacity - new_capacity, idx_begin_);
+        std::rotate(storage_.begin(), storage_.begin() + required_shift, storage_.end());
+        idx_begin_ -= required_shift;
         storage_.resize(new_capacity);
     }
 
