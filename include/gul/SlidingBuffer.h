@@ -100,9 +100,8 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  * Iterator invalidation:
  *   All read only operations    None
  *   clear                       All iterators except begin()
- *   reserve, resize             If shrunk: All except begin()
+ *   reserve, resize             If shrunk: All behind the new end (incl end()).
  *   push_front                  If size increased end()
- *   push_back                   If size increased end()
  *
  * Member types:
  *   value_type                  Type of the elements
@@ -252,7 +251,8 @@ public:
      * Insert one element at the end of the buffer; if it is full, an element at the front
      * is dropped to make room.
      *
-     * Iterator end() is invalidated.
+     * Iterator end() is invalidated. Iterator begin() is only invalidated if the call
+     * causes the size of the buffer to increase (i.e. if it was not full yet).
      * All other iterators still point to the same logical element, while the contents of
      * all logical elements is shifted.
      *
@@ -291,7 +291,8 @@ public:
      * Insert one element at the front of the buffer; if it is full, an element at the
      * back is dropped to make room.
      *
-     * Iterator end() is invalidated.
+     * Iterator begin() is invalidated. Iterator end() is only invalidated if the call
+     * causes the size of the buffer to increase (i.e. if it was not full yet).
      * All other iterators still point to the same logical element, while the contents of
      * all logical elements is shifted.
      *
@@ -480,8 +481,6 @@ public:
     /**
      * Empty the buffer.
      *
-     * All iterators except begin() are invalidated.
-     *
      * Its size() will be zero afterwards.
      */
     auto clear() -> void
@@ -502,8 +501,6 @@ public:
      * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
-     *
-     * All iterators except begin() are invalidated.
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
      * \param shrink_behavior Specify the \ref ShrinkBehavior.
@@ -860,9 +857,9 @@ protected:
  * \code
  * Iterator invalidation:
  *   All read only operations    None
- *   clear, reserve, resize      All
- *   push_front                  If size incresed begin()
- *   push_back                   If size incresed end()
+ *   clear                       All iterators except begin()
+ *   reserve, resize             If shrank: All behind the new end (incl end()); if grown: all
+ *   push_front                  If size incresed end()
  *
  * Member types:
  *   iterator                    container_type::iterator
@@ -1081,8 +1078,6 @@ public:
      * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
-     *
-     * All iterators are invalidated.
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
      * \param shrink_behavior Specify the \ref ShrinkBehavior.
