@@ -40,15 +40,15 @@ namespace gul {
  * Usually the more recent data shall be preserved, while older data can be
  * dropped.
  *
- * * If SlidingBuffer::push_front has been used to fill the buffer the front
+ * * If SlidingBuffer::push_front() has been used to fill the buffer the front
  *   elements should then be kept.
- * * If SlidingBuffer::push_back was the fill method the back elements are
+ * * If SlidingBuffer::push_back() was the fill method the back elements are
  *   usually better to keep.
- * * If a mixture of SlidingBuffer::push_front and SlidingBuffer::push_back
+ * * If a mixture of SlidingBuffer::push_front() and SlidingBuffer::push_back()
  *   has been used this is hard to decide.
  *
- * The behavior is utilized by SlidingBuffer::resize, SlidingBuffer::reserve,
- * SlidingBufferExposed::resize, and SlidingBufferExposed::reserve.
+ * The behavior is utilized by SlidingBuffer::resize(), SlidingBuffer::reserve(),
+ * SlidingBufferExposed::resize(), and SlidingBufferExposed::reserve().
  */
 enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
 
@@ -96,13 +96,9 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  * See SlidingBufferExposed for a variant with a different (more performant) iterator
  * interface.
  *
- * \code
- * Iterator invalidation:
- *   All read only operations    None
- *   clear                       All iterators except begin()
- *   reserve, resize             If shrunk: All behind the new end (incl end()).
- *   push_front                  If size increased end()
+ * Iterator invalidation is specified at SlidingBufferIterator.
  *
+ * \code
  * Member types:
  *   value_type                  Type of the elements
  *   container_type              Type of the underlying container (i.e. std::array<value_type, ..>)
@@ -146,16 +142,16 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  * \endcode
  *
  * The sliding buffer can be instantiated in two slightly different versions:
- * * If the size is known at compile time, it can be specified as the `fixed_capacity`
+ * * If the size is known at compile time, it can be specified as the \b `fixed_capacity`
  *   template parameter. The elements are stored within the sliding buffer as in a
  *   std::array.
- * * If a flexible capacity is desired, `fixed_capacity` can be omitted. It defaults to
+ * * If a flexible capacity is desired, \b `fixed_capacity` can be omitted. It defaults to
  *   zero, and space for elements can subsequently be allocated dynamically as in a
  *   std::vector. You need to use a constructor that sets a certain capacity or set the
  *   capacity afterwards with resize(). As long as the capacity is zero, the buffer is
  *   unusable and most operations result in undefined behavior.
  *
- * If clear() is to be used, `ElementT` must be default constructible.
+ * If clear() is to be used, \b `ElementT` must be default constructible.
  *
  * \tparam ElementT       Type of elements in the buffer
  * \tparam fixed_capacity Maximum number of elements in the buffer (capacity), zero if
@@ -199,7 +195,7 @@ public:
     /**
      * Construct an empty sliding buffer.
      *
-     * The capacity of the buffer is given by the fixed_capacity template parameter.
+     * The capacity of the buffer is given by the \b `fixed_capacity` template parameter.
      * If that template argument is not zero, a std::array based SlidingBuffer
      * with that (unchangeable) capacity is created.
      *
@@ -228,7 +224,7 @@ public:
      * Constructs a sliding buffer with a specified capacity.
      *
      * For std::array based sliding buffers the capacity is specified by the
-     * fixed_capacity template parameter.
+     * \b `fixed_capacity` template parameter.
      */
     SlidingBuffer(size_type count) : storage_(count) {}
 
@@ -246,15 +242,13 @@ protected:
     Container storage_{ };
 
 public:
-
     /**
      * Insert one element at the end of the buffer; if it is full, an element at the front
      * is dropped to make room.
      *
-     * Iterator end() is invalidated. Iterator begin() is only invalidated if the call
-     * causes the size of the buffer to increase (i.e. if it was not full yet).
-     * All other iterators still point to the same logical element, while the contents of
-     * all logical elements is shifted.
+     * At least some iterators can be invalidated. See \ref SlidingBufferIterator.
+     *
+     * Afterwards all iterators still point to the same logical element (i.e. element[n]).
      *
      * \warning
      * Calling push_back() on a SlidingBuffer with zero capacity results in undefined
@@ -289,9 +283,9 @@ public:
      * Insert one element at the front of the buffer; if it is full, an element at the
      * back is dropped to make room.
      *
-     * Iterator begin() is invalidated. Iterator end() is only invalidated if the call
-     * causes the size of the buffer to increase (i.e. if it was not full yet).
-     * All other iterators still point to the same logical element, while the contents of
+     * At least some iterators can be invalidated. See \ref SlidingBufferIterator.
+     *
+     * Afterwards all iterators still point to the same logical element, while the contents of
      * all logical elements is shifted.
      *
      * \warning
@@ -433,8 +427,8 @@ public:
     /**
      * Return the number of elements in the container, i.e. std::distance(begin(), end()).
      *
-     * In the startup phase it can be 0 and up to the fixed_capacity or capacity(),
-     * after startup (filled() == true) it will always return fixed_capacity resp.
+     * In the startup phase it can be 0 and up to the \b `fixed_capacity` or capacity(),
+     * after startup (filled() == true) it will always return \b `fixed_capacity` resp.
      * capacity().
      */
     auto size() const noexcept -> size_type
@@ -466,8 +460,7 @@ public:
      * If the buffer is used in filter contexts this means the filter is fully
      * initialized and working.
      *
-     * If the buffer has zero capacity it will be filled after one element (that
-     * is not memorized) has been pushed into it.
+     * If the buffer has zero capacity the value of filled() is false.
      */
     auto filled() const noexcept -> bool
     {
@@ -476,6 +469,8 @@ public:
 
     /**
      * Empty the buffer.
+     *
+     * (Almost) all iterators will be invalidated. See \ref SlidingBufferIterator.
      *
      * Its size() will be zero afterwards.
      */
@@ -494,9 +489,11 @@ public:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
+     * * Shrinking: The excess elements are dropped according to \b `shrink_behavior`.
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
+     *
+     * At least some iterators can be invalidated. See \ref SlidingBufferIterator.
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
      * \param shrink_behavior Specify the \ref ShrinkBehavior.
@@ -557,12 +554,29 @@ public:
      *
      * This is a bidirectional iterator.
      *
-     * It has the following guarantees:
+     * \par Invalidation
+     * An iterator is considered invalid if at least one of these conditions is true:
+     * * it can not be safely dereferenced (implementation dependent or undefined behavior)
+     * * it points to junk data
+     * * it does not point to the element which it is supposed to point to
+     * \par
+     * Depending on what \e supposed means two specifications can be given:
+     * 1. Iterator is supposed to point to a specific logical position/index in the buffer
+     * 2. Iterator is supposed to point to a specific value held in the buffer
+     * \par
+     * It has the following guarantees for case 1:
      * * No invalidation on any read
      * * No invalidation by push_front() or push_back() after the container is filled
-     * * Only begin() invalidated on size increase by push_front()
+     * * Only end() invalidated on size increase by push_front() or push_back()
+     * * Only end() invalidated on size increase by resize() or reserve()
+     * * Iterators pointing past the new end invalidated on size decrease
+     * \par
+     * It has the following guarantees for case 2:
+     * * No invalidation on any read
+     * * All iterators invalidated by push_front()
+     * * All iterators invalidated by push_back() after the container is filled
      * * Only end() invalidated on size increase by push_back()
-     * * Only iterators pointing past the new end() invalidated on size decrease
+     * * All iterators invalidated on size change
      *
      * The SlidingBufferIterator represents a logical index in the SlidingBuffer. In other
      * words, the iterator does not "follow" the sliding data when push_back() or
@@ -781,7 +795,7 @@ protected:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
+     * * Shrinking: The excess elements are dropped according to \b `shrink_behavior`.
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
      *
@@ -850,13 +864,17 @@ protected:
  * interface.
  * For a complete description, see SlidingBuffer; here are the differences only:
  *
- * \code
- * Iterator invalidation:
- *   All read only operations    None
- *   clear                       All iterators except begin()
- *   reserve, resize             If shrank: All behind the new end (incl end()); if grown: all
- *   push_front                  If size incresed end()
+ * \par Iterator invalidation
+ * It is only specified that all elements can be visited by traversing from begin() to end().\n
+ * If the size changes (push_front(), push_back(), resize(), reserve()) all iterators are invalidated.\n
+ * \par
+ * Furthermore when both push_front() and push_back() have been used on a single SlidingBufferExposed
+ * the whole capacity of the buffer is visited by traversing from begin() to end(), including
+ * possible 'unfilled' (default constructed) elements in the unused slots.
+ * \n
+ * See begin() and end() for more details.
  *
+ * \code
  * Member types:
  *   iterator                    container_type::iterator
  *   const_iterator              container_type::const_iterator
@@ -923,7 +941,7 @@ public:
      * used to add them), begin() returns an iterator pointing to the first occupied
      * element. If the elements are non-contiguous (which can happen if push_front() and
      * push_back() were mixed and the buffer is not yet full), begin() simply points to
-     * the start of the container and the range [begin(), end] may enclose
+     * the start of the container and the range [begin(), end()] may enclose
      * default-constructed elements.
      *
      * If the container is empty, the returned iterator is equal to end().
@@ -960,6 +978,8 @@ public:
      * Return an iterator to the element following the last element in the used space of
      * the underlying container.
      *
+     * If the container is empty, the returned iterator is equal to begin().
+     *
      * This element acts as a placeholder; attempting to access it results in undefined
      * behavior.
      *
@@ -968,7 +988,7 @@ public:
      * used to add them), end() returns an iterator pointing past the last occupied
      * element. If the elements are non-contiguous (which can happen if push_front() and
      * push_back() were mixed and the buffer is not yet full), end() simply points past
-     * the last element of the container and the range [begin(), end] may enclose
+     * the last element of the container and the range [begin(), end()] may enclose
      * default-constructed elements.
      */
     auto end() noexcept -> iterator
@@ -1004,16 +1024,8 @@ public:
      * container.
      *
      * It corresponds to the last element of the non-reversed container.
-     * If the container is empty, the returned iterator is equal to rend().
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
-     *
-     * It does, however, take not yet filled buffers into account and returns iterators
-     * only to elements really filled.
-     *
-     * If the container is empty, the returned iterator will be equal to end()
+     * See begin() and end() for details on what is accessed.
      */
     auto rbegin() noexcept -> reverse_iterator
     {
@@ -1025,16 +1037,8 @@ public:
      * underlying container.
      *
      * It corresponds to the last element of the non-reversed container.
-     * If the container is empty, the returned iterator is equal to rend().
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
-     *
-     * It does, however, take not yet filled buffers into account and returns iterators
-     * only to elements really filled.
-     *
-     * If the container is empty, the returned iterator will be equal to cend()
+     * See begin() and end() for details on what is accessed.
      */
     auto crbegin() const noexcept -> const_reverse_iterator
     {
@@ -1044,9 +1048,7 @@ public:
     /**
      * Return an iterator to the last element of the reversed underlying container.
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
+     * See begin() and end() for details on what is accessed.
      */
     auto rend() noexcept -> reverse_iterator
     {
@@ -1057,9 +1059,7 @@ public:
      * Return a constant iterator to the last element of the reversed
      * underlying container.
      *
-     * This accesses the underlying container in its order. The iterators do not know
-     * where the sliding starts and ends. Use the iterators only if you want to access
-     * all elements in unknown order.
+     * See begin() and end() for details on what is accessed.
      */
     auto crend() const noexcept -> const_reverse_iterator
     {
@@ -1071,7 +1071,7 @@ public:
      *
      * Only possible if the underlying container is a std::vector.
      *
-     * * Shrinking: The excess elements are dropped according to \b shrink_behavior.
+     * * Shrinking: The excess elements are dropped according to \b `shrink_behavior`.
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
      *
@@ -1130,7 +1130,7 @@ public:
      *
      * This just calls resize(). See further explanations at resize().
      *
-     * \param size   New capacity (maximum size) of the sliding buffer.
+     * \param size   New capacity (\b `maximum size`) of the sliding buffer.
      * \param shrink_behavior Specify the \ref ShrinkBehavior.
      */
     auto reserve(size_type size, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
