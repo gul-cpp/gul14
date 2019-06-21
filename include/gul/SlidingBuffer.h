@@ -267,8 +267,7 @@ public:
         increase_idx(idx_end_);
         if (full_)
             increase_idx(idx_begin_);
-
-        if (idx_end_ == idx_begin_)
+        else if (idx_end_ == idx_begin_)
             full_ = true;
     }
 
@@ -282,8 +281,7 @@ public:
         increase_idx(idx_end_);
         if (full_)
             increase_idx(idx_begin_);
-
-        if (idx_end_ == idx_begin_)
+        else if (idx_end_ == idx_begin_)
             full_ = true;
     }
 
@@ -306,11 +304,10 @@ public:
 
         if (full_)
             decrease_idx(idx_end_);
+        else if (idx_end_ == idx_begin_)
+            full_ = true;
 
         storage_[idx_begin_] = in;
-
-        if (idx_end_ == idx_begin_)
-            full_ = true;
     }
 
     /**
@@ -322,11 +319,10 @@ public:
 
         if (full_)
             decrease_idx(idx_end_);
+        else if (idx_end_ == idx_begin_)
+            full_ = true;
 
         storage_[idx_begin_] = std::move(in);
-
-        if (idx_end_ == idx_begin_)
-            full_ = true;
     }
 
     /**
@@ -775,7 +771,7 @@ private:
     {
         ++idx;
 
-        if (idx == capacity())
+        if (idx >= capacity())
             idx = 0;
     }
 
