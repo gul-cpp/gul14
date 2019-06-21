@@ -151,7 +151,7 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  *   capacity afterwards with resize(). As long as the capacity is zero, the buffer is
  *   unusable and most operations result in undefined behavior.
  *
- * If clear() is to be used, \b `ElementT` must be default constructible.
+ * \b `ElementT` must be default constructible.
  *
  * \tparam ElementT       Type of elements in the buffer
  * \tparam fixed_capacity Maximum number of elements in the buffer (capacity), zero if
