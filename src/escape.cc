@@ -24,6 +24,7 @@
 #include "gul/escape.h"
 #include <array>
 #include <iomanip>
+#include <limits>
 #include <regex>
 #include <stdexcept>
 #include <sstream>
@@ -48,11 +49,13 @@ char get_last_nibble_as_hex(unsigned int i)
 
 std::string escape(const std::string& in)
 {
+    static_assert(std::numeric_limits<signed char>::min() == -128,
+                  "Unsupported char type");
+    static_assert(std::numeric_limits<signed char>::max() == 127,
+                  "Unsupported char type");
+
     auto escaped = ""s;
     escaped.reserve(in.length());
-
-    static_assert(static_cast<signed char>(128) == -128,
-                  "Signed char > 127 does not wrap to negative values as expected");
 
     for (const signed char c : in)
     {
