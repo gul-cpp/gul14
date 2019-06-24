@@ -339,7 +339,9 @@ auto min_max(const ContainerT& container, Accessor accessor = ElementAccessor<El
             [accessor] (const MinMaxT& accu, const ElementT& el) -> MinMaxT {
                 auto out{ accu };
                 auto const val = accessor(el);
-                if (not std::isnan(val)) {
+                // Test portably for not-NAN (some compilers do not have std::isnan() for
+                // integral types)
+                if (val == val) {
                     // (a >= NAN) and (a <= NAN) always false for all a
                     if (not (val >= out.min))
                         out.min = val;
