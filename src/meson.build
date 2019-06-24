@@ -82,20 +82,17 @@ endif
 
 # There seems to be a bug in meson versions prior 0.46.0 that prevent
 # correct assignment and evaluation of cpp_args, so we do it here by hand :-(
-add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
-                 '-Wshadow' ]
+add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version) ]
 
 libgul = shared_library('gul', libgul_src + [ version_cc ],
                         soversion : so_version,
                         cpp_args : add_cpp_args,
                         include_directories : inc,
-                        link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                         install : true)
 
 libgul_s = static_library('gul', libgul_src + [ version_cc ],
                           cpp_args : add_cpp_args,
                           include_directories : inc,
-                          link_args : [ '-fvisibility=hidden', '-fwhole-program' ],
                           install : true)
 
 pkg = import('pkgconfig')

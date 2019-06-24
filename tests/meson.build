@@ -39,7 +39,7 @@ test('all',
                 tests + [ catch_main ],
                 dependencies : thread_dep,
                 include_directories : test_inc,
-                link_with : libgul),
+                link_with : libgul_s),
      timeout : test_time)
 
 endif # if not get_option('tests') else

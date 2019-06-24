@@ -14,8 +14,13 @@ project('libgul', 'cpp',
 version_parts = meson.project_version().split('.')
 libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
-# Find out if this is a normal (not local) install (i.e. not into /usr/local)
-deb_install = get_option('prefix') != '/usr/local'
+if build_machine.system() == 'linux'
+	# Find out if this is a normal (not local) install (i.e. not into /usr/local)
+	deb_install = get_option('prefix') != '/usr/local'
+else
+	# disable packaging on all non linux platforms
+	deb_install = false
+endif
 
 subdir('include')
 subdir('src')
