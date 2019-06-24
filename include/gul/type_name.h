@@ -179,16 +179,15 @@ constexpr string_view type_name()
         ? start_idx + colon_idx - 1
         : s.length() - 2; // len("]\0") == 2
     return s.substr(start_idx, end_idx - start_idx + 1);
-
 #elif defined(_MSC_VER)
     // MSVC returns something like "return_type function_name<template_parameter>()"
     auto const s = string_view{ __FUNCSIG__ };
     auto const start_idx = s.find("gul::type_name<") + sizeof("gul::type_name<") - 1;
     auto const end_idx = s.find_last_of('>') - 1;
     return s.substr(start_idx, end_idx - start_idx + 1);
-
-#endif
+#else
     return "";
+#endif
 }
 
 } // namespace gul
