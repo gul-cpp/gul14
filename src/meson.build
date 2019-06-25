@@ -83,6 +83,9 @@ endif
 # There seems to be a bug in meson versions prior 0.46.0 that prevent
 # correct assignment and evaluation of cpp_args, so we do it here by hand :-(
 add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version) ]
+if meson.get_compiler('cpp').has_argument('-Wshadow')
+    add_cpp_args += [ '-Wshadow' ]
+endif
 
 libgul = shared_library('gul', libgul_src + [ version_cc ],
                         soversion : so_version,
