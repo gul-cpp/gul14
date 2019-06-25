@@ -59,10 +59,11 @@ struct IsHexDumpContainer : std::false_type { };
 template <typename T>
 struct IsHexDumpContainer <T,
     typename std::enable_if_t<
-        std::is_integral<typename std::iterator_traits<decltype(std::declval<T>().cbegin())>::value_type>::value,
+        std::is_integral<typename std::iterator_traits<decltype(
+                                    std::declval<T>().cbegin())>::value_type>::value,
         decltype(std::declval<T>().cbegin(),
-                 std::declval<T>().cend(),
-                 0)
+                    std::declval<T>().cend(),
+                    0)
     >>
     : std::true_type { };
 
@@ -80,11 +81,11 @@ template <typename T>
 struct IsHexDumpIterator <T,
     typename std::enable_if_t<
         std::is_integral<typename std::iterator_traits<T>::value_type>::value
-        and not std::is_same<typename std::iterator_traits<T>::iterator_category,
-                             std::input_iterator_tag>::value,
+            and not std::is_same<typename std::iterator_traits<T>::iterator_category,
+                    std::input_iterator_tag>::value,
         decltype(std::declval<T>().operator*(),
-                 std::declval<T>().operator++(),
-                 0)
+                    std::declval<T>().operator++(),
+                    0)
     >>
     : std::true_type { };
 
@@ -101,7 +102,8 @@ struct IsHexDumpIterator <T,
 template <typename StreamT,
     typename = std::enable_if_t<std::is_convertible<
         StreamT*,
-        std::basic_ostream<typename StreamT::char_type, typename StreamT::traits_type>*>::value>>
+        std::basic_ostream<typename StreamT::char_type,
+                            typename StreamT::traits_type>*>::value>>
 struct IsHexDumpStream : std::true_type { };
 
 // Here is the template actually doing the hexdump
@@ -110,7 +112,8 @@ struct IsHexDumpStream : std::true_type { };
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
-StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& end, string_view prompt = "")
+StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& end,
+    string_view prompt = "")
 {
     constexpr auto maxelem = 1000ul * 16; // 1000 lines with 16 elements each
 
@@ -246,9 +249,73 @@ struct HexdumpParameterForward {
     /// Iterator past end of elements to be dumped (in iterator mode)
     IteratorT end_;
     /// Possible prompt to prepend to the dump
-    const std::string prompt_;
+    std::string prompt_;
     /// A container with the elements to be dumped (in container/temporary mode)
     ContainerT cont_;
+
+    HexdumpParameterForward() = default;
+
+    HexdumpParameterForward(
+        IteratorT begin_it, IteratorT end_it, std::string prompt, ContainerT&& cont)
+        : begin_ { begin_it }
+        , end_ { end_it }
+        , prompt_ { std::move(prompt) }
+        , cont_ { std::forward<ContainerT>(cont) }
+    {
+        regenerate_iterators<ContainerT>();
+    }
+
+    HexdumpParameterForward(const HexdumpParameterForward& other) { *this = other; }
+
+    HexdumpParameterForward(HexdumpParameterForward&& other) noexcept
+    {
+        *this = std::move(other);
+    }
+
+    HexdumpParameterForward& operator=(const HexdumpParameterForward& other)
+    {
+        if (this == &other)
+            return *this;
+
+        begin_ = other.begin_;
+        end_ = other.end_;
+        prompt_ = other.prompt_;
+        cont_ = other.cont_;
+
+        regenerate_iterators<ContainerT>();
+
+        return *this;
+    }
+
+    HexdumpParameterForward& operator=(HexdumpParameterForward&& other) noexcept
+    {
+        if (this == &other)
+            return *this;
+
+        begin_ = std::move(other.begin_);
+        end_ = std::move(other.end_);
+        prompt_ = std::move(other.prompt_);
+        cont_ = std::move(other.cont_);
+
+        regenerate_iterators<ContainerT>();
+
+        return *this;
+    }
+
+private:
+    template <typename ContType,
+        std::enable_if_t<!detail::IsHexDumpContainer<ContType>::value, int> = 0
+        >
+    void regenerate_iterators() noexcept {}
+
+    template <typename ContType,
+        std::enable_if_t<detail::IsHexDumpContainer<ContType>::value, int> = 0
+        >
+    void regenerate_iterators() noexcept
+    {
+        begin_ = cont_.begin();
+        end_ = cont_.end();
+    }
 };
 
 /**
@@ -327,20 +394,15 @@ hexdump_stream(const ContainerT& cont, std::string prompt = "")
  */
 template<typename ContainerT,
     typename = std::enable_if_t<detail::IsHexDumpContainer<ContainerT>::value,
-    decltype(HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>{ }, 0)>>
+        decltype(HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()),
+                     ContainerT> {}, 0)>>
 HexdumpParameterForward<decltype(std::declval<ContainerT>().cbegin()), ContainerT>
 hexdump_stream(ContainerT&& cont, std::string prompt = "")
 {
-    auto cheap_dummy = cont.cbegin();
-    // The temporary container must be moved to retain the values until we need them after operator<<.
-    auto ret = HexdumpParameterForward<decltype(cheap_dummy), ContainerT>{
-        cheap_dummy,
-        cheap_dummy,
-        std::move(prompt),
-        std::forward<ContainerT>(cont)};
-    ret.begin_ = ret.cont_.cbegin(); // (re)construct iterator after move
-    ret.end_ = ret.cont_.cend();
-    return ret;
+    // The temporary container must be moved to retain the values until we need them
+    // after operator<<.
+    return { cont.cbegin(), cont.cbegin(), std::move(prompt),
+             std::forward<ContainerT>(cont) };
 }
 
 /**
@@ -353,7 +415,9 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
  * of the dump is generated.
  */
 template<typename IteratorT, typename ContainerT>
-std::ostream& operator<< (std::ostream& os, const HexdumpParameterForward<IteratorT, ContainerT>& hdp) {
+std::ostream& operator<<(
+    std::ostream& os, const HexdumpParameterForward<IteratorT, ContainerT>& hdp)
+{
     return detail::hexdump_stream(os, hdp.begin_, hdp.end_, hdp.prompt_);
 }
 
