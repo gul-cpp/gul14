@@ -493,10 +493,15 @@ public:
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
      *
-     * At least some iterators can be invalidated. See \ref SlidingBufferIterator.
+     * \param new_capacity     New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior  Specify the \ref ShrinkBehavior.
      *
-     * \param new_capacity  New capacity (maximum size) of the sliding buffer.
-     * \param shrink_behavior Specify the \ref ShrinkBehavior.
+     * \note
+     * Think twice when shrinking the buffer: The default `shrink_behavior`
+     * (ShrinkBehavior::keep_front_elements) is transparent only if exclusively
+     * push_front() was used to add elements. If push_back() was used, resize() without a
+     * second argument discards the most recent elements; in these cases, make sure to
+     * specify ShrinkBehavior::keep_back_elements.
      */
     auto resize(size_type new_capacity, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
@@ -506,14 +511,8 @@ public:
     }
 
     /**
-     * Resize the container.
-     *
-     * Only possible if the underlying container is a std::vector.
-     *
-     * This just calls resize(). See further explanations at resize().
-     *
-     * \param size   New capacity (maximum size) of the sliding buffer.
-     * \param shrink_behavior Specify the \ref ShrinkBehavior.
+     * Resize the container (identical to resize()).
+     * \see resize()
      */
     auto reserve(size_type size, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
@@ -801,6 +800,8 @@ protected:
      *
      * \param new_capacity  New capacity (maximum size) of the sliding buffer.
      * \param shrink_behavior Specify the \ref ShrinkBehavior.
+     *
+     * \see resize()
      */
     auto change_capacity(size_type new_capacity, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
@@ -862,15 +863,20 @@ protected:
 /**
  * A variant of SlidingBuffer that exposes the underlying container through its iterator
  * interface.
- * For a complete description, see SlidingBuffer; here are the differences only:
+ * The direct iterator access to the underlying buffer offers a performance benefit in
+ * some cases. However, it comes at the cost of limited flexibility. SlidingBufferExposed
+ * behaves identically to SlidingBuffer except for the differences listed here:
  *
  * \par Iterator invalidation
- * It is only specified that all elements can be visited by traversing from begin() to end().\n
- * If the size changes (push_front(), push_back(), resize(), reserve()) all iterators are invalidated.\n
+ * It is only specified that all elements can be visited by traversing from begin() to
+ * end().\n
+ * If the size changes (push_front(), push_back(), resize(), reserve()) all iterators are
+ * invalidated.\n
  * \par
- * Furthermore when both push_front() and push_back() have been used on a single SlidingBufferExposed
- * the whole capacity of the buffer is visited by traversing from begin() to end(), including
- * possible 'unfilled' (default constructed) elements in the unused slots.
+ * Furthermore, when both push_front() and push_back() have been used on a single
+ * SlidingBufferExposed, the whole capacity of the buffer is visited by traversing from
+ * begin() to end(), including possible 'unfilled' (default constructed) elements in the
+ * unused slots.
  * \n
  * See begin() and end() for more details.
  *
@@ -1075,8 +1081,15 @@ public:
      * * Growing: The capacity changes, but the (used) size does not. It will grow
      *   gradually when elements are pushed, as in the startup phase.
      *
-     * \param new_capacity  New capacity (maximum size) of the sliding buffer.
-     * \param shrink_behavior Specify the \ref ShrinkBehavior.
+     * \param new_capacity     New capacity (maximum size) of the sliding buffer.
+     * \param shrink_behavior  Specify the \ref ShrinkBehavior.
+     *
+     * \note
+     * Think twice when shrinking the buffer: The default `shrink_behavior`
+     * (ShrinkBehavior::keep_front_elements) is transparent only if exclusively
+     * push_front() was used to add elements. If push_back() was used, resize() without a
+     * second argument discards the most recent elements; in these cases, make sure to
+     * specify ShrinkBehavior::keep_back_elements.
      */
     auto resize(size_type new_capacity, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {
@@ -1109,7 +1122,8 @@ public:
         // Growing
         if (new_capacity > old_capacity) {
             storage_.resize(new_capacity);
-            std::move_backward(storage_.begin() + idx_begin_, storage_.begin() + old_capacity, storage_.end());
+            std::move_backward(storage_.begin() + idx_begin_,
+                               storage_.begin() + old_capacity, storage_.end());
             idx_begin_ += new_capacity - old_capacity;
             return;
         }
@@ -1124,14 +1138,8 @@ public:
     }
 
     /**
-     * Resize the container.
-     *
-     * Only possible if the underlying container is a std::vector.
-     *
-     * This just calls resize(). See further explanations at resize().
-     *
-     * \param size   New capacity (\b `maximum size`) of the sliding buffer.
-     * \param shrink_behavior Specify the \ref ShrinkBehavior.
+     * Resize the container (identical to resize()).
+     * \see resize()
      */
     auto reserve(size_type size, ShrinkBehavior shrink_behavior = ShrinkBehavior::keep_front_elements) -> void
     {

@@ -413,11 +413,12 @@ namespace gul {
  * The General Utility Library provides some additional containers.
  *
  * SlidingBuffer:
- *     A container to use as sliding window on a data stream.
+ *     A circular data buffer of (semi-)fixed capacity to which elements can be added at
+ *     the front or at the back.
  *
  * SlidingBufferExposed:
- *     A container to use as sliding window on a data stream with the underlying container
- *     exposed.
+ *     The same as SlidingBuffer, but with direct iterator access to the underlying buffer
+ *     for maximum performance.
  */
 
 } // namespace gul

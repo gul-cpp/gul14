@@ -106,9 +106,10 @@ template <typename StreamT,
                             typename StreamT::traits_type>*>::value>>
 struct IsHexDumpStream : std::true_type { };
 
+/// \cond PRIVATE
+
 // Here is the template actually doing the hexdump
 // It is called by the different hexdump*() versions
-// \cond PRIVATE
 template<typename StreamT, typename IteratorT,
     typename = std::enable_if_t<detail::IsHexDumpStream<StreamT>::value>,
     typename = std::enable_if_t<detail::IsHexDumpIterator<IteratorT>::value>>
@@ -162,7 +163,7 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
     }
     return dest;
 }
-// \endcond
+/// \endcond
 
 } // namespace detail
 
@@ -255,6 +256,14 @@ struct HexdumpParameterForward {
 
     HexdumpParameterForward() = default;
 
+    /**
+     * Construct a hexdump parameter forwarder object.
+     * \param begin_it  Start iterator (meaningless if a container is passed).
+     * \param end_it    End iterator (meaningless if a container is passed).
+     * \param prompt    A string to be printed alongside the hexdump output.
+     * \param cont      The container to be hexdumped (can be nullptr if iterators are
+     *                  used).
+     */
     HexdumpParameterForward(
         IteratorT begin_it, IteratorT end_it, std::string prompt, ContainerT&& cont)
         : begin_ { begin_it }
@@ -265,13 +274,25 @@ struct HexdumpParameterForward {
         regenerate_iterators<ContainerT>();
     }
 
+    /**
+     * Copy constructor (automatically updates the begin_ and end_ interator members if
+     * the copied object holds a container).
+     */
     HexdumpParameterForward(const HexdumpParameterForward& other) { *this = other; }
 
+    /**
+     * Move constructor (automatically updates the begin_ and end_ interator members if
+     * the moved-from object holds a container).
+     */
     HexdumpParameterForward(HexdumpParameterForward&& other) noexcept
     {
         *this = std::move(other);
     }
 
+    /**
+     * Copy assignment (automatically updates the begin_ and end_ interator members if
+     * the copied object holds a container).
+     */
     HexdumpParameterForward& operator=(const HexdumpParameterForward& other)
     {
         if (this == &other)
@@ -287,6 +308,10 @@ struct HexdumpParameterForward {
         return *this;
     }
 
+    /**
+     * Move assignment (automatically updates the begin_ and end_ interator members if
+     * the moved-from object holds a container).
+     */
     HexdumpParameterForward& operator=(HexdumpParameterForward&& other) noexcept
     {
         if (this == &other)
