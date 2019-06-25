@@ -116,6 +116,15 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_3 Version 1.3
+ *
+ * - \ref gul::SlidingBuffer "SlidingBuffer": Add
+ *   \ref gul::SlidingBuffer::push_back "push_back()",
+ *   \ref gul::ShrinkBehavior "ShrinkBehavior"
+ * - Minor bugfixes for \ref gul::SlidingBuffer "SlidingBuffer"
+ * - GUL can be built with Visual C++/Visual Studio 2019 using Meson/Ninja
+ * - GUL can be built without GIT
+ *
  * \subsection v1_2 Version 1.2
  *
  * - Add lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),
