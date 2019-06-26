@@ -927,14 +927,14 @@ TEST_CASE("SlidingBufferExposed: begin() and end() with push_back()",
 
 TEST_CASE("SlidingBuffer: begin() and end() on const buffer", "[SlidingBuffer]")
 {
-    const gul::SlidingBuffer<int, 4> buf;
+    const gul::SlidingBuffer<int, 4> buf{};
     REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
 }
 
 TEST_CASE("SlidingBufferExposed: begin() and end() on const buffer",
           "[SlidingBufferExposed]")
 {
-    const gul::SlidingBufferExposed<int, 4> buf;
+    const gul::SlidingBufferExposed<int, 4> buf{};
     REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
 }
 
