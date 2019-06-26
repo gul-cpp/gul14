@@ -49,6 +49,8 @@ namespace gul {
  *
  * The behavior is utilized by SlidingBuffer::resize(), SlidingBuffer::reserve(),
  * SlidingBufferExposed::resize(), and SlidingBufferExposed::reserve().
+ *
+ * \since GUL version 1.3
  */
 enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
 
@@ -253,6 +255,7 @@ public:
      * \warning
      * Calling push_back() on a SlidingBuffer with zero capacity results in undefined
      * behavior.
+     * \since GUL version 1.3
      */
     auto push_back(const value_type& in) -> void
     {
