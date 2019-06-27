@@ -120,6 +120,7 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
 
     // Get the number of hex digits to represent any value of the given integral type
     constexpr auto nod = sizeof(*begin) * 2;
+    constexpr bool is_char = (nod == 2);
 
     const std::string indent(prompt.length(), ' ');
     const std::string empty(nod + 1, ' ');
@@ -141,13 +142,13 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
                     >(*it++);
                 dest << std::setw(nod) << ch << ' ';
             } else {
-                if (nod != 2) {
+                if (!is_char) {
                     break;
                 }
                 dest << empty;
             }
         }
-        if (nod == 2) { // only char
+        if (is_char) {
             // Here we re-visit the iterator from the beginning of the line, thus
             // requiring ForwardIterators over InputOperators
             dest << ' ';
