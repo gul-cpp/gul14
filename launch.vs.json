@@ -1,0 +1,11 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "native",
+      "name": "libgul-test.exe",
+      "project": "build\\debug\\tests\\libgul-test.exe"
+    }
+  ]
+}

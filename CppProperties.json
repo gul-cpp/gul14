@@ -1,0 +1,44 @@
+{
+  "configurations": [
+    {
+      "environments": [
+        {
+          "MESON_PLATFORM": "x86",
+          "MESON_BUILDTYPE": "debug"
+        }
+      ],
+      "name": "x86-Debug",
+      "intelliSenseMode": "windows-msvc-x86"
+    },
+    {
+      "environments": [
+        {
+          "MESON_PLATFORM": "x86",
+          "MESON_BUILDTYPE": "release"
+        }
+      ],
+      "name": "x86-Release",
+      "intelliSenseMode": "windows-msvc-x86"
+    },
+    {
+      "environments": [
+        {
+          "MESON_PLATFORM": "x64",
+          "MESON_BUILDTYPE": "debug"
+        }
+      ],
+      "name": "x64-Debug",
+      "intelliSenseMode": "windows-msvc-x64"
+    },
+    {
+      "environments": [
+        {
+          "MESON_PLATFORM": "x64",
+          "MESON_BUILDTYPE": "release"
+        }
+      ],
+      "name": "x64-Release",
+      "intelliSenseMode": "windows-msvc-x64"
+    }
+  ]
+}

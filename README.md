@@ -133,9 +133,25 @@ used as outlined above. However, the devil is in the details:
 * For Ninja, the version distributed with Visual Studio 2019 works well.
 
 Setting up the PATH and calling the correct executable can be difficult. We distribute a
-Windows batch file "make_vs.bat" as an example. It may require some editing for your
-preferred platform and build mode, but afterwards you can ``make_vs release``,
-``make_vs debug`` or ``make_vs test`` from the CMD command line.
+Windows batch file "make_vs.bat" as an example. It may require some editing to adapt it
+to your system, but afterwards you can call it from the command line or directly from
+Visual Studio to initiate a build, cleanup, or to run the unit test suite:
+
+```
+Usage:
+make_vs mrproper                    - Remove the entire build directory
+make_vs release <platform>          - Build the release version of the library for the specified platform
+make_vs debug <platform>            - Build the debug version of the library for the specified platform
+make_vs test <buildtype> <platform> - Run the unit tests for the specified build type and platform
+
+<buildtype> is one of "release" or "debug"
+<platform> is one of "x86" or "x64"
+```
+
+The files tasks_vs.json, launch_vs.json, and CppProperties.json in the root directory
+contain information for Visual Studio 2019 that should allow you to open the folder via
+"open folder" (i.e. without a project file) and still be able to build and debug GUL
+via the batch file.
 
 ## Testing <a name="Testing"></a>
 
