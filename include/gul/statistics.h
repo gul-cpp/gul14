@@ -164,10 +164,13 @@ public:
  * ``mean -> sum 0..n-1 (element i) / n``
  *
  * \param container    Container of the elements to examine
- * \param accessor     Helper function to access the numeric value of one container element
+ * \param accessor     Helper function to access the numeric value of one container
+ *                     element
  * \returns            the arithmetic mean value.
  *
- * \tparam ResultT     Type of the result value
+ * \tparam ResultT     Type of the result (this is also the type used for holding the sum
+ *                     of all elements and for the division by the number of elements, so
+ *                     make sure it can hold numbers that are big enough)
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
@@ -189,8 +192,8 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
             container.cbegin(), container.cend(),
             ResultT{ },
             [accessor] (const ResultT& accu, const ElementT& el) {
-                return accu + accessor(el); } );
-    return sum / container.size();
+                return static_cast<ResultT>(accu + accessor(el)); } );
+    return sum / static_cast<ResultT>(container.size());
 }
 
 /**
