@@ -95,7 +95,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("String filling example") {
         std::string some_string {};
         char* buffer = nullptr;
-        float some_float = 123.45;
+        auto some_float = 123.45f;
         do {
             buffer = new char[100];
             if (buffer == nullptr)
