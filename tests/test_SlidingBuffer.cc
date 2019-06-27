@@ -629,7 +629,11 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at() on array-
     REQUIRE(buf.at(1) == 1.0);
     REQUIRE_THROWS(buf.at(2));
     REQUIRE_THROWS(buf.at(5));
-    REQUIRE_THROWS(buf.at(-1));
+
+    // The static_cast suppresses a warning about passing a signed int for an unsigned
+    // argument. Unfortunately this warning is not reliable across compilers, so it is
+    // worth testing at() for its reaction to accidental negative values, too.
+    REQUIRE_THROWS(buf.at(static_cast<decltype(buf)::size_type>(-1)));
 
     buf.push_front(3.0);
     REQUIRE(!buf.empty());
@@ -670,7 +674,11 @@ TEST_CASE("SlidingBuffer: push_back(), empty(), size(), clear(), at() on array-b
     REQUIRE(buf.at(1) == 2.0);
     REQUIRE_THROWS(buf.at(2));
     REQUIRE_THROWS(buf.at(5));
-    REQUIRE_THROWS(buf.at(-1));
+
+    // The static_cast suppresses a warning about passing a signed int for an unsigned
+    // argument. Unfortunately this warning is not reliable across compilers, so it is
+    // worth testing at() for its reaction to accidental negative values, too.
+    REQUIRE_THROWS(buf.at(static_cast<decltype(buf)::size_type>(-1)));
 
     buf.push_back(3.0);
     REQUIRE(!buf.empty());
