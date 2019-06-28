@@ -133,16 +133,16 @@ used as outlined above. However, the devil is in the details:
 * For Ninja, the version distributed with Visual Studio 2019 works well.
 
 Setting up the PATH and calling the correct executable can be difficult. We distribute a
-Windows batch file "make_vs.bat" as an example. It may require some editing to adapt it
+Windows batch file "make\_vs.bat" as an example. It may require some editing to adapt it
 to your system, but afterwards you can call it from the command line or directly from
 Visual Studio to initiate a build, cleanup, or to run the unit test suite:
 
 ```
 Usage:
-make_vs mrproper                    - Remove the entire build directory
-make_vs release <platform>          - Build the release version of the library for the specified platform
-make_vs debug <platform>            - Build the debug version of the library for the specified platform
-make_vs test <buildtype> <platform> - Run the unit tests for the specified build type and platform
+make\_vs mrproper                    - Remove the entire build directory
+make\_vs release <platform>          - Build the release version of the library for the specified platform
+make\_vs debug <platform>            - Build the debug version of the library for the specified platform
+make\_vs test <buildtype> <platform> - Run the unit tests for the specified build type and platform
 
 <buildtype> is one of "release" or "debug"
 <platform> is one of "x86" or "x64"
