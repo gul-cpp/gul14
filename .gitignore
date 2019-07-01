@@ -2,4 +2,6 @@
 ._*
 nbproject
 build*
-/.vs
+.vs
+!.vs/launch.vs.json
+!.vs/tasks.vs.json
