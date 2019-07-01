@@ -1,3 +1,7 @@
+@REM This batch file should be run from the root directory of the GUL folder,
+@REM e.g. via "tools\make_vs debug x86".
+
+@REM Edit the following 3 lines to reflect your Visual Studio and Meson installation paths.
 @set VCVARS_x86="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
 @set VCVARS_x64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
 @set MESON="C:\Program Files\Meson\meson.exe"

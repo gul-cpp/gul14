@@ -7,10 +7,12 @@
       "appliesTo": "/",
       "type": "launch",
       "contextType": "build",
-      "inheritEnvironments": [ "${cpp.activeConfiguration}" ],
+      "inheritEnvironments": [
+        "${cpp.activeConfiguration}"
+      ],
       "command": "${env.COMSPEC}",
       "args": [
-        "make_vs.bat",
+        "tools\\make_vs.bat",
         "${env.MESON_BUILDTYPE}",
         "${env.MESON_PLATFORM}"
       ],
@@ -21,10 +23,12 @@
       "appliesTo": "/",
       "type": "launch",
       "contextType": "clean",
-      "inheritEnvironments": [ "${cpp.activeConfiguration}" ],
+      "inheritEnvironments": [
+        "${cpp.activeConfiguration}"
+      ],
       "command": "${env.COMSPEC}",
       "args": [
-        "make_vs.bat",
+        "tools\\make_vs.bat",
         "mrproper"
       ],
       "workingDirectory": "${workspaceRoot}"
@@ -33,10 +37,12 @@
       "taskLabel": "Run tests",
       "appliesTo": "/",
       "type": "launch",
-      "inheritEnvironments": [ "${cpp.activeConfiguration}" ],
+      "inheritEnvironments": [
+        "${cpp.activeConfiguration}"
+      ],
       "command": "${env.COMSPEC}",
       "args": [
-        "make_vs.bat",
+        "tools\\make_vs.bat",
         "test",
         "${env.MESON_BUILDTYPE}",
         "${env.MESON_PLATFORM}"
