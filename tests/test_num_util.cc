@@ -144,6 +144,10 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(1.0, 1.01, -std::numeric_limits<double>::infinity()) == true);
     REQUIRE(gul::within_orders(1.0, 0.0, 1) == false);
     REQUIRE(gul::within_orders(1.0, 0.0, 0) == false);
+
+    // From the Doxygen example with integers
+    REQUIRE(gul::within_orders(23736384, 23736228, 5) == true);
+    REQUIRE(gul::within_orders(23736384, 23735384, 5) == false);
 }
 
 TEST_CASE("test within_abs()", "[numerics]")

@@ -68,8 +68,8 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  * Remember that any nonzero number has infinite different significant digits compared
  * with 0.00000000. So if either a or b is 0.0 the result must be false.
  *
- * \param a       The first number to compare (any floating point type)
- * \param b       The second number to compare (any floating point type, same type as a)
+ * \param a       The first number to compare
+ * \param b       The second number to compare (same type as a)
  * \param orders  The number of digits to take for comparison (any numeric type)
  *
  * \returns true if the difference between a and b is orders of magnitude lower than the
@@ -77,13 +77,13 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  */
 template<typename NumT, typename OrderT,
     typename = std::enable_if_t<
-        std::is_floating_point<NumT>::value
+        std::is_arithmetic<NumT>::value
         and std::is_arithmetic<OrderT>::value
     >>
 bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
-    return std::abs(a - b)
-        < (std::max(std::abs(a), std::abs(b)) / std::pow(static_cast<std::decay_t<NumT>>(10.0),orders));
+    return gul::abs(a - b)
+        < (std::max(gul::abs(a), gul::abs(b)) / std::pow(static_cast<std::decay_t<NumT>>(10.0), orders));
 }
 
 /**
