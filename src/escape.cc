@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -47,7 +47,7 @@ char get_last_nibble_as_hex(unsigned int i)
 } // anonymous namespace
 
 
-std::string escape(const std::string& in)
+std::string escape(string_view in)
 {
     static_assert(std::numeric_limits<signed char>::min() == -128,
                   "Unsupported char type");
@@ -97,7 +97,7 @@ std::string escape(const std::string& in)
 
 std::string unescape(const std::string& in)
 {
-    auto re = std::regex{ R"(\\(["\\nrt]|x[[:xdigit:]]{2}))" };
+    const static auto re = std::regex{ R"(\\(["\\nrt]|x[[:xdigit:]]{2}))" };
     auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
     auto rend = std::regex_iterator<std::string::const_iterator>{ };
     auto last = rend; // last processed

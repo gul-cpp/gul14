@@ -23,6 +23,7 @@
 #pragma once
 
 #include <string>
+#include "gul/string_view.h"
 
 namespace gul {
 
@@ -59,7 +60,7 @@ namespace gul {
  *
  * \returns a new string that contains only ASCII characters.
  */
-std::string escape(const std::string& in);
+std::string escape(string_view in);
 
 /**
  * Evaluate a string with escaped characters to get the original string back.
