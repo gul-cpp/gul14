@@ -129,7 +129,6 @@ namespace gul {
  *   \ref gul::ShrinkBehavior "ShrinkBehavior"
  * - Minor bugfixes for \ref gul::SlidingBuffer "SlidingBuffer"
  * - GUL can be built with Visual C++/Visual Studio 2019 using Meson/Ninja
- * - GUL can be built without GIT
  *
  * \subsection v1_2 Version 1.2
  *

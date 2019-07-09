@@ -74,6 +74,8 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  *
  * \returns true if the difference between a and b is orders of magnitude lower than the
  *          value of a or b.
+ *
+ * \since GUL version 1.4 parameter type \b NumT can be an integral type (had to be floating point before)
  */
 template<typename NumT, typename OrderT,
     typename = std::enable_if_t<

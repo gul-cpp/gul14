@@ -59,6 +59,8 @@ namespace gul {
  * \param in The input string.
  *
  * \returns a new string that contains only ASCII characters.
+ *
+ * \since GUL version 1.4 parameter \b in is a string_view (was std::string before)
  */
 std::string escape(string_view in);
 
@@ -70,6 +72,8 @@ std::string escape(string_view in);
  * \param in The string with escape sequences
  *
  * \return A new string where the sequences have been evaluated
+ *
+ * \since GUL version 1.4 parameter \b in is a string_view (was std::string before)
  */
 std::string unescape(string_view in);
 
