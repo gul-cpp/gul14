@@ -119,7 +119,7 @@ namespace gul {
  * \subsection v1_4 Version 1.4
  *
  * - escape() & unescape(): Change argument type from const std::string & to
-     gul::string_view
+ *   gul::string_view
  * - within_orders() can now be used with integer arguments
  *
  * \subsection v1_3 Version 1.3
