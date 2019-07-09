@@ -102,43 +102,44 @@ std::string unescape(const std::string& in)
     auto rend = std::regex_iterator<std::string::const_iterator>{ };
     auto last = rend; // last processed
 
-    auto buf = std::stringstream{ };
+    auto unescaped = ""s;
+    unescaped.reserve(in.length());
 
     for (; rit != rend; ++rit) {
         last = rit;
-        buf << rit->prefix();
+        unescaped += rit->prefix();
         if (rit->empty())
             continue;
         auto const c = rit->format("$1");
         switch (c[0]) {
         case '\"':
         case '\\':
-            buf << c;
+            unescaped += c;
             break;
         case 'n':
-            buf << "\n";
+            unescaped += "\n";
             break;
         case 'r':
-            buf << "\r";
+            unescaped += "\r";
             break;
         case 't':
-            buf << "\t";
+            unescaped += "\t";
             break;
         case 'x':
-            buf << static_cast<unsigned char>(std::stoi(rit->format("$1").substr(1), 0, 16));
+            unescaped += static_cast<unsigned char>(std::stoi(rit->format("$1").substr(1), 0, 16));
             break;
         default:
-            buf << rit->str();
+            unescaped += rit->str();
             break;
         }
     }
 
     if (last == rend) // no match
-        buf << in;
+        unescaped += in;
     else
-        buf << last->suffix();
+        unescaped += last->suffix();
 
-    return buf.str();
+    return unescaped;
 }
 
 } // namespace gul
