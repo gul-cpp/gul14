@@ -73,7 +73,10 @@ namespace {
  */
 constexpr std::size_t constexpr_strlen(const char* str)
 {
-    return (*str != '\0') ? 1 + constexpr_strlen(str + 1) : 0;
+    if (*str == '\0')
+        return 0;
+    // Tail recursion will be unrolled
+    return 1 + constexpr_strlen(str + 1); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 }
 
 /**
