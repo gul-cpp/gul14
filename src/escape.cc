@@ -95,15 +95,15 @@ std::string escape(string_view in)
     return escaped;
 }
 
-std::string unescape(const std::string& in)
+std::string unescape(string_view in)
 {
-    const static auto re = std::regex{ R"(\\(["\\nrt]|x[[:xdigit:]]{2}))" };
-    auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
-    auto const rend = std::regex_iterator<std::string::const_iterator>{ };
+    auto const static re = std::regex{ R"(\\(["\\nrt]|x[[:xdigit:]]{2}))" };
+    auto rit  = std::regex_iterator<string_view::const_iterator>{ in.cbegin(), in.cend(), re };
+    auto const rend = std::regex_iterator<string_view::const_iterator>{ };
     auto last = decltype(*rit){ };
 
     if (rit == rend)
-        return in;
+        return std::string{ in };
 
     auto unescaped = ""s;
     unescaped.reserve(in.length());

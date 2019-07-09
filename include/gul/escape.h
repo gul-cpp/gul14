@@ -71,7 +71,7 @@ std::string escape(string_view in);
  *
  * \return A new string where the sequences have been evaluated
  */
-std::string unescape(const std::string& in);
+std::string unescape(string_view in);
 
 } /* namespace gul */
 

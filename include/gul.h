@@ -116,6 +116,12 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_4 Version 1.4
+ *
+ * - escape() & unescape(): Change argument type from const std::string & to
+     gul::string_view
+ * - within_orders() can now be used with integer arguments
+ *
  * \subsection v1_3 Version 1.3
  *
  * - \ref gul::SlidingBuffer "SlidingBuffer": Add
