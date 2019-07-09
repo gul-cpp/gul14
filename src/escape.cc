@@ -99,22 +99,25 @@ std::string unescape(const std::string& in)
 {
     const static auto re = std::regex{ R"(\\(["\\nrt]|x[[:xdigit:]]{2}))" };
     auto rit  = std::regex_iterator<std::string::const_iterator>{ in.cbegin(), in.cend(), re };
-    auto rend = std::regex_iterator<std::string::const_iterator>{ };
-    auto last = rend; // last processed
+    auto const rend = std::regex_iterator<std::string::const_iterator>{ };
+    auto last = decltype(*rit){ };
+
+    if (rit == rend)
+        return in;
 
     auto unescaped = ""s;
     unescaped.reserve(in.length());
 
     for (; rit != rend; ++rit) {
-        last = rit;
+        last = *rit;
         unescaped += rit->prefix();
         if (rit->empty())
             continue;
-        auto const c = rit->format("$1");
-        switch (c[0]) {
+        auto const matched_escape_sequence = rit->str(1);
+        switch (matched_escape_sequence[0]) {
         case '\"':
         case '\\':
-            unescaped += c;
+            unescaped += matched_escape_sequence;
             break;
         case 'n':
             unescaped += "\n";
@@ -126,7 +129,7 @@ std::string unescape(const std::string& in)
             unescaped += "\t";
             break;
         case 'x':
-            unescaped += static_cast<unsigned char>(std::stoi(rit->format("$1").substr(1), 0, 16));
+            unescaped += static_cast<char>(std::stoi(matched_escape_sequence.substr(1), 0, 16));
             break;
         default:
             unescaped += rit->str();
@@ -134,14 +137,11 @@ std::string unescape(const std::string& in)
         }
     }
 
-    if (last == rend) // no match
-        unescaped += in;
-    else
-        unescaped += last->suffix();
+    unescaped += last.suffix();
 
     return unescaped;
 }
 
 } // namespace gul
 
-/* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+// vi:ts=4:sw=4:sts=4:et

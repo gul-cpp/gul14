@@ -28,30 +28,30 @@ using namespace std::literals;
 
 TEST_CASE("Compare escaped strings", "[string_util]")
 {
-	REQUIRE(gul::escape("foo bar baz"s) == "foo bar baz"s);
+    REQUIRE(gul::escape("foo bar baz"s) == "foo bar baz"s);
 
-	// This shows the design idea quite nice:
-	REQUIRE(gul::escape("foo\rbar\nfoobar\tbaz\\qux\""s) ==
-			  R"(foo\rbar\nfoobar\tbaz\\qux\")"s);
+    // This shows the design idea quite nice:
+    REQUIRE(gul::escape("foo\rbar\nfoobar\tbaz\\qux\""s) ==
+              R"(foo\rbar\nfoobar\tbaz\\qux\")"s);
 
-	REQUIRE(gul::escape("foo\abar\000baz"s) == R"(foo\x07bar\x00baz)"s);
+    REQUIRE(gul::escape("foo\abar\000baz"s) == R"(foo\x07bar\x00baz)"s);
 
-	REQUIRE(gul::escape("\xff") == "\\xff");
+    REQUIRE(gul::escape("\xff") == "\\xff");
 }
 
 TEST_CASE("Compare unescaped strings", "[string_util]")
 {
-	REQUIRE(gul::unescape("foo bar baz"s) == "foo bar baz"s);
+    REQUIRE(gul::unescape("foo bar baz"s) == "foo bar baz"s);
 
-	REQUIRE(gul::unescape(R"(foo\rbar\nfoobar\tbaz\\qux\")"s) ==
-	                        "foo\rbar\nfoobar\tbaz\\qux\""s);
+    REQUIRE(gul::unescape(R"(foo\rbar\nfoobar\tbaz\\qux\")"s) ==
+                "foo\rbar\nfoobar\tbaz\\qux\""s);
 
-	REQUIRE(gul::unescape(R"(foo\x07bar\x00baz)"s) == "foo\abar\000baz"s);
+    REQUIRE(gul::unescape(R"(foo\x07bar\x00baz)"s) == "foo\abar\000baz"s);
 
     REQUIRE(gul::unescape("\\xff") == "\xff");
-    
-	auto const s = "foo\abar\000baz"s;
-	REQUIRE(gul::unescape(gul::escape(s)) == s);
+
+    auto const s = "foo\abar\000baz"s;
+    REQUIRE(gul::unescape(gul::escape(s)) == s);
 }
 
 TEST_CASE("Check escaping and unescaping with random strings", "[string_util]")
@@ -92,3 +92,5 @@ TEST_CASE("Check escaping and unescaping with random strings", "[string_util]")
         }
     }
 }
+
+// vi:ts=4:sw=4:sts=4:et
