@@ -8,7 +8,11 @@
         }
       ],
       "name": "x86-Debug",
-      "intelliSenseMode": "windows-msvc-x86"
+      "intelliSenseMode": "windows-msvc-x86",
+      "includePath": [
+        "${workspaceRoot}/include",
+        "${env.INCLUDE}"
+      ]
     },
     {
       "environments": [
@@ -18,7 +22,11 @@
         }
       ],
       "name": "x86-Release",
-      "intelliSenseMode": "windows-msvc-x86"
+      "intelliSenseMode": "windows-msvc-x86",
+      "includePath": [
+        "${workspaceRoot}/include",
+        "${env.INCLUDE}"
+      ]
     },
     {
       "environments": [
@@ -28,7 +36,11 @@
         }
       ],
       "name": "x64-Debug",
-      "intelliSenseMode": "windows-msvc-x64"
+      "intelliSenseMode": "windows-msvc-x64",
+      "includePath": [
+        "${workspaceRoot}/include",
+        "${env.INCLUDE}"
+      ]
     },
     {
       "environments": [
@@ -38,7 +50,11 @@
         }
       ],
       "name": "x64-Release",
-      "intelliSenseMode": "windows-msvc-x64"
+      "intelliSenseMode": "windows-msvc-x64",
+      "includePath": [
+        "${workspaceRoot}/include",
+        "${env.INCLUDE}"
+      ]
     }
   ]
 }
