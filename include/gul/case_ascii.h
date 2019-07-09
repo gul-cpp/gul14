@@ -41,8 +41,7 @@ constexpr char lowercase_ascii(char c) noexcept
 {
     if (c >= 'A' && c <= 'Z')
         return c - 'A' + 'a';
-    else
-        return c;
+    return c;
 }
 
 /**
@@ -81,8 +80,7 @@ constexpr char uppercase_ascii(char c) noexcept
 {
     if (c >= 'a' && c <= 'z')
         return c - 'a' + 'A';
-    else
-        return c;
+    return c;
 }
 
 /**
