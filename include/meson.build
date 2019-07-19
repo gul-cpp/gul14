@@ -24,6 +24,7 @@ libgul_sub_headers = files([
     'gul/string_view.h',
     'gul/substring_checks.h',
     'gul/time_util.h',
+	'gul/to_number.h',
     'gul/tokenize.h',
     'gul/Trigger.h',
     'gul/trim.h',

@@ -38,6 +38,7 @@
 #include "gul/substring_checks.h"
 #include "gul/time_util.h"
 #include "gul/tokenize.h"
+#include "gul/to_number.h"
 #include "gul/trim.h"
 #include "gul/Trigger.h"
 #include "gul/type_name.h"
@@ -275,6 +276,9 @@ namespace gul {
  * lowercase_ascii_inplace(), uppercase_ascii_inplace(): Replace all ASCII characters in a
  *           string by their lowercase/uppercase equivalents.
  * 
+ * <h4>Conversion to Numbers</h4>
+ *
+ * to_number(): Convert an ASCII string_view into an integer or floating-point number.
  *
  * <h3>Classes</h3>
  *
@@ -363,11 +367,19 @@ namespace gul {
  *
  * The General Utility Library provides several functions dealing with numbers.
  *
+ * <h4>Modifying Values</h4>
+ *
  * abs():
  *     Calculate the absolute value, even for unsigned types.
  *
  * clamp():
  *     Coerce a value to be within a given range.
+ *
+ * <h4>Converting to Numbers</h4>
+ *
+ * to_number(): Convert an ASCII string_view into an integer or floating-point number.
+ *
+ * <h4>Approximate Comparisons</h4>
  *
  * within_abs():
  *     Determine if two numbers are almost equal, allowing for an absolute difference.

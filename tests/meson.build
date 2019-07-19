@@ -30,6 +30,7 @@ tests = [
     'test_substring_checks.cc',
     'test_time_util.cc',
     'test_tokenize.cc',
+	'test_to_number.cc',
     'test_Trigger.cc',
     'test_trim.cc',
     'test_type_name.cc',
