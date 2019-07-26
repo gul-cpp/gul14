@@ -1082,20 +1082,13 @@ auto do_a_dump(Buffer buf, int start, int end, bool backwards,
     auto const omit_until = end - start >= 10 ? end - 4 : 0;
     head += " - push_"s + (backwards ? "back"s : "front"s);
     head += " - shrink_keep_"s + (sb == gul::ShrinkBehavior::keep_back_elements ? "back"s : "front"s);
-    if (omit_until > 0)
-        std::cout << head << "\n[...]\n";
-    else
-        buf.debugdump(std::cout << head << '\n');
     for (auto i = start; i <= end; ++i) {
         if (not backwards)
             buf.push_front(i);
         else
             buf.push_back(i);
-        if (omit_until == 0 or i >= omit_until)
-            buf.debugdump(std::cout);
     }
     buf.resize(resize_to, sb);
-    buf.debugdump(std::cout) << '\n';
 
     std::stringstream s{ };
     for (auto it = buf.begin(); it != buf.end(); ++it)
