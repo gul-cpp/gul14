@@ -23,6 +23,7 @@ tests = [
     'test_join_split.cc',
     'test_main.cc',
     'test_num_util.cc',
+    'test_optional.cc',
     'test_replace.cc',
     'test_SlidingBuffer.cc',
     'test_statistics.cc',
