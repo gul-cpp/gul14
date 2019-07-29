@@ -1078,17 +1078,27 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
 
 template <typename Buffer>
 auto do_a_dump(Buffer buf, int start, int end, bool backwards,
-        int resize_to, gul::ShrinkBehavior sb, std::string head) {
+        int resize_to, gul::ShrinkBehavior sb, std::string head, bool print) {
     auto const omit_until = end - start >= 10 ? end - 4 : 0;
     head += " - push_"s + (backwards ? "back"s : "front"s);
     head += " - shrink_keep_"s + (sb == gul::ShrinkBehavior::keep_back_elements ? "back"s : "front"s);
+    if (print) {
+        if (omit_until > 0)
+            std::cout << head << "\n[...]\n";
+        else
+            buf.debugdump(std::cout << head << '\n');
+    }
     for (auto i = start; i <= end; ++i) {
         if (not backwards)
             buf.push_front(i);
         else
             buf.push_back(i);
+        if (print and (omit_until == 0 or i >= omit_until))
+            buf.debugdump(std::cout);
     }
     buf.resize(resize_to, sb);
+    if (print)
+        buf.debugdump(std::cout) << '\n';
 
     std::stringstream s{ };
     for (auto it = buf.begin(); it != buf.end(); ++it)
@@ -1098,6 +1108,7 @@ auto do_a_dump(Buffer buf, int start, int end, bool backwards,
 
 TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
 {
+    bool const print = false;  // ??context??.getConfig()->verbosity() > Catch::Verbosity::Normal;
     auto a = std::string{};
 
     auto const pf = false; // push_front
@@ -1113,10 +1124,10 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 4;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "4 3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "1 2 3 4");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "4 5 6 7");
     }
 
     SECTION("Buffer not yet filled, grow without element loss") {
@@ -1126,10 +1137,10 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 12;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4 3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4 5 6 7");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "7 6 5 4 3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3 4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "1 2 3 4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "1 2 3 4 5 6 7");
     }
 
     SECTION("Buffer not yet filled, shrink without element loss") {
@@ -1139,10 +1150,10 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 5;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "1 2 3");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "1 2 3");
     }
 
     SECTION("Buffer filled, shrink with element loss") {
@@ -1152,10 +1163,10 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 4;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "25 24 23 22");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "22 23 24 25");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "27 28 29 30");
     }
 
     SECTION("Buffer filled, grow without element loss") {
@@ -1165,15 +1176,16 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 12;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27 26 25 24 23 22");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25 26 27 28 29 30");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "30 29 28 27 26 25 24 23 22");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "22 23 24 25 26 27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "22 23 24 25 26 27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "22 23 24 25 26 27 28 29 30");
     }
 }
 
 TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
 {
+    bool const print = false;  // ??context??.getConfig()->verbosity() > Catch::Verbosity::Normal;
     auto a = std::string{};
 
     auto const pf = false; // push_front
@@ -1189,10 +1201,10 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 4;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "4 3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "1 2 3 4");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "4 5 6 7");
     }
 
     SECTION("Buffer not yet filled, grow without element loss") {
@@ -1202,10 +1214,10 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 12;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "7 6 5 4 3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "1 2 3 4 5 6 7");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "7 6 5 4 3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3 4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "1 2 3 4 5 6 7");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "7 6 5 4 3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "1 2 3 4 5 6 7");
     }
 
     SECTION("Buffer not yet filled, shrink without element loss") {
@@ -1215,10 +1227,10 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 5;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "3 2 1");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "1 2 3");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "3 2 1");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "1 2 3");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "1 2 3");
     }
 
     SECTION("Buffer filled, shrink with element loss") {
@@ -1228,10 +1240,10 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 4;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "25 24 23 22");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "22 23 24 25");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "27 28 29 30");
     }
 
     SECTION("Buffer filled, grow without element loss") {
@@ -1241,10 +1253,10 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
         auto const end_size = 12;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal) == "30 29 28 27 26 25 24 23 22");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal) == "22 23 24 25 26 27 28 29 30");
-        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal) == "30 29 28 27 26 25 24 23 22");
-        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal) == "22 23 24 25 26 27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sf, normal, print) == "22 23 24 25 26 27 28 29 30");
+        REQUIRE(do_a_dump(buf, start, end, pf, end_size, sb, normal, print) == "30 29 28 27 26 25 24 23 22");
+        REQUIRE(do_a_dump(buf, start, end, pb, end_size, sb, normal, print) == "22 23 24 25 26 27 28 29 30");
     }
 }
 
