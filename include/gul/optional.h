@@ -36,14 +36,14 @@
 #include <utility>
 
 /// \cond HIDE_SYMBOLS
-# define GUL_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
+#define GUL_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
 /// \endcond
 
 namespace gul {
 
 /// \cond HIDE_SYMBOLS
 
-    template <class T>
+template <class T>
 class optional;
 
 // 20.5.5, optional for lvalue reference types
@@ -52,191 +52,211 @@ class optional<T&>;
 
 
 // workaround: std utility functions aren't constexpr yet
+
 template <class T>
-inline constexpr T&& constexpr_forward(typename std::remove_reference<T>::type& t) noexcept
-{
-  return static_cast<T&&>(t);
+inline constexpr T&& constexpr_forward(typename std::remove_reference<T>::type& t) noexcept {
+    return static_cast<T&&> (t);
 }
 
 template <class T>
-inline constexpr T&& constexpr_forward(typename std::remove_reference<T>::type&& t) noexcept
-{
+inline constexpr T&& constexpr_forward(typename std::remove_reference<T>::type&& t) noexcept {
     static_assert(!std::is_lvalue_reference<T>::value, "!!");
-    return static_cast<T&&>(t);
+    return static_cast<T&&> (t);
 }
 
 template <class T>
-inline constexpr typename std::remove_reference<T>::type&& constexpr_move(T&& t) noexcept
-{
-    return static_cast<typename std::remove_reference<T>::type&&>(t);
+inline constexpr typename std::remove_reference<T>::type&& constexpr_move(T&& t) noexcept {
+    return static_cast<typename std::remove_reference<T>::type&&> (t);
 }
 
 
 #if defined NDEBUG
-# define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) (EXPR)
+#define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) (EXPR)
 #else
-# define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) ((CHECK) ? (EXPR) : ([]{assert(!#CHECK);}(), (EXPR)))
+#define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) ((CHECK) ? (EXPR) : ([]{assert(!#CHECK);}(), (EXPR)))
 #endif
 
 
-namespace detail_
-{
+namespace detail_ {
 
 // static_addressof: a constexpr version of addressof
+
 template <typename T>
-struct has_overloaded_addressof
-{
-  template <class X>
-  constexpr static bool has_overload(...) { return false; }
+struct has_overloaded_addressof {
 
-  template <class X, size_t S = sizeof(std::declval<X&>().operator&()) >
-  constexpr static bool has_overload(bool) { return true; }
+    template <class X>
+    constexpr static bool has_overload(...) {
+        return false;
+    }
 
-  constexpr static bool value = has_overload<T>(true);
+    template <class X, size_t S = sizeof (std::declval<X&>().operator&()) >
+    constexpr static bool has_overload(bool) {
+        return true;
+    }
+
+    constexpr static bool value = has_overload<T>(true);
 };
 
 template <typename T, GUL_OPTIONAL_REQUIRES(!has_overloaded_addressof<T>)>
-constexpr T* static_addressof(T& ref)
-{
-  return &ref;
+constexpr T* static_addressof(T& ref) {
+    return &ref;
 }
 
-template <typename T, GUL_OPTIONAL_REQUIRES(has_overloaded_addressof<T>)>
-T* static_addressof(T& ref)
-{
-  return std::addressof(ref);
+template <typename T, GUL_OPTIONAL_REQUIRES(has_overloaded_addressof<T>) >
+T* static_addressof(T& ref) {
+    return std::addressof(ref);
 }
 
 
 // the call to convert<A>(b) has return type A and converts b to type A iff b decltype(b) is implicitly convertible to A
+
 template <class U>
-constexpr U convert(U v) { return v; }
+constexpr U convert(U v) {
+    return v;
+}
 
 
-namespace swap_ns
-{
-  using std::swap;
+namespace swap_ns {
+using std::swap;
 
-  template <class T>
-  void adl_swap(T& t, T& u) noexcept(noexcept(swap(t, u)))
-  {
+template <class T>
+void adl_swap(T& t, T& u) noexcept(noexcept(swap(t, u))) {
     swap(t, u);
-  }
+}
 
 } // namespace swap_ns
 
 } // namespace detail
 
-
-constexpr struct trivial_init_t{} trivial_init{};
+constexpr struct trivial_init_t {
+} trivial_init{};
 
 
 // 20.5.6, In-place construction
-constexpr struct in_place_t{} in_place{};
+
+constexpr struct in_place_t {
+} in_place{};
 
 
 // 20.5.7, Disengaged state indicator
-struct nullopt_t
-{
-  struct init{};
-  constexpr explicit nullopt_t(init){}
+
+struct nullopt_t {
+
+    struct init {
+    };
+
+    constexpr explicit nullopt_t(init) {
+    }
 };
 constexpr nullopt_t nullopt{nullopt_t::init()};
 
 
 // 20.5.8, class bad_optional_access
+
 class bad_optional_access : public std::logic_error {
 public:
-  explicit bad_optional_access(const std::string& what_arg) : std::logic_error{what_arg} {}
-  explicit bad_optional_access(const char* what_arg) : std::logic_error{what_arg} {}
+    explicit bad_optional_access(const std::string& what_arg) : std::logic_error{what_arg}
+    {
+    }
+    explicit bad_optional_access(const char* what_arg) : std::logic_error{what_arg}
+    {
+    }
 };
 
-
 template <class T>
-union storage_t
-{
-  unsigned char dummy_;
-  T value_;
-
-  constexpr storage_t( trivial_init_t ) noexcept : dummy_() {};
-
-  template <class... Args>
-  constexpr storage_t( Args&&... args ) : value_(constexpr_forward<Args>(args)...) {}
-
-  ~storage_t(){}
-};
-
-
-template <class T>
-union constexpr_storage_t
-{
+union storage_t {
     unsigned char dummy_;
     T value_;
 
-    constexpr constexpr_storage_t( trivial_init_t ) noexcept : dummy_() {};
+    constexpr storage_t(trivial_init_t) noexcept : dummy_() {
+    };
 
     template <class... Args>
-    constexpr constexpr_storage_t( Args&&... args ) : value_(constexpr_forward<Args>(args)...) {}
+    constexpr storage_t(Args&&... args) : value_(constexpr_forward<Args>(args)...) {
+    }
+
+    ~storage_t() {
+    }
+};
+
+template <class T>
+union constexpr_storage_t {
+    unsigned char dummy_;
+    T value_;
+
+    constexpr constexpr_storage_t(trivial_init_t) noexcept : dummy_() {
+    };
+
+    template <class... Args>
+    constexpr constexpr_storage_t(Args&&... args) : value_(constexpr_forward<Args>(args)...) {
+    }
 
     ~constexpr_storage_t() = default;
 };
 
-
 template <class T>
-struct optional_base
-{
+struct optional_base {
     bool init_;
     storage_t<T> storage_;
 
-    constexpr optional_base() noexcept : init_(false), storage_(trivial_init) {};
+    constexpr optional_base() noexcept : init_(false), storage_(trivial_init) {
+    };
 
-    explicit constexpr optional_base(const T& v) : init_(true), storage_(v) {}
+    explicit constexpr optional_base(const T& v) : init_(true), storage_(v) {
+    }
 
-    explicit constexpr optional_base(T&& v) : init_(true), storage_(constexpr_move(v)) {}
+    explicit constexpr optional_base(T&& v) : init_(true), storage_(constexpr_move(v)) {
+    }
 
     template <class... Args> explicit optional_base(in_place_t, Args&&... args)
-        : init_(true), storage_(constexpr_forward<Args>(args)...) {}
+    : init_(true), storage_(constexpr_forward<Args>(args)...) {
+    }
 
     template <class U, class... Args, GUL_OPTIONAL_REQUIRES(std::is_constructible<T, std::initializer_list<U>>)>
     explicit optional_base(in_place_t, std::initializer_list<U> il, Args&&... args)
-        : init_(true), storage_(il, std::forward<Args>(args)...) {}
+    : init_(true), storage_(il, std::forward<Args>(args)...) {
+    }
 
-    ~optional_base() { if (init_) storage_.value_.T::~T(); }
+    ~optional_base() {
+        if (init_) storage_.value_.T::~T();
+    }
 };
 
-
 template <class T>
-struct constexpr_optional_base
-{
+struct constexpr_optional_base {
     bool init_;
     constexpr_storage_t<T> storage_;
 
-    constexpr constexpr_optional_base() noexcept : init_(false), storage_(trivial_init) {};
+    constexpr constexpr_optional_base() noexcept : init_(false), storage_(trivial_init) {
+    };
 
-    explicit constexpr constexpr_optional_base(const T& v) : init_(true), storage_(v) {}
+    explicit constexpr constexpr_optional_base(const T& v) : init_(true), storage_(v) {
+    }
 
-    explicit constexpr constexpr_optional_base(T&& v) : init_(true), storage_(constexpr_move(v)) {}
+    explicit constexpr constexpr_optional_base(T&& v) : init_(true), storage_(constexpr_move(v)) {
+    }
 
     template <class... Args> explicit constexpr constexpr_optional_base(in_place_t, Args&&... args)
-      : init_(true), storage_(constexpr_forward<Args>(args)...) {}
+    : init_(true), storage_(constexpr_forward<Args>(args)...) {
+    }
 
     template <class U, class... Args, GUL_OPTIONAL_REQUIRES(std::is_constructible<T, std::initializer_list<U>>)>
     constexpr explicit constexpr_optional_base(in_place_t, std::initializer_list<U> il, Args&&... args)
-      : init_(true), storage_(il, std::forward<Args>(args)...) {}
+    : init_(true), storage_(il, std::forward<Args>(args)...) {
+    }
 
     ~constexpr_optional_base() = default;
 };
 
 template <class T>
 using OptionalBase = typename std::conditional<
-    std::is_trivially_destructible<T>::value,                          // if possible
+    std::is_trivially_destructible<T>::value, // if possible
     constexpr_optional_base<typename std::remove_const<T>::type>, // use base with trivial destructor
     optional_base<typename std::remove_const<T>::type>
 >::type;
 
 
 /// \endcond
-
 
 /**
  * A class template that can either contain a value of a certain type or not.
@@ -246,209 +266,233 @@ using OptionalBase = typename std::conditional<
  * almost all use cases.
  */
 template <class T>
-class optional : private OptionalBase<T>
-{
-/// \cond HIDE_SYMBOLS
-  static_assert( !std::is_same<typename std::decay<T>::type, nullopt_t>::value, "bad T" );
-  static_assert( !std::is_same<typename std::decay<T>::type, in_place_t>::value, "bad T" );
+class optional : private OptionalBase<T> {
+    /// \cond HIDE_SYMBOLS
+    static_assert( !std::is_same<typename std::decay<T>::type, nullopt_t>::value, "bad T");
+    static_assert( !std::is_same<typename std::decay<T>::type, in_place_t>::value, "bad T");
 
+    constexpr bool initialized() const noexcept {
+        return OptionalBase<T>::init_;
+    }
 
-  constexpr bool initialized() const noexcept { return OptionalBase<T>::init_; }
-  typename std::remove_const<T>::type* dataptr() {  return std::addressof(OptionalBase<T>::storage_.value_); }
-  constexpr const T* dataptr() const { return detail_::static_addressof(OptionalBase<T>::storage_.value_); }
+    typename std::remove_const<T>::type* dataptr() {
+        return std::addressof(OptionalBase<T>::storage_.value_);
+    }
 
-  constexpr const T& contained_val() const& { return OptionalBase<T>::storage_.value_; }
-  constexpr T&& contained_val() && { return std::move(OptionalBase<T>::storage_.value_); }
-  constexpr T& contained_val() & { return OptionalBase<T>::storage_.value_; }
+    constexpr const T* dataptr() const {
+        return detail_::static_addressof(OptionalBase<T>::storage_.value_);
+    }
 
-  void clear() noexcept {
-    if (initialized()) dataptr()->T::~T();
-    OptionalBase<T>::init_ = false;
-  }
+    constexpr const T& contained_val() const& {
+        return OptionalBase<T>::storage_.value_;
+    }
 
-  template <class... Args>
-  void initialize(Args&&... args) noexcept(noexcept(T(std::forward<Args>(args)...)))
-  {
-    assert(!OptionalBase<T>::init_);
-    ::new (static_cast<void*>(dataptr())) T(std::forward<Args>(args)...);
-    OptionalBase<T>::init_ = true;
-  }
+    constexpr T&& contained_val() && {
+        return std::move(OptionalBase<T>::storage_.value_);
+    }
 
-  template <class U, class... Args>
-  void initialize(std::initializer_list<U> il, Args&&... args) noexcept(noexcept(T(il, std::forward<Args>(args)...)))
-  {
-    assert(!OptionalBase<T>::init_);
-    ::new (static_cast<void*>(dataptr())) T(il, std::forward<Args>(args)...);
-    OptionalBase<T>::init_ = true;
-  }
+    constexpr T& contained_val() & {
+        return OptionalBase<T>::storage_.value_;
+    }
+
+    void clear() noexcept {
+        if (initialized()) dataptr()->T::~T();
+        OptionalBase<T>::init_ = false;
+    }
+
+    template <class... Args>
+    void initialize(Args&&... args) noexcept(noexcept(T(std::forward<Args>(args)...))) {
+        assert(!OptionalBase<T>::init_);
+        ::new (static_cast<void*> (dataptr())) T(std::forward<Args>(args)...);
+        OptionalBase<T>::init_ = true;
+    }
+
+    template <class U, class... Args>
+    void initialize(std::initializer_list<U> il, Args&&... args) noexcept(noexcept(T(il, std::forward<Args>(args)...))) {
+        assert(!OptionalBase<T>::init_);
+        ::new (static_cast<void*> (dataptr())) T(il, std::forward<Args>(args)...);
+        OptionalBase<T>::init_ = true;
+    }
 
 public:
-  typedef T value_type;
+    typedef T value_type;
 
-  // 20.5.5.1, constructors
-  constexpr optional() noexcept : OptionalBase<T>()  {};
-  constexpr optional(nullopt_t) noexcept : OptionalBase<T>() {};
+    // 20.5.5.1, constructors
 
-  optional(const optional& rhs)
-  : OptionalBase<T>()
-  {
-    if (rhs.initialized()) {
-        ::new (static_cast<void*>(dataptr())) T(*rhs);
-        OptionalBase<T>::init_ = true;
+    constexpr optional() noexcept : OptionalBase<T>() {
+    };
+
+    constexpr optional(nullopt_t) noexcept : OptionalBase<T>() {
+    };
+
+    optional(const optional& rhs)
+    : OptionalBase<T>() {
+        if (rhs.initialized()) {
+            ::new (static_cast<void*> (dataptr())) T(*rhs);
+            OptionalBase<T>::init_ = true;
+        }
     }
-  }
 
-  optional(optional&& rhs) noexcept(std::is_nothrow_move_constructible<T>::value)
-  : OptionalBase<T>()
-  {
-    if (rhs.initialized()) {
-        ::new (static_cast<void*>(dataptr())) T(std::move(*rhs));
-        OptionalBase<T>::init_ = true;
+    optional(optional&& rhs) noexcept(std::is_nothrow_move_constructible<T>::value)
+    : OptionalBase<T>() {
+        if (rhs.initialized()) {
+            ::new (static_cast<void*> (dataptr())) T(std::move(*rhs));
+            OptionalBase<T>::init_ = true;
+        }
     }
-  }
 
-  constexpr optional(const T& v) : OptionalBase<T>(v) {}
+    constexpr optional(const T& v) : OptionalBase<T>(v) {
+    }
 
-  constexpr optional(T&& v) : OptionalBase<T>(constexpr_move(v)) {}
+    constexpr optional(T&& v) : OptionalBase<T>(constexpr_move(v)) {
+    }
 
-  template <class... Args>
-  explicit constexpr optional(in_place_t, Args&&... args)
-  : OptionalBase<T>(in_place_t{}, constexpr_forward<Args>(args)...) {}
+    template <class... Args>
+    explicit constexpr optional(in_place_t, Args&&... args)
+    : OptionalBase<T>(in_place_t{}, constexpr_forward<Args>(args)...) {
+    }
 
-  template <class U, class... Args, GUL_OPTIONAL_REQUIRES(std::is_constructible<T, std::initializer_list<U>>)>
-  constexpr explicit optional(in_place_t, std::initializer_list<U> il, Args&&... args)
-  : OptionalBase<T>(in_place_t{}, il, constexpr_forward<Args>(args)...) {}
+    template <class U, class... Args, GUL_OPTIONAL_REQUIRES(std::is_constructible<T, std::initializer_list<U>>)>
+    constexpr explicit optional(in_place_t, std::initializer_list<U> il, Args&&... args)
+    : OptionalBase<T>(in_place_t{}, il, constexpr_forward<Args>(args)...) {
+    }
 
-  // 20.5.4.2, Destructor
-  ~optional() = default;
+    // 20.5.4.2, Destructor
+    ~optional() = default;
 
-  // 20.5.4.3, assignment
-  optional& operator=(nullopt_t) noexcept
-  {
-    clear();
-    return *this;
-  }
+    // 20.5.4.3, assignment
 
-  optional& operator=(const optional& rhs)
-  {
-    if      (initialized() == true  && rhs.initialized() == false) clear();
-    else if (initialized() == false && rhs.initialized() == true)  initialize(*rhs);
-    else if (initialized() == true  && rhs.initialized() == true)  contained_val() = *rhs;
-    return *this;
-  }
+    optional& operator=(nullopt_t) noexcept {
+        clear();
+        return *this;
+    }
 
-  optional& operator=(optional&& rhs)
-  noexcept(std::is_nothrow_move_assignable<T>::value && std::is_nothrow_move_constructible<T>::value)
-  {
-    if      (initialized() == true  && rhs.initialized() == false) clear();
-    else if (initialized() == false && rhs.initialized() == true)  initialize(std::move(*rhs));
-    else if (initialized() == true  && rhs.initialized() == true)  contained_val() = std::move(*rhs);
-    return *this;
-  }
+    optional& operator=(const optional& rhs) {
+        if (initialized() == true && rhs.initialized() == false) clear();
+        else if (initialized() == false && rhs.initialized() == true) initialize(*rhs);
+        else if (initialized() == true && rhs.initialized() == true) contained_val() = *rhs;
+        return *this;
+    }
 
-  template <class U>
-  auto operator=(U&& v)
-  -> typename std::enable_if
-  <
-    std::is_same<typename std::decay<U>::type, T>::value,
-    optional&
-  >::type
-  {
-    if (initialized()) { contained_val() = std::forward<U>(v); }
-    else               { initialize(std::forward<U>(v));  }
-    return *this;
-  }
+    optional& operator=(optional&& rhs)
+    noexcept(std::is_nothrow_move_assignable<T>::value && std::is_nothrow_move_constructible<T>::value) {
+        if (initialized() == true && rhs.initialized() == false) clear();
+        else if (initialized() == false && rhs.initialized() == true) initialize(std::move(*rhs));
+        else if (initialized() == true && rhs.initialized() == true) contained_val() = std::move(*rhs);
+        return *this;
+    }
 
+    template <class U>
+    auto operator=(U&& v)
+    -> typename std::enable_if<std::is_same<typename std::decay<U>::type, T>::value, optional&>::type {
+        if (initialized()) {
+            contained_val() = std::forward<U>(v);
+        } else {
+            initialize(std::forward<U>(v));
+        }
+        return *this;
+    }
 
-  template <class... Args>
-  void emplace(Args&&... args)
-  {
-    clear();
-    initialize(std::forward<Args>(args)...);
-  }
+    template <class... Args>
+    void emplace(Args&&... args) {
+        clear();
+        initialize(std::forward<Args>(args)...);
+    }
 
-  template <class U, class... Args>
-  void emplace(std::initializer_list<U> il, Args&&... args)
-  {
-    clear();
-    initialize<U, Args...>(il, std::forward<Args>(args)...);
-  }
+    template <class U, class... Args>
+    void emplace(std::initializer_list<U> il, Args&&... args) {
+        clear();
+        initialize<U, Args...>(il, std::forward<Args>(args)...);
+    }
 
-  // 20.5.4.4, Swap
-  void swap(optional<T>& rhs) noexcept(std::is_nothrow_move_constructible<T>::value
-                                       && noexcept(detail_::swap_ns::adl_swap(std::declval<T&>(), std::declval<T&>())))
-  {
-    if      (initialized() == true  && rhs.initialized() == false) { rhs.initialize(std::move(**this)); clear(); }
-    else if (initialized() == false && rhs.initialized() == true)  { initialize(std::move(*rhs)); rhs.clear(); }
-    else if (initialized() == true  && rhs.initialized() == true)  { using std::swap; swap(**this, *rhs); }
-  }
+    // 20.5.4.4, Swap
 
-  // 20.5.4.5, Observers
+    void swap(optional<T>& rhs) noexcept(std::is_nothrow_move_constructible<T>::value
+            && noexcept(detail_::swap_ns::adl_swap(std::declval<T&>(), std::declval<T&>()))) {
+        if (initialized() == true && rhs.initialized() == false) {
+            rhs.initialize(std::move(* * this));
+            clear();
+        } else if (initialized() == false && rhs.initialized() == true) {
+            initialize(std::move(*rhs));
+            rhs.clear();
+        } else if (initialized() == true && rhs.initialized() == true) {
+            using std::swap;
+            swap(* * this, *rhs);
+        }
+    }
 
-  explicit constexpr operator bool() const noexcept { return initialized(); }
-  constexpr bool has_value() const noexcept { return initialized(); }
+    // 20.5.4.5, Observers
 
-  constexpr T const* operator ->() const {
-    return GUL_OPTIONAL_ASSERTED_EXPRESSION(initialized(), dataptr());
-  }
+    explicit constexpr operator bool() const noexcept {
+        return initialized();
+    }
 
-  constexpr T* operator ->() {
-    assert (initialized());
-    return dataptr();
-  }
+    constexpr bool has_value() const noexcept {
+        return initialized();
+    }
 
-  constexpr T const& operator *() const& {
-    return GUL_OPTIONAL_ASSERTED_EXPRESSION(initialized(), contained_val());
-  }
+    constexpr T const* operator->() const {
+        return GUL_OPTIONAL_ASSERTED_EXPRESSION(initialized(), dataptr());
+    }
 
-  constexpr T& operator *() & {
-    assert (initialized());
-    return contained_val();
-  }
+    constexpr T* operator->() {
+        assert(initialized());
+        return dataptr();
+    }
 
-  constexpr T&& operator *() && {
-    assert (initialized());
-    return constexpr_move(contained_val());
-  }
+    constexpr T const& operator*() const& {
+        return GUL_OPTIONAL_ASSERTED_EXPRESSION(initialized(), contained_val());
+    }
 
-  constexpr T const& value() const& {
-    return initialized() ? contained_val() : (throw bad_optional_access("bad optional access"), contained_val());
-  }
+    constexpr T& operator*() & {
+        assert(initialized());
+        return contained_val();
+    }
 
-  constexpr T& value() & {
-    return initialized() ? contained_val() : (throw bad_optional_access("bad optional access"), contained_val());
-  }
+    constexpr T&& operator*() && {
+        assert(initialized());
+        return constexpr_move(contained_val());
+    }
 
-  constexpr T&& value() && {
-    if (!initialized()) throw bad_optional_access("bad optional access");
-	return std::move(contained_val());
-  }
+    constexpr T const& value() const& {
+        return initialized() ? contained_val() : (throw bad_optional_access("bad optional access"), contained_val());
+    }
+
+    constexpr T& value() & {
+        return initialized() ? contained_val() : (throw bad_optional_access("bad optional access"), contained_val());
+    }
+
+    constexpr T&& value() && {
+        if (!initialized()) throw bad_optional_access("bad optional access");
+        return std::move(contained_val());
+    }
 
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable: 4244) // possible loss of data
 #endif
-  template <class V>
-  constexpr T value_or(V&& v) const&
-  {
-    return *this ? **this : detail_::convert<T>(constexpr_forward<V>(v));
-  }
 
-  template <class V>
-  constexpr T value_or(V&& v) &&
-  {
-    return *this ? constexpr_move(const_cast<optional<T>&>(*this).contained_val()) : detail_::convert<T>(constexpr_forward<V>(v));
-  }
+    template <class V>
+    constexpr T value_or(V&& v) const& {
+        return *this ? * * this : detail_::convert<T>(constexpr_forward<V>(v));
+    }
+
+    template <class V>
+    constexpr T value_or(V&& v) && {
+        return *this ? constexpr_move(const_cast<optional<T>&> (*this).contained_val()) : detail_::convert<T>(constexpr_forward<V>(v));
+    }
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
 
-  // 20.6.3.6, modifiers
-  void reset() noexcept { clear(); }
+    // 20.6.3.6, modifiers
 
-/// \endcond
+    void reset() noexcept {
+        clear();
+    }
+
+    /// \endcond
 };
-
 
 /**
  * A class template that can either contain a value of a certain type or not.
@@ -458,421 +502,375 @@ public:
  * almost all use cases.
  */
 template <class T>
-class optional<T&>
-{
-/// \cond HIDE_SYMBOLS
-  static_assert( !std::is_same<T, nullopt_t>::value, "bad T" );
-  static_assert( !std::is_same<T, in_place_t>::value, "bad T" );
-  T* ref;
+class optional<T&> {
+    /// \cond HIDE_SYMBOLS
+    static_assert( !std::is_same<T, nullopt_t>::value, "bad T");
+    static_assert( !std::is_same<T, in_place_t>::value, "bad T");
+    T* ref;
 
 public:
 
-  // 20.5.5.1, construction/destruction
-  constexpr optional() noexcept : ref(nullptr) {}
+    // 20.5.5.1, construction/destruction
 
-  constexpr optional(nullopt_t) noexcept : ref(nullptr) {}
+    constexpr optional() noexcept : ref(nullptr) {
+    }
 
-  constexpr optional(T& v) noexcept : ref(detail_::static_addressof(v)) {}
+    constexpr optional(nullopt_t) noexcept : ref(nullptr) {
+    }
 
-  optional(T&&) = delete;
+    constexpr optional(T& v) noexcept : ref(detail_::static_addressof(v)) {
+    }
 
-  constexpr optional(const optional& rhs) noexcept : ref(rhs.ref) {}
+    optional(T&&) = delete;
 
-  explicit constexpr optional(in_place_t, T& v) noexcept : ref(detail_::static_addressof(v)) {}
+    constexpr optional(const optional& rhs) noexcept : ref(rhs.ref) {
+    }
 
-  explicit optional(in_place_t, T&&) = delete;
+    explicit constexpr optional(in_place_t, T& v) noexcept : ref(detail_::static_addressof(v)) {
+    }
 
-  ~optional() = default;
+    explicit optional(in_place_t, T&&) = delete;
 
-  // 20.5.5.2, mutation
-  optional& operator=(nullopt_t) noexcept {
-    ref = nullptr;
-    return *this;
-  }
+    ~optional() = default;
 
-  // optional& operator=(const optional& rhs) noexcept {
+    // 20.5.5.2, mutation
+
+    optional& operator=(nullopt_t) noexcept {
+        ref = nullptr;
+        return *this;
+    }
+
+    // optional& operator=(const optional& rhs) noexcept {
     // ref = rhs.ref;
     // return *this;
-  // }
+    // }
 
-  // optional& operator=(optional&& rhs) noexcept {
+    // optional& operator=(optional&& rhs) noexcept {
     // ref = rhs.ref;
     // return *this;
-  // }
+    // }
 
-  template <typename U>
-  auto operator=(U&& rhs) noexcept
-  -> typename std::enable_if
-  <
+    template <typename U>
+    auto operator=(U&& rhs) noexcept
+    -> typename std::enable_if
+    <
     std::is_same<typename std::decay<U>::type, optional<T&>>::value,
     optional&
-  >::type
-  {
-    ref = rhs.ref;
-    return *this;
-  }
+    >::type
+    {
+        ref = rhs.ref;
+        return *this;
+    }
 
-  template <typename U>
-  auto operator=(U&& rhs) noexcept
-  -> typename std::enable_if
-  <
+    template <typename U>
+    auto operator=(U&& rhs) noexcept
+    -> typename std::enable_if
+    <
     !std::is_same<typename std::decay<U>::type, optional<T&>>::value,
     optional&
-  >::type
-  = delete;
+    >::type
+    = delete;
 
-  void emplace(T& v) noexcept {
-    ref = detail_::static_addressof(v);
-  }
+    void emplace(T& v) noexcept {
+        ref = detail_::static_addressof(v);
+    }
 
-  void emplace(T&&) = delete;
+    void emplace(T&&) = delete;
 
+    void swap(optional<T&>& rhs) noexcept {
+        std::swap(ref, rhs.ref);
+    }
 
-  void swap(optional<T&>& rhs) noexcept
-  {
-    std::swap(ref, rhs.ref);
-  }
+    // 20.5.5.3, observers
 
-  // 20.5.5.3, observers
-  constexpr T* operator->() const {
-    return GUL_OPTIONAL_ASSERTED_EXPRESSION(ref, ref);
-  }
+    constexpr T* operator->() const {
+        return GUL_OPTIONAL_ASSERTED_EXPRESSION(ref, ref);
+    }
 
-  constexpr T& operator*() const {
-    return GUL_OPTIONAL_ASSERTED_EXPRESSION(ref, *ref);
-  }
+    constexpr T& operator*() const {
+        return GUL_OPTIONAL_ASSERTED_EXPRESSION(ref, *ref);
+    }
 
-  constexpr T& value() const {
-    return ref ? *ref : (throw bad_optional_access("bad optional access"), *ref);
-  }
+    constexpr T& value() const {
+        return ref ? *ref : (throw bad_optional_access("bad optional access"), *ref);
+    }
 
-  explicit constexpr operator bool() const noexcept {
-    return ref != nullptr;
-  }
+    explicit constexpr operator bool() const noexcept {
+        return ref != nullptr;
+    }
 
-  constexpr bool has_value() const noexcept {
-    return ref != nullptr;
-  }
+    constexpr bool has_value() const noexcept {
+        return ref != nullptr;
+    }
 
-  template <class V>
-  constexpr typename std::decay<T>::type value_or(V&& v) const
-  {
-    return *this ? **this : detail_::convert<typename std::decay<T>::type>(constexpr_forward<V>(v));
-  }
+    template <class V>
+    constexpr typename std::decay<T>::type value_or(V&& v) const {
+        return *this ? * * this : detail_::convert<typename std::decay<T>::type > (constexpr_forward<V>(v));
+    }
 
-  // x.x.x.x, modifiers
-  void reset() noexcept { ref = nullptr; }
+    // x.x.x.x, modifiers
 
-/// \endcond
+    void reset() noexcept {
+        ref = nullptr;
+    }
+
+    /// \endcond
 };
 
 /// \cond HIDE_SYMBOLS
 
 template <class T>
-class optional<T&&>
-{
-  static_assert( sizeof(T) == 0, "optional rvalue references disallowed" );
+class optional<T&&> {
+    static_assert( sizeof (T) == 0, "optional rvalue references disallowed");
 };
 
 
 // 20.5.8, Relational operators
-template <class T> constexpr bool operator==(const optional<T>& x, const optional<T>& y)
-{
-  return bool(x) != bool(y) ? false : bool(x) == false ? true : *x == *y;
+
+template <class T> constexpr bool operator==(const optional<T>& x, const optional<T>& y) {
+    return bool(x) != bool(y) ? false : bool(x) == false ? true : *x == *y;
 }
 
-template <class T> constexpr bool operator!=(const optional<T>& x, const optional<T>& y)
-{
-  return !(x == y);
+template <class T> constexpr bool operator!=(const optional<T>& x, const optional<T>& y) {
+    return !(x == y);
 }
 
-template <class T> constexpr bool operator<(const optional<T>& x, const optional<T>& y)
-{
-  return (!y) ? false : (!x) ? true : *x < *y;
+template <class T> constexpr bool operator<(const optional<T>& x, const optional<T>& y) {
+    return (!y) ? false : (!x) ? true : *x < *y;
 }
 
-template <class T> constexpr bool operator>(const optional<T>& x, const optional<T>& y)
-{
-  return (y < x);
+template <class T> constexpr bool operator>(const optional<T>& x, const optional<T>& y) {
+    return (y < x);
 }
 
-template <class T> constexpr bool operator<=(const optional<T>& x, const optional<T>& y)
-{
-  return !(y < x);
+template <class T> constexpr bool operator<=(const optional<T>& x, const optional<T>& y) {
+    return !(y < x);
 }
 
-template <class T> constexpr bool operator>=(const optional<T>& x, const optional<T>& y)
-{
-  return !(x < y);
+template <class T> constexpr bool operator>=(const optional<T>& x, const optional<T>& y) {
+    return !(x < y);
 }
 
 
 // 20.5.9, Comparison with nullopt
-template <class T> constexpr bool operator==(const optional<T>& x, nullopt_t) noexcept
-{
-  return (!x);
+
+template <class T> constexpr bool operator==(const optional<T>& x, nullopt_t) noexcept {
+    return (!x);
 }
 
-template <class T> constexpr bool operator==(nullopt_t, const optional<T>& x) noexcept
-{
-  return (!x);
+template <class T> constexpr bool operator==(nullopt_t, const optional<T>& x) noexcept {
+    return (!x);
 }
 
-template <class T> constexpr bool operator!=(const optional<T>& x, nullopt_t) noexcept
-{
-  return bool(x);
+template <class T> constexpr bool operator!=(const optional<T>& x, nullopt_t) noexcept {
+    return bool(x);
 }
 
-template <class T> constexpr bool operator!=(nullopt_t, const optional<T>& x) noexcept
-{
-  return bool(x);
+template <class T> constexpr bool operator!=(nullopt_t, const optional<T>& x) noexcept {
+    return bool(x);
 }
 
-template <class T> constexpr bool operator<(const optional<T>&, nullopt_t) noexcept
-{
-  return false;
+template <class T> constexpr bool operator<(const optional<T>&, nullopt_t) noexcept {
+    return false;
 }
 
-template <class T> constexpr bool operator<(nullopt_t, const optional<T>& x) noexcept
-{
-  return bool(x);
+template <class T> constexpr bool operator<(nullopt_t, const optional<T>& x) noexcept {
+    return bool(x);
 }
 
-template <class T> constexpr bool operator<=(const optional<T>& x, nullopt_t) noexcept
-{
-  return (!x);
+template <class T> constexpr bool operator<=(const optional<T>& x, nullopt_t) noexcept {
+    return (!x);
 }
 
-template <class T> constexpr bool operator<=(nullopt_t, const optional<T>&) noexcept
-{
-  return true;
+template <class T> constexpr bool operator<=(nullopt_t, const optional<T>&) noexcept {
+    return true;
 }
 
-template <class T> constexpr bool operator>(const optional<T>& x, nullopt_t) noexcept
-{
-  return bool(x);
+template <class T> constexpr bool operator>(const optional<T>& x, nullopt_t) noexcept {
+    return bool(x);
 }
 
-template <class T> constexpr bool operator>(nullopt_t, const optional<T>&) noexcept
-{
-  return false;
+template <class T> constexpr bool operator>(nullopt_t, const optional<T>&) noexcept {
+    return false;
 }
 
-template <class T> constexpr bool operator>=(const optional<T>&, nullopt_t) noexcept
-{
-  return true;
+template <class T> constexpr bool operator>=(const optional<T>&, nullopt_t) noexcept {
+    return true;
 }
 
-template <class T> constexpr bool operator>=(nullopt_t, const optional<T>& x) noexcept
-{
-  return (!x);
+template <class T> constexpr bool operator>=(nullopt_t, const optional<T>& x) noexcept {
+    return (!x);
 }
 
 
 
 // 20.5.10, Comparison with T
-template <class T> constexpr bool operator==(const optional<T>& x, const T& v)
-{
-  return bool(x) ? *x == v : false;
+
+template <class T> constexpr bool operator==(const optional<T>& x, const T& v) {
+    return bool(x) ? *x == v : false;
 }
 
-template <class T> constexpr bool operator==(const T& v, const optional<T>& x)
-{
-  return bool(x) ? v == *x : false;
+template <class T> constexpr bool operator==(const T& v, const optional<T>& x) {
+    return bool(x) ? v == *x : false;
 }
 
-template <class T> constexpr bool operator!=(const optional<T>& x, const T& v)
-{
-  return bool(x) ? *x != v : true;
+template <class T> constexpr bool operator!=(const optional<T>& x, const T& v) {
+    return bool(x) ? *x != v : true;
 }
 
-template <class T> constexpr bool operator!=(const T& v, const optional<T>& x)
-{
-  return bool(x) ? v != *x : true;
+template <class T> constexpr bool operator!=(const T& v, const optional<T>& x) {
+    return bool(x) ? v != *x : true;
 }
 
-template <class T> constexpr bool operator<(const optional<T>& x, const T& v)
-{
-  return bool(x) ? *x < v : true;
+template <class T> constexpr bool operator<(const optional<T>& x, const T& v) {
+    return bool(x) ? *x < v : true;
 }
 
-template <class T> constexpr bool operator>(const T& v, const optional<T>& x)
-{
-  return bool(x) ? v > *x : true;
+template <class T> constexpr bool operator>(const T& v, const optional<T>& x) {
+    return bool(x) ? v > *x : true;
 }
 
-template <class T> constexpr bool operator>(const optional<T>& x, const T& v)
-{
-  return bool(x) ? *x > v : false;
+template <class T> constexpr bool operator>(const optional<T>& x, const T& v) {
+    return bool(x) ? *x > v : false;
 }
 
-template <class T> constexpr bool operator<(const T& v, const optional<T>& x)
-{
-  return bool(x) ? v < *x : false;
+template <class T> constexpr bool operator<(const T& v, const optional<T>& x) {
+    return bool(x) ? v < *x : false;
 }
 
-template <class T> constexpr bool operator>=(const optional<T>& x, const T& v)
-{
-  return bool(x) ? *x >= v : false;
+template <class T> constexpr bool operator>=(const optional<T>& x, const T& v) {
+    return bool(x) ? *x >= v : false;
 }
 
-template <class T> constexpr bool operator<=(const T& v, const optional<T>& x)
-{
-  return bool(x) ? v <= *x : false;
+template <class T> constexpr bool operator<=(const T& v, const optional<T>& x) {
+    return bool(x) ? v <= *x : false;
 }
 
-template <class T> constexpr bool operator<=(const optional<T>& x, const T& v)
-{
-  return bool(x) ? *x <= v : true;
+template <class T> constexpr bool operator<=(const optional<T>& x, const T& v) {
+    return bool(x) ? *x <= v : true;
 }
 
-template <class T> constexpr bool operator>=(const T& v, const optional<T>& x)
-{
-  return bool(x) ? v >= *x : true;
+template <class T> constexpr bool operator>=(const T& v, const optional<T>& x) {
+    return bool(x) ? v >= *x : true;
 }
 
 
 // Comparison of optional<T&> with T
-template <class T> constexpr bool operator==(const optional<T&>& x, const T& v)
-{
-  return bool(x) ? *x == v : false;
+
+template <class T> constexpr bool operator==(const optional<T&>& x, const T& v) {
+    return bool(x) ? *x == v : false;
 }
 
-template <class T> constexpr bool operator==(const T& v, const optional<T&>& x)
-{
-  return bool(x) ? v == *x : false;
+template <class T> constexpr bool operator==(const T& v, const optional<T&>& x) {
+    return bool(x) ? v == *x : false;
 }
 
-template <class T> constexpr bool operator!=(const optional<T&>& x, const T& v)
-{
-  return bool(x) ? *x != v : true;
+template <class T> constexpr bool operator!=(const optional<T&>& x, const T& v) {
+    return bool(x) ? *x != v : true;
 }
 
-template <class T> constexpr bool operator!=(const T& v, const optional<T&>& x)
-{
-  return bool(x) ? v != *x : true;
+template <class T> constexpr bool operator!=(const T& v, const optional<T&>& x) {
+    return bool(x) ? v != *x : true;
 }
 
-template <class T> constexpr bool operator<(const optional<T&>& x, const T& v)
-{
-  return bool(x) ? *x < v : true;
+template <class T> constexpr bool operator<(const optional<T&>& x, const T& v) {
+    return bool(x) ? *x < v : true;
 }
 
-template <class T> constexpr bool operator>(const T& v, const optional<T&>& x)
-{
-  return bool(x) ? v > *x : true;
+template <class T> constexpr bool operator>(const T& v, const optional<T&>& x) {
+    return bool(x) ? v > *x : true;
 }
 
-template <class T> constexpr bool operator>(const optional<T&>& x, const T& v)
-{
-  return bool(x) ? *x > v : false;
+template <class T> constexpr bool operator>(const optional<T&>& x, const T& v) {
+    return bool(x) ? *x > v : false;
 }
 
-template <class T> constexpr bool operator<(const T& v, const optional<T&>& x)
-{
-  return bool(x) ? v < *x : false;
+template <class T> constexpr bool operator<(const T& v, const optional<T&>& x) {
+    return bool(x) ? v < *x : false;
 }
 
-template <class T> constexpr bool operator>=(const optional<T&>& x, const T& v)
-{
-  return bool(x) ? *x >= v : false;
+template <class T> constexpr bool operator>=(const optional<T&>& x, const T& v) {
+    return bool(x) ? *x >= v : false;
 }
 
-template <class T> constexpr bool operator<=(const T& v, const optional<T&>& x)
-{
-  return bool(x) ? v <= *x : false;
+template <class T> constexpr bool operator<=(const T& v, const optional<T&>& x) {
+    return bool(x) ? v <= *x : false;
 }
 
-template <class T> constexpr bool operator<=(const optional<T&>& x, const T& v)
-{
-  return bool(x) ? *x <= v : true;
+template <class T> constexpr bool operator<=(const optional<T&>& x, const T& v) {
+    return bool(x) ? *x <= v : true;
 }
 
-template <class T> constexpr bool operator>=(const T& v, const optional<T&>& x)
-{
-  return bool(x) ? v >= *x : true;
+template <class T> constexpr bool operator>=(const T& v, const optional<T&>& x) {
+    return bool(x) ? v >= *x : true;
 }
 
 // Comparison of optional<T const&> with T
-template <class T> constexpr bool operator==(const optional<const T&>& x, const T& v)
-{
-  return bool(x) ? *x == v : false;
+
+template <class T> constexpr bool operator==(const optional<const T&>& x, const T& v) {
+    return bool(x) ? *x == v : false;
 }
 
-template <class T> constexpr bool operator==(const T& v, const optional<const T&>& x)
-{
-  return bool(x) ? v == *x : false;
+template <class T> constexpr bool operator==(const T& v, const optional<const T&>& x) {
+    return bool(x) ? v == *x : false;
 }
 
-template <class T> constexpr bool operator!=(const optional<const T&>& x, const T& v)
-{
-  return bool(x) ? *x != v : true;
+template <class T> constexpr bool operator!=(const optional<const T&>& x, const T& v) {
+    return bool(x) ? *x != v : true;
 }
 
-template <class T> constexpr bool operator!=(const T& v, const optional<const T&>& x)
-{
-  return bool(x) ? v != *x : true;
+template <class T> constexpr bool operator!=(const T& v, const optional<const T&>& x) {
+    return bool(x) ? v != *x : true;
 }
 
-template <class T> constexpr bool operator<(const optional<const T&>& x, const T& v)
-{
-  return bool(x) ? *x < v : true;
+template <class T> constexpr bool operator<(const optional<const T&>& x, const T& v) {
+    return bool(x) ? *x < v : true;
 }
 
-template <class T> constexpr bool operator>(const T& v, const optional<const T&>& x)
-{
-  return bool(x) ? v > *x : true;
+template <class T> constexpr bool operator>(const T& v, const optional<const T&>& x) {
+    return bool(x) ? v > *x : true;
 }
 
-template <class T> constexpr bool operator>(const optional<const T&>& x, const T& v)
-{
-  return bool(x) ? *x > v : false;
+template <class T> constexpr bool operator>(const optional<const T&>& x, const T& v) {
+    return bool(x) ? *x > v : false;
 }
 
-template <class T> constexpr bool operator<(const T& v, const optional<const T&>& x)
-{
-  return bool(x) ? v < *x : false;
+template <class T> constexpr bool operator<(const T& v, const optional<const T&>& x) {
+    return bool(x) ? v < *x : false;
 }
 
-template <class T> constexpr bool operator>=(const optional<const T&>& x, const T& v)
-{
-  return bool(x) ? *x >= v : false;
+template <class T> constexpr bool operator>=(const optional<const T&>& x, const T& v) {
+    return bool(x) ? *x >= v : false;
 }
 
-template <class T> constexpr bool operator<=(const T& v, const optional<const T&>& x)
-{
-  return bool(x) ? v <= *x : false;
+template <class T> constexpr bool operator<=(const T& v, const optional<const T&>& x) {
+    return bool(x) ? v <= *x : false;
 }
 
-template <class T> constexpr bool operator<=(const optional<const T&>& x, const T& v)
-{
-  return bool(x) ? *x <= v : true;
+template <class T> constexpr bool operator<=(const optional<const T&>& x, const T& v) {
+    return bool(x) ? *x <= v : true;
 }
 
-template <class T> constexpr bool operator>=(const T& v, const optional<const T&>& x)
-{
-  return bool(x) ? v >= *x : true;
+template <class T> constexpr bool operator>=(const T& v, const optional<const T&>& x) {
+    return bool(x) ? v >= *x : true;
 }
 
 
 // 20.5.12, Specialized algorithms
+
 template <class T>
-void swap(optional<T>& x, optional<T>& y) noexcept(noexcept(x.swap(y)))
-{
-  x.swap(y);
+void swap(optional<T>& x, optional<T>& y) noexcept(noexcept(x.swap(y))) {
+    x.swap(y);
 }
 
-
 template <class T>
-constexpr optional<typename std::decay<T>::type> make_optional(T&& v)
-{
-  return optional<typename std::decay<T>::type>(constexpr_forward<T>(v));
+constexpr optional<typename std::decay<T>::type> make_optional(T&& v) {
+    return optional<typename std::decay<T>::type > (constexpr_forward<T>(v));
 }
 
 template <class X>
-constexpr optional<X&> make_optional(std::reference_wrapper<X> v)
-{
-  return optional<X&>(v.get());
+constexpr optional<X&> make_optional(std::reference_wrapper<X> v) {
+    return optional<X&>(v.get());
 }
 
 
@@ -883,29 +881,28 @@ constexpr optional<X&> make_optional(std::reference_wrapper<X> v)
 
 
 /// \cond PRIVATE
-namespace std
+namespace std {
+template <typename T>
+struct hash<gul::optional<T>>
 {
-  template <typename T>
-  struct hash<gul::optional<T>>
-  {
     typedef typename hash<T>::result_type result_type;
     typedef gul::optional<T> argument_type;
 
     constexpr result_type operator()(argument_type const& arg) const {
-      return arg ? std::hash<T>{}(*arg) : result_type{};
+        return arg ? std::hash<T>{}(*arg) : result_type{};
     }
-  };
+};
 
-  template <typename T>
-  struct hash<gul::optional<T&>>
-  {
+template <typename T>
+struct hash<gul::optional<T&>>
+{
     typedef typename hash<T>::result_type result_type;
     typedef gul::optional<T&> argument_type;
 
     constexpr result_type operator()(argument_type const& arg) const {
-      return arg ? std::hash<T>{}(*arg) : result_type{};
+        return arg ? std::hash<T>{}(*arg) : result_type{};
     }
-  };
+};
 }
 /// \endcond
 
