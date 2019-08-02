@@ -117,6 +117,10 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_5 Version 1.5
+ *
+ * - Add gul::optional, a backport of std::optional from C++17
+ *
  * \subsection v1_4 Version 1.4
  *
  * - escape() & unescape(): Change argument type from const std::string & to
