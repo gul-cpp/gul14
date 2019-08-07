@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,7 @@
 #pragma once
 
 #include <string>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -43,6 +44,7 @@ namespace gul {
  * \note
  * The null character is not treated as whitespace by default.
  */
+GUL_EXPORT
 extern const string_view default_whitespace_characters;
 
 } /* namespace gul */

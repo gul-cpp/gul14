@@ -4,7 +4,7 @@
  * \date    Created on September 3, 2018
  * \brief   Declaration of tokenize(), tokenize_sv().
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include "gul/internal.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
 
@@ -43,6 +44,7 @@ namespace gul {
  *                    characters is used.
  * \returns a std::vector with the single substrings.
  */
+GUL_EXPORT
 std::vector<std::string> tokenize(string_view str,
     string_view delimiters = default_whitespace_characters);
 
@@ -62,6 +64,7 @@ std::vector<std::string> tokenize(string_view str,
  *          string views point to the original string str and are valid only for the
  *          lifetime of that argument.
  */
+GUL_EXPORT
 std::vector<string_view> tokenize_sv(string_view str,
     string_view delimiters = default_whitespace_characters);
 

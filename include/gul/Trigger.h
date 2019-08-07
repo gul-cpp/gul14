@@ -4,7 +4,7 @@
  * \date    Created on September 21, 2018
  * \brief   Declaration of the Trigger class for the General Utility Library.
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -25,6 +25,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
+#include "gul/internal.h"
 
 namespace gul {
 
@@ -110,6 +111,7 @@ public:
      * Destructor: Send a final trigger signal so that all threads waiting on this object
      * have a chance to stop.
      */
+    GUL_EXPORT
     ~Trigger() noexcept;
 
     /// Not copyable and not movable
@@ -131,27 +133,32 @@ public:
      *     cout << "Trigger is now high\n";
      * \endcode
      */
+    GUL_EXPORT
     operator bool() const noexcept;
 
     /**
      * Set the trigger to high==true or low==false.
      * Setting it to true will cause any waiting threads to resume.
      */
+    GUL_EXPORT
     Trigger &operator=(bool interrupt) noexcept;
 
     /// Set the trigger to low (false).
+    GUL_EXPORT
     void reset() noexcept;
 
     /**
      * Set the trigger to high (true).
      * This causes any waiting threads to resume.
      */
+    GUL_EXPORT
     void trigger() noexcept;
 
     /**
      * Suspend execution of the current thread until the trigger goes high (true).
      * Execution is also resumed if the object is destructed.
      */
+    GUL_EXPORT
     void wait() const;
 
     /**

@@ -5,7 +5,7 @@
  * \brief  Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(),
  *         and trim_right_sv().
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "gul/internal.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
 
@@ -46,6 +47,7 @@ namespace gul {
  *      trim_left() and trim_right() %trim only one side of the string,<br>
  *      trim_left_sv() and trim_right_sv() %trim only one side and return a string_view.
  */
+GUL_EXPORT
 std::string trim(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
@@ -65,6 +67,7 @@ std::string trim(string_view str, string_view ws_chars = default_whitespace_char
  *      trim_left_sv() and trim_right_sv() %trim only one side of the string,<br>
  *      trim_left() and trim_right() %trim only one side and return a copied string.<br>
  */
+GUL_EXPORT
 string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
@@ -84,6 +87,7 @@ string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_c
  *      trim_right() and trim_right_sv() %trim the other side of the string,<br>
  *      trim() and trim_sv() %trim both sides of the string.
  */
+GUL_EXPORT
 std::string trim_left(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
@@ -103,6 +107,7 @@ std::string trim_left(string_view str, string_view ws_chars = default_whitespace
  *      trim_right() and trim_right_sv() %trim the other side of the string,<br>
  *      trim() and trim_sv() %trim both sides of the string.
  */
+GUL_EXPORT
 string_view trim_left_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
@@ -122,6 +127,7 @@ string_view trim_left_sv(string_view str, string_view ws_chars = default_whitesp
  *      trim_left() and trim_left_sv() %trim the other side of the string,<br>
  *      trim() and trim_sv() %trim both sides of the string.
  */
+GUL_EXPORT
 std::string trim_right(string_view str, string_view ws_chars = default_whitespace_characters);
 
 /**
@@ -141,6 +147,7 @@ std::string trim_right(string_view str, string_view ws_chars = default_whitespac
  *      trim_left() and trim_left_sv() %trim the other side of the string,<br>
  *      trim() and trim_sv() %trim both sides of the string.
  */
+GUL_EXPORT
 string_view trim_right_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
 

@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -25,6 +25,7 @@
 #include <string>
 #include <regex>
 #include <vector>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -53,6 +54,7 @@ namespace gul {
  *      a regular expression, and<br>
  *      join() can join the vector back into a string.
  */
+GUL_EXPORT
 std::vector<std::string> split(string_view text, string_view delimiter);
 
 /**
@@ -78,6 +80,7 @@ std::vector<std::string> split(string_view text, string_view delimiter);
  *      split_sv() does the same returning a vector of string_views, and<br>
  *      join() can join the vector back into a string.
  */
+GUL_EXPORT
 std::vector<std::string> split(const std::string& text, const std::regex& delimiter);
 
 /**
@@ -105,6 +108,7 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
  *      a regular expression, and<br>
  *      join() can join the vector back into a string.
  */
+GUL_EXPORT
 std::vector<gul::string_view> split_sv(string_view text, string_view delimiter);
 
 /**
@@ -123,6 +127,7 @@ std::vector<gul::string_view> split_sv(string_view text, string_view delimiter);
  *      string_view objects, split() and associated functions can be used to split a
  *      string into a vector of substrings.
  */
+GUL_EXPORT
 std::string join(const std::vector<std::string>& parts, string_view glue);
 
 /**
@@ -141,6 +146,7 @@ std::string join(const std::vector<std::string>& parts, string_view glue);
  *      split() and associated functions can be used to split a string into a vector of
  *      substrings.
  */
+GUL_EXPORT
 std::string join(const std::vector<string_view>& parts, string_view glue);
 
 } /* namespace gul */

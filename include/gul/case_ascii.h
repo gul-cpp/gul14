@@ -24,6 +24,7 @@
 #pragma once
 
 #include <string>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -44,7 +45,6 @@ constexpr char lowercase_ascii(char c) noexcept
         return c;
 }
 
-
 /**
  * Return a copy of the given string in which all ASCII characters are replaced by their
  * lowercase equivalents.
@@ -53,6 +53,7 @@ constexpr char lowercase_ascii(char c) noexcept
  * \see lowercase_ascii(char), lowercase_ascii_inplace(std::string &),
  *      uppercase_ascii(gul::string_view)
  */
+GUL_EXPORT
 std::string lowercase_ascii(gul::string_view str);
 
 /**
@@ -65,6 +66,7 @@ std::string lowercase_ascii(gul::string_view str);
  * \see lowercase_ascii(char), lowercase_ascii(gul::string_view),
  *      uppercase_ascii_inplace(std::string &)
  */
+GUL_EXPORT
 std::string &lowercase_ascii_inplace(std::string &str) noexcept;
 
 /**
@@ -91,6 +93,7 @@ constexpr char uppercase_ascii(char c) noexcept
  * \see uppercase_ascii(char), uppercase_ascii_inplace(std::string &),
  *      lowercase_ascii(gul::string_view)
  */
+GUL_EXPORT
 std::string uppercase_ascii(gul::string_view str);
 
 /**
@@ -103,6 +106,7 @@ std::string uppercase_ascii(gul::string_view str);
  * \see uppercase_ascii(char), uppercase_ascii(gul::string_view),
  *      lowercase_ascii_inplace(std::string &)
  */
+GUL_EXPORT
 std::string &uppercase_ascii_inplace(std::string &str) noexcept;
 
 } // namespace gul

@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,7 @@
 #pragma once
 
 #include <string>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -37,6 +38,7 @@ namespace gul {
  *                of haystack is returned.
  * \param hammer  The replacement string.
  */
+GUL_EXPORT
 std::string replace(string_view haystack, string_view needle, string_view hammer);
 
 /**
@@ -51,6 +53,7 @@ std::string replace(string_view haystack, string_view needle, string_view hammer
  *
  * \returns the altered haystack.
  */
+GUL_EXPORT
 std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer);
 
 } /* namespace gul */

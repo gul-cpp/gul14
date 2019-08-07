@@ -13,6 +13,7 @@ libgul_sub_headers = files([
     'gul/escape.h',
     'gul/finalizer.h',
     'gul/hexdump.h',
+    'gul/internal.h',
     'gul/join_split.h',
     'gul/num_util.h',
     'gul/optional.h',

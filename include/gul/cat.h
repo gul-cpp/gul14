@@ -5,7 +5,7 @@
  * \brief  Declaration of the overload set for cat() and of the associated class
  *         ConvertingStringView.
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -25,6 +25,7 @@
 
 #include <string>
 #include <type_traits>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -91,13 +92,16 @@ inline std::string cat() { return std::string(); }
 inline std::string cat(const ConvertingStringView& s) { return std::string(s); }
 
 /// \see cat()
+GUL_EXPORT
 std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2);
 
 /// \see cat()
+GUL_EXPORT
 std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2,
                 const ConvertingStringView& s3);
 
 /// \see cat()
+GUL_EXPORT
 std::string cat(std::initializer_list<ConvertingStringView> pieces);
 
 /// \see cat()

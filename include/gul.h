@@ -81,7 +81,7 @@ namespace gul {
  * \section usage Usage
  *
  * To use the library, include the single header file \ref gul.h and link your code
- * against the library (-lgul).
+ * against the library (-lgul). If you are on Windows, see \ref using_gul_on_windows.
  *
  * GUL requires at least C++14. All utility functions and classes are enclosed in the
  * namespace \ref gul.
@@ -478,4 +478,27 @@ namespace gul {
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+/**
+ * \page using_gul_on_windows Using GUL on Windows
+ *
+ * GUL can be built on Windows with the Meson build system and the Microsoft Visual C++
+ * compiler. Please refer to README.md in our
+ * [source code repository](https://stash.desy.de/projects/GUL/repos/libgul/browse/) for
+ * details. By default, both a static and a dynamic library (a DLL) are built.
+ *
+ * Because of the way DLLs work in Windows, the GUL header files must differentiate
+ * between a statically and a dynamically linked library. GUL does this by means of a
+ * preprocessor macro, `GUL_USING_STATIC_LIB_OR_OBJECTS`. We assume that most users will
+ * prefer the DLL version, therefore we treat this as the default case:
+ * 
+ * - If you link your code against the DLL, there is no need to take any further action.
+ *   The header files already provide the necessary import declarations.
+ * - If you link your code against the static library (or directly against GUL's object
+ *   files), you must define the macro GUL_USING_STATIC_LIB_OR_OBJECTS. This will
+ *   suppress the DLL import declarations.
+ *
+ * On other platforms and compilers, the macro is meaningless.
+ */
+
 } // namespace gul

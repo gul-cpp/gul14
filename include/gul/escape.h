@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,7 @@
 #pragma once
 
 #include <string>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 namespace gul {
@@ -62,6 +63,7 @@ namespace gul {
  *
  * \since GUL version 1.4 parameter \b in is a string_view (was std::string before)
  */
+GUL_EXPORT
 std::string escape(string_view in);
 
 /**
@@ -75,6 +77,7 @@ std::string escape(string_view in);
  *
  * \since GUL version 1.4 parameter \b in is a string_view (was std::string before)
  */
+GUL_EXPORT
 std::string unescape(string_view in);
 
 } /* namespace gul */
