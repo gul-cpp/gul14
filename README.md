@@ -132,27 +132,27 @@ the devil is in the details:
 * For Meson, prefer the MSI installer from https://mesonbuild.com/. We found that Meson
   versions packaged with the Anaconda Python distribution do not work, to name an
   example.
-* For Ninja, the version distributed with Visual Studio 2019 works just as well as the
-  one from the Meson MSI installer.
+* For Ninja, the version from the Meson MSI installer works just as well as the one
+  distributed with Visual Studio 2019 (in the cmake workload).
 
 Setting up the PATH and calling the correct executable can be difficult. We distribute a
-Windows batch file ``tools\\make\_vs.bat`` as an example. It may require some editing to
+Windows batch file ``tools\make_vs.bat`` as an example. It may require some editing to
 adapt it to your system, but afterwards you can call it from the command line or directly
 from Visual Studio to initiate a build, cleanup, or to run the unit test suite. From the
-main directory of your GUL working copy, type ``tools\\make\_vs``:
+main directory of your GUL working copy, type ``tools\make_vs``:
 
 ```
 Usage:
-tools\\make\_vs mrproper                    - Remove the entire build directory
-tools\\make\_vs release <platform>          - Build the release version of the library for the specified platform
-tools\\make\_vs debug <platform>            - Build the debug version of the library for the specified platform
-tools\\make\_vs test <buildtype> <platform> - Run the unit tests for the specified build type and platform
+tools\make_vs mrproper                    - Remove the entire build directory
+tools\make_vs release <platform>          - Build the release version of the library for the specified platform
+tools\make_vs debug <platform>            - Build the debug version of the library for the specified platform
+tools\make_vs test <buildtype> <platform> - Run the unit tests for the specified build type and platform
 
 <buildtype> is one of "release" or "debug"
 <platform> is one of "x86" or "x64"
 ```
 
-The files ``.vs\\tasks_vs.json`` and ``.vs\\launch_vs.json`` as well as
+The files ``.vs\tasks_vs.json`` and ``.vs\launch_vs.json`` as well as
 ``CppProperties.json`` in the root directory contain information for Visual Studio 2019
 that should allow you to open the folder via "open folder" (i.e. without a project file)
 and still be able to build and debug GUL via the batch file.
