@@ -118,6 +118,11 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_6 Version 1.6
+ * 
+ * - *Released with DOOCS 19.8.0*
+ * - Add to_number()
+ *
  * \subsection v1_5 Version 1.5
  *
  * - Add gul::optional, a backport of std::optional from C++17
@@ -149,6 +154,7 @@ namespace gul {
  * - Add \ref FinalAction and \ref finally
  *
  * \subsection v1_0 Version 1.0
+ *
  * - *Released with DOOCS 19.5.0*
  * - First release version of GUL
  */
