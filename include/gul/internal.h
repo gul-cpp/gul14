@@ -24,6 +24,10 @@
 
 #ifdef _MSC_VER
 
+// For old Visual C++ compilers, including <ciso646> enables the alternative operator
+// representations "and", "or", and "not".
+#include <ciso646>
+
 #ifdef GUL_COMPILING_SHARED_LIB
 #define GUL_EXPORT __declspec(dllexport)
 #elif GUL_USING_STATIC_LIB_OR_OBJECTS

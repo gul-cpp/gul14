@@ -24,6 +24,7 @@
 
 #include <type_traits>
 #include <utility>
+#include "gul/internal.h"
 
 namespace gul {
 

@@ -4,7 +4,7 @@
  * \date   Created on September 14, 2018
  * \brief  Provide information about the library version
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "gul/internal.h"
 #include "string_view.h"
 
 namespace gul {

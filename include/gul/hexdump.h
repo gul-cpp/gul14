@@ -4,7 +4,7 @@
  * \date   Created on September 25, 2018
  * \brief  Declarations of hexdump()
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -26,6 +26,7 @@
 #include <sstream>
 #include <type_traits>
 #include <utility>
+#include "gul/internal.h"
 #include "gul/string_view.h"
 
 ////// Overview of the prototypes contained in here, but without template specifications:

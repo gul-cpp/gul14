@@ -29,6 +29,7 @@
 #include <numeric>
 #include <type_traits>
 #include <vector>
+#include "gul/internal.h"
 
 namespace gul {
 

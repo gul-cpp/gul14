@@ -19,7 +19,7 @@
  * Updated July 2015 to reflect the Library Fundamentals TS
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4480.html
  * 
- * Modified August 2018 for GUL (L. Froehlich)
+ * Modified August 2018, August 2019 for GUL (L. Froehlich)
  */
 
 #pragma once
@@ -31,6 +31,7 @@
 #include <string>
 #include <cstring>
 #include <iosfwd>
+#include "gul/internal.h"
 
 #if __cpp_constexpr >= 201304
 #define STX_CONSTEXPR14 constexpr

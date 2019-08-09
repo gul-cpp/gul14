@@ -21,7 +21,7 @@
  * http://www.boost.org/LICENSE_1_0.txt)
  * The idea and interface is based on Boost.Optional library
  * authored by Fernando Luis Cacciola Carballal.
- * Modified July 2019 for GUL (Lars Froehlich).
+ * Modified July, August 2019 for GUL (Lars Froehlich).
  */
 
 #ifndef OPTIONAL_H_
@@ -34,6 +34,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include "gul/internal.h"
 
 /// \cond HIDE_SYMBOLS
 #define GUL_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
