@@ -266,7 +266,7 @@ using OptionalBase = typename std::conditional<
  * [std::optional](https://en.cppreference.com/w/cpp/utility/optional) from C++17 for
  * almost all use cases.
  *
- * \since GUL 1.5
+ * \since GUL version 1.5
  */
 template <class T>
 class optional : private OptionalBase<T> {
@@ -504,7 +504,7 @@ public:
  * [std::optional](https://en.cppreference.com/w/cpp/utility/optional) from C++17 for
  * almost all use cases.
  *
- * \since GUL 1.5
+ * \since GUL version 1.5
  */
 template <class T>
 class optional<T&> {

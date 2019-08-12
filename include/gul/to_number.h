@@ -254,8 +254,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
  * This function has different overloads for unsigned integers, signed integers, and
  * floating-point types.
  *
- * \since
- * GUL 1.6
+ * \since GUL version 1.6
  */
 // Overload for unsigned integer types.
 template <typename NumberType,
