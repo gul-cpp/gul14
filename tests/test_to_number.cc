@@ -134,13 +134,13 @@ TEMPLATE_TEST_CASE("to_number(): integer lowest() values round-trip", "[to_numbe
     REQUIRE(to_number<TestType>(str).value() == std::numeric_limits<TestType>::lowest());
 }
 
-TEST_CASE("to_number(): Overflow for float", "[to_number]")
+TEST_CASE("to_number(): Overflow, big and small numbers (float)", "[to_number]")
 {
-    REQUIRE(to_number<float>("3.40282e+38").value() == 3.40282e+38f);
+    REQUIRE_THAT(to_number<float>("3.40282e+38").value(), WithinULP(3.40282e+38f, 1));
     REQUIRE(to_number<float>("3.40282e+39").has_value() == false);
-    REQUIRE(to_number<float>("-3.40282e+38").value() == -3.40282e+38f);
+    REQUIRE_THAT(to_number<float>("-3.40282e+38").value(), WithinULP(-3.40282e+38f, 1));
     REQUIRE(to_number<float>("-3.40282e+39").has_value() == false);
-    REQUIRE(to_number<float>("1.17549e-38").value() == 1.17549e-38f);
+    REQUIRE_THAT(to_number<float>("1.17549e-38").value(), WithinULP(1.17549e-38f, 1));
     REQUIRE(to_number<float>("1e-50").value() == 0.0f);
 }
 

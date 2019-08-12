@@ -176,13 +176,26 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
 
     if (!str_after_point.empty())
     {
-        for (char c : str_after_point)
+        // Try optimized integer conversion if the number fits into an unsigned long long.
+        if (str_after_point.size() <= std::numeric_limits<unsigned long long>::digits10)
         {
-            if (!is_digit(c))
+            auto opt = to_unsigned_integer<unsigned long long>(str_after_point);
+            if (!opt)
                 return nullopt;
 
-            result += (c - '0') * digit_value;
-            digit_value *= NumberType(0.1);
+            result += opt.value() * std::pow(NumberType(10),
+                                             exponent - static_cast<int>(str_after_point.size()));
+        }
+        else
+        {
+            for (char c : str_after_point)
+            {
+                if (!is_digit(c))
+                    return nullopt;
+
+                result += (c - '0') * digit_value;
+                digit_value *= NumberType(0.1);
+            }
         }
     }
 
