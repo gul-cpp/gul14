@@ -66,8 +66,8 @@ namespace gul {
  *  - \ref numeric_utilities
  *  - \ref container_utilities
  *  - \ref GSL_utilities
- *  - \ref backports of standard library features that are not yet available on common
- *    compilers
+ *  - \ref standard_library_backports
+ *  - \ref unit_tests
  *
  * To keep the library useful for as many users as possible, special-purpose code has no
  * place in it. Specifically, the library includes:
@@ -399,9 +399,9 @@ namespace gul {
  */
 
 /**
- * \page backports Backports
+ * \page standard_library_backports Standard Library Backports
  *
- * The General Utility Library provides a few classes from C++ standard libraries that
+ * The General Utility Library provides a few classes from the C++ standard library that
  * are not yet available to users of older compilers.
  *
  * \ref gul::optional "optional":
@@ -414,6 +414,28 @@ namespace gul {
  *     A view to a contiguous sequence of chars. It should behave like
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  *     from C++17 for almost all use cases.
+ */
+
+/**
+ * \page unit_tests Unit Tests
+ *
+ * GUL uses the [Catch2 test framework](https://github.com/catchorg/Catch2) for its unit
+ * tests. It bundles all of its functionality in a single header file. For convenience,
+ * the GUL-internal version of this header can be accessed via:
+ * \code
+ * #include "gul/catch.h"
+ * // Your unit tests here
+ * \endcode
+ * Please refer to https://github.com/catchorg/Catch2/blob/master/docs/tutorial.md
+ * for an introduction to Catch2.
+ *
+ * \note
+ * Please note that unlike all other include files provided with GUL, `catch.h` is *not*
+ * automatically included by the default include directive:
+ * \code
+ * #include "gul.h"
+ * // Catch2 is not included!
+ * \endcode
  */
 
 /**
