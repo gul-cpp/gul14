@@ -15,6 +15,11 @@ Files: include/gul/catch.h
 Copyright: 2019 Two Blue Cubes Ltd.
 License: BOOST-1
 
+Files: include/gul/optional.h
+Copyright: 2011-2012 Andrzej Krzemienski
+           2019 libgul contributors (L. Froehlich)
+License: BOOST-1
+
 License: LGPL-2.1+
  This package is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
