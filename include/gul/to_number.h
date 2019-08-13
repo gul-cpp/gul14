@@ -108,7 +108,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
 {
     int exponent = 0;
     auto e_pos = str.find_first_of("eE");
-    if (e_pos != str.npos)
+    if (e_pos != gul::string_view::npos)
     {
         if (e_pos + 1 == str.size())
             return nullopt;
@@ -129,7 +129,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     gul::string_view str_after_point;
 
     auto point_pos = str.find('.');
-    if (point_pos != str.npos)
+    if (point_pos != gul::string_view::npos)
     {
         str_before_point = str.substr(0, point_pos);
         str_after_point = str.substr(point_pos + 1);
