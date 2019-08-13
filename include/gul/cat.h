@@ -108,7 +108,7 @@ std::string cat(std::initializer_list<ConvertingStringView> pieces);
 template <typename... Args, typename = std::enable_if_t<(sizeof...(Args) > 3)>>
 inline std::string cat(const Args&... args)
 {
-    return cat({ args... });
+    return cat({ args... }); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay): Impossible to remove that warning
 }
 
 } // namespace gul
