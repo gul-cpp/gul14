@@ -53,10 +53,10 @@ constexpr inline optional<NumberType> to_unsigned_integer(gul::string_view str) 
             return nullopt;
 
 #ifdef __GNUC__
-        if (__builtin_mul_overflow(result, NumberType{ 10 }, &result))
+        if (__builtin_mul_overflow(result, NumberType{ 10 }, &result)) // NOLINT(cppcoreguidelines-pro-type-vararg)
             return nullopt;
 
-        if (__builtin_add_overflow(result, static_cast<NumberType>(c - '0'), &result))
+        if (__builtin_add_overflow(result, static_cast<NumberType>(c - '0'), &result)) // NOLINT(cppcoreguidelines-pro-type-vararg)
             return nullopt;
 #else
         if (result > max_tenth)
