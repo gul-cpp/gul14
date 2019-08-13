@@ -11,7 +11,7 @@ if [ $# -lt 1 ]; then
 	exit 1
 fi
 
-HEADERLIST=`find ../include -type f -print | grep -v '/string_view.h$' | sed 's/^/{"name":"/;s/$/"}/' | tr '\n' ','`
+HEADERLIST=`find ../include -type f -print | grep -v '/\(string_view\|optional\).h$' | sed 's/^/{"name":"/;s/$/"}/' | tr '\n' ','`
 
 echo clang-tidy $@
 
