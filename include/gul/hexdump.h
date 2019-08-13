@@ -257,6 +257,7 @@ struct HexdumpParameterForward {
     ContainerT cont_;
 
     HexdumpParameterForward() = default;
+    ~HexdumpParameterForward() = default;
 
     /**
      * Construct a hexdump parameter forwarder object.
