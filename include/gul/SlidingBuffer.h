@@ -413,7 +413,8 @@ public:
     {
         if (idx_end_ == 0)
             return storage_[capacity() - 1];
-        return storage_[idx_end_ - 1];
+        else
+            return storage_[idx_end_ - 1];
     }
 
     /**
@@ -423,7 +424,8 @@ public:
     {
         if (idx_end_ == 0)
             return storage_[capacity() - 1];
-        return storage_[idx_end_ - 1];
+        else
+            return storage_[idx_end_ - 1];
     }
 
     /**
@@ -438,9 +440,10 @@ public:
         if (full_)
             return capacity();
 
-        if (idx_end_ < idx_begin_)
+        if (idx_end_ >= idx_begin_)
+            return idx_end_ - idx_begin_;
+        else
             return idx_end_ + capacity() - idx_begin_;
-        return idx_end_ - idx_begin_;
     }
 
     /**
