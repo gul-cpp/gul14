@@ -46,6 +46,8 @@ tests = [
     'test_type_name.cc',
 ]
 
+subdir('ryu')
+
 test('all',
     executable('libgul-test',
         tests + [ catch_main ],

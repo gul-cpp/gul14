@@ -12,6 +12,8 @@ libgul_src = files([
 
 inc += include_directories('.')
 
+subdir('ryu')
+
 git_exe = find_program('git', required : false, native : true)
 if git_exe.found()
 

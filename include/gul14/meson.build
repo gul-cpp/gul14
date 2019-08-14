@@ -11,6 +11,7 @@ standalone_headers = [
     'join_split.h',
     'num_util.h',
     'replace.h',
+    'ryu.h',
     'SlidingBuffer.h',
     'SmallVector.h',
     'span.h',
