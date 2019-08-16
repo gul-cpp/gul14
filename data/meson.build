@@ -59,3 +59,5 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
 elif get_option('docs')
     message('Documentation requested but tools missing, \'doc\' target not generated')
 endif # option docs and have doxy_run (doxywrap)
+
+# vi:ts=4:sw=4:sts=4:et

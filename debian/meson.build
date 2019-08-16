@@ -83,3 +83,5 @@ configure_file(input : deb_name_default + '.install.in',
 configure_file(input : deb_dev_name_default + '.install.in',
                output : deb_dev_name + '.install',
                configuration : deb_conf)
+
+# vi:ts=4:sw=4:sts=4:et

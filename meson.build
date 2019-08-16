@@ -15,11 +15,11 @@ version_parts = meson.project_version().split('.')
 libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
 if build_machine.system() == 'linux'
-	# Find out if this is a normal (not local) install (i.e. not into /usr/local)
-	deb_install = get_option('prefix') != '/usr/local'
+    # Find out if this is a normal (not local) install (i.e. not into /usr/local)
+    deb_install = get_option('prefix') != '/usr/local'
 else
-	# disable packaging on all non linux platforms
-	deb_install = false
+    # disable packaging on all non linux platforms
+    deb_install = false
 endif
 
 subdir('include')
@@ -62,3 +62,5 @@ if not (git_full_api_version == 'unknown')
         error('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
     endif
 endif
+
+# vi:ts=4:sw=4:sts=4:et

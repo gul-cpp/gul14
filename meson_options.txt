@@ -12,3 +12,5 @@ option('deb-vers-tag', type : 'string', value : 'v',
        description : 'Debian package uses git version tags starting with this')
 option('deb-vers-pack', type : 'boolean', value : false,
        description : 'Debian package name will contain patchlevel')
+
+# vi:ts=4:sw=4:sts=4:et:syn=conf

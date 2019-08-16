@@ -24,7 +24,7 @@ libgul_sub_headers = files([
     'gul/string_view.h',
     'gul/substring_checks.h',
     'gul/time_util.h',
-	'gul/to_number.h',
+    'gul/to_number.h',
     'gul/tokenize.h',
     'gul/Trigger.h',
     'gul/trim.h',
@@ -42,3 +42,5 @@ inc = [ include_directories([
     '.',
     'gul'
 ])]
+
+# vi:ts=4:sw=4:sts=4:et

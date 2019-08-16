@@ -45,3 +45,5 @@ test('all',
      timeout : test_time)
 
 endif # if not get_option('tests') else
+
+# vi:ts=4:sw=4:sts=4:et
