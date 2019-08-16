@@ -20,8 +20,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iomanip>
+
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/to_number.h"
 
 using namespace Catch::Matchers;
 using gul::to_number;

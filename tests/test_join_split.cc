@@ -21,7 +21,7 @@
  */
 
 #include "gul/catch.h"
-#include <gul.h>
+#include "gul/join_split.h"
 
 using namespace std::literals::string_literals;
 using gul::string_view;

@@ -21,7 +21,7 @@
  */
 
 #include "gul/catch.h"
-#include <gul.h>
+#include "gul/substring_checks.h"
 
 using namespace std::literals;
 using namespace gul;

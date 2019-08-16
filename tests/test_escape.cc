@@ -20,9 +20,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/catch.h"
 #include <random>
-#include <gul.h>
+
+#include "gul/cat.h"
+#include "gul/catch.h"
+#include "gul/escape.h"
 
 using namespace std::literals;
 

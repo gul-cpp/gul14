@@ -20,9 +20,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "catch.h"
-#include <gul.h>
-#include <iostream>
+#include <sstream>
+
+#include "gul/catch.h"
+#include "gul/type_name.h"
 
 using namespace std::literals::string_literals;
 using namespace Catch::Matchers;

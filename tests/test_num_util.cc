@@ -21,8 +21,9 @@
  */
 
 #include <limits>
+
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/num_util.h"
 
 TEST_CASE("test within_orders()", "[numerics]")
 {

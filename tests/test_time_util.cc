@@ -21,8 +21,10 @@
  */
 
 #include <future>
+
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/time_util.h"
+#include "gul/Trigger.h"
 
 using namespace std::literals;
 

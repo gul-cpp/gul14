@@ -22,7 +22,7 @@
  */
 
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/trim.h"
 
 using gul::trim;
 using gul::trim_sv;

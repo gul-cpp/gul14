@@ -20,11 +20,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "catch.h"
-#include <gul.h>
+#include <array>
 #include <iostream>
 #include <limits>
-#include <array>
+
+#include "gul/catch.h"
+#include "gul/hexdump.h"
 
 using namespace std::literals::string_literals;
 

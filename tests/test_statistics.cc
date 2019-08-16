@@ -20,10 +20,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "catch.h"
-#include <gul.h>
 #include <deque>
 #include <sstream>
+
+#include "gul/catch.h"
+#include "gul/statistics.h"
 
 template <typename DataT, typename StateT = void>
 struct StatisticsElement {

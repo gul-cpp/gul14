@@ -22,7 +22,7 @@
  */
 
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/tokenize.h"
 
 using namespace std::literals;
 

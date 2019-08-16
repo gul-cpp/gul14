@@ -21,7 +21,7 @@
  */
 
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/string_view.h"
 
 using namespace std::literals;
 

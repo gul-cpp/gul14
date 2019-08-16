@@ -19,14 +19,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#include <gul/finalizer.h>
-
-#include <new>
 #include <functional>
+#include <new>
 #include <string>
 
-#include "catch.h"
+#include "gul/catch.h"
+#include "gul/finalizer.h"
 
 TEST_CASE("Finalizer Tests", "[finalizer]")
 {

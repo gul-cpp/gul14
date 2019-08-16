@@ -21,7 +21,7 @@
  */
 
 #include "gul/catch.h"
-#include "gul.h"
+#include "gul/optional.h"
 
 using gul::optional;
 using namespace std::literals;

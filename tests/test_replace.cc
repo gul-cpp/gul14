@@ -21,7 +21,7 @@
  */
 
 #include "gul/catch.h"
-#include <gul.h>
+#include "gul/replace.h"
 
 using namespace std::literals;
 using namespace gul;

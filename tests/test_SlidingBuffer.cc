@@ -20,12 +20,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "catch.h"
-#include <gul.h>
-#include <sstream>
-#include <random>
-
 #include <iostream>
+#include <random>
+#include <sstream>
+
+#include "gul/cat.h"
+#include "gul/catch.h"
+#include "gul/join_split.h"
+#include "gul/SlidingBuffer.h"
+#include "gul/trim.h"
+#include "gul/tokenize.h"
 
 using namespace std::literals::string_literals;
 
