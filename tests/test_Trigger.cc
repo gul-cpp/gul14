@@ -40,7 +40,7 @@ constexpr int MS_AFTER = 18;
 
 } // anonymous namespace
 
-TEST_CASE("Construction, assignment, equality and bool operator work", "[concurrency]")
+TEST_CASE("Construction, assignment, equality and bool operator work", "[Trigger]")
 {
     Trigger trg;
     REQUIRE(trg == false);
@@ -54,7 +54,7 @@ TEST_CASE("Construction, assignment, equality and bool operator work", "[concurr
 
 }
 
-SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurrency]")
+SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[Trigger]")
 {
     GIVEN("a trigger and a helper thread that sets it to true after 30 ms")
     {
@@ -107,7 +107,7 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[concurr
     }
 }
 
-SCENARIO("Trigger::wait_for() and wait_until() wait the requested amount of time", "[concurrency]")
+SCENARIO("Trigger::wait_for() and wait_until() wait the requested amount of time", "[Trigger]")
 {
     Trigger trg;
 

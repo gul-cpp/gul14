@@ -26,7 +26,7 @@
 using namespace std::literals;
 using namespace gul;
 
-TEST_CASE("contains(string_view, string_view)", "[string][substring checks]")
+TEST_CASE("contains(string_view, string_view)", "[substring_checks]")
 {
     REQUIRE(contains("Hello World", "Hello"));
     REQUIRE(contains("Hello World", "World"));
@@ -39,7 +39,7 @@ TEST_CASE("contains(string_view, string_view)", "[string][substring checks]")
     REQUIRE(contains("", ""));
 }
 
-TEST_CASE("contains(string_view, char)", "[string][substring checks]")
+TEST_CASE("contains(string_view, char)", "[substring_checks]")
 {
     REQUIRE(contains("Hello World", 'H'));
     REQUIRE(contains("Hello World", 'd'));
@@ -50,7 +50,7 @@ TEST_CASE("contains(string_view, char)", "[string][substring checks]")
     REQUIRE(!contains("Hello World", '\0'));
 }
 
-TEST_CASE("ends_with(string_view, string_view)", "[string][starts_with/ends_with]")
+TEST_CASE("ends_with(string_view, string_view)", "[substring_checks]")
 {
     REQUIRE(!ends_with("Hello World", "Hello World2"));
     REQUIRE(ends_with("Hello World", "Hello World"));
@@ -62,7 +62,7 @@ TEST_CASE("ends_with(string_view, string_view)", "[string][starts_with/ends_with
     REQUIRE(!ends_with("Hello World", "\0"s));
 }
 
-TEST_CASE("ends_with(string_view, char)", "[string][starts_with/ends_with]")
+TEST_CASE("ends_with(string_view, char)", "[substring_checks]")
 {
     REQUIRE(ends_with("Hello World", 'd'));
     REQUIRE(!ends_with("Hello World", 'D'));
@@ -70,7 +70,7 @@ TEST_CASE("ends_with(string_view, char)", "[string][starts_with/ends_with]")
     REQUIRE(ends_with("Hello World\0"s, '\0'));
 }
 
-TEST_CASE("starts_with(string_view, string_view)", "[string][starts_with/ends_with]")
+TEST_CASE("starts_with(string_view, string_view)", "[substring_checks]")
 {
     REQUIRE(!starts_with("Hello World", "Hello World2"));
     REQUIRE(starts_with("Hello World", "Hello World"));
@@ -82,7 +82,7 @@ TEST_CASE("starts_with(string_view, string_view)", "[string][starts_with/ends_wi
     REQUIRE(!starts_with("Hello World", "\0"s));
 }
 
-TEST_CASE("starts_with(string_view, char)", "[string][starts_with/ends_with]")
+TEST_CASE("starts_with(string_view, char)", "[substring_checks]")
 {
     REQUIRE(starts_with("Hello World", 'H'));
     REQUIRE(!starts_with("Hello World", 'h'));

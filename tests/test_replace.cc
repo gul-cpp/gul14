@@ -26,7 +26,7 @@
 using namespace std::literals;
 using namespace gul;
 
-TEST_CASE("Replace parts of a string in-place", "[string_util]")
+TEST_CASE("Replace parts of a string in-place", "[replace]")
 {
     const std::string input{ "foo bar baz" };
     std::string foo = input;
@@ -54,7 +54,7 @@ TEST_CASE("Replace parts of a string in-place", "[string_util]")
     REQUIRE(replace_inplace(foo, " ", "\t") == ""s);
 }
 
-TEST_CASE("Replace parts of a string using replace()", "[string_util]")
+TEST_CASE("Replace parts of a string using replace()", "[replace]")
 {
     REQUIRE(replace("hello lovely helpful world", "he", "KOU") == "KOUllo lovely KOUlpful world");
     REQUIRE(replace("hello lovely helpful world", "he", "A") == "Allo lovely Alpful world");

@@ -44,7 +44,7 @@ constexpr float S_AFTER = MS_AFTER * 1e-3f;
 
 } // anonymous namespace
 
-SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]")
+SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time_util]")
 {
     auto t0 = tic();
 
@@ -94,7 +94,7 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time]"
     }
 }
 
-SCENARIO("Negative or zero times make sleep() not wait", "[time]")
+SCENARIO("Negative or zero times make sleep() not wait", "[time_util]")
 {
     auto t0 = tic();
 
@@ -143,7 +143,7 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time]")
     }
 }
 
-SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single thread", "[time]")
+SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single thread", "[time_util]")
 {
     auto t0 = tic();
 
@@ -187,7 +187,7 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
     }
 }
 
-SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time]")
+SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time_util]")
 {
     WHEN("interrupting sleep(2s, interrupt) after 15 ms")
     {

@@ -33,7 +33,7 @@ using gul::trim_right_sv;
 
 using namespace std::literals;
 
-TEST_CASE("trim() works with various examples", "[string]")
+TEST_CASE("trim() works with various examples", "[trim]")
 {
     REQUIRE(trim("  Hello\n World\t\r   ") == "Hello\n World");
     REQUIRE(trim("Hello\t\r   ") == "Hello");
@@ -48,7 +48,7 @@ TEST_CASE("trim() works with various examples", "[string]")
     REQUIRE(trim(" Hello World ", "") == " Hello World ");
 }
 
-TEST_CASE("trim_sv() works with various examples", "[string]")
+TEST_CASE("trim_sv() works with various examples", "[trim]")
 {
     REQUIRE(trim_sv("  Hello\n World\t\r   ") == "Hello\n World");
     REQUIRE(trim_sv("Hello\t\r   ") == "Hello");
@@ -63,7 +63,7 @@ TEST_CASE("trim_sv() works with various examples", "[string]")
     REQUIRE(trim_sv(" Hello World ", "") == " Hello World ");
 }
 
-TEST_CASE("trim_left() works with various examples", "[string]")
+TEST_CASE("trim_left() works with various examples", "[trim]")
 {
     REQUIRE(trim_left("  Hello\n World\t\r   ") == "Hello\n World\t\r   ");
     REQUIRE(trim_left("Hello\t\r   ") == "Hello\t\r   ");
@@ -78,7 +78,7 @@ TEST_CASE("trim_left() works with various examples", "[string]")
     REQUIRE(trim_left(" Hello World ", "") == " Hello World ");
 }
 
-TEST_CASE("trim_left_sv() works with various examples", "[string]")
+TEST_CASE("trim_left_sv() works with various examples", "[trim]")
 {
     REQUIRE(trim_left_sv("  Hello\n World\t\r   ") == "Hello\n World\t\r   ");
     REQUIRE(trim_left_sv("Hello\t\r   ") == "Hello\t\r   ");
@@ -93,7 +93,7 @@ TEST_CASE("trim_left_sv() works with various examples", "[string]")
     REQUIRE(trim_left_sv(" Hello World ", "") == " Hello World ");
 }
 
-TEST_CASE("trim_right() works with various examples", "[string]")
+TEST_CASE("trim_right() works with various examples", "[trim]")
 {
     REQUIRE(trim_right("  Hello\n World\t\r   ") == "  Hello\n World");
     REQUIRE(trim_right("Hello\t\r   ") == "Hello");
@@ -108,7 +108,7 @@ TEST_CASE("trim_right() works with various examples", "[string]")
     REQUIRE(trim_right(" Hello World ", "") == " Hello World ");
 }
 
-TEST_CASE("trim_right_sv() works with various examples", "[string]")
+TEST_CASE("trim_right_sv() works with various examples", "[trim]")
 {
     REQUIRE(trim_right_sv("  Hello\n World\t\r   ") == "  Hello\n World");
     REQUIRE(trim_right_sv("Hello\t\r   ") == "Hello");

@@ -25,7 +25,7 @@
 #include "gul/catch.h"
 #include "gul/num_util.h"
 
-TEST_CASE("test within_orders()", "[numerics]")
+TEST_CASE("test within_orders()", "[num_util]")
 {
     REQUIRE(gul::within_orders(1.0, 101.0, 2) == false);
     REQUIRE(gul::within_orders(101.0, 1.0, 2) == false);
@@ -151,7 +151,7 @@ TEST_CASE("test within_orders()", "[numerics]")
     REQUIRE(gul::within_orders(23736384, 23735384, 5) == false);
 }
 
-TEST_CASE("test within_abs()", "[numerics]")
+TEST_CASE("test within_abs()", "[num_util]")
 {
     REQUIRE(gul::within_abs(1.0, 101.0, 2.0) == false);
     REQUIRE(gul::within_abs(101.0, 1.0, 2.0) == false);
@@ -269,7 +269,7 @@ TEST_CASE("test within_abs()", "[numerics]")
     REQUIRE(gul::within_abs(i1, i2, i3) == true);
 }
 
-TEST_CASE("test within_ulp()", "[numerics]")
+TEST_CASE("test within_ulp()", "[num_util]")
 {
     REQUIRE(gul::within_ulp(3.0f/7.0f, 0.42857142857f, 1));
 
@@ -317,7 +317,7 @@ public:
     }
 };
 
-TEST_CASE("test clamp()", "[numerics]")
+TEST_CASE("test clamp()", "[num_util]")
 {
     // Simplest test
     auto r1 = gul::clamp(5, 3, 7);

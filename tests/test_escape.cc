@@ -28,7 +28,7 @@
 
 using namespace std::literals;
 
-TEST_CASE("Compare escaped strings", "[string_util]")
+TEST_CASE("Compare escaped strings", "[escape]")
 {
     REQUIRE(gul::escape("foo bar baz"s) == "foo bar baz"s);
 
@@ -41,7 +41,7 @@ TEST_CASE("Compare escaped strings", "[string_util]")
     REQUIRE(gul::escape("\xff") == "\\xff");
 }
 
-TEST_CASE("Compare unescaped strings", "[string_util]")
+TEST_CASE("Compare unescaped strings", "[escape]")
 {
     REQUIRE(gul::unescape("foo bar baz"s) == "foo bar baz"s);
 
@@ -56,7 +56,7 @@ TEST_CASE("Compare unescaped strings", "[string_util]")
     REQUIRE(gul::unescape(gul::escape(s)) == s);
 }
 
-TEST_CASE("Check escaping and unescaping with random strings", "[string_util]")
+TEST_CASE("Check escaping and unescaping with random strings", "[escape]")
 {
     std::random_device r;
     std::default_random_engine re(r());
