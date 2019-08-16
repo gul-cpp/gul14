@@ -137,3 +137,5 @@ SCENARIO("Trigger::wait_for() and wait_until() wait the requested amount of time
         }
     }
 }
+
+// vi:ts=4:sw=4:sts=4:et

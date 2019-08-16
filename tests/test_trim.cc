@@ -122,3 +122,5 @@ TEST_CASE("trim_right_sv() works with various examples", "[trim]")
     REQUIRE(trim_right_sv("Hello World", "ldr") == "Hello Wo");
     REQUIRE(trim_right_sv(" Hello World ", "") == " Hello World ");
 }
+
+// vi:ts=4:sw=4:sts=4:et

@@ -31,3 +31,5 @@ TEST_CASE("gul::string_view accepts a string as both char * and std::string, and
     REQUIRE( gul::string_view{"Test"} == gul::string_view{"Test"s} );
     REQUIRE( gul::string_view{""} == gul::string_view{""s} );
 }
+
+// vi:ts=4:sw=4:sts=4:et

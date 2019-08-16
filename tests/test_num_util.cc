@@ -365,4 +365,4 @@ TEST_CASE("test clamp()", "[num_util]")
     REQUIRE(x9.product() == Approx(ulimit_b.product()));
 }
 
-// vi:ts=4:sw=4:et
+// vi:ts=4:sw=4:sts=4:et

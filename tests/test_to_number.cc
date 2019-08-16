@@ -180,3 +180,5 @@ TEMPLATE_TEST_CASE("to_number(): Floating-point types, constexpr", "[to_number]"
     REQUIRE(a == TestType{ -42.2e1 });
 }
 */
+
+// vi:ts=4:sw=4:sts=4:et

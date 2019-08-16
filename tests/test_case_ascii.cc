@@ -100,3 +100,5 @@ TEST_CASE("uppercase_ascii_inplace()", "[case_ascii]")
 
     REQUIRE(adr_returned == adr_old);
 }
+
+// vi:ts=4:sw=4:sts=4:et

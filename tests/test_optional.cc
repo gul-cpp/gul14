@@ -43,3 +43,5 @@ TEMPLATE_TEST_CASE("optional: Basics for string types", "[optional]",
     REQUIRE(std::string(opt.value_or("Test")) == "Test");
     REQUIRE_THROWS_AS(opt.value(), gul::bad_optional_access);
 }
+
+// vi:ts=4:sw=4:sts=4:et

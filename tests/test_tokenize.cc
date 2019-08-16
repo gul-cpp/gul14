@@ -106,3 +106,5 @@ TEST_CASE("gul::tokenize_sv() works with empty delimiter string", "[tokenize]")
     REQUIRE(tokens.size() == 1);
     REQUIRE(tokens[0] == "Hello World");
 }
+
+// vi:ts=4:sw=4:sts=4:et

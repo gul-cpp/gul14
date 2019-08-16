@@ -156,3 +156,5 @@ TEST_CASE("join(split())", "[join_split]")
     REQUIRE(gul::join(gul::split(x, "e"), "e") == x);
     REQUIRE(gul::join(gul::split_sv(x, "e"), "e") == x);
 }
+
+// vi:ts=4:sw=4:sts=4:et

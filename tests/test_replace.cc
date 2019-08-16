@@ -62,3 +62,5 @@ TEST_CASE("Replace parts of a string using replace()", "[replace]")
     REQUIRE(replace("hello lovely helpful world", "lo", "y") == "hely yvely helpful world");
     REQUIRE(replace("hello lovely helpful world", "l", "") == "heo ovey hepfu word");
 }
+
+// vi:ts=4:sw=4:sts=4:et

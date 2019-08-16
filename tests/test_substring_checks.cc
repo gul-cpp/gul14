@@ -89,3 +89,5 @@ TEST_CASE("starts_with(string_view, char)", "[substring_checks]")
     REQUIRE(!starts_with("", 'H'));
     REQUIRE(starts_with("\0Hello World"s, '\0'));
 }
+
+// vi:ts=4:sw=4:sts=4:et

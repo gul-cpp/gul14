@@ -36,3 +36,5 @@ TEST_CASE("gul::cat() works for fixed test cases from 0 to 6 arguments", "[cat]"
     REQUIRE(cat("La", "le", "lu", 42, '#') == "Lalelu42#");
     REQUIRE(cat("La", "le", "lu", 42, " # ", 6.0) == "Lalelu42 # 6.000000");
 }
+
+// vi:ts=4:sw=4:sts=4:et
