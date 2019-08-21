@@ -6,22 +6,18 @@ libgul_main_header = files([
 
 install_headers(libgul_main_header)
 
-libgul_sub_headers = files([
+# The standalone_headers are tested for self-containment in the tests section
+standalone_headers = [
     'gul/case_ascii.h',
     'gul/cat.h',
-    'gul/catch.h',
     'gul/escape.h',
     'gul/finalizer.h',
     'gul/hexdump.h',
-    'gul/internal.h',
     'gul/join_split.h',
     'gul/num_util.h',
-    'gul/optional.h',
     'gul/replace.h',
     'gul/SlidingBuffer.h',
     'gul/statistics.h',
-    'gul/string_util.h',
-    'gul/string_view.h',
     'gul/substring_checks.h',
     'gul/time_util.h',
     'gul/to_number.h',
@@ -29,6 +25,15 @@ libgul_sub_headers = files([
     'gul/Trigger.h',
     'gul/trim.h',
     'gul/type_name.h',
+]
+
+libgul_sub_headers = files(standalone_headers)
+libgul_sub_headers += files([
+    'gul/catch.h',
+    'gul/internal.h',
+    'gul/optional.h',
+    'gul/string_util.h',
+    'gul/string_view.h',
     'gul/version.h',
 ])
 

@@ -1,8 +1,8 @@
 /**
- * \file   incl_trim.cc
+ * \file   test_self_containment.cc.in
  * \author \ref contributors
- * \date   Created on Aug 21, 2019
- * \brief  Test for inclusion completeness of trim.h.
+ * \date   Created on August 21, 2019
+ * \brief  Used to check if the individual headers are self-contained
  *
  * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
@@ -20,15 +20,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/trim.h"
-
-void incl_trim() {
-    gul::trim("test");
-    gul::trim_sv("test");
-    gul::trim_left("test");
-    gul::trim_left_sv("test");
-    gul::trim_right("test");
-    gul::trim_right_sv("test");
-}
+#include "@HEADER_TO_INCLUDE@"
 
 // vi:ts=4:sw=4:sts=4:et

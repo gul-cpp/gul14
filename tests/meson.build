@@ -36,8 +36,6 @@ tests = [
     'test_type_name.cc',
 ]
 
-subdir('inclusion')
-
 test('all',
      executable('libgul-test',
                 tests + [ catch_main ],
@@ -45,6 +43,32 @@ test('all',
                 include_directories : test_inc,
                 link_with : libgul),
      timeout : test_time)
+
+######
+# Test if all headers are self-contained (Core Guidelines SF.11)
+# This is automated over all standalone_headers
+
+message('Generating self-containment tests')
+all_header_checks = [ ]
+foreach header_to_check : standalone_headers
+    if not header_to_check.startswith('gul/') or not header_to_check.endswith('.h')
+        continue
+    endif
+    header_name = header_to_check.split('gul/')[1].split('.h')[0]
+
+    header_conf = configuration_data()
+    header_conf.set('HEADER_TO_INCLUDE', header_to_check)
+
+    header_check = configure_file(input : 'test_self_containment.cc.in',
+                                  output : 'incl_' + header_name + '.cc',
+                                  configuration : header_conf)
+    all_header_checks += [ header_check ]
+endforeach
+
+static_library('_ignore_me', all_header_checks,
+               cpp_args : add_cpp_args,
+               include_directories : inc,
+               install : false)
 
 endif # if not get_option('tests') else
 
