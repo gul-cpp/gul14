@@ -53,7 +53,7 @@ TEST_CASE("gul::tokenize() works with custom delimiters and null characters", "[
 {
     const auto input = "\t Hel\0lo\n\rWorld\t\t  "s;
     auto tokens = tokenize(input, " \t\n\r");
-    
+
     REQUIRE(tokens.size() == 2);
     REQUIRE(tokens[0] == "Hel\0lo"s);
     REQUIRE(tokens[0].length() == 6);
@@ -63,7 +63,7 @@ TEST_CASE("gul::tokenize() works with custom delimiters and null characters", "[
 TEST_CASE("gul::tokenize() works with empty delimiter string", "[tokenize]")
 {
     auto tokens = tokenize("Hello World", "");
-    
+
     REQUIRE(tokens.size() == 1);
     REQUIRE(tokens[0] == "Hello World");
 }

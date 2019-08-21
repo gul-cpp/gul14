@@ -56,7 +56,7 @@ std::string trim(string_view str, string_view ws_chars = default_whitespace_char
  * Which characters are removed can be customized via the ws_chars parameter.
  *
  * \snippet trim.cc Using trim_sv() on a mutable string
- * 
+ *
  * \param str   The string that should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
@@ -76,7 +76,7 @@ string_view trim_sv(string_view str, string_view ws_chars = default_whitespace_c
  * Which characters are removed can be customized via the ws_chars parameter.
  *
  * \snippet trim.cc Using trim_left() and trim_right() with default and custom whitespace
- * 
+ *
  * \param str   The string from which leading characters should be trimmed.
  * \param ws_chars  A string containing all the characters that should be treated as
  *                  whitespace (i.e. that are trimmed). If this is empty, no characters
