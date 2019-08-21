@@ -1,0 +1,11 @@
+Inclusion Test
+--------------
+
+This directory contains minimal compilation units, that include just one gul
+header file and try to use each function / instantiate all function templates
+at least once.  No standard or other headers should be included. In this way
+we can check if the header files are self-sufficient and do not depend on
+anything no explicitly mentioned.
+
+The files in here are just compiled but never used/executed.
+All objects are linked into a static library, that is discarded.
