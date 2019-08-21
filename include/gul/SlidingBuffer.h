@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include "gul/cat.h"
 #include "gul/internal.h"
 
 namespace gul {

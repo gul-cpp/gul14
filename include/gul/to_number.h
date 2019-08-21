@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <cmath>
 #include "gul/internal.h"
 #include "gul/optional.h"
 #include "gul/string_view.h"
