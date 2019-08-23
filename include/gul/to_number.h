@@ -163,7 +163,8 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
         }
         else
         {
-            digit_value = std::pow(NumberType(10), exponent + str_before_point.size() - 1);
+            digit_value = std::pow(NumberType(10),
+                    exponent + static_cast<int>(str_before_point.size()) - 1);
 
             for (char c : str_before_point)
             {
