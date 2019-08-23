@@ -5,22 +5,26 @@
     {
       "type": "native",
       "name": "libgul-test.exe (x86-Debug)",
-      "project": "build\\x86-windows\\debug\\tests\\libgul-test.exe"
+      "project": "build\\x86-windows\\debug\\tests\\libgul-test.exe",
+      "currentDir": "build\\x86-windows\\debug\\src"
     },
     {
       "type": "native",
       "name": "libgul-test.exe (x86-Release)",
-      "project": "build\\x86-windows\\release\\tests\\libgul-test.exe"
+      "project": "build\\x86-windows\\release\\tests\\libgul-test.exe",
+      "currentDir": "build\\x86-windows\\release\\src"
     },
     {
       "type": "native",
       "name": "libgul-test.exe (x64-Debug)",
-      "project": "build\\x64-windows\\debug\\tests\\libgul-test.exe"
+      "project": "build\\x64-windows\\debug\\tests\\libgul-test.exe",
+      "currentDir": "build\\x64-windows\\debug\\src"
     },
     {
       "type": "native",
       "name": "libgul-test.exe (x64-Release)",
-      "project": "build\\x64-windows\\release\\tests\\libgul-test.exe"
+      "project": "build\\x64-windows\\release\\tests\\libgul-test.exe",
+      "currentDir": "build\\x64-windows\\release\\src"
     }
   ]
 }
