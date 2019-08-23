@@ -21,6 +21,7 @@
  */
 
 #include <iomanip>
+#include <sstream>
 
 #include "gul/catch.h"
 #include "gul/to_number.h"
