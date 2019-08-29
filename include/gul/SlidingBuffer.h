@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <array>
+#include <ostream>
 #include <vector>
 #include "gul/cat.h"
 #include "gul/internal.h"
