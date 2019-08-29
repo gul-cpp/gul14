@@ -140,30 +140,30 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     if (str_before_point.empty() && str_after_point.empty())
         return nullopt;
 
-    long double digit_value = 1.0L;
-    long double result = 0.0L;
+    NumberType digit_value{ 1 };
+    NumberType result{ 0 };
 
     if (str_before_point.empty())
     {
-        digit_value = std::pow(10.0L, exponent - 1);
+        digit_value = std::pow(NumberType(10), exponent - 1);
     }
     else
     {
         // Try optimized integer conversion if the number fits into an unsigned long long.
         if (str_before_point.size() <= std::numeric_limits<unsigned long long>::digits10)
         {
-            digit_value = std::pow(10.0L, exponent);
+            digit_value = std::pow(NumberType(10), exponent);
 
             auto opt = to_unsigned_integer<unsigned long long>(str_before_point);
             if (!opt)
                 return nullopt;
             result = opt.value() * digit_value;
 
-            digit_value *= 0.1L;
+            digit_value *= NumberType(0.1);
         }
         else
         {
-            digit_value = std::pow(10.0L,
+            digit_value = std::pow(NumberType(10),
                     exponent + static_cast<int>(str_before_point.size()) - 1);
 
             for (char c : str_before_point)
@@ -172,7 +172,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
                     return nullopt;
 
                 result += (c - '0') * digit_value;
-                digit_value *= 0.1L;
+                digit_value *= NumberType(0.1);
             }
         }
     }
@@ -186,8 +186,8 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
             if (!opt)
                 return nullopt;
 
-            result += opt.value() * std::pow(10.0L,
-                    exponent - static_cast<int>(str_after_point.size()));
+            result += opt.value() * std::pow(NumberType(10),
+                                             exponent - static_cast<int>(str_after_point.size()));
         }
         else
         {
@@ -197,17 +197,15 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
                     return nullopt;
 
                 result += (c - '0') * digit_value;
-                digit_value *= 0.1L;
+                digit_value *= NumberType(0.1);
             }
         }
     }
 
-    const auto r = static_cast<NumberType>(result);
-
-    if (!std::isfinite(r))
+    if (!std::isfinite(result))
         return nullopt;
 
-    return r;
+    return result;
 }
 
 } // namespace detail
