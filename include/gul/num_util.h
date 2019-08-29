@@ -156,6 +156,18 @@ bool within_ulp(NumT a, NumT b, unsigned int ulp)
  *
  * Only `operator<()` is used for this, so it has to be defined for `NumT`.
  *
+ * Note that all parameters need to be of the same type. Add the correct suffix if using a literal
+ * as shown in the following example:
+ * \code
+ * char c = ...;
+ * size_t s = ...;
+ * float f = ...;
+ *
+ * auto c2 = clamp(c, 'a', 'z');
+ * auto s2 = clamp(s, 0ul, 1000ul);
+ * auto f2 = clamp(f, 0.0f, 99.0f);
+ * \endcode
+ *
  * \tparam NumT Type of the objects to compare. Needs to have `operator<()` defined.
  *
  * \param v     The value to clamp
