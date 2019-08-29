@@ -327,6 +327,10 @@ TEST_CASE("test clamp()", "[num_util]")
     REQUIRE(r2 == 3);
     REQUIRE(r3 == 7);
 
+    char c = ' ';
+    auto c1 = gul::clamp(c, 'a', 'z');
+    REQUIRE(c1 == 'a'); // assumes ASCII or EBCDIC or any other usual char table
+
     // Test with user class, compare by products with lambda
     auto llimit_a = A{ 3.0, 4.2 };
     auto ulimit_a = A{ 23.1, 32.7 };
