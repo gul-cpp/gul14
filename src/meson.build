@@ -91,6 +91,7 @@ libgul = shared_library('gul', libgul_src + [ version_cc ],
                         soversion : so_version,
                         cpp_args : add_cpp_args,
                         include_directories : inc,
+                        gnu_symbol_visibility : 'hidden',
                         install : true)
 
 libgul_s = static_library('gul', libgul_src + [ version_cc ],

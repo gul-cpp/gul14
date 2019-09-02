@@ -36,8 +36,10 @@
 #define GUL_EXPORT __declspec(dllimport)
 #endif
 
-#else
+#elif defined(__GNUC__)
+#define GUL_EXPORT __attribute__ ((visibility ("default")))
 
+#else
 #define GUL_EXPORT
 
 #endif
