@@ -30,7 +30,7 @@
 
 #ifdef GUL_COMPILING_SHARED_LIB
 #define GUL_EXPORT __declspec(dllexport)
-#elif GUL_USING_STATIC_LIB_OR_OBJECTS
+#elif defined(GUL_USING_STATIC_LIB_OR_OBJECTS)
 #define GUL_EXPORT 
 #else
 #define GUL_EXPORT __declspec(dllimport)
