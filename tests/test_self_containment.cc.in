@@ -22,4 +22,6 @@
 
 #include "@HEADER_TO_INCLUDE@"
 
+void @DUMMY_FUNCTION_NAME@() {} // to prevent object files without any symbol
+
 // vi:ts=4:sw=4:sts=4:et

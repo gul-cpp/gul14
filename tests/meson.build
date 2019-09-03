@@ -50,7 +50,9 @@ test('all',
 
 message('Generating self-containment tests')
 all_header_checks = [ ]
+loop_number = 0
 foreach header_to_check : standalone_headers
+    loop_number += 1
     if not header_to_check.startswith('gul/') or not header_to_check.endswith('.h')
         continue
     endif
@@ -58,6 +60,7 @@ foreach header_to_check : standalone_headers
 
     header_conf = configuration_data()
     header_conf.set('HEADER_TO_INCLUDE', header_to_check)
+    header_conf.set('DUMMY_FUNCTION_NAME', 'a@0@'.format(loop_number))
 
     header_check = configure_file(input : 'test_self_containment.cc.in',
                                   output : 'incl_' + header_name + '.cc',
