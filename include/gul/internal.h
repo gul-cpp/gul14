@@ -22,24 +22,26 @@
 
 #pragma once
 
-#ifdef _MSC_VER
-
 // For old Visual C++ compilers, including <ciso646> enables the alternative operator
 // representations "and", "or", and "not".
-#include <ciso646>
-
-#ifdef GUL_COMPILING_SHARED_LIB
-#define GUL_EXPORT __declspec(dllexport)
-#elif defined(GUL_USING_STATIC_LIB_OR_OBJECTS)
-#define GUL_EXPORT 
-#else
-#define GUL_EXPORT __declspec(dllimport)
+#if defined(_MSC_VER)
+#   include <ciso646>
 #endif
 
+// The GUL_EXPORT macro is used to export certain symbols to the generated library.
+// How the symbols have to me marked is different between compilers.
+#if defined(_MSC_VER)
+#   if defined(GUL_COMPILING_SHARED_LIB)
+#       define GUL_EXPORT __declspec(dllexport)
+#   elif defined(GUL_USING_STATIC_LIB_OR_OBJECTS)
+#       define GUL_EXPORT
+#   else
+#       define GUL_EXPORT __declspec(dllimport)
+#   endif
 #elif defined(__GNUC__)
-#define GUL_EXPORT __attribute__ ((visibility ("default")))
-
+#   define GUL_EXPORT __attribute__ ((visibility ("default")))
 #else
-#define GUL_EXPORT
-
+#   define GUL_EXPORT
 #endif
+
+// vi:ts=4:sw=4:et:sts=4
