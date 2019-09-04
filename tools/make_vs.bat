@@ -1,9 +1,19 @@
 @REM Setting up the ninja build system with meson on Windows
 
-@REM Edit the following 3 lines to reflect your Visual Studio and Meson installation paths.
-@set VCVARS_x86="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
-@set VCVARS_x64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
-@set MESON="C:\Program Files\Meson\meson.exe"
+@REM Uncomment and edit the following 3 lines to reflect your Visual Studio and Meson installation paths.
+@REM If nothing is set some defaults will be used
+
+@REM @set MESON="C:\Program Files\Meson\meson.exe"
+@REM @set VCVARS_x86="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars32.bat"
+@REM @set VCVARS_x64="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
+
+@call :find_default_studio
+@IF ERRORLEVEL 1 (
+    echo Can not find Visual Studio installation at default location
+    exit /B 1
+)
+
+@IF NOT DEFINED MESON set MESON="meson.exe"
 
 @set TOOLDIR=%~p0
 @call :get_repo_root %TOOLDIR:~0,-1%
@@ -91,5 +101,30 @@ ninja -C %REPO_ROOT%%FOLDER% %TARGET%
 :get_repo_root
     @set REPO_ROOT=%~dp1
     @exit /B
+
+:find_default_studio
+    @IF DEFINED VCVARS_x86 IF DEFINED VCVARS_x64 exit /B 0
+
+    @REM Trying to find the newest Visual Studio at the default install path
+    @set VC_PREFIX=C:\Program Files (x86)\Microsoft Visual Studio\
+    @IF EXIST "%VC_PREFIX%2019" (
+        set VC_YEAR=2019\
+    ) ELSE IF EXIST "%VC_PREFIX%2017" (
+        set VC_YEAR=2017\
+    ) ELSE IF EXIST "%VC_PREFIX%2015" (
+        set VC_YEAR=2015\
+    ) ELSE exit /B 1
+
+    @IF EXIST "%VC_PREFIX%%VC_YEAR%Enterprise" (
+        set VC_VERSION=Enterprise\
+    ) ELSE IF EXIST "%VC_PREFIX%%VC_YEAR%Professional" (
+        set VC_VERSION=Professional\
+    ) ELSE IF EXIST "%VC_PREFIX%%VC_YEAR%Community" (
+        set VC_VERSION=Community\
+    ) ELSE exit /B 2
+
+    @IF NOT DEFINED VCVARS_x86 set VCVARS_x86="%VC_PREFIX%%VC_YEAR%%VC_VERSION%VC\Auxiliary\Build\vcvars32.bat"
+    @IF NOT DEFINED VCVARS_x64 set VCVARS_x64="%VC_PREFIX%%VC_YEAR%%VC_VERSION%VC\Auxiliary\Build\vcvars64.bat"
+    @exit /B 0
 
 :end
