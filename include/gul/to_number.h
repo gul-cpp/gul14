@@ -322,4 +322,4 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 
 } /* namespace gul */
 
-/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+// vi:ts=4:sw=4:et:sts=4
