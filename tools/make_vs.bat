@@ -38,10 +38,10 @@ rmdir /S /Q build
 @echo INVALID ARGUMENTS: %*
 @echo.
 @echo Usage:
-@echo %0 mrproper                    - Remove the entire build directory
-@echo %0 release ^<platform^>          - Build the release version of the library for the specified platform
-@echo %0 debug ^<platform^>            - Build the debug version of the library for the specified platform
-@echo %0 test ^<buildtype^> ^<platform^> - Run the unit tests for the specified build type and platform
+@echo %~n0 mrproper                    - Remove the entire build directory
+@echo %~n0 release ^<platform^>          - Build the release version of the library for the specified platform
+@echo %~n0 debug ^<platform^>            - Build the debug version of the library for the specified platform
+@echo %~n0 test ^<buildtype^> ^<platform^> - Run the unit tests for the specified build type and platform
 @echo.
 @echo ^<buildtype^> is one of "release" or "debug"
 @echo ^<platform^> is one of "x86" or "x64"
