@@ -9,7 +9,7 @@
 @call :get_repo_root %TOOLDIR:~0,-1%
 
 @IF NOT "%~1%"=="mrproper" GOTO after_mrproper
-rmdir /S /Q %REPO_ROOT%build
+@IF EXIST %REPO_ROOT%build\ rmdir /S /Q %REPO_ROOT%build
 @GOTO end
 :after_mrproper
 
