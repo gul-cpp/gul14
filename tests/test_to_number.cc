@@ -20,6 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <array>
 #include <iomanip>
 #include <sstream>
 
@@ -58,40 +59,48 @@ TEST_CASE("to_number(): Integer types", "[to_number]")
 
 TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, double, long double)
 {
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0").value(), TestType(0.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("12").value(), TestType(12.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-12").value(), TestType(-12.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.125").value(), TestType(0.125l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-0.125").value(), TestType(-0.125l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("5.").value(), TestType(5.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-5.").value(), TestType(-5.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(".5").value(), TestType(0.5l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-.5").value(), TestType(-0.5l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("123456.654321").value(),
-            TestType(123456.654321l), 1));
-    if (sizeof(TestType) <= sizeof(double))
-        REQUIRE(true == gul::within_ulp(to_number<TestType>("123456789012345678901234567890").value(),
-            TestType(123456789012345678901234567890.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e2").value(), TestType(100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e+2").value(), TestType(100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1.e2").value(), TestType(100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1.e+2").value(), TestType(100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e-2").value(), TestType(0.01l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e2").value(), TestType(-100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e+2").value(), TestType(-100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1.e2").value(), TestType(-100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1.e+2").value(), TestType(-100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e-2").value(), TestType(-0.01l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E2").value(), TestType(100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E+2").value(), TestType(100.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E-2").value(), TestType(0.01l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e2").value(), TestType(10.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e+2").value(), TestType(10.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e-2").value(), TestType(0.001l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e2").value(), TestType(10.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e+2").value(), TestType(10.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e-2").value(), TestType(0.001l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("5e-0").value(), TestType(5.0l), 1));
+    struct TestCase {
+        char const* input;
+        long double output;
+    };
+    std::array<TestCase, 31> cases = {{
+        { "0", 0.0l },
+        { "12", 12.0l },
+        { "-12", -12.0l },
+        { "0.125", 0.125l },
+        { "-0.125", -0.125l },
+        { "5.", 5.0l },
+        { "-5.", -5.0l },
+        { ".5", 0.5l },
+        { "-.5", -0.5l },
+        { "123456.654321", 123456.654321l },
+        { "123456789012345678901234567890", 123456789012345678901234567890.0l },
+        { "1e2", 100.0l },
+        { "1e+2", 100.0l },
+        { "1.e2", 100.0l },
+        { "1.e+2", 100.0l },
+        { "1e-2", 0.01l },
+        { "-1e2", -100.0l },
+        { "-1e+2", -100.0l },
+        { "-1.e2", -100.0l },
+        { "-1.e+2", -100.0l },
+        { "-1e-2", -0.01l },
+        { "1E2", 100.0l },
+        { "1E+2", 100.0l },
+        { "1E-2", 0.01l },
+        { ".1e2", 10.0l },
+        { ".1e+2", 10.0l },
+        { ".1e-2", 0.001l },
+        { "0.1e2", 10.0l },
+        { "0.1e+2", 10.0l },
+        { "0.1e-2", 0.001l },
+        { "5e-0", 5.0l }
+    }};
+    for (auto const& test : cases) {
+        CAPTURE(test.input);
+        REQUIRE(gul::within_ulp(to_number<TestType>(test.input).value(),
+            TestType(test.output), 1) == true);
+    }
 
     REQUIRE(to_number<TestType>("").has_value() == false);
     REQUIRE(to_number<TestType>("0.1 ").has_value() == false);
