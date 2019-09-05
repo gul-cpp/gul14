@@ -57,39 +57,39 @@ TEST_CASE("to_number(): Integer types", "[to_number]")
 
 TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, double, long double)
 {
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0").value(), TestType(0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("12").value(), TestType(12l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("0").value(), TestType(0.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("12").value(), TestType(12.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("-12").value(), TestType(-12.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("0.125").value(), TestType(0.125l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("-0.125").value(), TestType(-0.125l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("5.").value(), TestType(5l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-5.").value(), TestType(-5l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("5.").value(), TestType(5.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("-5.").value(), TestType(-5.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>(".5").value(), TestType(0.5l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("-.5").value(), TestType(-0.5l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("123456.654321").value(),
             TestType(123456.654321l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("123456789012345678901234567890").value(),
             TestType(123456789012345678901234567890.0l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e2").value(), TestType(100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e+2").value(), TestType(100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1.e2").value(), TestType(100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1.e+2").value(), TestType(100l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e2").value(), TestType(100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("1e+2").value(), TestType(100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("1.e2").value(), TestType(100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("1.e+2").value(), TestType(100.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("1e-2").value(), TestType(0.01l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e2").value(), TestType(-100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e+2").value(), TestType(-100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1.e2").value(), TestType(-100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1.e+2").value(), TestType(-100l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e2").value(), TestType(-100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e+2").value(), TestType(-100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1.e2").value(), TestType(-100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("-1.e+2").value(), TestType(-100.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("-1e-2").value(), TestType(-0.01l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E2").value(), TestType(100l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E+2").value(), TestType(100l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E2").value(), TestType(100.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("1E+2").value(), TestType(100.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("1E-2").value(), TestType(0.01l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e2").value(), TestType(10l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e+2").value(), TestType(10l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e2").value(), TestType(10.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e+2").value(), TestType(10.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>(".1e-2").value(), TestType(0.001l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e2").value(), TestType(10l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e+2").value(), TestType(10l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e2").value(), TestType(10.0l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e+2").value(), TestType(10.0l), 1));
     REQUIRE(true == gul::within_ulp(to_number<TestType>("0.1e-2").value(), TestType(0.001l), 1));
-    REQUIRE(true == gul::within_ulp(to_number<TestType>("5e-0").value(), TestType(5l), 1));
+    REQUIRE(true == gul::within_ulp(to_number<TestType>("5e-0").value(), TestType(5.0l), 1));
 
     REQUIRE(to_number<TestType>("").has_value() == false);
     REQUIRE(to_number<TestType>(" 0.1").has_value() == false);
