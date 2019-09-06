@@ -1082,7 +1082,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
 
 template <typename Buffer>
 auto do_a_dump(Buffer buf, int start, int end, bool backwards,
-        int resize_to, gul::ShrinkBehavior sb, std::string head, bool print) {
+        std::size_t resize_to, gul::ShrinkBehavior sb, std::string head, bool print) {
     auto const omit_until = end - start >= 10 ? end - 4 : 0;
     head += " - push_"s + (backwards ? "back"s : "front"s);
     head += " - shrink_keep_"s + (sb == gul::ShrinkBehavior::keep_back_elements ? "back"s : "front"s);
@@ -1124,8 +1124,8 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer not yet filled, shrink with element loss") {
         auto const start = 1;
         auto const end = 7;
-        auto const start_size = 9;
-        auto const end_size = 4;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 4;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4");
@@ -1137,8 +1137,8 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer not yet filled, grow without element loss") {
         auto const start = 1;
         auto const end = 7;
-        auto const start_size = 9;
-        auto const end_size = 12;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 12;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4 3 2 1");
@@ -1150,8 +1150,8 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer not yet filled, shrink without element loss") {
         auto const start = 1;
         auto const end = 3;
-        auto const start_size = 9;
-        auto const end_size = 5;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 5;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "3 2 1");
@@ -1163,8 +1163,8 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer filled, shrink with element loss") {
         auto const start = 10;
         auto const end = 30;
-        auto const start_size = 9;
-        auto const end_size = 4;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 4;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27");
@@ -1176,8 +1176,8 @@ TEST_CASE("SlidingBuffer: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer filled, grow without element loss") {
         auto const start = 10;
         auto const end = 30;
-        auto const start_size = 9;
-        auto const end_size = 12;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 12;
         auto buf = SlidingBufferDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27 26 25 24 23 22");
@@ -1201,8 +1201,8 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer not yet filled, shrink with element loss") {
         auto const start = 1;
         auto const end = 7;
-        auto const start_size = 9;
-        auto const end_size = 4;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 4;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4");
@@ -1214,8 +1214,8 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer not yet filled, grow without element loss") {
         auto const start = 1;
         auto const end = 7;
-        auto const start_size = 9;
-        auto const end_size = 12;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 12;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "7 6 5 4 3 2 1");
@@ -1227,8 +1227,8 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer not yet filled, shrink without element loss") {
         auto const start = 1;
         auto const end = 3;
-        auto const start_size = 9;
-        auto const end_size = 5;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 5;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "3 2 1");
@@ -1240,8 +1240,8 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer filled, shrink with element loss") {
         auto const start = 10;
         auto const end = 30;
-        auto const start_size = 9;
-        auto const end_size = 4;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 4;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27");
@@ -1253,8 +1253,8 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
     SECTION("Buffer filled, grow without element loss") {
         auto const start = 10;
         auto const end = 30;
-        auto const start_size = 9;
-        auto const end_size = 12;
+        std::size_t const start_size = 9;
+        std::size_t const end_size = 12;
         auto buf = SlidingBufferExposedDebug<int>{ start_size };
 
         REQUIRE(do_a_dump(buf, start, end, pf, end_size, sf, normal, print) == "30 29 28 27 26 25 24 23 22");
