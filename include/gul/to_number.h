@@ -145,14 +145,14 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
 
     if (str_before_point.empty())
     {
-        digit_value = std::pow(NumberType(10), exponent - 1);
+        digit_value = std::pow(NumberType(10), NumberType(exponent - 1));
     }
     else
     {
         // Try optimized integer conversion if the number fits into an unsigned long long.
         if (str_before_point.size() <= std::numeric_limits<unsigned long long>::digits10)
         {
-            digit_value = std::pow(NumberType(10), exponent);
+            digit_value = std::pow(NumberType(10), NumberType(exponent));
 
             auto opt = to_unsigned_integer<unsigned long long>(str_before_point);
             if (!opt)
@@ -164,7 +164,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
         else
         {
             digit_value = std::pow(NumberType(10),
-                    exponent + static_cast<int>(str_before_point.size()) - 1);
+                NumberType(exponent + static_cast<int>(str_before_point.size()) - 1));
 
             for (char c : str_before_point)
             {
@@ -187,7 +187,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
                 return nullopt;
 
             result += opt.value() * std::pow(NumberType(10),
-                                             exponent - static_cast<int>(str_after_point.size()));
+                NumberType(exponent - static_cast<int>(str_after_point.size())));
         }
         else
         {
