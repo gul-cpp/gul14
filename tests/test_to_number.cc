@@ -93,7 +93,6 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
     REQUIRE(true == gul::within_ulp(to_number<TestType>("5e-0").value(), TestType(5.0l), 1));
 
     REQUIRE(to_number<TestType>("").has_value() == false);
-    REQUIRE(to_number<TestType>(" 0.1").has_value() == false);
     REQUIRE(to_number<TestType>("0.1 ").has_value() == false);
     REQUIRE(to_number<TestType>(".").has_value() == false);
     REQUIRE(to_number<TestType>("-.").has_value() == false);
