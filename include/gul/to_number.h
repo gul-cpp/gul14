@@ -284,7 +284,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
             static_cast<UnsignedT>(std::numeric_limits<NumberType>::max()) + 1;
 
         str.remove_prefix(1);
-        
+
         auto result = detail::to_unsigned_integer<UnsignedT>(str);
         if (!result)
             return nullopt;
