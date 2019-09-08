@@ -27,6 +27,7 @@
 #include "gul/to_number.h"
 #include "gul/num_util.h"
 
+using namespace std::literals::string_literals;
 using namespace Catch::Matchers;
 using gul::to_number;
 
@@ -132,14 +133,59 @@ TEMPLATE_TEST_CASE("to_number(): integer lowest() values round-trip", "[to_numbe
     REQUIRE(to_number<TestType>(str).value() == std::numeric_limits<TestType>::lowest());
 }
 
-TEST_CASE("to_number(): Overflow, big and small numbers (float)", "[to_number]")
+TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]", float, double, long double)
 {
-    REQUIRE_THAT(to_number<float>("3.40282e+38").value(), WithinULP(3.40282e+38f, 1));
-    REQUIRE(to_number<float>("3.40282e+39").has_value() == false);
-    REQUIRE_THAT(to_number<float>("-3.40282e+38").value(), WithinULP(-3.40282e+38f, 1));
-    REQUIRE(to_number<float>("-3.40282e+39").has_value() == false);
-    //REQUIRE_THAT(to_number<float>("1.17549e-38").value(), WithinULP(1.17549e-38f, 3000));
-    REQUIRE(to_number<float>("1e-50").value() == 0.0f);
+    // Do no try subnormal if the type does not support it
+    auto const max_divisor = std::numeric_limits<TestType>::has_denorm ? 4 : 1;
+
+    auto const min = std::numeric_limits<TestType>::min();
+    auto ss = std::stringstream{ };
+    ss << std::setprecision(std::numeric_limits<TestType>::max_digits10);
+
+    for (auto i = 1; i <= max_divisor; ++i) {
+        auto const num = min / i; // Generate a number that is smaller than min (aka subnormal)
+        ss.str("");
+        ss << num;
+        REQUIRE(to_number<TestType>(ss.str()).value() == num);
+    }
+}
+
+TEMPLATE_TEST_CASE("to_number(): max and overflow floating point", "[to_number]", float, double, long double)
+{
+    auto const max = std::numeric_limits<TestType>::max();
+
+    auto ss = std::stringstream{ };
+    ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << max;
+    auto numb = ss.str();
+
+    REQUIRE(to_number<TestType>(numb).value() == max);
+
+    if (numb[0] < '9')
+        ++numb[0];
+    else
+        numb = "10"s + numb.substr(1);
+    CAPTURE(numb);
+    REQUIRE(to_number<TestType>(numb).has_value() == false);
+}
+
+TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_number]", float, double, long double)
+{
+    auto const lowest = std::numeric_limits<TestType>::lowest();
+
+    auto ss = std::stringstream{ };
+    ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << lowest;
+    auto numb = ss.str();
+
+    REQUIRE(to_number<TestType>(numb).value() == lowest);
+
+    assert(numb[0] == '-');
+    if (numb[1] < '9')
+        ++numb[1];
+    else
+        numb = "-10"s + numb.substr(2);
+
+    CAPTURE(numb);
+    REQUIRE(to_number<TestType>(numb).has_value() == false);
 }
 
 /* Disabled because doocsdev16's gcc has insufficient constexpr support (but works on
