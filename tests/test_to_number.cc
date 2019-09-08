@@ -111,7 +111,7 @@ TEMPLATE_TEST_CASE("to_number(): integer max() values round-trip", "[to_number]"
 {
     std::stringstream ss;
 
-    ss << std::setprecision(std::numeric_limits<TestType>::digits10 + 1)
+    ss << std::setprecision(std::numeric_limits<TestType>::max_digits10)
        << static_cast<unsigned long long>(std::numeric_limits<TestType>::max());
 
     std::string str = ss.str();
@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE("to_number(): integer lowest() values round-trip", "[to_numbe
 {
     std::stringstream ss;
 
-    ss << std::setprecision(std::numeric_limits<TestType>::digits10 + 1)
+    ss << std::setprecision(std::numeric_limits<TestType>::max_digits10)
        << static_cast<long long>(std::numeric_limits<TestType>::lowest());
 
     std::string str = ss.str();
