@@ -96,10 +96,11 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
         { "0.1e-2", 0.001l },
         { "5e-0", 5.0l }
     }};
+    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 1 : 0; // long double std::pow 'bug'
     for (auto const& test : cases) {
         CAPTURE(test.input);
         REQUIRE(gul::within_ulp(to_number<TestType>(test.input).value(),
-            TestType(test.output), 1) == true);
+            TestType(test.output), long_double_lenience) == true);
     }
 
     REQUIRE(to_number<TestType>("").has_value() == false);
@@ -146,6 +147,8 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
 {
     // Do no try subnormal if the type does not support it
     auto const max_divisor = std::numeric_limits<TestType>::has_denorm ? 4 : 1;
+    // Long double std::pow 'bug'
+    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 1 : 0;
 
     auto const min = std::numeric_limits<TestType>::min();
     auto ss = std::stringstream{ };
@@ -155,8 +158,7 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
         auto const num = min / i; // Generate a number that is smaller than min (aka subnormal)
         ss.str("");
         ss << num;
-        REQUIRE(true == gul::within_ulp(to_number<TestType>(ss.str()).value(), num, 1));
-
+        REQUIRE(true == gul::within_ulp(to_number<TestType>(ss.str()).value(), num, long_double_lenience));
     }
 }
 
@@ -168,7 +170,9 @@ TEMPLATE_TEST_CASE("to_number(): max and overflow floating point", "[to_number]"
     ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << max;
     auto numb = ss.str();
 
-    REQUIRE(to_number<TestType>(numb).value() == max);
+    // Long double std::pow 'bug' on Darwin
+    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 30 : 0;
+    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), max, long_double_lenience));
 
     if (numb[0] < '9')
         ++numb[0];
@@ -186,7 +190,9 @@ TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_numbe
     ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << lowest;
     auto numb = ss.str();
 
-    REQUIRE(to_number<TestType>(numb).value() == lowest);
+    // Long double std::pow 'bug' on Darwin
+    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 30 : 0;
+    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), lowest, long_double_lenience));
 
     assert(numb[0] == '-');
     if (numb[1] < '9')
