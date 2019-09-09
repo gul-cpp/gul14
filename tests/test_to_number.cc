@@ -146,7 +146,8 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
         auto const num = min / i; // Generate a number that is smaller than min (aka subnormal)
         ss.str("");
         ss << num;
-        REQUIRE(to_number<TestType>(ss.str()).value() == num);
+        REQUIRE(true == gul::within_ulp(to_number<TestType>(ss.str()).value(), num, 1));
+
     }
 }
 
