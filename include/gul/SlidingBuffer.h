@@ -213,11 +213,11 @@ public:
     /// Default copy constructor.
     SlidingBuffer(SlidingBuffer const&) = default;
     /// Default move constructor.
-    SlidingBuffer(SlidingBuffer&&) noexcept = default;
+    SlidingBuffer(SlidingBuffer&&) noexcept(std::is_nothrow_move_constructible<container_type>::value) = default;
     /// Default copy assignment operator.
     SlidingBuffer& operator=(SlidingBuffer const&) = default;
     /// Default move assignment operator.
-    SlidingBuffer& operator=(SlidingBuffer &&) noexcept = default;
+    SlidingBuffer& operator=(SlidingBuffer &&) noexcept(std::is_nothrow_move_assignable<container_type>::value) = default;
     /// Default Destructor.
     virtual ~SlidingBuffer() = default;
 
