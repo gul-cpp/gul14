@@ -21,6 +21,7 @@
  */
 
 #include <array>
+#include <cmath>
 #include <iomanip>
 #include <random>
 #include <sstream>
@@ -107,6 +108,33 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
         REQUIRE(gul::within_ulp(to_number<TestType>(test.input).value(),
             TestType(test.output), lenience) == true);
     }
+    std::array<TestCase, 12> special_cases = {{
+        { "inf", std::numeric_limits<long double>::infinity() },
+        { "iNf", std::numeric_limits<long double>::infinity() },
+        { "INF", std::numeric_limits<long double>::infinity() },
+        { "-inf", -std::numeric_limits<long double>::infinity() },
+        { "-iNf", -std::numeric_limits<long double>::infinity() },
+        { "-INF", -std::numeric_limits<long double>::infinity() },
+        { "infinity", std::numeric_limits<long double>::infinity() },
+        { "INFINITY", std::numeric_limits<long double>::infinity() },
+        { "INFInITY", std::numeric_limits<long double>::infinity() },
+        { "-infinity", -std::numeric_limits<long double>::infinity() },
+        { "-INFINITY", -std::numeric_limits<long double>::infinity() },
+        { "-INFInITY", -std::numeric_limits<long double>::infinity() },
+    }};
+    for (auto const& test : special_cases) {
+        CAPTURE(test.input);
+        REQUIRE(to_number<TestType>(test.input).value() == TestType(test.output));
+    }
+    REQUIRE(std::isnan(to_number<TestType>("nan").value()));
+    REQUIRE(std::isnan(to_number<TestType>("nAn").value()));
+    REQUIRE(std::isnan(to_number<TestType>("NAN").value()));
+    REQUIRE(std::isnan(to_number<TestType>("-nan").value()));
+    REQUIRE(std::isnan(to_number<TestType>("-nAn").value()));
+    REQUIRE(std::isnan(to_number<TestType>("-NAN").value()));
+    REQUIRE(std::isnan(to_number<TestType>("nan()").value()));
+    REQUIRE(std::isnan(to_number<TestType>("nan(1234abc_ABC)").value()));
+    REQUIRE(std::isnan(to_number<TestType>("-nan(1234abc_ABC)").value()));
 
     REQUIRE(to_number<TestType>("").has_value() == false);
     REQUIRE(to_number<TestType>("0.1 ").has_value() == false);
@@ -118,6 +146,19 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
     REQUIRE(to_number<TestType>("1e.").has_value() == false);
     REQUIRE(to_number<TestType>("1e+").has_value() == false);
     REQUIRE(to_number<TestType>("1e-").has_value() == false);
+    REQUIRE(to_number<TestType>("in").has_value() == false);
+    REQUIRE(to_number<TestType>("infi").has_value() == false);
+    REQUIRE(to_number<TestType>("infinityi").has_value() == false);
+    REQUIRE(to_number<TestType>("-in").has_value() == false);
+    REQUIRE(to_number<TestType>("-infi").has_value() == false);
+    REQUIRE(to_number<TestType>("-infinityi").has_value() == false);
+    REQUIRE(to_number<TestType>("na").has_value() == false);
+    REQUIRE(to_number<TestType>("nana").has_value() == false);
+    REQUIRE(to_number<TestType>("nan(").has_value() == false);
+    if (sizeof(TestType) <= sizeof(double)) {
+        // Apple clang 8.0.0 strtod() fails to check this input for long double
+        REQUIRE(to_number<TestType>("nan(.)").has_value() == false);
+    }
 }
 
 TEMPLATE_TEST_CASE("to_number(): integer max() values round-trip", "[to_number]",
@@ -183,8 +224,14 @@ TEMPLATE_TEST_CASE("to_number(): max and overflow floating point", "[to_number]"
         ++numb[0];
     else
         numb = "10"s + numb.substr(1);
+
     CAPTURE(numb);
-    REQUIRE(to_number<TestType>(numb).has_value() == false);
+    auto answer = to_number<TestType>(numb).value();
+    CAPTURE(answer);
+    // Check for infinity
+    REQUIRE((not std::isfinite(answer)));
+    REQUIRE((not std::isnan(answer)));
+
 }
 
 TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_number]", float, double, long double)
@@ -205,7 +252,11 @@ TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_numbe
         numb = "-10"s + numb.substr(2);
 
     CAPTURE(numb);
-    REQUIRE(to_number<TestType>(numb).has_value() == false);
+    auto answer = to_number<TestType>(numb).value();
+    CAPTURE(answer);
+    // Check for infinity
+    REQUIRE((not std::isfinite(answer)));
+    REQUIRE((not std::isnan(answer)));
 }
 
 template <typename Float>

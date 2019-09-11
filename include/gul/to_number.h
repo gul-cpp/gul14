@@ -29,6 +29,7 @@
 #include "gul/internal.h"
 #include "gul/optional.h"
 #include "gul/string_view.h"
+#include "gul/substring_checks.h"
 
 namespace gul {
 
@@ -38,6 +39,19 @@ namespace detail {
 constexpr inline bool is_digit(char c) noexcept
 {
     return c >= '0' && c <= '9';
+}
+
+constexpr inline bool is_nan_specifier(char c) noexcept
+{
+    if (c >= '0' && c <= '9')
+        return true;
+    if (c >= 'a' && c <= 'z')
+        return true;
+    if (c >= 'A' && c <= 'Z')
+        return true;
+    if (c == '_')
+        return true;
+    return false;
 }
 
 template <typename NumberType>
@@ -160,10 +174,35 @@ constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view 
 template <typename NumberType>
 constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
 {
-    if (str.compare("nan") == 0)
-        return std::numeric_limits<NumberType>::quiet_NaN();
-    if (not is_digit(str[0]) and str[0] != '.')
+    auto strlength = str.length();
+    if (strlength == 0)
         return nullopt;
+
+    if (gul::starts_with_nocase(str, "inf")) {
+        if (strlength == 3 /* strlen("inf") */ )
+            return std::numeric_limits<NumberType>::infinity();
+        if (strlength == 8 /* strlen("infinity") */
+                and gul::starts_with_nocase(str.substr(3), "inity"))
+            return std::numeric_limits<NumberType>::infinity();
+        return nullopt;
+    }
+
+    if (gul::starts_with_nocase(str, "nan")) {
+        if (strlength == 3 /* strlen("nan") */ )
+            return std::numeric_limits<NumberType>::quiet_NaN();
+        if (strlength < 5 /* strlen("nan()") */ or str[3] != '(' or str.back() != ')')
+            return nullopt;
+        str.remove_prefix(4);
+        str.remove_suffix(1);
+        while (str.length()) {
+            if (not is_nan_specifier(str.front()))
+                return nullopt;
+            str.remove_prefix(1);
+        }
+        // We do not use the NaN specifier
+        return std::numeric_limits<NumberType>::quiet_NaN();
+    }
+
     int exponent = 0;
     auto e_pos = str.find_first_of("eE");
     if (e_pos != gul::string_view::npos)
@@ -230,13 +269,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     if (not Qval.has_value())
         return nullopt;
 
-    NumberType result = std::pow(CalcType(10), CalcType(exponent)) * *Qval;
-
-    // We need to have the result in NumberType before we test for infinity
-    if (!std::isfinite(result))
-        return nullopt;
-
-    return result;
+    return std::pow(CalcType(10), CalcType(exponent)) * *Qval;
 }
 
 } // namespace detail
@@ -271,24 +304,40 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
  *
  * <h4>Input Format</h4>
  *
- * The allowed number format depends on the chosen numeric output type. Unsigned integral
- * types accept only digits ("123", "042"=42), signed integral types allow for a leading
- * minus sign as well ("-42"). Floating-point types additionally recognize a decimal point
- * ("1.2", ".5", "12.") and exponential notation using a small or capital "e" ("12e5",
- * "4.2e1", ".2e-4", "2.E5"). The behavior with surrounding whitespace is *undefined*, so
- * it should be removed before passing input to this function. Apart from these
- * considerations, to_number() should accept all input that can be parsed by C++17's
- * from_chars(). It could, in fact, be implemented with it.
+ * The allowed number format depends on the chosen numeric output type.
+ * <h5>Unsigned integral types</h5>
+ * * Accept only digits ("123", "042"=42).
  *
+ * <h5>Signed integral types</h5>
+ * * Allow additionally a leading minus sign as well ("-42"). No leading plus sign is allowed, though.
+ *
+ * <h5>Floating-point types</h5>
+ * Recognize additionally
+ * * A decimal point ("1.2", ".5", "12.") and exponential
+ *   notation using a small or capital "e" ("12e5", "4.2e1", ".2e-4", "2.E5").
+ * * Infinity expressions: (optional minus sign) INF or INFINITY ignoring case.
+ * * Not-a-number expressions: (optional minus sign) NAN or NAN(char_sequence) ignoring case.
+     The char_sequence can only contain digits, Latin letters, and underscores.
+     The result is a quiet NaN floating-point value.
+ *
+ * The behavior with surrounding whitespace is *undefined*, so
+ * it should be removed before passing input to this function.
+ * This means to_number() accepts a subset of C++17's from_chars() input format; where it
+ * supports the input format it is modeled close to from_chars().
+ *
+ * \tparam NumberType Destination numeric type
  * \param str  The string to be converted into a number.
  * \returns a gul::optional that contains the number if the conversion was successful. If
  *          there was a conversion error, the return value is empty.
+ *          If the input describes a number whose parsed value is not in the range representable
+ *          by \b NumberType, the return value is empty.
  *
  * \note
  * This function has different overloads for unsigned integers, signed integers, and
  * floating-point types.
  *
  * \since GUL version 1.6
+ * \since GUL version 1.7 the NAN and INF floating point conversion
  */
 // Overload for unsigned integer types.
 template <typename NumberType,
@@ -382,8 +431,6 @@ inline optional<NumberType> to_number(gul::string_view str)
     else return nullopt;
 
     if (input.data() + input.size() != process_end)
-        return nullopt;
-    if (!std::isfinite(Qval))
         return nullopt;
     return Qval;
 }
