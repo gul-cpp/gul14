@@ -118,8 +118,16 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_7 Version 1.7
+ *
+ * - Add contains_nocase(), starts_with_nocase(), ends_with_nocase()
+ * - Bugfix in within_ulp() for subnormal numbers
+ * - Fix SlidingBuffer{} constructor for non-trivial elements
+ * - Improve precision of to_number()
+ * - Improve usability with MSVC
+ *
  * \subsection v1_6 Version 1.6
- * 
+ *
  * - *Released with DOOCS 19.8.0*
  * - Add to_number()
  *

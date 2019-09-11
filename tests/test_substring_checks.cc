@@ -37,6 +37,7 @@ TEST_CASE("contains(string_view, string_view)", "[substring_checks]")
     REQUIRE(!contains("Hello World", "\0"s));
     REQUIRE(contains("Hello World", ""));
     REQUIRE(contains("", ""));
+    REQUIRE(!contains("", "aaa"));
 }
 
 TEST_CASE("contains(string_view, char)", "[substring_checks]")
@@ -48,6 +49,40 @@ TEST_CASE("contains(string_view, char)", "[substring_checks]")
     REQUIRE(contains("Hello\0World\0"s, '\0'));
     REQUIRE(contains("Hello\0World\0"s, 'd'));
     REQUIRE(!contains("Hello World", '\0'));
+}
+
+TEST_CASE("contains_nocase(string_view, string_view)", "[substring_checks]")
+{
+    REQUIRE(contains_nocase("Hello World", "Hello"));
+    REQUIRE(contains_nocase("Hello World", "hello"));
+    REQUIRE(contains_nocase("Hello World", "helLo"));
+    REQUIRE(contains_nocase("Hello World", "World"));
+    REQUIRE(contains_nocase("Hello World", "world"));
+    REQUIRE(contains_nocase("Hello World", "woRld"));
+    REQUIRE(contains_nocase("Hello World", "o Wo"));
+    REQUIRE(contains_nocase("Hello World", "o wo"));
+    REQUIRE(contains_nocase("Hello World", "o wO"));
+    REQUIRE(!contains_nocase("Hello World", "lll"));
+    REQUIRE(contains_nocase("Hello\0World\0"s, "d\0"s));
+    REQUIRE(contains_nocase("Hello\0World\0"s, "\0W"s));
+    REQUIRE(!contains_nocase("Hello World", "\0"s));
+    REQUIRE(contains_nocase("Hello World", ""));
+    REQUIRE(contains_nocase("", ""));
+    REQUIRE(!contains_nocase("", "aaa"));
+}
+
+TEST_CASE("contains_nocase(string_view, char)", "[substring_checks]")
+{
+    REQUIRE(contains_nocase("Hello World", 'H'));
+    REQUIRE(contains_nocase("Hello World", 'h'));
+    REQUIRE(contains_nocase("Hello World", 'E'));
+    REQUIRE(contains_nocase("Hello World", 'd'));
+    REQUIRE(contains_nocase("Hello World", 'D'));
+    REQUIRE(contains_nocase("Hello World", ' '));
+    REQUIRE(!contains_nocase("Hello World", 'g'));
+    REQUIRE(contains_nocase("Hello\0World\0"s, '\0'));
+    REQUIRE(contains_nocase("Hello\0World\0"s, 'd'));
+    REQUIRE(!contains_nocase("Hello World", '\0'));
 }
 
 TEST_CASE("ends_with(string_view, string_view)", "[substring_checks]")
@@ -70,6 +105,31 @@ TEST_CASE("ends_with(string_view, char)", "[substring_checks]")
     REQUIRE(ends_with("Hello World\0"s, '\0'));
 }
 
+TEST_CASE("ends_with_nocase(string_view, string_view)", "[substring_checks]")
+{
+    REQUIRE(!ends_with_nocase("Hello World", "Hello World2"));
+    REQUIRE(ends_with_nocase("Hello World", "Hello World"));
+    REQUIRE(ends_with_nocase("Hello World", "Hello WOrld"));
+    REQUIRE(ends_with_nocase("Hello World", "Hello world"));
+    REQUIRE(ends_with_nocase("Hello World", "World"));
+    REQUIRE(ends_with_nocase("Hello World", "WoRLd"));
+    REQUIRE(ends_with_nocase("Hello World", ""));
+    REQUIRE(!ends_with_nocase("", "Hello"));
+    REQUIRE(ends_with_nocase("", ""));
+    REQUIRE(ends_with_nocase("Hello World\0"s, "\0"s));
+    REQUIRE(!ends_with_nocase("Hello World", "\0"s));
+}
+
+TEST_CASE("ends_with_nocase(string_view, char)", "[substring_checks]")
+{
+    REQUIRE(ends_with_nocase("Hello World", 'd'));
+    REQUIRE(ends_with_nocase("Hello World", 'D'));
+    REQUIRE(ends_with_nocase("Hello WorlD", 'd'));
+    REQUIRE(!ends_with_nocase("Hello World", 't'));
+    REQUIRE(!ends_with_nocase("", 'd'));
+    REQUIRE(ends_with_nocase("Hello World\0"s, '\0'));
+}
+
 TEST_CASE("starts_with(string_view, string_view)", "[substring_checks]")
 {
     REQUIRE(!starts_with("Hello World", "Hello World2"));
@@ -88,6 +148,31 @@ TEST_CASE("starts_with(string_view, char)", "[substring_checks]")
     REQUIRE(!starts_with("Hello World", 'h'));
     REQUIRE(!starts_with("", 'H'));
     REQUIRE(starts_with("\0Hello World"s, '\0'));
+}
+
+TEST_CASE("starts_with_nocase(string_view, string_view)", "[substring_checks]")
+{
+    REQUIRE(!starts_with_nocase("Hello World", "Hello World2"));
+    REQUIRE(starts_with_nocase("Hello World", "Hello World"));
+    REQUIRE(starts_with_nocase("Hello World", "Hello WOrld"));
+    REQUIRE(starts_with_nocase("Hello World", "Hello world"));
+    REQUIRE(starts_with_nocase("Hello World", "Hello"));
+    REQUIRE(starts_with_nocase("Hello World", "HeLLo"));
+    REQUIRE(starts_with_nocase("Hello World", ""));
+    REQUIRE(!starts_with_nocase("", "Hello"));
+    REQUIRE(starts_with_nocase("", ""));
+    REQUIRE(starts_with_nocase("\0Hello World"s, "\0"s));
+    REQUIRE(!starts_with_nocase("Hello World", "\0"s));
+}
+
+TEST_CASE("starts_with_nocase(string_view, char)", "[substring_checks]")
+{
+    REQUIRE(starts_with_nocase("Hello World", 'H'));
+    REQUIRE(starts_with_nocase("Hello World", 'h'));
+    REQUIRE(starts_with_nocase("hello World", 'H'));
+    REQUIRE(!starts_with_nocase("Hello World", 'e'));
+    REQUIRE(!starts_with_nocase("", 'H'));
+    REQUIRE(starts_with_nocase("\0Hello World"s, '\0'));
 }
 
 // vi:ts=4:sw=4:sts=4:et
