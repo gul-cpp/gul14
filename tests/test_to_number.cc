@@ -22,6 +22,7 @@
 
 #include <array>
 #include <iomanip>
+#include <random>
 #include <sstream>
 
 #include "gul/catch.h"
@@ -202,6 +203,89 @@ TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_numbe
 
     CAPTURE(numb);
     REQUIRE(to_number<TestType>(numb).has_value() == false);
+}
+
+template <typename Float>
+auto random_float() -> Float
+{
+    using bit_type = int64_t;
+
+    union convert {
+        Float f;
+        bit_type i;
+    };
+    auto converter = convert{};
+
+    static_assert(sizeof(decltype(std::declval<convert>().f))
+                <= sizeof(decltype(std::declval<convert>().i)),
+                "Integer random buffer too small");
+    static_assert(offsetof(convert, f) == offsetof(convert, i),
+                "Alignment problem in conversion union");
+
+    static std::random_device rd;
+    auto static gen = std::mt19937{ rd() };
+    auto static dis = std::uniform_int_distribution<bit_type>{ };
+
+    do
+        converter.i = dis(gen);
+    while (false
+            and (std::isnan(converter.f)
+                or not std::isfinite(converter.f))); // discard/retry if random number is NaN or INF
+
+    return converter.f;
+}
+
+TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", float, double)
+{
+    char buf[1000];
+    int i_nan{ };
+    int i_inf{ };
+    int i_sub{ };
+    int i_nor{ };
+    for (int i = 100'000; --i;) {
+        TestType const num = random_float<TestType>();
+
+        auto ss = std::stringstream{ };
+        ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << num;
+        auto numstr = ss.str();
+
+#if 1
+        auto converted = to_number<TestType>(numstr);
+#else
+        auto converted = gul::optional<TestType>{ };
+        char* blah;
+        if (sizeof(TestType) == sizeof(float))
+            converted = gul::optional<TestType>( std::strtof(numstr.c_str(), &blah) );
+        else
+            converted = gul::optional<TestType>( std::strtod(numstr.c_str(), &blah) );
+#endif
+
+        snprintf(buf, sizeof(buf), "   -=>  %+a", num);
+        numstr += buf;
+        CAPTURE(i);
+        CAPTURE(numstr);
+        REQUIRE(converted.has_value());
+        ss.str("");
+        ss << *converted;
+        auto conver = ss.str();
+        snprintf(buf, sizeof(buf), "   -=>  %+a", *converted);
+        conver += buf;
+        CAPTURE(conver);
+        if (std::isnan(num)) {
+            CAPTURE("NaN " + std::to_string(++i_nan));
+            REQUIRE(std::isnan(*converted));
+        } else if (not std::isfinite(num)) {
+            CAPTURE("infinity " + std::to_string(++i_inf));
+            REQUIRE(std::abs(num) == std::abs(*converted));
+            REQUIRE(std::signbit(num) == std::signbit(*converted));
+        } else if (not std::isnormal(num)) {
+            CAPTURE("subnormal " + std::to_string(++i_sub));
+            REQUIRE(true == gul::within_ulp(*converted, num, 30));
+        } else {
+            CAPTURE("normal " + std::to_string(++i_nor));
+            REQUIRE(true == gul::within_ulp(*converted, num, 0));
+        }
+    }
 }
 
 /* Disabled because doocsdev16's gcc has insufficient constexpr support (but works on
