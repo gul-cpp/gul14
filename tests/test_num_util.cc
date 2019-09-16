@@ -286,9 +286,52 @@ TEST_CASE("test within_ulp()", "[num_util]")
     REQUIRE(gul::within_ulp(1.0, 1.0 - 3 * std::numeric_limits<double>::epsilon(), 3) == true);
 
     // Typical 4 byte float values allow ~6-7 meaningfull digits, more digits are lost to ULP
+    // The subnormal tests following depend on this representation.
+    static_assert(std::numeric_limits<float>::is_iec559, "Test needs redesign because float not IEC-float");
     static_assert(sizeof(float) == 4, "Test needs redesign because float resolution changed");
+    static_assert(std::numeric_limits<float>::max_exponent == 128,
+            "Test needs redesign because mantissa/exponent size unexpected");
+
     REQUIRE(gul::within_ulp(543.0f, 543.001f, 3) == false);
     REQUIRE(gul::within_ulp(543.0f, 543.0001f, 3) == true);
+    REQUIRE(gul::within_ulp(543.0e-36f, 543.001e-36f, 3) == false);
+    REQUIRE(gul::within_ulp(543.0e-36f, 543.0001e-36f, 3) == true);
+    REQUIRE(gul::within_ulp(543.0e+35f, 543.001e+35f, 3) == false);
+    REQUIRE(gul::within_ulp(543.0e+35f, 543.0001e+35f, 3) == true);
+
+    // Some subnormal numbers, hand selected and checked with dumpfp
+
+    float f = 1.00000009e-36f; // 1 ULP off
+    REQUIRE(1.0e-36f != f);
+    REQUIRE(gul::within_ulp(1.0e-36f, f, 2) == true);
+    REQUIRE(gul::within_ulp(1.0e-36f, f, 1) == true);
+    REQUIRE(gul::within_ulp(1.0e-36f, f, 0) == false);
+
+    f = 1.0000002e-36f; // 2 ULP off
+    REQUIRE(1.0e-36f != f);
+    REQUIRE(gul::within_ulp(1.0e-36f, f, 2) == true);
+    REQUIRE(gul::within_ulp(1.0e-36f, f, 1) == false);
+    REQUIRE(gul::within_ulp(1.0e-36f, f, 0) == false);
+
+    f = 1.000009e-40f; // 1 ULP off
+    REQUIRE(1.0e-40f != f);
+    REQUIRE(gul::within_ulp(1.0e-40f, f, 2) == true);
+    REQUIRE(gul::within_ulp(1.0e-40f, f, 1) == true);
+    REQUIRE(gul::within_ulp(1.0e-40f, f, 0) == false);
+
+    f = 1.009e-42f; // 6 ULP off;
+    REQUIRE(1.0e-42f != f);
+    REQUIRE(gul::within_ulp(1.0e-42f, f, 7) == true);
+    REQUIRE(gul::within_ulp(1.0e-42f, f, 6) == true);
+    REQUIRE(gul::within_ulp(1.0e-42f, f, 5) == false);
+    REQUIRE(gul::within_ulp(1.0e-42f, f, 0) == false);
+
+    auto nan = std::numeric_limits<double>::quiet_NaN();
+    REQUIRE(gul::within_ulp(nan, nan, 10'000'000) == false);
+    REQUIRE(gul::within_ulp(std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(), 1) == true);
+    REQUIRE(gul::within_ulp(-std::numeric_limits<double>::infinity(),
+        std::numeric_limits<double>::infinity(), 10'000'000) == false);
 }
 
 // Some classes to test clamp()

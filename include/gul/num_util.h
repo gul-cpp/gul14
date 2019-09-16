@@ -144,8 +144,15 @@ bool within_ulp(NumT a, NumT b, unsigned int ulp)
     if (a == b)
         return true;
     auto diff = std::abs(a - b);
-    return diff <= std::numeric_limits<NumT>::epsilon() * ulp * std::max(std::abs(a), std::abs(b))
-        or diff < std::numeric_limits<NumT>::min(); // or the difference is subnormal
+    auto maxval = std::max(std::abs(a), std::abs(b));
+    // NORMAL cases
+    if (std::isnormal(maxval))
+        return diff <= std::numeric_limits<NumT>::epsilon() * (ulp * maxval);
+    // SUBNORMAL cases
+    if (std::isfinite(maxval))
+        return diff <= std::numeric_limits<NumT>::denorm_min() * ulp;
+    // NAN and INF cases: Two NANs or (a xor b is (-)INF) or (INF, -INF pair)
+    return false;
 }
 
 /**
