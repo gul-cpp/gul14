@@ -33,6 +33,10 @@ using namespace std::literals::string_literals;
 using namespace Catch::Matchers;
 using gul::to_number;
 
+// Allowed deviation from ideal result in ULP
+int constexpr long_double_lenience = 5;
+int constexpr double_lenience = 3;
+
 TEST_CASE("to_number(): Integer types", "[to_number]")
 {
     REQUIRE(to_number<char>("0").value() == 0);
@@ -97,11 +101,11 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
         { "0.1e-2", 0.001l },
         { "5e-0", 5.0l }
     }};
-    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 1 : 0; // long double std::pow 'bug'
+    auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
     for (auto const& test : cases) {
         CAPTURE(test.input);
         REQUIRE(gul::within_ulp(to_number<TestType>(test.input).value(),
-            TestType(test.output), long_double_lenience) == true);
+            TestType(test.output), lenience) == true);
     }
 
     REQUIRE(to_number<TestType>("").has_value() == false);
@@ -149,7 +153,7 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
     // Do no try subnormal if the type does not support it
     auto const max_divisor = std::numeric_limits<TestType>::has_denorm ? 4 : 1;
     // Long double std::pow 'bug'
-    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 1 : 0;
+    auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
 
     auto const min = std::numeric_limits<TestType>::min();
     auto ss = std::stringstream{ };
@@ -159,7 +163,8 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
         auto const num = min / i; // Generate a number that is smaller than min (aka subnormal)
         ss.str("");
         ss << num;
-        REQUIRE(true == gul::within_ulp(to_number<TestType>(ss.str()).value(), num, long_double_lenience));
+        CAPTURE(ss.str());
+        REQUIRE(true == gul::within_ulp(to_number<TestType>(ss.str()).value(), num, lenience));
     }
 }
 
@@ -171,9 +176,8 @@ TEMPLATE_TEST_CASE("to_number(): max and overflow floating point", "[to_number]"
     ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << max;
     auto numb = ss.str();
 
-    // Long double std::pow 'bug' on Darwin
-    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 30 : 0;
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), max, long_double_lenience));
+    auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
+    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), max, lenience));
 
     if (numb[0] < '9')
         ++numb[0];
@@ -191,9 +195,8 @@ TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_numbe
     ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << lowest;
     auto numb = ss.str();
 
-    // Long double std::pow 'bug' on Darwin
-    auto const long_double_lenience = sizeof(TestType) > sizeof(double) ? 30 : 0;
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), lowest, long_double_lenience));
+    auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
+    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), lowest, lenience));
 
     assert(numb[0] == '-');
     if (numb[1] < '9')
@@ -228,9 +231,12 @@ auto random_float() -> Float
 
     do
         converter.i = dis(gen);
-    while (false
-            and (std::isnan(converter.f)
-                or not std::isfinite(converter.f))); // discard/retry if random number is NaN or INF
+#if 0
+    while (false)
+#else
+    // discard/retry if random number is NaN or INF
+    while (std::isnan(converter.f) or not std::isfinite(converter.f));
+#endif
 
     return converter.f;
 }
@@ -249,16 +255,7 @@ TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", f
         ss << std::setprecision(std::numeric_limits<TestType>::max_digits10) << num;
         auto numstr = ss.str();
 
-#if 1
         auto converted = to_number<TestType>(numstr);
-#else
-        auto converted = gul::optional<TestType>{ };
-        char* blah;
-        if (sizeof(TestType) == sizeof(float))
-            converted = gul::optional<TestType>( std::strtof(numstr.c_str(), &blah) );
-        else
-            converted = gul::optional<TestType>( std::strtod(numstr.c_str(), &blah) );
-#endif
 
         snprintf(buf, sizeof(buf), "   -=>  %+a", num);
         numstr += buf;
@@ -283,7 +280,7 @@ TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", f
             REQUIRE(true == gul::within_ulp(*converted, num, 30));
         } else {
             CAPTURE("normal " + std::to_string(++i_nor));
-            REQUIRE(true == gul::within_ulp(*converted, num, 0));
+            REQUIRE(true == gul::within_ulp(*converted, num, 3));
         }
     }
 }

@@ -9,7 +9,7 @@ else
 
 test_inc = inc + [ include_directories('.') ]
 catch_main = 'test_main.cc'
-test_time = 4 # Default timeout
+test_time = 10 # Default timeout
 
 thread_dep = dependency('threads')
 
