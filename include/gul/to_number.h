@@ -22,7 +22,10 @@
 
 #pragma once
 
+#include <cstdlib>
 #include <cmath>
+#include <type_traits>
+
 #include "gul/internal.h"
 #include "gul/optional.h"
 #include "gul/string_view.h"
@@ -105,9 +108,62 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
         return opt_exp.value();
 }
 
+using FloatConversionIntType = unsigned long long int;
+
+inline constexpr FloatConversionIntType pow10(int exponent) noexcept
+{
+    FloatConversionIntType constexpr vals[] = {
+        1, 10, 100, 1'000, 10'000, 100'000, 1'000'000, 10'000'000, // 0-7
+        100'000'000, 1'000'000'000, 10'000'000'000, 100'000'000'000, // 8-11
+        1'000'000'000'000, 10'000'000'000'000, 100'000'000'000'000, // 12-14
+        1'000'000'000'000'000, 10'000'000'000'000'000, 100'000'000'000'000'000, // 15-17
+        1'000'000'000'000'000'000U, 10'000'000'000'000'000'000U // 18-19
+    };
+    static_assert(std::numeric_limits<FloatConversionIntType>::digits10 == 19,
+            "pow10() table does not fit to FloatConversionIntType range");
+    if (exponent < 0 or exponent > 19)
+        return 0;
+    return vals[exponent];
+}
+
+template <typename NumberType>
+constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view i1, gul::string_view i2) noexcept
+{
+    static_assert(std::numeric_limits<FloatConversionIntType>::digits10
+            >= std::numeric_limits<NumberType>::max_digits10,
+            "FloatConversionIntType is too small for NumberType");
+
+    i1 = i1.substr(0, std::min(i1.length(),
+                size_t(std::numeric_limits<FloatConversionIntType>::digits10)));
+    i2 = i2.substr(0, std::min(i2.length(),
+                size_t(std::numeric_limits<FloatConversionIntType>::digits10) - i1.length()));
+
+    FloatConversionIntType accu{ 0 };
+
+    if (not i1.empty()) {
+        auto f1 = to_unsigned_integer<FloatConversionIntType>(i1);
+        if (not f1.has_value())
+            return nullopt;
+        accu += *f1;
+    }
+    if (not i2.empty()) {
+        accu *= pow10(i2.length());
+        auto f2 = to_unsigned_integer<FloatConversionIntType>(i2);
+        if (not f2.has_value())
+            return nullopt;
+        accu += *f2;
+    }
+    return NumberType(accu) / pow10(i1.length() + i2.length() - 1);
+
+}
+
 template <typename NumberType>
 constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
 {
+    if (str.compare("nan") == 0)
+        return std::numeric_limits<NumberType>::quiet_NaN();
+    if (not is_digit(str[0]) and str[0] != '.')
+        return nullopt;
     int exponent = 0;
     auto e_pos = str.find_first_of("eE");
     if (e_pos != gul::string_view::npos)
@@ -140,68 +196,43 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     if (str_before_point.empty() && str_after_point.empty())
         return nullopt;
 
-    NumberType digit_value{ 1 };
-    NumberType result{ 0 };
+    // Get rid of leading zeros
+    while (!str_before_point.empty() and str_before_point[0] == '0')
+        str_before_point.remove_prefix(1);
 
-    if (str_before_point.empty())
-    {
-        digit_value = std::pow(NumberType(10), NumberType(exponent - 1));
-    }
-    else
-    {
-        // Try optimized integer conversion if the number fits into an unsigned long long.
-        if (str_before_point.size() <= std::numeric_limits<unsigned long long>::digits10)
-        {
-            digit_value = std::pow(NumberType(10), NumberType(exponent));
+    // Normalize the number
+    if (str_before_point.empty()) {
+        auto const old_digits = str_after_point.length();
+        while (!str_after_point.empty() and str_after_point[0] == '0')
+            str_after_point.remove_prefix(1);
 
-            auto opt = to_unsigned_integer<unsigned long long>(str_before_point);
-            if (!opt)
-                return nullopt;
-            result = opt.value() * digit_value;
+        if (str_after_point.empty())
+            return { 0 };
 
-            digit_value *= NumberType(0.1);
-        }
-        else
-        {
-            digit_value = std::pow(NumberType(10),
-                NumberType(exponent + static_cast<int>(str_before_point.size()) - 1));
-
-            for (char c : str_before_point)
-            {
-                if (!is_digit(c))
-                    return nullopt;
-
-                result += (c - '0') * digit_value;
-                digit_value *= NumberType(0.1);
-            }
-        }
+        str_before_point = str_after_point.substr(0, 1);
+        str_after_point.remove_prefix(1);
+        exponent -= static_cast<int>(old_digits - str_after_point.length());
+    } else {
+        exponent += static_cast<int>(str_before_point.length() - 1);
     }
 
-    if (!str_after_point.empty())
-    {
-        // Try optimized integer conversion if the number fits into an unsigned long long.
-        if (str_after_point.size() <= std::numeric_limits<unsigned long long>::digits10)
-        {
-            auto opt = to_unsigned_integer<unsigned long long>(str_after_point);
-            if (!opt)
-                return nullopt;
+    // Now the incoming number string is like this:
+    // "s.tr_before_point" "str_after_point" E exponent
+    //   ^                                           ^
+    //   | here is the decimal dot, virtually        | corrected exponent
 
-            result += opt.value() * std::pow(NumberType(10),
-                NumberType(exponent - static_cast<int>(str_after_point.size())));
-        }
-        else
-        {
-            for (char c : str_after_point)
-            {
-                if (!is_digit(c))
-                    return nullopt;
+    using long_double = long double;
+    using CalcType = std::conditional_t<
+        std::greater<std::size_t>()(sizeof(NumberType), sizeof(double)),
+        long_double, double>;
 
-                result += (c - '0') * digit_value;
-                digit_value *= NumberType(0.1);
-            }
-        }
-    }
+    auto Qval = to_normalized_float<CalcType>(str_before_point, str_after_point);
+    if (not Qval.has_value())
+        return nullopt;
 
+    NumberType result = std::pow(CalcType(10), CalcType(exponent)) * *Qval;
+
+    // We need to have the result in NumberType before we test for infinity
     if (!std::isfinite(result))
         return nullopt;
 
@@ -300,9 +331,14 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
     return detail::to_unsigned_integer<NumberType>(str);
 }
 
-// Overload for floating-point types.
+// Overload for floating-point types float and double.
 template <typename NumberType,
-    std::enable_if_t<std::is_floating_point<NumberType>::value, int> = 0>
+    std::enable_if_t<std::is_floating_point<NumberType>::value, long> = 0,
+    std::enable_if_t<
+        std::greater_equal<std::size_t>()(
+            std::numeric_limits<detail::FloatConversionIntType>::digits10,
+            std::numeric_limits<NumberType>::max_digits10),
+        int> = 0>
 constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 {
     if (str.empty())
@@ -318,6 +354,38 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
     }
 
     return detail::to_unsigned_float<NumberType>(str);
+}
+
+// Overload for extra resolution floating-point types (long double).
+template <typename NumberType,
+    std::enable_if_t<std::is_floating_point<NumberType>::value, long> = 0,
+    std::enable_if_t<
+        std::less<std::size_t>()(
+            std::numeric_limits<detail::FloatConversionIntType>::digits10,
+            std::numeric_limits<NumberType>::max_digits10),
+        int> = 0>
+inline optional<NumberType> to_number(gul::string_view str)
+{
+    if (str.empty())
+        return nullopt;
+
+    auto input = std::string{ str };
+    char* process_end;
+    NumberType Qval;
+    // Will be optimized away:
+    if (sizeof(NumberType) == sizeof(long double))
+        Qval = std::strtold(input.c_str(), &process_end);
+    else if (sizeof(NumberType) == sizeof(double))
+        Qval = std::strtod(input.c_str(), &process_end);
+    else if (sizeof(NumberType) == sizeof(float))
+        Qval = std::strtof(input.c_str(), &process_end);
+    else return nullopt;
+
+    if (input.data() + input.size() != process_end)
+        return nullopt;
+    if (!std::isfinite(Qval))
+        return nullopt;
+    return Qval;
 }
 
 } /* namespace gul */
