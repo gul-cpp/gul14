@@ -141,6 +141,8 @@ template<typename NumT,
     typename = std::enable_if_t<std::is_floating_point<NumT>::value>>
 bool within_ulp(NumT a, NumT b, unsigned int ulp)
 {
+    if (a == b)
+        return true;
     auto diff = std::abs(a - b);
     return diff <= std::numeric_limits<NumT>::epsilon() * ulp * std::max(std::abs(a), std::abs(b))
         or diff < std::numeric_limits<NumT>::min(); // or the difference is subnormal
