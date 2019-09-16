@@ -271,7 +271,7 @@ TEST_CASE("test within_abs()", "[num_util]")
 
 TEST_CASE("test within_ulp()", "[num_util]")
 {
-    REQUIRE(gul::within_ulp(3.0f/7.0f, 0.42857142857f, 1));
+    REQUIRE(gul::within_ulp(3.0f/7.0f, 0.42857143282890319824f, 0));
 
     REQUIRE(gul::within_ulp(1.0, 1.0 + 1 * std::numeric_limits<double>::epsilon(), 0) == false);
     REQUIRE(gul::within_ulp(1.0, 1.0 + 1 * std::numeric_limits<double>::epsilon(), 1) == true);
