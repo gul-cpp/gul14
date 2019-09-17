@@ -122,7 +122,7 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
         return opt_exp.value();
 }
 
-using FloatConversionIntType = unsigned long long int;
+using FloatConversionIntType = uint64_t;
 
 inline constexpr FloatConversionIntType pow10(int exponent) noexcept
 {
@@ -161,13 +161,13 @@ constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view 
         accu += *f1;
     }
     if (not i2.empty()) {
-        accu *= pow10(i2.length());
+        accu *= pow10(static_cast<int>(i2.length()));
         auto f2 = to_unsigned_integer<FloatConversionIntType>(i2);
         if (not f2.has_value())
             return nullopt;
         accu += *f2;
     }
-    return NumberType(accu) / pow10(i1.length() + i2.length() - 1);
+    return NumberType(accu) / pow10(static_cast<int>(i1.length() + i2.length()) - 1);
 
 }
 
@@ -269,7 +269,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     if (not Qval.has_value())
         return nullopt;
 
-    return std::pow(CalcType(10), CalcType(exponent)) * *Qval;
+    return NumberType(std::pow(CalcType(10), CalcType(exponent)) * *Qval);
 }
 
 } // namespace detail
@@ -382,12 +382,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 
 // Overload for floating-point types float and double.
 template <typename NumberType,
-    std::enable_if_t<std::is_floating_point<NumberType>::value, long> = 0,
-    std::enable_if_t<
-        std::greater_equal<std::size_t>()(
-            std::numeric_limits<detail::FloatConversionIntType>::digits10,
-            std::numeric_limits<NumberType>::max_digits10),
-        int> = 0>
+    std::enable_if_t<std::is_same<double, NumberType>::value || std::is_same<float, NumberType>::value, int> = 0>
 constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 {
     if (str.empty())
@@ -407,12 +402,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 
 // Overload for extra resolution floating-point types (long double).
 template <typename NumberType,
-    std::enable_if_t<std::is_floating_point<NumberType>::value, long> = 0,
-    std::enable_if_t<
-        std::less<std::size_t>()(
-            std::numeric_limits<detail::FloatConversionIntType>::digits10,
-            std::numeric_limits<NumberType>::max_digits10),
-        int> = 0>
+    std::enable_if_t<std::is_same<long double, NumberType>::value, int> = 0>
 inline optional<NumberType> to_number(gul::string_view str)
 {
     if (str.empty())
@@ -422,13 +412,15 @@ inline optional<NumberType> to_number(gul::string_view str)
     char* process_end;
     NumberType Qval;
     // Will be optimized away:
-    if (sizeof(NumberType) == sizeof(long double))
+    //if (sizeof(NumberType) == sizeof(long double))
         Qval = std::strtold(input.c_str(), &process_end);
+#if 0
     else if (sizeof(NumberType) == sizeof(double))
         Qval = std::strtod(input.c_str(), &process_end);
     else if (sizeof(NumberType) == sizeof(float))
         Qval = std::strtof(input.c_str(), &process_end);
     else return nullopt;
+#endif
 
     if (input.data() + input.size() != process_end)
         return nullopt;

@@ -155,10 +155,17 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
     REQUIRE(to_number<TestType>("na").has_value() == false);
     REQUIRE(to_number<TestType>("nana").has_value() == false);
     REQUIRE(to_number<TestType>("nan(").has_value() == false);
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4127 )
+#endif
     if (sizeof(TestType) <= sizeof(double)) {
         // Apple clang 8.0.0 strtod() fails to check this input for long double
         REQUIRE(to_number<TestType>("nan(.)").has_value() == false);
     }
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 }
 
 TEMPLATE_TEST_CASE("to_number(): integer max() values round-trip", "[to_number]",
