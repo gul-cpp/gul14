@@ -145,7 +145,7 @@ template <typename NumberType>
 constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view i1, gul::string_view i2) noexcept
 {
     static_assert(std::numeric_limits<FloatConversionIntType>::digits10
-            >= std::numeric_limits<NumberType>::max_digits10,
+            >= std::numeric_limits<NumberType>::digits10,
             "FloatConversionIntType is too small for NumberType");
 
     i1 = i1.substr(0, std::min(i1.length(),
@@ -282,6 +282,21 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     return NumberType(std::pow(CalcType(10), CalcType(exponent)) * *Qval);
 }
 
+template <typename NumberType>
+inline optional<NumberType> to_signed_float(gul::string_view str)
+{
+    if (str.empty())
+        return nullopt;
+
+    auto input = std::string{ str };
+    char* process_end;
+    NumberType Qval = std::strtold(input.c_str(), &process_end);
+
+    if (input.data() + input.size() != process_end)
+        return nullopt;
+    return Qval;
+}
+
 } // namespace detail
 /// \endcond
 
@@ -294,8 +309,11 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
  * \code
  * gul::optional<int> result = gul::to_number<int>("42");
  *
- * if (result)
+ * if (result.has_value())
  *     std::cout << "The answer is " << result.value() << ".\n";
+ *
+ * if (result)
+ *     std::cout << "The answer is " << *result << ".\n";
  * \endcode
  * 
  * <h4>Design Goals</h4>
@@ -390,13 +408,35 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
     return detail::to_unsigned_integer<NumberType>(str);
 }
 
-// Overload for floating-point types float and double.
+// Overload for floating-point types.
 template <typename NumberType,
-    std::enable_if_t<std::is_same<double, NumberType>::value || std::is_same<float, NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
+    std::enable_if_t<std::is_floating_point<NumberType>::value, int> = 0>
+constexpr inline optional<NumberType> to_number(gul::string_view str)
+        noexcept(std::numeric_limits<detail::FloatConversionIntType>::digits10
+                 > std::numeric_limits<NumberType>::digits10)
 {
     if (str.empty())
         return nullopt;
+
+#ifdef __APPLE__
+    if (sizeof(NumberType) > sizeof(double)) {
+        // Apple clang 8.0.0 has a bug with std::pow and long double types,
+        // where the result is off by a huge amount. Use std::strtold() here.
+#else
+#   ifdef _MSC_VER
+#       pragma warning( push )
+#       pragma warning( disable: 4127 ) // conditional expression is constant
+#   endif
+    if (std::numeric_limits<detail::FloatConversionIntType>::digits10
+            <= std::numeric_limits<NumberType>::digits10) {
+        // Too big for our approach. Resort to non-constexpr functionality.
+        // This actually never happenes with the currently supported platforms / compilers.
+#   ifdef _MSC_VER
+#       pragma warning( pop )
+#   endif
+#endif
+        return detail::to_signed_float<NumberType>(str);
+    }
 
     if (str.front() == '-')
     {
@@ -408,33 +448,6 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
     }
 
     return detail::to_unsigned_float<NumberType>(str);
-}
-
-// Overload for extra resolution floating-point types (long double).
-template <typename NumberType,
-    std::enable_if_t<std::is_same<long double, NumberType>::value, int> = 0>
-inline optional<NumberType> to_number(gul::string_view str)
-{
-    if (str.empty())
-        return nullopt;
-
-    auto input = std::string{ str };
-    char* process_end;
-    NumberType Qval;
-    // Will be optimized away:
-    //if (sizeof(NumberType) == sizeof(long double))
-        Qval = std::strtold(input.c_str(), &process_end);
-#if 0
-    else if (sizeof(NumberType) == sizeof(double))
-        Qval = std::strtod(input.c_str(), &process_end);
-    else if (sizeof(NumberType) == sizeof(float))
-        Qval = std::strtof(input.c_str(), &process_end);
-    else return nullopt;
-#endif
-
-    if (input.data() + input.size() != process_end)
-        return nullopt;
-    return Qval;
 }
 
 } /* namespace gul */

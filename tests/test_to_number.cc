@@ -35,7 +35,7 @@ using namespace Catch::Matchers;
 using gul::to_number;
 
 // Allowed deviation from ideal result in ULP
-int constexpr long_double_lenience = 5;
+int constexpr long_double_lenience = 3;
 int constexpr double_lenience = 3;
 
 TEST_CASE("to_number(): Integer types", "[to_number]")
@@ -269,7 +269,11 @@ TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_numbe
 template <typename Float>
 auto random_float() -> Float
 {
-    using bit_type = int64_t;
+    struct int128_t {
+        int64_t a;
+        int64_t b;
+    };
+    using bit_type = int128_t; // int64_t;
 
     union convert {
         Float f;
@@ -285,12 +289,14 @@ auto random_float() -> Float
 
     static std::random_device rd;
     auto static gen = std::mt19937{ rd() };
-    auto static dis = std::uniform_int_distribution<bit_type>{ };
+    auto static dis = std::uniform_int_distribution<int64_t>{ };
 
-    do
-        converter.i = dis(gen);
+    do {
+        converter.i.a = dis(gen);
+        converter.i.b = dis(gen);
+    }
 #if 0
-    while (false)
+    while (false);
 #else
     // discard/retry if random number is NaN or INF
     while (std::isnan(converter.f) or not std::isfinite(converter.f));
@@ -299,14 +305,13 @@ auto random_float() -> Float
     return converter.f;
 }
 
-TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", float, double)
+TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", float, double, long double)
 {
-    char buf[1000];
     int i_nan{ };
     int i_inf{ };
     int i_sub{ };
     int i_nor{ };
-    for (int i = 100'000; --i;) {
+    for (int i = std::is_same<TestType, long double>::value ? 100 : 100'000; --i;) {
         TestType const num = random_float<TestType>();
 
         auto ss = std::stringstream{ };
@@ -315,16 +320,12 @@ TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", f
 
         auto converted = to_number<TestType>(numstr);
 
-        snprintf(buf, sizeof(buf), "   -=>  %+a", num);
-        numstr += buf;
         CAPTURE(i);
         CAPTURE(numstr);
         REQUIRE(converted.has_value());
         ss.str("");
         ss << *converted;
         auto conver = ss.str();
-        snprintf(buf, sizeof(buf), "   -=>  %+a", *converted);
-        conver += buf;
         CAPTURE(conver);
         if (std::isnan(num)) {
             CAPTURE("NaN " + std::to_string(++i_nan));
