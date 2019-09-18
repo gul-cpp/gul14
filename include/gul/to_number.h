@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstdlib>
 #include <cmath>
 #include <type_traits>
@@ -126,16 +127,16 @@ using FloatConversionIntType = uint64_t;
 
 inline constexpr FloatConversionIntType pow10(int exponent) noexcept
 {
-    FloatConversionIntType constexpr vals[] = {
+    std::array<FloatConversionIntType, 20> constexpr vals = {
         1, 10, 100, 1'000, 10'000, 100'000, 1'000'000, 10'000'000, // 0-7
         100'000'000, 1'000'000'000, 10'000'000'000, 100'000'000'000, // 8-11
         1'000'000'000'000, 10'000'000'000'000, 100'000'000'000'000, // 12-14
         1'000'000'000'000'000, 10'000'000'000'000'000, 100'000'000'000'000'000, // 15-17
         1'000'000'000'000'000'000U, 10'000'000'000'000'000'000U // 18-19
     };
-    static_assert(std::numeric_limits<FloatConversionIntType>::digits10 == 19,
+    static_assert(std::numeric_limits<FloatConversionIntType>::digits10 == vals.size() - 1,
             "pow10() table does not fit to FloatConversionIntType range");
-    if (exponent < 0 or exponent > 19)
+    if (exponent < 0 or exponent >= static_cast<int>(vals.size()))
         return 0;
     return vals[exponent];
 }
