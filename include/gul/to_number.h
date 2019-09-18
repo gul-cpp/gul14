@@ -173,36 +173,45 @@ constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view 
 }
 
 template <typename NumberType>
-constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
+constexpr inline optional<optional<NumberType>> check_inf_nan(gul::string_view str) noexcept
 {
-    auto strlength = str.length();
+    auto const strlength = str.length();
     if (strlength == 0)
-        return nullopt;
+        return { {} };
 
     if (gul::starts_with_nocase(str, "inf")) {
         if (strlength == 3 /* strlen("inf") */ )
-            return std::numeric_limits<NumberType>::infinity();
+            return { make_optional(std::numeric_limits<NumberType>::infinity()) };
         if (strlength == 8 /* strlen("infinity") */
                 and gul::starts_with_nocase(str.substr(3), "inity"))
-            return std::numeric_limits<NumberType>::infinity();
-        return nullopt;
+            return { make_optional(std::numeric_limits<NumberType>::infinity()) };
+        return { {} };
     }
 
     if (gul::starts_with_nocase(str, "nan")) {
         if (strlength == 3 /* strlen("nan") */ )
-            return std::numeric_limits<NumberType>::quiet_NaN();
+            return { make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
         if (strlength < 5 /* strlen("nan()") */ or str[3] != '(' or str.back() != ')')
-            return nullopt;
+            return { {} };
         str.remove_prefix(4);
         str.remove_suffix(1);
         while (str.length()) {
             if (not is_nan_specifier(str.front()))
-                return nullopt;
+                return { {} };
             str.remove_prefix(1);
         }
         // We do not use the NaN specifier
-        return std::numeric_limits<NumberType>::quiet_NaN();
+        return { make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
     }
+    return nullopt;
+}
+
+template <typename NumberType>
+constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
+{
+    auto inf_nan = check_inf_nan<NumberType>(str);
+    if (inf_nan.has_value())
+        return *inf_nan;
 
     int exponent = 0;
     auto e_pos = str.find_first_of("eE");
