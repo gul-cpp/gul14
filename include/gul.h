@@ -263,11 +263,11 @@ namespace gul {
  *
  * <h4>Checking for Substrings</h4>
  *
- * contains(): Check if a string contains a certain string or character.
+ * contains(), contains_nocase(): Check if a string contains a certain string or character.
  *
- * ends_with(): Check if a string ends with a certain string or character.
+ * ends_with(), ends_with_nocase(): Check if a string ends with a certain string or character.
  *
- * starts_with(): Check if a string starts with a certain string or character.
+ * starts_with(), starts_with_nocase(): Check if a string starts with a certain string or character.
  *
  * <h4>Replacing & Trimming</h4>
  *
