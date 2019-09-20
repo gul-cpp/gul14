@@ -89,7 +89,7 @@ std::string escape(string_view in)
                 {
                     escaped += c;
                 }
-        };
+        }
     }
 
     return escaped;

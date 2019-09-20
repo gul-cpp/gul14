@@ -246,7 +246,8 @@ std::string hexdump(const ContainerT& cont, string_view prompt = "")
  * Member cont_ holds the container if a temporary has been used for dumping.
  */
 template<typename IteratorT, typename ContainerT = void*>
-struct HexdumpParameterForward {
+class HexdumpParameterForward {
+public:
     /// Iterator to begin of elements to be dumped (in iterator mode)
     IteratorT begin_;
     /// Iterator past end of elements to be dumped (in iterator mode)
@@ -334,7 +335,12 @@ private:
     template <typename ContType,
         std::enable_if_t<!detail::IsHexDumpContainer<ContType>::value, int> = 0
         >
-    void regenerate_iterators() noexcept {}
+    void regenerate_iterators() noexcept
+    {
+        // This is empty, but we need this member function template so that we can
+        // regenerate the iterators if need be for the other enable_if case, see
+        // below...
+    }
 
     template <typename ContType,
         std::enable_if_t<detail::IsHexDumpContainer<ContType>::value, int> = 0

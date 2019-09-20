@@ -834,7 +834,7 @@ TEST_CASE("SlidingBufferExposed test", "[SlidingBuffer]")
 
         REQUIRE(i == 10);
         auto index_data = std::vector<double>{ };
-        for (; i--;) {
+        while (i--) {
             auto ref = buff1.at(i).val;
             REQUIRE(buff1[i].val == ref);
             index_data.push_back(ref);

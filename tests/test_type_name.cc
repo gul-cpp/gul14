@@ -31,7 +31,7 @@ using namespace Catch::Matchers;
 template <typename T>
 class clever {
 public:
-    clever(T) {}
+    explicit clever(T) {}
 };
 
 TEST_CASE("Type-name Test", "[type_name]")

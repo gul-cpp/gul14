@@ -215,7 +215,11 @@ constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi) {
  */
 template<class NumT, class Compare>
 constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi, Compare comp) {
-    return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+    if (comp(v, lo))
+        return lo;
+    if (comp(hi, v))
+        return hi;
+    return v;
 }
 
 } // namespace gul

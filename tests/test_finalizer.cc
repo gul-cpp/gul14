@@ -31,7 +31,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("Closure as temporary") {
         int foo = 1;
         {
-            auto _ = gul::finally([&] { foo += 2; });
+            auto _ = gul::finally([&foo] { foo += 2; });
         }
         REQUIRE(foo == 3);
     }
@@ -40,7 +40,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
         int foo = 1;
         {
             // materialized and copied
-            auto xxx = [&] { foo += 2; };
+            auto xxx = [&foo] { foo += 2; };
             auto yyy { xxx };
 
             auto _ = gul::finally(yyy);
@@ -71,7 +71,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
         int foo = 1;
         {
             // Use FinalAction directly
-            auto xxx = [&] { foo += 2; };
+            auto xxx = [&foo] { foo += 2; };
             auto yyy { xxx };
 
             auto _ = gul::FinalAction<decltype(yyy)>(yyy);
@@ -82,7 +82,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("Call on exception") {
         int foo = 1;
         try {
-            auto _ = gul::finally([&] { foo += 2; });
+            auto _ = gul::finally([&foo] { foo += 2; });
             throw "Foo bar";
         } catch (...) {
             foo++;
@@ -98,7 +98,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
             buffer = new char[100];
             if (buffer == nullptr)
                 break;
-            auto _ = gul::finally([&] { delete[] buffer; buffer = nullptr; });
+            auto _ = gul::finally([&buffer] { delete[] buffer; buffer = nullptr; });
 
             snprintf(buffer, 100, "%.1f", some_float);
             some_string = buffer;
@@ -114,7 +114,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("Closure move") {
         int foo = 1;
         {
-            auto _1 = gul::finally([&]() { foo += 2; });
+            auto _1 = gul::finally([&foo]() { foo += 2; });
             {
                 auto _2 = std::move(_1);
                 REQUIRE(foo == 1);

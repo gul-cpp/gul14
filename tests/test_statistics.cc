@@ -104,8 +104,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         fifo.push_back({value2, state2});
         REQUIRE(mean(fifo, accessor) == Approx((value1 + value2) / 2.0));
         auto rmsval = std::sqrt((value1 * value1 + value2 * value2) / 2.0);
-        REQUIRE(rms(fifo, accessor) ==
-                Approx(std::sqrt((value1 * value1 + value2 * value2) / 2.0)));
+        REQUIRE(rms(fifo, accessor) == Approx(rmsval));
         REQUIRE(median(fifo, accessor) == (value1 + value2) / 2.0);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         REQUIRE(min_max(fifo, accessor).min == value2);
@@ -198,106 +197,109 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(vec3 == std::vector<double>{ });
     }
 
-    SECTION("data analysis examples") {
-        { // simple example
-            std::vector<float> my_data = { 3.0f, 2.1f, 7.5f, 9.9f, 5.2f };
+    SECTION("data analysis examples: simple example") {
+        std::vector<float> my_data = { 3.0f, 2.1f, 7.5f, 9.9f, 5.2f };
 
-            auto durchschnitt = mean(my_data);
+        auto durchschnitt = mean(my_data);
 
-            REQUIRE_THAT(durchschnitt, Catch::Matchers::WithinULP(5.54000f, 3));
-        }
-        { // example with accessors
-            struct measurement {
-                float intensity;
-                float charge;
-            };
+        REQUIRE_THAT(durchschnitt, Catch::Matchers::WithinULP(5.54000f, 3));
+    }
 
-            std::vector<measurement> my_data = { { 3.1f, 1102.2f }, { 2.2f, 1023.4f }, { 2.9f, 1077.3f } };
+    SECTION("data analysis examples: example with accessors") {
+        struct measurement {
+            float intensity;
+            float charge;
+        };
 
-            auto durchschnitt_i = mean(my_data, [](const auto& e){ return e.intensity; });
-            auto durchschnitt_c = mean(my_data, [](const auto& e){ return e.charge; } );
+        std::vector<measurement> my_data = { { 3.1f, 1102.2f }, { 2.2f, 1023.4f }, { 2.9f, 1077.3f } };
 
-            REQUIRE_THAT(durchschnitt_i, Catch::Matchers::WithinULP(2.73333333f, 3));
-            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
+        auto durchschnitt_i = mean(my_data, [](const auto& e){ return e.intensity; });
+        auto durchschnitt_c = mean(my_data, [](const auto& e){ return e.charge; } );
 
-            auto durchschnitt_i2 = mean<int>(my_data, [](const auto& e){ return e.intensity; });
-            auto durchschnitt_c2 = mean<int>(my_data, [](const auto& e){ return e.charge; } );
+        REQUIRE_THAT(durchschnitt_i, Catch::Matchers::WithinULP(2.73333333f, 3));
+        REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
 
-            REQUIRE(durchschnitt_i2 == 2);
-            REQUIRE(durchschnitt_c2 == 1067);
-        }
-        { // small custom struct
-            using LaserType = unsigned int;
-            struct chargedata {
-                float val;
-                LaserType laser;
-            };
+        auto durchschnitt_i2 = mean<int>(my_data, [](const auto& e){ return e.intensity; });
+        auto durchschnitt_c2 = mean<int>(my_data, [](const auto& e){ return e.charge; } );
 
-            std::vector<chargedata> my_data = { { 1102.2f, 3u }, { 1023.4f, 2u }, { 1077.3f, 5u } };
+        REQUIRE(durchschnitt_i2 == 2);
+        REQUIRE(durchschnitt_c2 == 1067);
+    }
 
-            auto durchschnitt_c = mean(my_data, [](chargedata const& el) { return el.val; });
+    SECTION("data analysis examples: small custom struct") {
+        using LaserType = unsigned int;
+        struct chargedata {
+            float val;
+            LaserType laser;
+        };
 
-            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
-        }
-        { // embedding one struct into another
-            using LaserType = unsigned int;
-            struct measurement {
-                float intensity;
-                float charge;
-            };
-            struct chargedata {
-                measurement meas;
-                LaserType laser;
-            };
+        std::vector<chargedata> my_data = { { 1102.2f, 3u }, { 1023.4f, 2u }, { 1077.3f, 5u } };
 
-            std::vector<chargedata> my_data = { { { 3.1f , 1102.2f }, 2u }, { { 2.2f, 1023.4f }, 2u } };
+        auto durchschnitt_c = mean(my_data, [](chargedata const& el) { return el.val; });
 
-            auto durchschnitt_c = mean(my_data, [](const auto& e){ return e.meas.charge; } );
+        REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1067.63333f, 3));
+    }
 
-            REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1062.80000f, 3));
-        }
-        { // convoluted expressions
-            using LaserMode = int;
-            using TrainIdT = unsigned long long int;
-            struct chargedata {
-                float val;
-                LaserMode laser;
-            };
-            struct train {
-                TrainIdT id;
-                std::vector<chargedata> meas;
-            };
+    SECTION("data analysis examples: embedding one struct into another") {
+        using LaserType = unsigned int;
+        struct measurement {
+            float intensity;
+            float charge;
+        };
+        struct chargedata {
+            measurement meas;
+            LaserType laser;
+        };
 
-            std::vector<train> my_trains = { // comment: hand calculated median
-                { 123ul, { { 1969.1f,  3 }, { 1643.2f,  9 }, { 1306.1f,  1 }, { 1616.0f,  5 } } }, // 1629.6
-                { 124ul, { { 1862.2f, 15 }, { 1742.6f,  2 }, { 1033.5f,  3 }, { 1360.9f,  1 } } }, // 1551.75
-                { 125ul, { { 1358.1f,  4 }, { 1577.3f,  2 }, { 1222.4f, 17 }, { 1275.5f,  6 } } }, // 1316.8
-                { 126ul, { { 1832.6f,  8 }, { 1983.9f, 17 }, { 1324.8f,  6 }, { 1521.6f,  8 } } }, // 1677.1
-                { 127ul, { { 1663.7f, 16 }, { 1050.8f,  5 }, { 1826.9f,  9 }, { 1786.6f, 15 } } }, // 1725.15
-                { 128ul, { { 1660.9f,  3 }, { 1974.3f,  4 }, { 1595.3f,  4 }, { 1771.7f,  4 } } } }; // 1716.3
+        std::vector<chargedata> my_data = { { { 3.1f , 1102.2f }, 2u }, { { 2.2f, 1023.4f }, 2u } };
 
-            auto trainrange = min_max(my_trains, [](const auto& e){ return e.id; } );
-            auto mean_of_median_c = mean(my_trains, [](const auto& e){ return median(e.meas,
-                                                        [] (const auto& e){ return e.val;}); } );
-            auto lasermax = min_max(my_trains, [](const auto& e){ return min_max(e.meas,
-                                                    [](const auto& e){ return e.laser; }).max; } );
+        auto durchschnitt_c = mean(my_data, [](const auto& e){ return e.meas.charge; } );
 
-            REQUIRE(trainrange.min == 123ul);
-            REQUIRE(trainrange.max == 128ul);
-            REQUIRE_THAT(mean_of_median_c, Catch::Matchers::WithinULP(1602.78333f, 5)); // 5 because many operations
-            REQUIRE(lasermax.max == 17u);
-        }
-        { // Show how even character sequences work: Outlier magic
-            std::string digits = { "8e7r6846209463768276894209524" };
-            auto mm = min_max(digits); // std::minmax() also useful in simple cases like these
-            REQUIRE(mm.min == '0');
-            REQUIRE(mm.max == 'r');
+        REQUIRE_THAT(durchschnitt_c, Catch::Matchers::WithinULP(1062.80000f, 3));
+    }
 
-            auto digits_clustered = remove_outliers(digits, 2);
-            auto clusterlimits = min_max(digits_clustered);
-            REQUIRE(clusterlimits.min == '0');
-            REQUIRE(clusterlimits.max == '9');
-        }
+    SECTION("data analysis examples: convoluted expressions") {
+        using LaserMode = int;
+        using TrainIdT = unsigned long long int;
+        struct chargedata {
+            float val;
+            LaserMode laser;
+        };
+        struct train {
+            TrainIdT id;
+            std::vector<chargedata> meas;
+        };
+
+        std::vector<train> my_trains = { // comment: hand calculated median
+            { 123ul, { { 1969.1f,  3 }, { 1643.2f,  9 }, { 1306.1f,  1 }, { 1616.0f,  5 } } }, // 1629.6
+            { 124ul, { { 1862.2f, 15 }, { 1742.6f,  2 }, { 1033.5f,  3 }, { 1360.9f,  1 } } }, // 1551.75
+            { 125ul, { { 1358.1f,  4 }, { 1577.3f,  2 }, { 1222.4f, 17 }, { 1275.5f,  6 } } }, // 1316.8
+            { 126ul, { { 1832.6f,  8 }, { 1983.9f, 17 }, { 1324.8f,  6 }, { 1521.6f,  8 } } }, // 1677.1
+            { 127ul, { { 1663.7f, 16 }, { 1050.8f,  5 }, { 1826.9f,  9 }, { 1786.6f, 15 } } }, // 1725.15
+            { 128ul, { { 1660.9f,  3 }, { 1974.3f,  4 }, { 1595.3f,  4 }, { 1771.7f,  4 } } } }; // 1716.3
+
+        auto trainrange = min_max(my_trains, [](const auto& e){ return e.id; } );
+        auto mean_of_median_c = mean(my_trains, [](const auto& e){ return median(e.meas,
+                                                    [] (const auto& f){ return f.val;}); } );
+        auto lasermax = min_max(my_trains, [](const auto& e){ return min_max(e.meas,
+                                                [](const auto& f){ return f.laser; }).max; } );
+
+        REQUIRE(trainrange.min == 123ul);
+        REQUIRE(trainrange.max == 128ul);
+        REQUIRE_THAT(mean_of_median_c, Catch::Matchers::WithinULP(1602.78333f, 5)); // 5 because many operations
+        REQUIRE(lasermax.max == 17u);
+    }
+
+    SECTION("data analysis examples: Show how even character sequences work: Outlier magic") {
+        std::string digits = { "8e7r6846209463768276894209524" };
+        auto mm = min_max(digits); // std::minmax() also useful in simple cases like these
+        REQUIRE(mm.min == '0');
+        REQUIRE(mm.max == 'r');
+
+        auto digits_clustered = remove_outliers(digits, 2);
+        auto clusterlimits = min_max(digits_clustered);
+        REQUIRE(clusterlimits.min == '0');
+        REQUIRE(clusterlimits.max == '9');
     }
 
 }
