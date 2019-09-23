@@ -290,7 +290,7 @@ inline optional<NumberType> to_signed_float(gul::string_view str)
 
     auto input = std::string{ str };
     char* process_end;
-    NumberType Qval = std::strtold(input.c_str(), &process_end);
+    NumberType Qval = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
 
     if (input.data() + input.size() != process_end)
         return nullopt;
