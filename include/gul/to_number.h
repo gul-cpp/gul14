@@ -55,8 +55,9 @@ constexpr inline bool is_nan_specifier(char c) noexcept
     return false;
 }
 
-template <typename NumberType>
-constexpr inline optional<NumberType> to_unsigned_integer(gul::string_view str) noexcept
+template <typename NumberType, bool count_magnitude = false>
+constexpr inline optional<NumberType> to_unsigned_integer(gul::string_view str,
+        NumberType* magnitude = nullptr) noexcept
 {
 #ifndef __GNUC__
     constexpr NumberType max_tenth = std::numeric_limits<NumberType>::max() / 10;
@@ -90,6 +91,8 @@ constexpr inline optional<NumberType> to_unsigned_integer(gul::string_view str) 
         if (result < last)
             return nullopt;
 #endif
+        if /*constexpr*/ (count_magnitude)
+            *magnitude *= NumberType{ 10 };
     }
 
     return result;
@@ -125,22 +128,6 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
 
 using FloatConversionIntType = uint64_t;
 
-inline constexpr FloatConversionIntType pow10(int exponent) noexcept
-{
-    std::array<FloatConversionIntType, 20> constexpr vals = {{
-        1, 10, 100, 1'000, 10'000, 100'000, 1'000'000, 10'000'000, // 0-7
-        100'000'000, 1'000'000'000, 10'000'000'000, 100'000'000'000, // 8-11
-        1'000'000'000'000, 10'000'000'000'000, 100'000'000'000'000, // 12-14
-        1'000'000'000'000'000, 10'000'000'000'000'000, 100'000'000'000'000'000, // 15-17
-        1'000'000'000'000'000'000U, 10'000'000'000'000'000'000U // 18-19
-    }};
-    static_assert(std::numeric_limits<FloatConversionIntType>::digits10 == vals.size() - 1,
-            "pow10() table does not fit to FloatConversionIntType range");
-    if (exponent < 0 or exponent >= static_cast<int>(vals.size()))
-        return 0;
-    return vals[exponent];
-}
-
 template <typename NumberType>
 constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view i1, gul::string_view i2) noexcept
 {
@@ -155,20 +142,22 @@ constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view 
 
     FloatConversionIntType accu{ 0 };
 
-    if (not i1.empty()) {
-        auto f1 = to_unsigned_integer<FloatConversionIntType>(i1);
-        if (not f1.has_value())
-            return nullopt;
-        accu += *f1;
-    }
+    auto magnitude = FloatConversionIntType{ 1 };
+
     if (not i2.empty()) {
-        accu *= pow10(static_cast<int>(i2.length()));
-        auto f2 = to_unsigned_integer<FloatConversionIntType>(i2);
+        auto f2 = to_unsigned_integer<FloatConversionIntType, true>(i2, &magnitude);
         if (not f2.has_value())
             return nullopt;
-        accu += *f2;
+        accu = *f2;
     }
-    return NumberType(accu) / pow10(static_cast<int>(i1.length() + i2.length()) - 1);
+    if (not i1.empty()) {
+        auto i2_magnitude = magnitude;
+        auto f1 = to_unsigned_integer<FloatConversionIntType, true>(i1, &magnitude);
+        if (not f1.has_value())
+            return nullopt;
+        accu += (*f1 * i2_magnitude);
+    }
+    return NumberType(accu) / (magnitude / 10);
 
 }
 
