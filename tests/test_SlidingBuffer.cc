@@ -33,13 +33,31 @@
 
 using namespace std::literals::string_literals;
 
-namespace {
-
 // A dummy struct for tests with nontrivial elements.
 struct MyStruct {
     int a;
     std::string b;
 };
+
+template <typename BufferT>
+auto generic_debugdump(std::ostream& s, typename BufferT::size_type len,
+        typename BufferT::size_type beg, typename BufferT::size_type end,
+        typename BufferT::container_type const& cont) -> std::ostream& {
+    for (typename BufferT::size_type i{0}; i < len; ++i) {
+        s << cont.at(i);
+        if (i == beg and i == end)
+            s << "*";
+        else if (i == beg)
+            s << "b";
+        else if (i == end)
+            s << "e";
+        else if (i + 1 < len)
+            s << " ";
+        if (i + 1 < len)
+            s << " ";
+    }
+    return s << '\n';
+}
 
 // A SlidingBuffer variant that allows to dump the underlying container
 // and the state of the buffer all in one to a stream.
@@ -47,60 +65,34 @@ struct MyStruct {
 template<typename ElementT, std::size_t fixed_capacity = 0u,
     typename Container = typename std::conditional_t<(fixed_capacity >= 1u),
         std::array<ElementT, fixed_capacity>,
-        std::vector<ElementT>>
+        std::vector<ElementT>>,
+    typename UnderlyingBuffer = gul::SlidingBuffer<ElementT, fixed_capacity, Container>
     >
-class SlidingBufferDebug : public gul::SlidingBuffer<ElementT, fixed_capacity, Container> {
+class SlidingBufferDebug : public UnderlyingBuffer {
 public:
-    using gul::SlidingBuffer<ElementT, fixed_capacity, Container>::SlidingBuffer;
-    using typename gul::SlidingBuffer<ElementT, fixed_capacity, Container>::size_type;
+    using UnderlyingBuffer::UnderlyingBuffer;
 
     auto debugdump(std::ostream& s) const -> std::ostream&
     {
-        auto const len = this->capacity();
-        for (size_type i{0}; i < len; ++i) {
-            s << this->storage_.at(i);
-            if (i == this->idx_begin_ and i == this->idx_end_)
-                s << "*";
-            else if (i == this->idx_begin_)
-                s << "b";
-            else if (i == this->idx_end_)
-                s << "e";
-            else if (i + 1 < len)
-                s << " ";
-            if (i + 1 < len)
-                s << " ";
-        }
-        return s << '\n';
+        return generic_debugdump<UnderlyingBuffer>(s, this->capacity(),
+                this->idx_begin_, this->idx_end_, this->storage_);
     }
 };
 
 template<typename ElementT, std::size_t fixed_capacity = 0u,
     typename Container = typename std::conditional_t<(fixed_capacity >= 1u),
         std::array<ElementT, fixed_capacity>,
-        std::vector<ElementT>>
+        std::vector<ElementT>>,
+    typename UnderlyingBuffer = gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>
     >
-class SlidingBufferExposedDebug : public gul::SlidingBufferExposed<ElementT, fixed_capacity, Container> {
+class SlidingBufferExposedDebug : public UnderlyingBuffer {
 public:
-    using gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>::SlidingBufferExposed;
-    using typename gul::SlidingBufferExposed<ElementT, fixed_capacity, Container>::size_type;
+    using UnderlyingBuffer::UnderlyingBuffer;
 
     auto debugdump(std::ostream& s) const -> std::ostream&
     {
-        auto const len = this->capacity();
-        for (size_type i{0}; i < len; ++i) {
-            s << this->storage_.at(i);
-            if (i == this->idx_begin_ and i == this->idx_end_)
-                s << "*";
-            else if (i == this->idx_begin_)
-                s << "b";
-            else if (i == this->idx_end_)
-                s << "e";
-            else if (i + 1 < len)
-                s << " ";
-            if (i + 1 < len)
-                s << " ";
-        }
-        return s << '\n';
+        return generic_debugdump<UnderlyingBuffer>(s, this->capacity(),
+                this->idx_begin_, this->idx_end_, this->storage_);
     }
 };
 
@@ -197,9 +189,6 @@ void do_dumping_tests(T& buff)
     REQUIRE_THAT(gul::trim(s2.str()), Catch::Matchers::Matches(
                 "141.4  131.3  121.2  111.1  101  90.9  80.8  70.7  60.6  50.5"));
 }
-
-} // anonymous namespace
-
 
 TEST_CASE("SlidingBuffer test", "[SlidingBuffer]")
 {
