@@ -75,10 +75,7 @@ constexpr inline bool contains(string_view haystack, char needle) noexcept
  */
 constexpr inline bool ends_with(string_view haystack, string_view stack) noexcept
 {
-    const auto hsl = haystack.length();
-    const auto sl = stack.length();
-
-    return hsl >= sl && haystack.compare(hsl - sl, sl, stack) == 0;
+    return haystack.ends_with(stack);
 }
 
 /**
@@ -94,7 +91,7 @@ constexpr inline bool ends_with(string_view haystack, string_view stack) noexcep
  */
 constexpr inline bool ends_with(string_view str, char c) noexcept
 {
-    return !str.empty() && str.back() == c;
+    return str.ends_with(c);
 }
 
 /**
@@ -111,10 +108,7 @@ constexpr inline bool ends_with(string_view str, char c) noexcept
  */
 constexpr inline bool starts_with(string_view haystack, string_view hay) noexcept
 {
-    const auto hsl = haystack.length();
-    const auto hl = hay.length();
-
-    return hsl >= hl && haystack.compare(0, hl, hay) == 0;
+    return haystack.starts_with(hay);
 }
 
 /**
@@ -130,7 +124,7 @@ constexpr inline bool starts_with(string_view haystack, string_view hay) noexcep
  */
 constexpr inline bool starts_with(string_view str, char c) noexcept
 {
-    return !str.empty() && str.front() == c;
+    return str.starts_with(c);
 }
 
 //
