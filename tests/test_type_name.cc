@@ -84,6 +84,13 @@ TEST_CASE("Type-name Test", "[type_name]")
         REQUIRE_THAT(oss.str(), Contains("clever"));
         REQUIRE_THAT(oss.str(), Contains("int"));
     }
+    SECTION("test constexpr-ness") {
+        auto constexpr x = gul::type_name<int>();
+        auto oss = std::ostringstream{ };
+        oss << x;
+        REQUIRE_THAT(oss.str(), Contains("int"));
+    }
+
     SECTION("test compile type output") {
         // There is not much checking here, because the type
         // of 'c' will be output in a compiler error message,
