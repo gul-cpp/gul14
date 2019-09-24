@@ -54,12 +54,60 @@ public:
 
 } // namespace detail
 
+// We use custom traits to allow constexpr operations on string_view
+template <typename charT, typename BaseT = std::char_traits<charT>>
+struct char_traits : public BaseT
+{
+    using char_type = typename BaseT::char_type;
+    using int_type = typename BaseT::int_type;
+    using pos_type = typename BaseT::pos_type;
+    using off_type = typename BaseT::off_type;
+    using state_type = typename BaseT::state_type;
+
+    using BaseT::lt;
+    using BaseT::eq;
+
+    static constexpr void assign(char_type& c1, const char_type& c2) noexcept
+    {
+        c1 = c2;
+    }
+
+    static STX_CONSTEXPR14 int compare(const char_type* s1, const char_type* s2, size_t n) noexcept
+    {
+        for (;n > 0; --n, ++s1, ++s2) {
+            if (lt(*s1, *s2))
+                return -1;
+            else if (lt(*s2, *s1))
+                return 1;
+        }
+        return 0;
+    }
+
+    static STX_CONSTEXPR14 size_t length(const char_type* s) noexcept
+    {
+        auto len = std::size_t{ };
+        while (!eq(s[len], char_type{ }))
+            ++len;
+        return len;
+    }
+
+    static STX_CONSTEXPR14 const char_type* find(const char_type* s, std::size_t n, const char_type& a) noexcept
+    {
+        for (;n > 0; --n, ++s) {
+            if (eq(*s, a))
+                return s;
+        }
+        return nullptr;
+    }
+};
+
+
 /**
  * A view to a contiguous sequence of chars or char-like objects. This is a backport of
  * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  * from libc++ for C++17.
  */
-template<typename charT, typename traits = std::char_traits<charT>>
+template<typename charT, typename traits = gul::char_traits<charT>>
 class basic_string_view {
 public:
     // types
@@ -77,6 +125,9 @@ public:
     typedef std::ptrdiff_t                        difference_type;
     static constexpr size_type     npos = size_type(-1);
 
+    // Helper to adapt to std::strings that need std::char_traits
+    using stdtraits = std::char_traits<charT>;
+
     // construct/copy
     constexpr basic_string_view() noexcept
             : ptr_(NULL), len_(0) {}
@@ -88,7 +139,7 @@ public:
     basic_string_view& operator=(const basic_string_view &rhs) noexcept = default;
 
     template<typename Allocator>
-    basic_string_view(const std::basic_string<charT, traits,
+    basic_string_view(const std::basic_string<charT, stdtraits,
             Allocator>& str) noexcept
             : ptr_(str.data()), len_(str.length()) {}
 
@@ -149,24 +200,24 @@ public:
     // basic_string_view string operations
 #ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
     template<typename Allocator>
-    explicit operator std::basic_string<charT, traits, Allocator>() const {
-        return std::basic_string<charT, traits, Allocator>(begin(), end());
+    explicit operator std::basic_string<charT, stdtraits, Allocator>() const {
+        return std::basic_string<charT, stdtraits, Allocator>(begin(), end());
     }
 #endif
 
 #ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
     template<typename Allocator = std::allocator<charT> >
     std::basic_string<charT, traits, Allocator> to_string(const Allocator& a = Allocator()) const {
-        return std::basic_string<charT, traits, Allocator>(begin(), end(), a);
+        return std::basic_string<charT, stdtraits, Allocator>(begin(), end(), a);
     }
 #else
-    std::basic_string<charT, traits> to_string() const {
-            return std::basic_string<charT, traits>(begin(), end());
+    std::basic_string<charT, stdtraits> to_string() const {
+            return std::basic_string<charT, stdtraits>(begin(), end());
             }
 
         template<typename Allocator>
-        std::basic_string<charT, traits, Allocator> to_string(const Allocator& a) const {
-            return std::basic_string<charT, traits, Allocator>(begin(), end(), a);
+        std::basic_string<charT, stdtraits, Allocator> to_string(const Allocator& a) const {
+            return std::basic_string<charT, stdtraits, Allocator>(begin(), end(), a);
             }
 #endif
 
@@ -240,9 +291,12 @@ public:
             return npos;
         if (s.empty())
             return pos;
-        const_iterator iter = std::search(this->cbegin() + pos, this->cend(),
-                                          s.cbegin (), s.cend (), traits::eq);
-        return iter == this->cend () ? npos : std::distance(this->cbegin (), iter);
+        const charT* end = ptr_ + len_ - s.len_;
+        for (const charT* cur = ptr_ + pos; cur <= end; ++cur) {
+            if (traits::compare(cur, s.ptr_, s.len_) == 0)
+                return cur - ptr_;
+        }
+        return npos;
     }
     STX_CONSTEXPR14 size_type find(charT c, size_type pos = 0) const noexcept
     { return find(basic_string_view(&c, 1), pos); }
@@ -406,15 +460,18 @@ inline bool operator>=(basic_string_view<charT, traits> x,
     return x.compare(y) >= 0;
 }
 
+template <typename charT>
+using stdtraits = std::char_traits<charT>;
+
 // "sufficient additional overloads of comparison functions"
 template<typename charT, typename traits, typename Allocator>
 inline bool operator==(basic_string_view<charT, traits> x,
-                       const std::basic_string<charT, traits, Allocator> & y) noexcept {
+                       const std::basic_string<charT, stdtraits<charT>, Allocator> & y) noexcept {
     return x == basic_string_view<charT, traits>(y);
 }
 
 template<typename charT, typename traits, typename Allocator>
-inline bool operator==(const std::basic_string<charT, traits, Allocator> & x,
+inline bool operator==(const std::basic_string<charT, stdtraits<charT>, Allocator> & x,
                        basic_string_view<charT, traits> y) noexcept {
     return basic_string_view<charT, traits>(x) == y;
 }
@@ -433,12 +490,12 @@ inline bool operator==(const charT * x,
 
 template<typename charT, typename traits, typename Allocator>
 inline bool operator!=(basic_string_view<charT, traits> x,
-                       const std::basic_string<charT, traits, Allocator> & y) noexcept {
+                       const std::basic_string<charT, stdtraits<charT>, Allocator> & y) noexcept {
     return x != basic_string_view<charT, traits>(y);
 }
 
 template<typename charT, typename traits, typename Allocator>
-inline bool operator!=(const std::basic_string<charT, traits, Allocator> & x,
+inline bool operator!=(const std::basic_string<charT, stdtraits<charT>, Allocator> & x,
                        basic_string_view<charT, traits> y) noexcept {
     return basic_string_view<charT, traits>(x) != y;
 }
@@ -457,12 +514,12 @@ inline bool operator!=(const charT * x,
 
 template<typename charT, typename traits, typename Allocator>
 inline bool operator<(basic_string_view<charT, traits> x,
-                      const std::basic_string<charT, traits, Allocator> & y) noexcept {
+                      const std::basic_string<charT, stdtraits<charT>, Allocator> & y) noexcept {
     return x < basic_string_view<charT, traits>(y);
 }
 
 template<typename charT, typename traits, typename Allocator>
-inline bool operator<(const std::basic_string<charT, traits, Allocator> & x,
+inline bool operator<(const std::basic_string<charT, stdtraits<charT>, Allocator> & x,
                       basic_string_view<charT, traits> y) noexcept {
     return basic_string_view<charT, traits>(x) < y;
 }
@@ -481,12 +538,12 @@ inline bool operator<(const charT * x,
 
 template<typename charT, typename traits, typename Allocator>
 inline bool operator>(basic_string_view<charT, traits> x,
-                      const std::basic_string<charT, traits, Allocator> & y) noexcept {
+                      const std::basic_string<charT, stdtraits<charT>, Allocator> & y) noexcept {
     return x > basic_string_view<charT, traits>(y);
 }
 
 template<typename charT, typename traits, typename Allocator>
-inline bool operator>(const std::basic_string<charT, traits, Allocator> & x,
+inline bool operator>(const std::basic_string<charT, stdtraits<charT>, Allocator> & x,
                       basic_string_view<charT, traits> y) noexcept {
     return basic_string_view<charT, traits>(x) > y;
 }
@@ -505,12 +562,12 @@ inline bool operator>(const charT * x,
 
 template<typename charT, typename traits, typename Allocator>
 inline bool operator<=(basic_string_view<charT, traits> x,
-                       const std::basic_string<charT, traits, Allocator> & y) noexcept {
+                       const std::basic_string<charT, stdtraits<charT>, Allocator> & y) noexcept {
     return x <= basic_string_view<charT, traits>(y);
 }
 
 template<typename charT, typename traits, typename Allocator>
-inline bool operator<=(const std::basic_string<charT, traits, Allocator> & x,
+inline bool operator<=(const std::basic_string<charT, stdtraits<charT>, Allocator> & x,
                        basic_string_view<charT, traits> y) noexcept {
     return basic_string_view<charT, traits>(x) <= y;
 }
@@ -529,12 +586,12 @@ inline bool operator<=(const charT * x,
 
 template<typename charT, typename traits, typename Allocator>
 inline bool operator>=(basic_string_view<charT, traits> x,
-                       const std::basic_string<charT, traits, Allocator> & y) noexcept {
+                       const std::basic_string<charT, stdtraits<charT>, Allocator> & y) noexcept {
     return x >= basic_string_view<charT, traits>(y);
 }
 
 template<typename charT, typename traits, typename Allocator>
-inline bool operator>=(const std::basic_string<charT, traits, Allocator> & x,
+inline bool operator>=(const std::basic_string<charT, stdtraits<charT>, Allocator> & x,
                        basic_string_view<charT, traits> y) noexcept {
     return basic_string_view<charT, traits>(x) >= y;
 }
@@ -565,10 +622,11 @@ inline void sv_insert_fill_chars(std::basic_ostream<charT, traits>& os, std::siz
 }
 
 template<class charT, class traits>
-void sv_insert_aligned(std::basic_ostream<charT, traits>& os, const basic_string_view<charT,traits>& str) {
+void sv_insert_aligned(std::basic_ostream<charT, stdtraits<charT>>& os, const basic_string_view<charT,traits>& str) {
     const std::size_t size = str.size();
     const std::size_t alignment_size = static_cast< std::size_t >(os.width()) - size;
-    const bool align_left = (os.flags() & std::basic_ostream<charT, traits>::adjustfield) == std::basic_ostream<charT, traits>::left;
+    const bool align_left = (os.flags() & std::basic_ostream<charT, stdtraits<charT>>::adjustfield)
+            == std::basic_ostream<charT, stdtraits<charT>>::left;
     if (!align_left) {
         detail::sv_insert_fill_chars(os, alignment_size);
         if (os.good())
@@ -585,8 +643,8 @@ void sv_insert_aligned(std::basic_ostream<charT, traits>& os, const basic_string
 
 // Inserter
 template<class charT, class traits>
-inline std::basic_ostream<charT, traits>&
-operator<<(std::basic_ostream<charT, traits>& os,
+inline std::basic_ostream<charT, stdtraits<charT>>&
+operator<<(std::basic_ostream<charT, stdtraits<charT>>& os,
            const basic_string_view<charT,traits>& str) {
     if (os.good()) {
         const std::size_t size = str.size();
