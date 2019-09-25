@@ -87,20 +87,28 @@ constexpr string_view type_name()
 #if defined(__GNUC__)
     // Clang returns something like "return_type function_name() [T = template_parameter; ...]"
     // GCC returns something like "return_type function_name() [with T = template_parameter]"
-    auto const s = string_view{ __PRETTY_FUNCTION__ };
+    auto s = string_view{ __PRETTY_FUNCTION__ };
     auto const start_idx = s.find(" = ") + 3; // len(" = ") == 3
-    auto const colon_idx = s.substr(start_idx).find(";");
-    auto const end_idx =
-        (colon_idx != string_view::npos)
-        ? start_idx + colon_idx - 1
-        : s.length() - 2; // len("]\0") == 2
-    return s.substr(start_idx, end_idx - start_idx + 1);
+    s.remove_prefix(start_idx);
+
+    auto const colon_idx = s.find(";");
+    auto const suff_length =
+        (colon_idx != string_view::npos) ? s.length() - colon_idx : 1; // len("]") == 1
+    s.remove_suffix(suff_length);
+    return s;
 #elif defined(_MSC_VER)
     // MSVC returns something like "return_type function_name<template_parameter>()"
-    auto const s = string_view{ __FUNCSIG__ };
+    auto s = string_view{ __FUNCSIG__ };
     auto const start_idx = s.find("gul::type_name<") + sizeof("gul::type_name<") - 1;
-    auto const end_idx = s.find_last_of('>') - 1;
-    return s.substr(start_idx, end_idx - start_idx + 1);
+    s.remove_prefix(start_idx);
+
+    for (auto end_idx = s.length() - 1; end_idx; --end_idx) {
+        if (s[end_idx] != '>')
+            continue;
+        s.remove_suffix(s.length() - end_idx);
+        break;
+    }
+    return s;
 #else
     return "";
 #endif
