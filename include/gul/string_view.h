@@ -291,10 +291,12 @@ public:
             return npos;
         if (s.empty())
             return pos;
-        const charT* end = ptr_ + len_ - s.len_;
-        for (const charT* cur = ptr_ + pos; cur <= end; ++cur) {
-            if (traits::compare(cur, s.ptr_, s.len_) == 0)
-                return cur - ptr_;
+        if (len_ < s.len_)
+            return npos;
+        auto const end = len_ - s.len_;
+        for (auto cur = pos; cur <= end; ++cur) {
+            if (traits::compare(ptr_ + cur, s.ptr_, s.len_) == 0)
+                return cur;
         }
         return npos;
     }
