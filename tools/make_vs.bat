@@ -111,8 +111,6 @@ ninja -C %REPO_ROOT%%FOLDER% %TARGET%
         set VC_YEAR=2019\
     ) ELSE IF EXIST "%VC_PREFIX%2017" (
         set VC_YEAR=2017\
-    ) ELSE IF EXIST "%VC_PREFIX%2015" (
-        set VC_YEAR=2015\
     ) ELSE exit /B 1
 
     @IF EXIST "%VC_PREFIX%%VC_YEAR%Enterprise" (

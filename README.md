@@ -156,6 +156,11 @@ The files ``.vs\tasks_vs.json`` and ``.vs\launch_vs.json`` as well as
 that should allow you to open the folder via "open folder" (i.e. without a project file)
 and still be able to build and debug GUL via the batch file.
 
+It is not possible to build GUL with a version prior to Visual Studio 2017 version 15.7
+(a.k.a. 19.14), because basic language features are
+[missing](https://docs.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance)
+(e.g. two phase name lookup is needed, N3652 and N3653 are used in GUL code).
+
 ## Testing <a name="Testing"></a>
 
 After configuring the build directory one can run all tests by
