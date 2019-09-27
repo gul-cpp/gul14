@@ -176,8 +176,6 @@ public:
     constexpr const_pointer data()    const noexcept { return ptr_; }
 
     // modifiers
-    void clear() noexcept { len_ = 0; }          // Boost extension
-
     STX_CONSTEXPR14 void remove_prefix(size_type n) {
         if ( n > len_ )
             n = len_;
@@ -197,28 +195,15 @@ public:
     }
 
     // basic_string_view string operations
-#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
     template<typename Allocator>
     explicit operator std::basic_string<charT, typename traits::base_traits, Allocator>() const {
         return std::basic_string<charT, typename traits::base_traits, Allocator>(begin(), end());
     }
-#endif
 
-#ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
     template<typename Allocator = std::allocator<charT> >
     std::basic_string<charT, typename traits::base_traits, Allocator> to_string(const Allocator& a = Allocator()) const {
         return std::basic_string<charT, typename traits::base_traits, Allocator>(begin(), end(), a);
     }
-#else
-    std::basic_string<charT, typename traits::base_traits> to_string() const {
-            return std::basic_string<charT, typename traits::base_traits>(begin(), end());
-            }
-
-        template<typename Allocator>
-        std::basic_string<charT, typename traits::base_traits, Allocator> to_string(const Allocator& a) const {
-            return std::basic_string<charT, typename traits::base_traits, Allocator>(begin(), end(), a);
-            }
-#endif
 
     size_type copy(charT* s, size_type n, size_type pos=0) const {
         if (pos > size())
@@ -264,24 +249,6 @@ public:
     STX_CONSTEXPR14 int compare(size_type pos1, size_type n1,
                                       const charT* x, size_type n2) const {
         return substr(pos1, n1).compare(basic_string_view(x, n2));
-    }
-
-    //  Searches
-    constexpr bool starts_with(charT c) const noexcept {              // Boost extension
-        return !empty() && traits::eq(c, front());
-    }
-
-    constexpr bool starts_with(basic_string_view x) const noexcept {  // Boost extension
-        return len_ >= x.len_ && traits::compare(ptr_, x.ptr_, x.len_) == 0;
-    }
-
-    constexpr bool ends_with(charT c) const noexcept {                // Boost extension
-        return !empty() && traits::eq(c, back());
-    }
-
-    constexpr bool ends_with(basic_string_view x) const noexcept {    // Boost extension
-        return len_ >= x.len_ &&
-                traits::compare(ptr_ + len_ - x.len_, x.ptr_, x.len_) == 0;
     }
 
     //  find
