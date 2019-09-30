@@ -307,11 +307,19 @@ auto random_float() -> Float
 
 TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", float, double, long double)
 {
+    int loops = 100'000;
+#ifdef ARM
+    // Do less thoroughly test on ARM because of performance limits
+    loops = 30'000;
+#endif
+    // long double is rather time consuming
+    if (std::is_same<TestType, long double>::value)
+        loops = 100;
     int i_nan{ };
     int i_inf{ };
     int i_sub{ };
     int i_nor{ };
-    for (int i = std::is_same<TestType, long double>::value ? 100 : 100'000; --i;) {
+    for (int i = 0; i < loops; ++i) {
         TestType const num = random_float<TestType>();
 
         auto ss = std::stringstream{ };

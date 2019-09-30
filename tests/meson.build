@@ -7,6 +7,13 @@ if not get_option('tests')
     # subdir_done() to avoid long 'else', meson 0.46+
 else
 
+# Find out if we run the tests on ARM (i.e. Raspberry)
+if host_machine.cpu_family() == 'arm' or host_machine.cpu_family() == 'aarch64'
+    test_cpp_args = [ '-DARM' ]
+else
+    test_cpp_args = []
+endif
+
 test_inc = inc + [ include_directories('.') ]
 catch_main = 'test_main.cc'
 test_time = 10 # Default timeout
@@ -39,6 +46,7 @@ tests = [
 test('all',
      executable('libgul-test',
                 tests + [ catch_main ],
+                cpp_args : test_cpp_args,
                 dependencies : thread_dep,
                 include_directories : test_inc,
                 link_with : libgul),
