@@ -270,11 +270,11 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
         std::greater<std::size_t>()(sizeof(NumberType), sizeof(double)),
         long_double, double>;
 
-    auto Qval = to_normalized_float<CalcType>(str_before_point, str_after_point);
-    if (not Qval.has_value())
+    auto norm_val = to_normalized_float<CalcType>(str_before_point, str_after_point);
+    if (not norm_val.has_value())
         return nullopt;
 
-    return NumberType(std::pow(CalcType(10), CalcType(exponent)) * *Qval);
+    return NumberType(std::pow(CalcType(10), CalcType(exponent)) * *norm_val);
 }
 
 template <typename NumberType>
@@ -285,11 +285,11 @@ inline optional<NumberType> to_signed_float(gul::string_view str)
 
     auto input = std::string{ str };
     char* process_end;
-    NumberType Qval = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
+    NumberType value = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
 
     if (input.data() + input.size() != process_end)
         return nullopt;
-    return Qval;
+    return value;
 }
 
 } // namespace detail
