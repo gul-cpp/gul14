@@ -98,6 +98,11 @@ constexpr inline optional<NumberType> to_unsigned_integer(gul::string_view str,
     return result;
 }
 
+/* Parse a signed exponent specifier.
+ * May start with a leading sign ('+' or '-'). The exponent value is limited to
+ * the range of int. The used range with a long double conversion is usually in
+ * the range -5000 to 5000, so this is not really a limitation.
+ */
 constexpr optional<int> parse_exponent(string_view str) noexcept
 {
     bool negative = false;
@@ -127,6 +132,22 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
 
 using FloatConversionIntType = uint64_t;
 
+/**
+ * Convert two string_views into one floating point number.
+ * The two strings are used as if they are seamlessly appended to each other.
+ * The resulting character sequence is then parsed to a floating point value
+ * of type NumberType under the assumption that a decimal dot exists after the
+ * first digit (thus normalised form).
+ * The first digit may not be a sign.
+ * The first digit may not be the digit zero (unless the total value is zero).
+ *
+ * Example: "123" "456" -> 1.23456
+ *
+ * \tparam NumberType Destination numeric type.
+ * \param str  The signless string to be converted.
+ *
+ * \returns a ParseInfNanResult that contains a gul::optional with the number
+ */
 template <typename NumberType>
 constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view i1, gul::string_view i2) noexcept
 {
@@ -166,6 +187,25 @@ struct ParseInfNanResult {
     optional<NumberType> result;
 };
 
+/**
+ * Convert a string_view into a floating point number.
+ * This function just parses NAN and INF specifying strings.
+ *
+ * \tparam NumberType Destination numeric type.
+ * \param str  The signless string to be converted.
+ *
+ * \returns a ParseInfNanResult that contains a gul::optional with the number
+ *          if the conversion was successful. If there was a conversion error,
+ *          the returned optional is empty. If nothing special has been found
+ *          the result_valid member is false.
+ *
+ * \note
+ * To be specific, the return value is one of
+ * - NAN
+ * - INF
+ * - nullopt (on parse error)
+ * - !result_valid (on nothing-to-do, i.e possibly number found)
+ */
 template <typename NumberType>
 constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul::string_view str) noexcept
 {
@@ -200,6 +240,23 @@ constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul::string_view st
     return { false, {} };
 }
 
+/**
+ * Convert a string_view into a floating point number.
+ * No sign is allowed at the beginning of the number (thus unsigned float).
+ *
+ * The mantissa and a possibly existing exponent are independently converted to
+ * an integer numeric value and combined to a floating point value. The
+ * mantissa is normalized in string form prior to conversion and the exponent
+ * is shifted accordingly.
+ *
+ * Only the C locale is used, i.e. the decimal dot is '.'.
+ *
+ * \tparam NumberType Destination numeric type.
+ * \param str  The signless string to be converted.
+ *
+ * \returns a gul::optional that contains the number if the conversion was successful. If
+ *          there was a conversion error, the return value is empty.
+ */
 template <typename NumberType>
 constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
 {
@@ -276,6 +333,25 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
     return NumberType(std::pow(CalcType(10), CalcType(exponent)) * *norm_val);
 }
 
+/**
+ * Convert a string_view into a floating point number using std::strtold.
+ * This function parses the ASCII representation of a number (e.g. "123" or "1.3e10") into
+ * a (floating point) number using the long double algorithm of the standard library.
+ *
+ * An intermediate string is created, whose construction can throw.
+ * Furthermore std::strtold() is not specified nothrow (although it is unlikely to throw).
+ *
+ * \tparam NumberType Destination numeric type, usually long double.
+ * \param str  The string to be converted into a number.
+ *
+ * \returns an optional that contains std::strtold()'s return value (include HUGE_VAL).
+ * Parsing failure (including number end before string end) is returned by std::nullopt.
+ *
+ * \note This function is used as fallback solution if we can not use gul::to_unsigned_float()
+ * for the desired conversions. This can have two reasons:
+ * - The internally used integer type is too small compared to the floating point type.
+ * - On Apple clang 8.0.0 std::pow<long double>() is inaccurate.
+ */
 template <typename NumberType>
 inline optional<NumberType> to_signed_float(gul::string_view str)
 {
