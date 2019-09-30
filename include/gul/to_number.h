@@ -121,9 +121,8 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
         return nullopt;
 
     if (negative)
-        return -opt_exp.value();
-    else
-        return opt_exp.value();
+        return -*opt_exp;
+    return *opt_exp;
 }
 
 using FloatConversionIntType = uint64_t;
@@ -224,7 +223,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
         if (!opt_exp)
             return nullopt;
 
-        exponent = opt_exp.value();
+        exponent = *opt_exp;
     }
 
     gul::string_view str_before_point{ str };
@@ -392,12 +391,12 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
         if (!result)
             return nullopt;
 
-        if (result.value() == max_abs_negative_value)
+        if (*result == max_abs_negative_value)
             return std::numeric_limits<NumberType>::lowest();
-        else if (result.value() > max_abs_negative_value)
+        else if (*result > max_abs_negative_value)
             return nullopt;
 
-        return -static_cast<NumberType>(result.value());
+        return -static_cast<NumberType>(*result);
     }
 
     return detail::to_unsigned_integer<NumberType>(str);
@@ -443,7 +442,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept(
         auto result = detail::to_unsigned_float<NumberType>(str);
         if (!result)
             return nullopt;
-        return -result.value();
+        return -*result;
     }
 
     return detail::to_unsigned_float<NumberType>(str);
