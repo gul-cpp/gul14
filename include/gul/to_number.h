@@ -162,45 +162,51 @@ constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view 
 }
 
 template <typename NumberType>
-constexpr inline optional<optional<NumberType>> check_inf_nan(gul::string_view str) noexcept
+struct ParseInfNanResult {
+    bool result_valid;
+    optional<NumberType> result;
+};
+
+template <typename NumberType>
+constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul::string_view str) noexcept
 {
     auto const strlength = str.length();
     if (strlength == 0)
-        return { {} };
+        return { true, {} };
 
     if (gul::starts_with_nocase(str, "inf")) {
         if (strlength == 3 /* strlen("inf") */ )
-            return { make_optional(std::numeric_limits<NumberType>::infinity()) };
+            return { true, make_optional(std::numeric_limits<NumberType>::infinity()) };
         if (strlength == 8 /* strlen("infinity") */
                 and gul::starts_with_nocase(str.substr(3), "inity"))
-            return { make_optional(std::numeric_limits<NumberType>::infinity()) };
-        return { {} };
+            return { true, make_optional(std::numeric_limits<NumberType>::infinity()) };
+        return { true, {} };
     }
 
     if (gul::starts_with_nocase(str, "nan")) {
         if (strlength == 3 /* strlen("nan") */ )
-            return { make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
+            return { true, make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
         if (strlength < 5 /* strlen("nan()") */ or str[3] != '(' or str.back() != ')')
-            return { {} };
+            return { true, {} };
         str.remove_prefix(4);
         str.remove_suffix(1);
         while (str.length()) {
             if (not is_nan_specifier(str.front()))
-                return { {} };
+                return { true, {} };
             str.remove_prefix(1);
         }
         // We do not use the NaN specifier
-        return { make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
+        return { true, make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
     }
-    return nullopt;
+    return { false, {} };
 }
 
 template <typename NumberType>
 constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
 {
-    auto inf_nan = check_inf_nan<NumberType>(str);
-    if (inf_nan.has_value())
-        return *inf_nan;
+    auto inf_nan = parse_inf_nan<NumberType>(str);
+    if (inf_nan.result_valid)
+        return inf_nan.result;
 
     int exponent = 0;
     auto e_pos = str.find_first_of("eE");
