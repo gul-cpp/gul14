@@ -353,7 +353,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
  * - On Apple clang 8.0.0 std::pow<long double>() is inaccurate.
  */
 template <typename NumberType>
-inline optional<NumberType> to_signed_float(gul::string_view str)
+inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept(false)
 {
     if (str.empty())
         return nullopt;
@@ -433,6 +433,10 @@ inline optional<NumberType> to_signed_float(gul::string_view str)
  * \note
  * This function has different overloads for unsigned integers, signed integers, and
  * floating-point types.
+ * \note
+ * The floating-point overload allocates an intermediate string and can throw if
+ * - The intermediate integer type is too small in comparison to NumberType
+ * - If this function is used with long double on Apple Clang
  *
  * \since GUL version 1.6
  * \since GUL version 1.7 the NAN and INF floating point conversion
@@ -509,7 +513,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept(
         // Too big for our approach. Resort to non-constexpr functionality.
         // This actually never happenes with the currently supported platforms / compilers.
         // (Except long double on Darwin)
-        return detail::to_signed_float<NumberType>(str);
+        return detail::strtold_wrapper<NumberType>(str);
     }
 
     if (str.front() == '-')
