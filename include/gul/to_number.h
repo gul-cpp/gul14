@@ -406,30 +406,34 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 // Overload for floating-point types.
 template <typename NumberType,
     std::enable_if_t<std::is_floating_point<NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul::string_view str)
-        noexcept(std::numeric_limits<detail::FloatConversionIntType>::digits10
-                 > std::numeric_limits<NumberType>::digits10)
+constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept(
+#ifdef __APPLE__
+        (sizeof(NumberType) <= sizeof(double)) &&
+#endif
+        (std::numeric_limits<detail::FloatConversionIntType>::digits10
+                 > std::numeric_limits<NumberType>::digits10))
 {
     if (str.empty())
         return nullopt;
 
+    if (
 #ifdef __APPLE__
-    if (sizeof(NumberType) > sizeof(double)) {
         // Apple clang 8.0.0 has a bug with std::pow and long double types,
         // where the result is off by a huge amount. Use std::strtold() here.
-#else
-#   ifdef _MSC_VER
-#       pragma warning( push )
-#       pragma warning( disable: 4127 ) // conditional expression is constant
-#   endif
-    if (std::numeric_limits<detail::FloatConversionIntType>::digits10
-            <= std::numeric_limits<NumberType>::digits10) {
+        (sizeof(NumberType) > sizeof(double)) ||
+#endif
+#ifdef _MSC_VER
+#    pragma warning( push )
+#    pragma warning( disable: 4127 ) // conditional expression is constant
+#endif
+            (std::numeric_limits<detail::FloatConversionIntType>::digits10
+            <= std::numeric_limits<NumberType>::digits10)) {
+#ifdef _MSC_VER
+#    pragma warning( pop )
+#endif
         // Too big for our approach. Resort to non-constexpr functionality.
         // This actually never happenes with the currently supported platforms / compilers.
-#   ifdef _MSC_VER
-#       pragma warning( pop )
-#   endif
-#endif
+        // (Except long double on Darwin)
         return detail::to_signed_float<NumberType>(str);
     }
 
