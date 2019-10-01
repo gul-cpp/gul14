@@ -71,9 +71,9 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time_u
             const auto toc_us = toc<std::chrono::microseconds>(t0);
 
             REQUIRE(toc_s > 0.1 - S_BEFORE);
-            REQUIRE(toc_s < 0.1 + S_AFTER);
+            REQUIRE(toc_s < 0.1 + 2 * S_AFTER);
             REQUIRE(toc_us > 100000 - US_BEFORE);
-            REQUIRE(toc_us < 100000 + US_AFTER);
+            REQUIRE(toc_us < 100000 + 2 * US_AFTER);
         }
     }
 
