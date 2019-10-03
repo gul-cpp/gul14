@@ -331,6 +331,21 @@ public:
         return *this;
     }
 
+    /**
+     * Overload of std::ostream's operator<< to enable a convenient syntax to dump
+     * things to a stream. Can also be used for ofstreams or stringstreams.
+     * \code
+     * std::cerr << hexdump_stream(mydata.data(), mydata.size()) << "\n";
+     * \endcode
+     * The stream is filled successively with the dumped data, no internal representation
+     * of the dump is generated.
+     */
+    friend std::ostream& operator<<(
+        std::ostream& os, const HexdumpParameterForward<IteratorT, ContainerT>& hdp)
+    {
+        return detail::hexdump_stream(os, hdp.begin_, hdp.end_, hdp.prompt_);
+    }
+
 private:
     template <typename ContType,
         std::enable_if_t<!detail::IsHexDumpContainer<ContType>::value, int> = 0
@@ -439,21 +454,6 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
              std::forward<ContainerT>(cont) };
 }
 
-/**
- * Overload of std::ostream's operator<< to enable a convenient syntax to dump
- * things to a stream. Can also be used for ofstreams or stringstreams.
- * \code
- * std::cerr << hexdump_stream(mydata.data(), mydata.size()) << "\n";
- * \endcode
- * The stream is filled successively with the dumped data, no internal representation
- * of the dump is generated.
- */
-template<typename IteratorT, typename ContainerT>
-std::ostream& operator<<(
-    std::ostream& os, const HexdumpParameterForward<IteratorT, ContainerT>& hdp)
-{
-    return detail::hexdump_stream(os, hdp.begin_, hdp.end_, hdp.prompt_);
-}
 
 
 } // namespace gul
