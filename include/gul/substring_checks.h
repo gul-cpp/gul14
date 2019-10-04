@@ -114,7 +114,7 @@ constexpr inline bool starts_with(string_view haystack, string_view hay) noexcep
     const auto hsl = haystack.length();
     const auto hl = hay.length();
 
-    return hsl >= hl && haystack.compare(0, hl, hay) == 0;
+    return hsl >= hl && string_view{ haystack.data(), hl }.compare(hay) == 0;
 }
 
 /**
