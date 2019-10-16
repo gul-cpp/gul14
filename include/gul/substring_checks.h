@@ -163,7 +163,7 @@ constexpr inline bool contains_nocase(string_view haystack, string_view needle) 
         return false;
     for (std::size_t i = 0; i <= haysize - needlesize; ++i) {
         auto j = needlesize;
-        for (; j--;) {
+        while (j-- > 0) {
             if (lowercase_ascii(haystack[j]) != lowercase_ascii(needle[j]))
                 break;
         }
@@ -223,9 +223,7 @@ constexpr inline bool ends_with_nocase(string_view haystack, string_view hay) no
         haystack.remove_suffix(1);
         hay.remove_suffix(1);
     }
-    if (hay.empty())
-        return true;
-    return false;
+    return hay.empty();
 }
 
 /**
@@ -270,9 +268,7 @@ constexpr inline bool starts_with_nocase(string_view haystack, string_view hay) 
         haystack.remove_prefix(1);
         hay.remove_prefix(1);
     }
-    if (hay.empty())
-        return true;
-    return false;
+    return hay.empty();
 }
 
 /**

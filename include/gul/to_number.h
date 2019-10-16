@@ -177,7 +177,7 @@ constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view 
             return nullopt;
         accu += (*f1 * i2_magnitude);
     }
-    return NumberType(accu) / (magnitude / 10);
+    return NumberType(accu) / (magnitude / 10); // NOLINT(bugprone-integer-division): Precision loss is not possible with normalized accu
 
 }
 
@@ -323,7 +323,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
 
     using long_double = long double;
     using CalcType = std::conditional_t<
-        std::greater<std::size_t>()(sizeof(NumberType), sizeof(double)),
+        std::greater<>()(sizeof(NumberType), sizeof(double)),
         long_double, double>;
 
     auto norm_val = to_normalized_float<CalcType>(str_before_point, str_after_point);
@@ -360,9 +360,9 @@ inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept(false
 
     auto input = std::string{ str };
     char* process_end;
-    NumberType value = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
+    auto value = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
 
-    if (input.data() + input.size() != process_end)
+    if (input.data() + input.size() != process_end) // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic): Pointer arithmetic needed because strtold gives pointer back
         return nullopt;
     return value;
 }

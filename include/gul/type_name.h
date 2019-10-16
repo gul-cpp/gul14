@@ -87,7 +87,7 @@ constexpr string_view type_name()
 #if defined(__GNUC__)
     // Clang returns something like "return_type function_name() [T = template_parameter; ...]"
     // GCC returns something like "return_type function_name() [with T = template_parameter]"
-    auto s = string_view{ __PRETTY_FUNCTION__ };
+    auto s = string_view{ static_cast<const char*>(__PRETTY_FUNCTION__) };
     auto const start_idx = s.find(" = ") + 3; // len(" = ") == 3
     s.remove_prefix(start_idx);
 
