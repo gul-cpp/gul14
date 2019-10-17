@@ -25,6 +25,7 @@
 #include <array>
 #include <cstdlib>
 #include <cmath>
+#include <exception>
 #include <type_traits>
 
 #include "gul/internal.h"
@@ -336,10 +337,8 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
 /**
  * Convert a string_view into a floating point number using std::strtold.
  * This function parses the ASCII representation of a number (e.g. "123" or "1.3e10") into
- * a (floating point) number using the long double algorithm of the standard library.
- *
- * An intermediate string is created, whose construction can throw.
- * Furthermore std::strtold() is not specified nothrow (although it is unlikely to throw).
+ * a (floating point) number using the long double algorithm of the standard library. For
+ * this, an intermediate string is created.
  *
  * \tparam NumberType Destination numeric type, usually long double.
  * \param str  The string to be converted into a number.
@@ -353,18 +352,25 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
  * - On Apple clang 8.0.0 std::pow<long double>() is inaccurate.
  */
 template <typename NumberType>
-inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept(false)
+inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
 
-    auto input = std::string{ str };
-    char* process_end;
-    auto value = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
+    try
+    {
+        auto input = std::string{ str };
+        char* process_end;
+        auto value = static_cast<NumberType>(std::strtold(input.c_str(), &process_end));
 
-    if (input.data() + input.size() != process_end) // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic): Pointer arithmetic needed because strtold gives pointer back
+        if (input.data() + input.size() != process_end) // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic): Pointer arithmetic needed because strtold gives pointer back
+            return nullopt;
+        return value;
+    }
+    catch (const std::exception &)
+    {
         return nullopt;
-    return value;
+    }
 }
 
 } // namespace detail
@@ -434,9 +440,9 @@ inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept(false
  * This function has different overloads for unsigned integers, signed integers, and
  * floating-point types.
  * \note
- * The floating-point overload allocates an intermediate string and can throw if
- * - The intermediate integer type is too small in comparison to NumberType
- * - If this function is used with long double on Apple Clang
+ * The floating-point overload allocates an intermediate string if
+ * - the intermediate integer type is too small in comparison to NumberType or
+ * - this function is used with long double on Apple Clang.
  *
  * \since GUL version 1.6
  * \since GUL version 1.7 the NAN and INF floating point conversion
@@ -485,12 +491,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 // Overload for floating-point types.
 template <typename NumberType,
     std::enable_if_t<std::is_floating_point<NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept(
-#ifdef __APPLE__
-        (sizeof(NumberType) <= sizeof(double)) &&
-#endif
-        (std::numeric_limits<detail::FloatConversionIntType>::digits10
-                 > std::numeric_limits<NumberType>::digits10))
+constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
