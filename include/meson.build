@@ -8,6 +8,7 @@ install_headers(libgul_main_header)
 
 # The standalone_headers are tested for self-containment in the tests section
 standalone_headers = [
+    'gul/bit_manip.h',
     'gul/case_ascii.h',
     'gul/cat.h',
     'gul/escape.h',

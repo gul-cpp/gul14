@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "gul/bit_manip.h"
 #include "gul/case_ascii.h"
 #include "gul/cat.h"
 #include "gul/escape.h"
@@ -117,6 +118,10 @@ namespace gul {
  * \page release_notes Release Notes
  *
  * \section changelog_1_x 1.x Versions
+ *
+ * \subsection v1_8 Version 1.8
+ *
+ * - Add bit_set(), bit_reset(), bit_flip(), bit_test()
  *
  * \subsection v1_7 Version 1.7
  *
@@ -406,6 +411,20 @@ namespace gul {
  * within_ulp():
  *     Determine if two numbers are almost equal, allowing for a difference of a given
  *     number of units-in-the-last-place (ULPs).
+ *
+ * <h4>Working With Bits in Integral Values</h4>
+ *
+ * bit_set():
+ *     Set a bit in an integral value.
+ *
+ * bit_reset():
+ *     Clear a bit in an integral value.
+ *
+ * bit_flip():
+ *     Flip a bit in an integral value.
+ *
+ * bit_test():
+ *     Test a bit in an integral value.
  */
 
 /**
