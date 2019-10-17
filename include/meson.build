@@ -18,6 +18,7 @@ standalone_headers = [
     'gul/replace.h',
     'gul/SlidingBuffer.h',
     'gul/statistics.h',
+    'gul/string_util.h',
     'gul/substring_checks.h',
     'gul/time_util.h',
     'gul/to_number.h',
@@ -32,7 +33,6 @@ libgul_sub_headers += files([
     'gul/catch.h',
     'gul/internal.h',
     'gul/optional.h',
-    'gul/string_util.h',
     'gul/string_view.h',
     'gul/version.h',
 ])
