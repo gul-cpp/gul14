@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <type_traits>
 
 #include "gul/internal.h"
@@ -56,7 +57,7 @@ using BitFunctionReturnType =
  * and only that bit is set.
  *
  * When \b bit is greater or equal to the number of bits in type \b T,
- * the behavior is undefined.
+ * std::abort() is called (via assert()).
  *
  * \param bit      Number of the bit that is to be set (LSB == 0)
  *
@@ -73,6 +74,7 @@ using BitFunctionReturnType =
  */
 template <typename T = unsigned, typename ReturnT = BitFunctionReturnType<T>>
 auto constexpr inline bit_set(unsigned bit) noexcept -> ReturnT {
+    assert(bit < sizeof(T) * 8);
     return (std::make_unsigned_t<T>{1} << bit);
 }
 
@@ -82,7 +84,7 @@ auto constexpr inline bit_set(unsigned bit) noexcept -> ReturnT {
  * Set the bit number \b bit in the existing value \b previous.
  *
  * When \b bit is greater or equal to the number of bits in type \b T,
- * the behavior is undefined.
+ * std::abort() is called (via assert()).
  *
  * \param previous Existing integral value where the bit shall be modified
  * \param bit      Number of the bit that is to be modified (LSB == 0)
@@ -107,7 +109,7 @@ auto constexpr inline bit_set(T previous, unsigned bit) noexcept -> ReturnT {
  * Reset (clear) the bit number \b bit in the existing value \b previous.
  *
  * When \b bit is greater or equal to the number of bits in type \b T,
- * the behavior is undefined.
+ * std::abort() is called (via assert()).
  *
  * \param previous Existing integral value where the bit shall be modified
  * \param bit      Number of the bit that is to be modified (LSB == 0)
@@ -134,7 +136,7 @@ auto constexpr inline bit_reset(T previous, unsigned bit) noexcept -> ReturnT {
  * previously not set and resetting the bit if it was previously set.
  *
  * When \b bit is greater or equal to the number of bits in type \b T,
- * the behavior is undefined.
+ * std::abort() is called (via assert()).
  *
  * \param previous Existing integral value where the bit shall be modified
  * \param bit      Number of the bit that is to be modified (LSB == 0)
@@ -159,7 +161,7 @@ auto constexpr inline bit_flip(T previous, unsigned bit) noexcept -> ReturnT {
  * Test the bit number \b bit in the existing value \b bits.
  *
  * When \b bit is greater or equal to the number of bits in type \b T,
- * the behavior is undefined.
+ * std::abort() is called (via assert()).
  *
  * \param bits     Integral value where the bit shall be tested
  * \param bit      Number of the bit that is to be modified (LSB == 0)
