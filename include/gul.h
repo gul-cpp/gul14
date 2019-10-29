@@ -120,6 +120,7 @@ namespace gul {
  *
  * \subsection v1_7 Version 1.7
  *
+ * - *Released with DOOCS 19.10.0*
  * - Add contains_nocase(), starts_with_nocase(), ends_with_nocase()
  * - Bugfix in within_ulp() for subnormal numbers
  * - Fix SlidingBuffer{} constructor for non-trivial elements
@@ -128,11 +129,12 @@ namespace gul {
  *
  * \subsection v1_6 Version 1.6
  *
- * - *Released with DOOCS 19.8.0*
+ * - *Released with DOOCS 19.8.2*
  * - Add to_number()
  *
  * \subsection v1_5 Version 1.5
  *
+ * - *Released with DOOCS 19.8.0*
  * - Add gul::optional, a backport of std::optional from C++17
  *
  * \subsection v1_4 Version 1.4
