@@ -305,13 +305,11 @@ auto random_float() -> Float
     return converter.f;
 }
 
-TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", float, double, long double)
+TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]",
+                   float, double, long double)
 {
-    int loops = 100'000;
-#ifdef ARM
-    // Do less thoroughly test on ARM because of performance limits
-    loops = 30'000;
-#endif
+    int loops = 5'000;
+
     // long double is rather time consuming
     if (std::is_same<TestType, long double>::value)
         loops = 100;
@@ -350,6 +348,38 @@ TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]", f
             REQUIRE(true == gul::within_ulp(*converted, num, 3));
         }
     }
+}
+
+TEMPLATE_TEST_CASE("to_number(): Convert integers with many leading zeros", "[to_number]",
+                   signed char, unsigned char, short, unsigned short, int, unsigned int,
+                   long, unsigned long, long long, unsigned long long)
+{
+    REQUIRE(to_number<TestType>("000000000000000000000000000000000000000000010") == TestType{ 10 });
+}
+
+TEMPLATE_TEST_CASE("to_number(): Convert floating-point values with many leading and trailing zeros", "[to_number]",
+    float, double, long double)
+{
+    auto const lenience = 0;
+
+    auto const test1 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1");
+    REQUIRE(gul::within_ulp(test1.value(), TestType{ 0.1l }, lenience) == true);
+
+    auto const test2 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1"
+            "00000000000000000000000000000000000000000000000000");
+    REQUIRE(gul::within_ulp(test2.value(), TestType{ 0.1l }, lenience) == true);
+
+    auto const test3 = to_number<TestType>("00000000000000000000000000000000000000000000000001"
+            "e000000000000000000000000000000000000000000000000000");
+    REQUIRE(gul::within_ulp(test3.value(), TestType{ 1.0l }, lenience) == true);
+
+    auto const test4 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1e"
+            "0000000000000000000000000000000000000000000000000");
+    REQUIRE(gul::within_ulp(test4.value(), TestType{ 0.1l }, lenience) == true);
+
+    auto const test5 = to_number<TestType>("0.00000000000000000000000000000000000000000000000001"
+            "e0000000000000000000000000000000000000000000000001");
+    REQUIRE(gul::within_ulp(test5.value(), TestType{ 1.0e-49l }, lenience) == true);
 }
 
 /* Disabled because doocsdev16's gcc has insufficient constexpr support (but works on
