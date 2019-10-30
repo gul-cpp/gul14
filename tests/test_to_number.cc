@@ -38,6 +38,13 @@ using gul::to_number;
 int constexpr long_double_lenience = 3;
 int constexpr double_lenience = 3;
 
+// Settings for the random round trip tests
+// To test thoroughly the number of test should be 100'000
+struct TestConfig {
+    bool static const random_includes_inf_nan{ false };
+    unsigned static const number_of_random_tests{ 5'000 };
+};
+
 TEST_CASE("to_number(): Integer types", "[to_number]")
 {
     REQUIRE(to_number<char>("0").value() == 0);
@@ -295,12 +302,8 @@ auto random_float() -> Float
         converter.i.a = dis(gen);
         converter.i.b = dis(gen);
     }
-#if 0
-    while (false);
-#else
-    // discard/retry if random number is NaN or INF
-    while (std::isnan(converter.f) or not std::isfinite(converter.f));
-#endif
+    while (not TestConfig::random_includes_inf_nan
+            and (std::isnan(converter.f) or not std::isfinite(converter.f)));
 
     return converter.f;
 }
@@ -308,7 +311,7 @@ auto random_float() -> Float
 TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]",
                    float, double, long double)
 {
-    int loops = 5'000;
+    auto loops = TestConfig::number_of_random_tests;
 
     // long double is rather time consuming
     if (std::is_same<TestType, long double>::value)
@@ -317,7 +320,7 @@ TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]",
     int i_inf{ };
     int i_sub{ };
     int i_nor{ };
-    for (int i = 0; i < loops; ++i) {
+    for (auto i{ 0u }; i < loops; ++i) {
         TestType const num = random_float<TestType>();
 
         auto ss = std::stringstream{ };
