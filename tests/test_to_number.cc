@@ -366,23 +366,23 @@ TEMPLATE_TEST_CASE("to_number(): Convert floating-point values with many leading
     auto const lenience = 0;
 
     auto const test1 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1");
-    REQUIRE(gul::within_ulp(test1.value(), TestType{ 0.1l }, lenience) == true);
+    REQUIRE(gul::within_ulp(test1.value(), TestType(0.1l), lenience) == true);
 
     auto const test2 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1"
             "00000000000000000000000000000000000000000000000000");
-    REQUIRE(gul::within_ulp(test2.value(), TestType{ 0.1l }, lenience) == true);
+    REQUIRE(gul::within_ulp(test2.value(), TestType(0.1l), lenience) == true);
 
     auto const test3 = to_number<TestType>("00000000000000000000000000000000000000000000000001"
             "e000000000000000000000000000000000000000000000000000");
-    REQUIRE(gul::within_ulp(test3.value(), TestType{ 1.0l }, lenience) == true);
+    REQUIRE(gul::within_ulp(test3.value(), TestType(1.0l), lenience) == true);
 
     auto const test4 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1e"
             "0000000000000000000000000000000000000000000000000");
-    REQUIRE(gul::within_ulp(test4.value(), TestType{ 0.1l }, lenience) == true);
+    REQUIRE(gul::within_ulp(test4.value(), TestType(0.1l), lenience) == true);
 
     auto const test5 = to_number<TestType>("0.00000000000000000000000000000000000000000000000001"
             "e0000000000000000000000000000000000000000000000001");
-    REQUIRE(gul::within_ulp(test5.value(), TestType{ 1.0e-49l }, lenience) == true);
+    REQUIRE(gul::within_ulp(test5.value(), TestType(1.0e-49l), lenience) == true);
 }
 
 /* Disabled because doocsdev16's gcc has insufficient constexpr support (but works on
