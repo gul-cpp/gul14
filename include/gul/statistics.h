@@ -286,7 +286,7 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
     // What is the middle element?
     auto middle = data_copy.begin() + (len / 2);
     std::nth_element(data_copy.begin(), middle, data_copy.end());
-    auto median = ResultT{ *middle };
+    auto median = static_cast<ResultT>(*middle);
 
     // If we have an even number of elements we need to do more:
     // We calculate the mean value of the two 'middle' elements

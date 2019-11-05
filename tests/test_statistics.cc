@@ -203,6 +203,10 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto durchschnitt = mean(my_data);
 
         REQUIRE_THAT(durchschnitt, Catch::Matchers::WithinULP(5.54000f, 3));
+
+        std::vector<int> my_int_data = { 3, 2, 7, 9, 5 };
+        REQUIRE_THAT(mean(my_int_data), Catch::Matchers::WithinULP(5.2, 3));
+        REQUIRE_THAT(median(my_int_data), Catch::Matchers::WithinULP(5.0, 3));
     }
 
     SECTION("data analysis examples: example with accessors") {
