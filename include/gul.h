@@ -33,6 +33,7 @@
 #include "gul/optional.h"
 #include "gul/replace.h"
 #include "gul/SlidingBuffer.h"
+#include "gul/span.h"
 #include "gul/statistics.h"
 #include "gul/string_util.h"
 #include "gul/string_view.h"
@@ -220,6 +221,12 @@ namespace gul {
  * <dd>Copyright 2011-2012 Andrzej Krzemienski.
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     \ref license_boost_1_0 and \ref optional.h for details).</dd>
+ *
+ * <dt>\ref span.h</dt>
+ * <dd>Copyright 2018 Tristan Brindle.
+ *     Distributed under the Boost Software License, Version 1.0 (see
+ *     \ref license_boost_1_0 and \ref span.h for details).</dd>
+ * </dl>
  *
  * <dt>\ref string_view.h</dt>
  * <dd>Copyright 2012-2015 Marshall Clow, copyright 2015 Beman Dawes.

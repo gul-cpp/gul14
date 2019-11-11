@@ -18,6 +18,7 @@ standalone_headers = [
     'gul/num_util.h',
     'gul/replace.h',
     'gul/SlidingBuffer.h',
+    'gul/span.h',
     'gul/statistics.h',
     'gul/string_util.h',
     'gul/substring_checks.h',
