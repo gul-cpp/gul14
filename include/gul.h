@@ -226,7 +226,6 @@ namespace gul {
  * <dd>Copyright 2018 Tristan Brindle.
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     \ref license_boost_1_0 and \ref span.h for details).</dd>
- * </dl>
  *
  * <dt>\ref string_view.h</dt>
  * <dd>Copyright 2012-2015 Marshall Clow, copyright 2015 Beman Dawes.
@@ -448,6 +447,11 @@ namespace gul {
  *     [std::optional](https://en.cppreference.com/w/cpp/utility/optional)
  *     from C++17 for almost all use cases.
  * 
+ * \ref gul::span "span":
+ *     A view to a contiguous sequence of objects. It should behave like
+ *     [std::span](https://en.cppreference.com/w/cpp/container/span) from C++20 for almost
+ *     all use cases.
+ *
  * \ref gul::string_view "string_view":
  *     A view to a contiguous sequence of chars. It should behave like
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)

@@ -25,13 +25,14 @@
 #include <stdexcept>
 #include <type_traits>
 
-// Various feature test macros
+namespace gul {
 
+/// \cond HIDE_SYMBOLS
+
+// Various feature test macros
 #if __cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
 #define GUL_SPAN_HAVE_CPP17
 #endif
-
-namespace gul {
 
 #if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_inline_variables)
 #define GUL_SPAN_INLINE_VAR inline
@@ -206,6 +207,16 @@ struct is_complete<T, decltype(sizeof(T))> : std::true_type {};
 
 } // namespace detail
 
+
+/// \endcond
+
+
+/**
+ * A view to a contiguous sequence of objects. This is a backport of
+ * [std::span](https://en.cppreference.com/w/cpp/container/span) from C++20.
+ *
+ * \since GUL version 1.9
+ */
 template <typename ElementType, std::size_t Extent>
 class span {
     static_assert(std::is_object<ElementType>::value,
@@ -220,6 +231,9 @@ class span {
     using storage_type = detail::span_storage<ElementType, Extent>;
 
 public:
+
+/// \{
+
     // constants and types
     using element_type = ElementType;
     using value_type = typename std::remove_cv<ElementType>::type;
@@ -430,7 +444,12 @@ public:
 
 private:
     storage_type storage_{};
+
+/// \}
+
 };
+
+/// \cond HIDE_SYMBOLS
 
 #ifdef GUL_SPAN_HAVE_DEDUCTION_GUIDES
 
@@ -575,6 +594,10 @@ constexpr auto get(span<E, S> s) -> decltype(s[N])
 {
     return s[N];
 }
+
+
+/// \endcond
+
 
 } // namespace gul
 
