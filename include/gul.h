@@ -121,7 +121,9 @@ namespace gul {
  *
  * \subsection v1_8 Version 1.8
  *
+ * - *Released with DOOCS 19.11.0*
  * - Add bit_set(), bit_reset(), bit_flip(), bit_test()
+ * - Make to_number() unconditionally noexcept
  *
  * \subsection v1_7 Version 1.7
  *
