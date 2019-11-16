@@ -120,6 +120,10 @@ namespace gul {
  *
  * \section changelog_1_x 1.x Versions
  *
+ * \subsection v1_9 Version 1.9
+ *
+ * - Add gul::span, a backport of std::span from C++20
+ *
  * \subsection v1_8 Version 1.8
  *
  * - *Released with DOOCS 19.11.0*
