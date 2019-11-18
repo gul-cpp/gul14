@@ -471,6 +471,14 @@ span(const Container&)->span<const typename Container::value_type>;
 
 #endif // GUL_HAVE_DEDUCTION_GUIDES
 
+/// \endcond
+
+/**
+ * Create a span from another span.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename ElementType, std::size_t Extent>
 constexpr span<ElementType, Extent>
 make_span(span<ElementType, Extent> s) noexcept
@@ -478,18 +486,36 @@ make_span(span<ElementType, Extent> s) noexcept
     return s;
 }
 
+/**
+ * Create a span from a fixed-size array.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename T, std::size_t N>
 constexpr span<T, N> make_span(T (&arr)[N]) noexcept
 {
     return {arr};
 }
 
+/**
+ * Create a span from a std::array.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename T, std::size_t N>
 GUL_SPAN_ARRAY_CONSTEXPR span<T, N> make_span(std::array<T, N>& arr) noexcept
 {
     return {arr};
 }
 
+/**
+ * Create a span from a const std::array.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename T, std::size_t N>
 GUL_SPAN_ARRAY_CONSTEXPR span<const T, N>
 make_span(const std::array<T, N>& arr) noexcept
@@ -497,18 +523,32 @@ make_span(const std::array<T, N>& arr) noexcept
     return {arr};
 }
 
+/**
+ * Create a span from a container.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename Container>
 constexpr span<typename Container::value_type> make_span(Container& cont)
 {
     return {cont};
 }
 
+/**
+ * Create a span from a const container.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename Container>
 constexpr span<const typename Container::value_type>
 make_span(const Container& cont)
 {
     return {cont};
 }
+
+/// \cond HIDE_SYMBOLS
 
 /* Comparison operators */
 // Implementation note: the implementations of == and < are equivalent to
@@ -571,6 +611,14 @@ constexpr bool operator>=(span<T, X> lhs, span<U, Y> rhs)
     return !(lhs < rhs);
 }
 
+/// \endcond
+
+/**
+ * Return a constant view to the byte representation of the elements of a given span.
+ * 
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <typename ElementType, std::size_t Extent>
 span<const byte, ((Extent == dynamic_extent) ? dynamic_extent
                                              : sizeof(ElementType) * Extent)>
@@ -579,6 +627,12 @@ as_bytes(span<ElementType, Extent> s) noexcept
     return {reinterpret_cast<const byte*>(s.data()), s.size_bytes()};
 }
 
+/**
+ * Return a writable view to the byte representation of the elements of a given span.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ */
 template <
     class ElementType, size_t Extent,
     typename std::enable_if<!std::is_const<ElementType>::value, int>::type = 0>
@@ -589,17 +643,20 @@ as_writable_bytes(span<ElementType, Extent> s) noexcept
     return {reinterpret_cast<byte*>(s.data()), s.size_bytes()};
 }
 
+/**
+ * Return a reference to the Nth element of a given span.
+ *
+ * This is a backport from the C++20 standard library, see:
+ * https://en.cppreference.com/w/cpp/container/span/get
+ */
 template <std::size_t N, typename E, std::size_t S>
 constexpr auto get(span<E, S> s) -> decltype(s[N])
 {
     return s[N];
 }
 
-
-/// \endcond
-
-
 } // namespace gul
+
 
 namespace std {
 
