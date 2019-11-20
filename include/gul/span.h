@@ -539,6 +539,8 @@ constexpr bool operator>=(span<T, X> lhs, span<U, Y> rhs)
  * 
  * This is a backport from the C++20 standard library, see:
  * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ *
+ * \since GUL version 1.9
  */
 template <typename ElementType, std::size_t Extent>
 span<const byte, ((Extent == dynamic_extent) ? dynamic_extent
@@ -553,6 +555,8 @@ as_bytes(span<ElementType, Extent> s) noexcept
  *
  * This is a backport from the C++20 standard library, see:
  * https://en.cppreference.com/w/cpp/container/span/as_bytes
+ *
+ * \since GUL version 1.9
  */
 template <
     class ElementType, size_t Extent,
@@ -569,6 +573,8 @@ as_writable_bytes(span<ElementType, Extent> s) noexcept
  *
  * This is a backport from the C++20 standard library, see:
  * https://en.cppreference.com/w/cpp/container/span/get
+ *
+ * \since GUL version 1.9
  */
 template <std::size_t N, typename E, std::size_t S>
 constexpr auto get(span<E, S> s) -> decltype(s[N])
@@ -595,6 +601,6 @@ public:
     using type = ElementType;
 };
 
-} // end namespace std
+} // namespace std
 
 // vi:ts=4:sw=4:sts=4:et
