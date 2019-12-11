@@ -22,9 +22,9 @@
 
 #pragma once
 
-#include "gul/case_ascii.h"
-#include "gul/internal.h"
-#include "gul/string_view.h"
+#include "gul14/case_ascii.h"
+#include "gul14/internal.h"
+#include "gul14/string_view.h"
 
 namespace gul {
 

@@ -24,12 +24,12 @@
 #include <random>
 #include <sstream>
 
-#include "gul/cat.h"
-#include "gul/catch.h"
-#include "gul/join_split.h"
-#include "gul/SlidingBuffer.h"
-#include "gul/trim.h"
-#include "gul/tokenize.h"
+#include "gul14/cat.h"
+#include "gul14/catch.h"
+#include "gul14/join_split.h"
+#include "gul14/SlidingBuffer.h"
+#include "gul14/trim.h"
+#include "gul14/tokenize.h"
 
 using namespace std::literals::string_literals;
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "gul/internal.h"
-#include "gul/string_view.h"
+#include "gul14/internal.h"
+#include "gul14/string_view.h"
 
 namespace gul {
 

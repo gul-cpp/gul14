@@ -26,8 +26,8 @@
 #include <sstream>
 #include <type_traits>
 #include <utility>
-#include "gul/internal.h"
-#include "gul/string_view.h"
+#include "gul14/internal.h"
+#include "gul14/string_view.h"
 
 ////// Overview of the prototypes contained in here, but without template specifications:
 //

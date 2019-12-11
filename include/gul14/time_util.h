@@ -24,8 +24,8 @@
 
 #include <chrono>
 #include <thread>
-#include "gul/internal.h"
-#include "gul/Trigger.h"
+#include "gul14/internal.h"
+#include "gul14/Trigger.h"
 
 namespace gul {
 

@@ -22,8 +22,8 @@
 
 #include <type_traits>
 
-#include "gul/catch.h"
-#include "gul/bit_manip.h"
+#include "gul14/catch.h"
+#include "gul14/bit_manip.h"
 
 TEMPLATE_TEST_CASE("All bit_*() functions", "[bit_manip]",
         char, unsigned char, signed char, short, unsigned short, int,

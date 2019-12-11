@@ -20,8 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/cat.h"
-#include "gul/catch.h"
+#include "gul14/cat.h"
+#include "gul14/catch.h"
 
 using namespace std::literals;
 using gul::cat;

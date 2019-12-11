@@ -31,7 +31,7 @@
 #include <string>
 #include <cstring>
 #include <iosfwd>
-#include "gul/internal.h"
+#include "gul14/internal.h"
 
 #if __cpp_constexpr >= 201304
 #define STX_CONSTEXPR14 constexpr

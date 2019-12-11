@@ -21,8 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/case_ascii.h"
-#include "gul/catch.h"
+#include "gul14/case_ascii.h"
+#include "gul14/catch.h"
 
 using namespace std::literals;
 using namespace gul;

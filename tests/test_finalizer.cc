@@ -23,8 +23,8 @@
 #include <new>
 #include <string>
 
-#include "gul/catch.h"
-#include "gul/finalizer.h"
+#include "gul14/catch.h"
+#include "gul14/finalizer.h"
 
 TEST_CASE("Finalizer Tests", "[finalizer]")
 {

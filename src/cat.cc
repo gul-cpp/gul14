@@ -4,7 +4,7 @@
  * \brief   Implementation of cat() for two or more parameters.
  * \date    Created on August 31, 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/cat.h"
+#include "gul14/cat.h"
 
 namespace gul {
 

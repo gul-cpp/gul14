@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "gul/internal.h"
+#include "gul14/internal.h"
 #include "string_view.h"
 
 namespace gul {

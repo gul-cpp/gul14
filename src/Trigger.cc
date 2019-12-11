@@ -20,7 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/Trigger.h"
+#include "gul14/Trigger.h"
 
 namespace gul {
 

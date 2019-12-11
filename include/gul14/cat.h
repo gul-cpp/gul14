@@ -25,8 +25,8 @@
 
 #include <string>
 #include <type_traits>
-#include "gul/internal.h"
-#include "gul/string_view.h"
+#include "gul14/internal.h"
+#include "gul14/string_view.h"
 
 namespace gul {
 
