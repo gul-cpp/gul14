@@ -1,5 +1,5 @@
 /**
- * \file    gul.h
+ * \file    gul14/gul.h
  * \authors \ref contributors
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
@@ -46,7 +46,11 @@
 #include "gul14/type_name.h"
 #include "gul14/version.h"
 
-/// namespace gul14 contains all functions and classes of the General Utility Library.
+/**
+ * Namespace gul14 contains all functions and classes of the General Utility Library.
+ * The main header file gul14/gul.h defines an alias namespace `gul` that can be used
+ * instead.
+ */
 namespace gul14 {
 
 /**
@@ -83,11 +87,12 @@ namespace gul14 {
  *
  * \section usage Usage
  *
- * To use the library, include the single header file \ref gul.h and link your code
+ * To use the library, include the single header file \ref gul14/gul.h and link your code
  * against the library (-lgul). If you are on Windows, see \ref using_gul_on_windows.
  *
  * GUL requires at least C++14. All utility functions and classes are enclosed in the
- * namespace \ref gul.
+ * namespace \ref gul14. The main header file defines a convenience alias so that also the
+ * namespace qualifier `gul::` can be used.
  *
  * \section source_code Obtaining the Source Code
  *
