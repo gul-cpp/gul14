@@ -22,7 +22,7 @@
 
 #include "gul14/Trigger.h"
 
-namespace gul {
+namespace gul14 {
 
 
 Trigger::~Trigger() noexcept
@@ -76,4 +76,4 @@ void Trigger::wait() const
 }
 
 
-} // namespace gul
+} // namespace gul14

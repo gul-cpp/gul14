@@ -26,7 +26,7 @@
 #include <utility>
 #include "gul14/internal.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * FinalAction allows us to execute something if the FinalAction object leaves the scope.
@@ -48,8 +48,8 @@ namespace gul {
  *  #include <gul/time_util.h>
  *
  *  void foo() {
- *      auto _ = gul::finally([start = gul::tic()] {
- *          std::cerr << "Function foo() took " << gul::toc(start) << "s.\n";
+ *      auto _ = gul14::finally([start = gul14::tic()] {
+ *          std::cerr << "Function foo() took " << gul14::toc(start) << "s.\n";
  *      });
  *
  *      std::srand(std::time(nullptr));
@@ -57,7 +57,7 @@ namespace gul {
  *          std::cout << "Premature exit\n";
  *          return;
  *      }
- *      gul::sleep(10); // do important stuff (like sleeping)
+ *      gul14::sleep(10); // do important stuff (like sleeping)
  *      std::cout << "Normal exit\n";
  *  }
  * \endcode
@@ -71,7 +71,7 @@ namespace gul {
  *      char* buffer = new char[100];
  *      if (buffer == nullptr)
  *          return;
- *      auto _ = gul::finally([&] { delete[] buffer; buffer = nullptr; });
+ *      auto _ = gul14::finally([&] { delete[] buffer; buffer = nullptr; });
  *
  *      // do stuff that might throw here
  *
@@ -154,6 +154,6 @@ FinalAction<typename std::decay_t<F>> finally(F&& f) noexcept {
     return FinalAction<typename std::decay_t<F>>(std::forward<typename std::decay_t<F>>(f));
 }
 
-} /* namespace gul */
+} // namespace gul14
 
 // vi:et:sts=4:sw=4:ts=4

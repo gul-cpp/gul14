@@ -1,7 +1,7 @@
 /**
  * \file   string_view.h
  * \author Marshall Clow, Beman Dawes
- * \brief  Provides a gul::string_view that is fully compatible with C++17's
+ * \brief  Provides a gul14::string_view that is fully compatible with C++17's
  *         std::string_view.
  *
  * \copyright
@@ -39,7 +39,7 @@
 #define STX_CONSTEXPR14
 #endif
 
-namespace gul {
+namespace gul14 {
 
 namespace detail {
 
@@ -109,7 +109,7 @@ struct char_traits : public BaseT
  * [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  * from libc++ for C++17.
  */
-template<typename charT, typename traits = gul::char_traits<charT>>
+template<typename charT, typename traits = gul14::char_traits<charT>>
 class basic_string_view {
 public:
     // types
@@ -168,7 +168,7 @@ public:
     constexpr const_reference operator[](size_type pos) const noexcept { return ptr_[pos]; }
 
     constexpr const_reference at(size_t pos) const {
-        return pos >= len_ ?  throw std::out_of_range("gul::string_view::at") : ptr_[pos];
+        return pos >= len_ ?  throw std::out_of_range("gul14::string_view::at") : ptr_[pos];
     }
 
     constexpr const_reference front() const                { return ptr_[0]; }
@@ -681,4 +681,4 @@ inline std::string operator+(string_view a, std::string b)
 /// \endcond
 
 
-} // namespace gul
+} // namespace gul14

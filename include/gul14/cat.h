@@ -28,12 +28,12 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * A string view that can automatically convert numbers into strings.
- * This class is primarily intended for use as a parameter in gul::cat().
- * For string-like arguments, it acts similar to gul::string_view. Number-like
+ * This class is primarily intended for use as a parameter in gul14::cat().
+ * For string-like arguments, it acts similar to gul14::string_view. Number-like
  * arguments (double, int, ...) are converted into strings in a default format using
  * std::to_string. Arguments of type char are converted into a string of length 1.
  */
@@ -80,7 +80,7 @@ private:
  * cat() reserves the correct amount of space before concatenating the strings and can
  * therefore save several memory allocations compared to concatenation with "+".
  * \code
- * std::string str = gul::cat(13.5, std::string(" quick "), "brown foxes ", "jump over ",
+ * std::string str = gul14::cat(13.5, std::string(" quick "), "brown foxes ", "jump over ",
  *                            42, " lazy dogs'", std::string(" heads."));
  * // str == "13.500000 quick brown foxes jump over 42 lazy dogs' heads."
  * \endcode
@@ -111,4 +111,4 @@ inline std::string cat(const Args&... args)
     return cat({ args... }); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay): Impossible to remove that warning
 }
 
-} // namespace gul
+} // namespace gul14

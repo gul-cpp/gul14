@@ -29,7 +29,7 @@
 
 #include "gul14/internal.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Compute the absolute value of a number.
@@ -88,8 +88,8 @@ template<typename NumT, typename OrderT,
     >>
 bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
-    return gul::abs(a - b)
-        < (std::max(gul::abs(a), gul::abs(b)) / std::pow(static_cast<std::decay_t<NumT>>(10.0), orders));
+    return gul14::abs(a - b)
+        < (std::max(gul14::abs(a), gul14::abs(b)) / std::pow(static_cast<std::decay_t<NumT>>(10.0), orders));
 }
 
 /**
@@ -105,7 +105,7 @@ bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(fal
  */
 template<typename NumT>
 bool within_abs(NumT a, NumT b, NumT tol) noexcept {
-    tol = gul::abs(tol); // Negative diff does not make sense
+    tol = gul14::abs(tol); // Negative diff does not make sense
     bool ret{};
     if (a > b) {
         if (std::is_floating_point<NumT>::value)
@@ -222,6 +222,6 @@ constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi, Compa
     return v;
 }
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:et

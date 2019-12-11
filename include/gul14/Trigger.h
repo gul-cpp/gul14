@@ -27,7 +27,7 @@
 #include <mutex>
 #include "gul14/internal.h"
 
-namespace gul {
+namespace gul14 {
 
 
 /**
@@ -215,4 +215,4 @@ private:
 };
 
 
-} // namespace gul
+} // namespace gul14

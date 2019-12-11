@@ -1,6 +1,6 @@
 /**
  * \file    optional.h
- * \brief   Implementation of gul::optional.
+ * \brief   Implementation of gul14::optional.
  *
  * \details
  * A header file for representing optional (nullable) objects for C++14 and passing them
@@ -40,7 +40,7 @@
 #define GUL_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
 /// \endcond
 
-namespace gul {
+namespace gul14 {
 
 /// \cond HIDE_SYMBOLS
 
@@ -883,16 +883,16 @@ constexpr optional<X&> make_optional(std::reference_wrapper<X> v) {
 /// \endcond
 
 
-} // namespace gul
+} // namespace gul14
 
 
 /// \cond PRIVATE
 namespace std {
 template <typename T>
-struct hash<gul::optional<T>>
+struct hash<gul14::optional<T>>
 {
     typedef typename hash<T>::result_type result_type;
-    typedef gul::optional<T> argument_type;
+    typedef gul14::optional<T> argument_type;
 
     constexpr result_type operator()(argument_type const& arg) const {
         return arg ? std::hash<T>{}(*arg) : result_type{};
@@ -900,10 +900,10 @@ struct hash<gul::optional<T>>
 };
 
 template <typename T>
-struct hash<gul::optional<T&>>
+struct hash<gul14::optional<T&>>
 {
     typedef typename hash<T>::result_type result_type;
-    typedef gul::optional<T&> argument_type;
+    typedef gul14::optional<T&> argument_type;
 
     constexpr result_type operator()(argument_type const& arg) const {
         return arg ? std::hash<T>{}(*arg) : result_type{};

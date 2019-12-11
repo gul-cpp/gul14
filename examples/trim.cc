@@ -28,32 +28,32 @@ using std::cout;
 int main()
 {
 //! [Using trim() with default and custom whitespace]
-    cout << "[" << gul::trim("\n \b trim(), default whitespace\t \r") << "]\n";
+    cout << "[" << gul14::trim("\n \b trim(), default whitespace\t \r") << "]\n";
     // prints "[trim(), default whitespace]"
 
-    cout << "[" << gul::trim(".:.:.:trim(), custom whitespace.:.:.:.", ".:") << "]\n";
+    cout << "[" << gul14::trim(".:.:.:trim(), custom whitespace.:.:.:.", ".:") << "]\n";
     // prints "[trim(), custom whitespace]"
 //! [Using trim() with default and custom whitespace]
 
 //! [Using trim_left() and trim_right() with default and custom whitespace]
-    cout << "[" << gul::trim_left("\n \b trim_left(), default whitespace   ") << "]\n";
+    cout << "[" << gul14::trim_left("\n \b trim_left(), default whitespace   ") << "]\n";
     // prints "[trim_left(), default whitespace   ]"
 
-    cout << "[" << gul::trim_right(".:.:.:trim_right(), custom whitespace.:.:.:.", ".:") << "]\n";
+    cout << "[" << gul14::trim_right(".:.:.:trim_right(), custom whitespace.:.:.:.", ".:") << "]\n";
     // prints "[.:.:.:trim_right, custom whitespace]"
 //! [Using trim_left() and trim_right() with default and custom whitespace]
 
 //! [Using trim_left_sv() and trim_right_sv() with default and custom whitespace]
-    cout << "[" << gul::trim_left_sv("\n \b trim_left_sv(), default whitespace   ") << "]\n";
+    cout << "[" << gul14::trim_left_sv("\n \b trim_left_sv(), default whitespace   ") << "]\n";
     // prints "[trim_left_sv(), default whitespace   ]"
 
-    cout << "[" << gul::trim_right_sv(".:.:.:trim_right_sv(), custom whitespace.:.:.:.", ".:") << "]\n";
+    cout << "[" << gul14::trim_right_sv(".:.:.:trim_right_sv(), custom whitespace.:.:.:.", ".:") << "]\n";
     // prints "[.:.:.:trim_right_sv, custom whitespace]"
 //! [Using trim_left_sv() and trim_right_sv() with default and custom whitespace]
 
 //! [Using trim_sv() on a mutable string]
     std::string str = "  string_view  ";
-    auto sv = gul::trim_sv(str); // sv is a string_view that points to the original string
+    auto sv = gul14::trim_sv(str); // sv is a string_view that points to the original string
 
     cout << "[" << sv << "]\n";
     // prints "[string_view]"

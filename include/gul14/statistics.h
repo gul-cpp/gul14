@@ -31,7 +31,7 @@
 #include <vector>
 #include "gul14/internal.h"
 
-namespace gul {
+namespace gul14 {
 
     using statistics_result_type = double; ///< Type used to return statistic properties
 
@@ -700,6 +700,6 @@ auto accumulate(const IteratorT& begin, const IteratorT& end, OpClosure op,
     return accumulate<ResultT>(make_view(begin, end), op, accessor);
 }
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:et

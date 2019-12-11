@@ -24,7 +24,7 @@
 
 using namespace std::literals::string_literals;
 
-namespace gul {
+namespace gul14 {
 
 std::string replace(string_view haystack, string_view needle, string_view hammer)
 {
@@ -64,6 +64,6 @@ std::string& replace_inplace(std::string& haystack, string_view needle, string_v
     return haystack;
 }
 
-} // namespace gul
+} // namespace gul14
 
 /* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 14 Sep 2018
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,10 +20,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "gul/version.h"
+#include "gul14/version.h"
 
-// The "@ string @" sequences are replaced with the actual strings by the meson build system
-// and written into the build directory as verion.cc. That file is compiled and linked
-// if specified.
-const gul::string_view gul::version_git{ "@GIT_FULL_API_VERSION@" };
-const gul::string_view gul::version_api{ "@LIBGUL_API_VERSION@" };
+// The "@ string @" sequences are replaced with the actual strings by the meson build
+// system and written into the build directory as version.cc. That file is compiled and
+// linked if specified.
+const gul14::string_view gul14::version_git{ "@GIT_FULL_API_VERSION@" };
+const gul14::string_view gul14::version_api{ "@LIBGUL_API_VERSION@" };

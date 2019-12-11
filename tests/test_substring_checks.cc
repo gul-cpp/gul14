@@ -24,7 +24,7 @@
 #include "gul14/substring_checks.h"
 
 using namespace std::literals;
-using namespace gul;
+using namespace gul14;
 
 TEST_CASE("contains(string_view, string_view)", "[substring_checks]")
 {

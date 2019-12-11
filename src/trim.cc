@@ -23,7 +23,7 @@
 
 #include "gul14/trim.h"
 
-namespace gul {
+namespace gul14 {
 
 
 std::string trim(string_view str, string_view ws_chars)
@@ -74,4 +74,4 @@ string_view trim_right_sv(string_view str, string_view ws_chars)
 }
 
 
-} // namespace gul
+} // namespace gul14

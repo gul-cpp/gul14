@@ -24,9 +24,9 @@
 #include "gul14/case_ascii.h"
 
 
-namespace gul {
+namespace gul14 {
 
-std::string lowercase_ascii(gul::string_view str)
+std::string lowercase_ascii(gul14::string_view str)
 {
     std::string result;
     result.reserve(str.size());
@@ -45,7 +45,7 @@ std::string &lowercase_ascii_inplace(std::string &str) noexcept
     return str;
 }
 
-std::string uppercase_ascii(gul::string_view str)
+std::string uppercase_ascii(gul14::string_view str)
 {
     std::string result;
     result.reserve(str.size());
@@ -64,6 +64,6 @@ std::string &uppercase_ascii_inplace(std::string &str) noexcept
     return str;
 }
 
-} // namespace gul
+} // namespace gul14
 
 /* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

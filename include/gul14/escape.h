@@ -26,7 +26,7 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Create a new string that looks like an ASCII-only C string literal of the input string.
@@ -68,7 +68,7 @@ std::string escape(string_view in);
 
 /**
  * Evaluate a string with escaped characters to get the original string back.
- * Does only know the escape sequences used by gul::escape() and can be
+ * Does only know the escape sequences used by gul14::escape() and can be
  * used as in inverse function.
  *
  * \param in The string with escape sequences
@@ -80,6 +80,6 @@ std::string escape(string_view in);
 GUL_EXPORT
 std::string unescape(string_view in);
 
-} /* namespace gul */
+} // namespace gul14
 
 /* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

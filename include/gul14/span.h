@@ -1,7 +1,7 @@
 /**
  * \file   span.h
  * \author Tristan Brindle
- * \brief  Provides a gul::span that mimicks C++20's std::span as closely as possible.
+ * \brief  Provides a gul14::span that mimicks C++20's std::span as closely as possible.
  *
  * \copyright
  * Copyright Tristan Brindle 2018.
@@ -25,7 +25,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace gul {
+namespace gul14 {
 
 /// \cond HIDE_SYMBOLS
 
@@ -582,22 +582,22 @@ constexpr auto get(span<E, S> s) -> decltype(s[N])
     return s[N];
 }
 
-} // namespace gul
+} // namespace gul14
 
 
 namespace std {
 
 template <typename ElementType, size_t Extent>
-class tuple_size<gul::span<ElementType, Extent>>
+class tuple_size<gul14::span<ElementType, Extent>>
     : public integral_constant<size_t, Extent> {};
 
 template <typename ElementType>
-class tuple_size<gul::span<ElementType, gul::dynamic_extent>>; // not defined
+class tuple_size<gul14::span<ElementType, gul14::dynamic_extent>>; // not defined
 
 template <size_t I, typename ElementType, size_t Extent>
-class tuple_element<I, gul::span<ElementType, Extent>> {
+class tuple_element<I, gul14::span<ElementType, Extent>> {
 public:
-    static_assert(Extent != gul::dynamic_extent && I < Extent, "");
+    static_assert(Extent != gul14::dynamic_extent && I < Extent, "");
     using type = ElementType;
 };
 

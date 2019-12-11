@@ -31,7 +31,7 @@
 
 using namespace std::literals::string_literals;
 
-namespace gul {
+namespace gul14 {
 
 // anonymous namespace to confine helper functions to this translation unit
 namespace {
@@ -142,6 +142,6 @@ std::string unescape(string_view in)
     return unescaped;
 }
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:sts=4:et

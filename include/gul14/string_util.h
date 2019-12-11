@@ -26,7 +26,7 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * The default characters that are treated as whitespace by GUL.
@@ -47,6 +47,6 @@ namespace gul {
 GUL_EXPORT
 extern const string_view default_whitespace_characters;
 
-} /* namespace gul */
+} // namespace gul14
 
 /* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

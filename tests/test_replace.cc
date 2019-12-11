@@ -24,7 +24,7 @@
 #include "gul14/replace.h"
 
 using namespace std::literals;
-using namespace gul;
+using namespace gul14;
 
 TEST_CASE("Replace parts of a string in-place", "[replace]")
 {

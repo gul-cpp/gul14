@@ -29,7 +29,7 @@
 #include "gul14/cat.h"
 #include "gul14/internal.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Determine how a SlidingBuffer handles decreases of its size.
@@ -367,7 +367,7 @@ public:
     {
         auto const s = size();
         if (idx >= s) {
-            throw std::out_of_range(gul::cat("SlidingBuffer::", __func__,
+            throw std::out_of_range(gul14::cat("SlidingBuffer::", __func__,
                 ": idx (which is ", idx, ") >= this->size() (which is ", s, ")"));
         }
         return operator[](idx);
@@ -380,7 +380,7 @@ public:
     {
         auto const s = size();
         if (idx >= s) {
-            throw std::out_of_range(gul::cat("SlidingBuffer::", __func__,
+            throw std::out_of_range(gul14::cat("SlidingBuffer::", __func__,
                 ": idx (which is ", idx, ") >= this->size() (which is ", s, ")"));
         }
         return operator[](idx);
@@ -1155,6 +1155,6 @@ public:
     }
 };
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:sts=4:et

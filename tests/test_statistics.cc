@@ -72,7 +72,7 @@ auto bit(int bit) -> unsigned int
 
 TEST_CASE("Container Statistics Tests", "[statistics]")
 {
-    using namespace gul;
+    using namespace gul14;
     auto op_max = [](const auto a, const auto b) { return std::max(a, b); };
     auto op_or = [](const auto a, const auto b) { return a | b; };
     auto acc_state = [](const auto& e) { return e.sta; };
@@ -147,7 +147,7 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
         // For some reason stuff from standard header <numeric> seem to be in our namespace,
         // so we need to specify that we want to use GUL's accumulate rather than std::accumulate
-        REQUIRE(gul::accumulate<unsigned int>(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
+        REQUIRE(gul14::accumulate<unsigned int>(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
         REQUIRE(accumulate<unsigned int>(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);

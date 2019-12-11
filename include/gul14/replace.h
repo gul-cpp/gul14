@@ -26,7 +26,7 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Replace all occurrences of a string within another string, returning the result
@@ -56,6 +56,6 @@ std::string replace(string_view haystack, string_view needle, string_view hammer
 GUL_EXPORT
 std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer);
 
-} /* namespace gul */
+} // namespace gul14
 
 /* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

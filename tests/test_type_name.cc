@@ -38,15 +38,15 @@ TEST_CASE("Type-name Test", "[type_name]")
 {
     SECTION("test some stdlib types") {
         auto oss = std::ostringstream{ };
-        oss << gul::type_name<decltype(oss)>();
+        oss << gul14::type_name<decltype(oss)>();
         REQUIRE_THAT(oss.str(), Contains("ostringstream"));
 
         oss.str("");
-        oss << gul::type_name<std::string>();
+        oss << gul14::type_name<std::string>();
         REQUIRE_THAT(oss.str(), Contains("basic_string"));
 
         oss.str("");
-        oss << gul::type_name<std::size_t>();
+        oss << gul14::type_name<std::size_t>();
         REQUIRE_THAT(oss.str(), Contains("unsigned"));
         REQUIRE_THAT(oss.str(), Contains("int") or Contains("long"));
 
@@ -56,36 +56,36 @@ TEST_CASE("Type-name Test", "[type_name]")
     }
     SECTION("test some basic types") {
         auto oss = std::ostringstream{ };
-        oss << gul::type_name<int>();
+        oss << gul14::type_name<int>();
         REQUIRE_THAT(oss.str(), Contains("int"));
 
         auto& x = "test";
         oss.str("");
-        oss << gul::type_name<decltype(x)>();
+        oss << gul14::type_name<decltype(x)>();
         REQUIRE_THAT(oss.str(), Contains("const"));
         REQUIRE_THAT(oss.str(), Contains("char"));
         REQUIRE_THAT(oss.str(), Contains("[5]"));
 
         oss.str("");
-        oss << gul::type_name<std::decay_t<decltype(x)>>();
+        oss << gul14::type_name<std::decay_t<decltype(x)>>();
         REQUIRE_THAT(oss.str(), Contains("const"));
         REQUIRE_THAT(oss.str(), Contains("char"));
         REQUIRE_THAT(oss.str(), Contains("*"));
 
         auto f = 2.3f;
         oss.str("");
-        oss << gul::type_name<decltype(f)>();
+        oss << gul14::type_name<decltype(f)>();
         REQUIRE_THAT(oss.str(), Contains("float"));
     }
     SECTION("test some user types") {
         auto c = clever<int>{ 1 };
         auto oss = std::ostringstream{ };
-        oss << gul::type_name<decltype(c)>();
+        oss << gul14::type_name<decltype(c)>();
         REQUIRE_THAT(oss.str(), Contains("clever"));
         REQUIRE_THAT(oss.str(), Contains("int"));
     }
     SECTION("test constexpr-ness") {
-        auto constexpr x = gul::type_name<int>();
+        auto constexpr x = gul14::type_name<int>();
         auto oss = std::ostringstream{ };
         oss << x;
         REQUIRE_THAT(oss.str(), Contains("int"));
@@ -97,7 +97,7 @@ TEST_CASE("Type-name Test", "[type_name]")
         // when the following is not commented out:
 
         // auto c = clever<int>{ 1 };
-        // gul::FailToInstantiate<decltype(c)>{};
+        // gul14::FailToInstantiate<decltype(c)>{};
     }
 }
 

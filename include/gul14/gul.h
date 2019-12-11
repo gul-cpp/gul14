@@ -46,8 +46,8 @@
 #include "gul14/type_name.h"
 #include "gul14/version.h"
 
-/// Namespace gul contains all functions and classes of the General Utility Library.
-namespace gul {
+/// namespace gul14 contains all functions and classes of the General Utility Library.
+namespace gul14 {
 
 /**
  * \mainpage
@@ -122,7 +122,7 @@ namespace gul {
  *
  * \subsection v1_9 Version 1.9
  *
- * - Add gul::span, a backport of std::span from C++20
+ * - Add gul14::span, a backport of std::span from C++20
  *
  * \subsection v1_8 Version 1.8
  *
@@ -147,29 +147,29 @@ namespace gul {
  * \subsection v1_5 Version 1.5
  *
  * - *Released with DOOCS 19.8.0*
- * - Add gul::optional, a backport of std::optional from C++17
+ * - Add gul14::optional, a backport of std::optional from C++17
  *
  * \subsection v1_4 Version 1.4
  *
  * - escape() & unescape(): Change argument type from const std::string & to
- *   gul::string_view
+ *   gul14::string_view
  * - within_orders() can now be used with integer arguments
  *
  * \subsection v1_3 Version 1.3
  *
- * - \ref gul::SlidingBuffer "SlidingBuffer": Add
- *   \ref gul::SlidingBuffer::push_back "push_back()",
- *   \ref gul::ShrinkBehavior "ShrinkBehavior"
- * - Minor bugfixes for \ref gul::SlidingBuffer "SlidingBuffer"
+ * - \ref gul14::SlidingBuffer "SlidingBuffer": Add
+ *   \ref gul14::SlidingBuffer::push_back "push_back()",
+ *   \ref gul14::ShrinkBehavior "ShrinkBehavior"
+ * - Minor bugfixes for \ref gul14::SlidingBuffer "SlidingBuffer"
  * - GUL can be built with Visual C++/Visual Studio 2019 using Meson/Ninja
  *
  * \subsection v1_2 Version 1.2
  *
  * - Add lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),
  *   uppercase_ascii_inplace()
- * - Bugfixes for \ref gul::SlidingBuffer "SlidingBuffer":
- *   \ref gul::SlidingBuffer::clear "clear()" did not work with variable-sized buffers,
- *   \ref gul::SlidingBuffer::empty "empty()" was not const
+ * - Bugfixes for \ref gul14::SlidingBuffer "SlidingBuffer":
+ *   \ref gul14::SlidingBuffer::clear "clear()" did not work with variable-sized buffers,
+ *   \ref gul14::SlidingBuffer::empty "empty()" was not const
  *
  * \subsection v1_1 Version 1.1
  *
@@ -315,7 +315,7 @@ namespace gul {
  *
  * <h3>Classes</h3>
  *
- * \ref gul::string_view "string_view":
+ * \ref gul14::string_view "string_view":
  *     A view to a contiguous sequence of chars. The GUL version is a backport of
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  *     from libc++ for C++17.
@@ -329,7 +329,7 @@ namespace gul {
  *
  * <h3>Classes</h3>
  *
- * \ref gul::Trigger "Trigger":
+ * \ref gul14::Trigger "Trigger":
  *     A class that allows sending triggers and waiting for them across different threads,
  *     like an electric trigger line.
  *
@@ -387,10 +387,10 @@ namespace gul {
  *
  * <h3>Classes</h3>
  *
- * \ref gul::MinMax "MinMax":
+ * \ref gul14::MinMax "MinMax":
  *     Holds a pair of two values, typically the minimum and maximum element of something.
  *
- * \ref gul::StandardDeviationMean "StandardDeviationMean":
+ * \ref gul14::StandardDeviationMean "StandardDeviationMean":
  *     Holds a pair of two values, typically the standard deviation and the mean value of
  *     something.
  */
@@ -445,18 +445,18 @@ namespace gul {
  * The General Utility Library provides a few classes from the C++ standard library that
  * are not yet available to users of older compilers.
  *
- * \ref gul::optional "optional":
+ * \ref gul14::optional "optional":
  *     A class template that can either contain a value of a certain type or not.
  *     It should behave like
  *     [std::optional](https://en.cppreference.com/w/cpp/utility/optional)
  *     from C++17 for almost all use cases.
  * 
- * \ref gul::span "span":
+ * \ref gul14::span "span":
  *     A view to a contiguous sequence of objects. It should behave like
  *     [std::span](https://en.cppreference.com/w/cpp/container/span) from C++20 for almost
  *     all use cases.
  *
- * \ref gul::string_view "string_view":
+ * \ref gul14::string_view "string_view":
  *     A view to a contiguous sequence of chars. It should behave like
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  *     from C++17 for almost all use cases.
@@ -496,7 +496,7 @@ namespace gul {
  * without actually including the proper GSL.
  * Note that the implementation can differ from the same-named entities in GSL.
  *
- * finally() & \ref gul::FinalAction "FinalAction":
+ * finally() & \ref gul14::FinalAction "FinalAction":
  *     Execute something when we leave the scope.
  */
 
@@ -508,18 +508,18 @@ namespace gul {
  *
  * <h3>Functions</h3>
  *
- * hexdump() & \ref gul::hexdump_stream "hexdump_stream()":
+ * hexdump() & \ref gul14::hexdump_stream "hexdump_stream()":
  *     Generate an ASCII hex dump of a container, a range, or a piece of memory.
  *
  * type_name():
  *     Generate a human readable string describing a type.
  *
- * finally() & \ref gul::FinalAction "FinalAction":
+ * finally() & \ref gul14::FinalAction "FinalAction":
  *     Execute something when we leave the scope.
  *
  * <h3>Classes</h3>
  *
- * \ref gul::FailToInstantiate "FailToInstantiate":
+ * \ref gul14::FailToInstantiate "FailToInstantiate":
  *     Class to help debug types.
  */
 
@@ -587,4 +587,8 @@ namespace gul {
  * On other platforms and compilers, the macro is meaningless.
  */
 
-} // namespace gul
+} // namespace gul14
+
+
+/// Namespace gul is a convenience alias for namespace gul14.
+namespace gul = gul14;

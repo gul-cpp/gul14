@@ -23,7 +23,7 @@
 #include "gul14/catch.h"
 #include "gul14/optional.h"
 
-using gul::optional;
+using gul14::optional;
 using namespace std::literals;
 
 TEMPLATE_TEST_CASE("optional: Basics for numeric types", "[optional]",
@@ -32,7 +32,7 @@ TEMPLATE_TEST_CASE("optional: Basics for numeric types", "[optional]",
     optional<TestType> opt;
     REQUIRE(opt.has_value() == false);
     REQUIRE(opt.value_or(42) == 42);
-    REQUIRE_THROWS_AS(opt.value(), gul::bad_optional_access);
+    REQUIRE_THROWS_AS(opt.value(), gul14::bad_optional_access);
 }
 
 TEMPLATE_TEST_CASE("optional: Basics for string types", "[optional]",
@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE("optional: Basics for string types", "[optional]",
     optional<TestType> opt;
     REQUIRE(opt.has_value() == false);
     REQUIRE(std::string(opt.value_or("Test")) == "Test");
-    REQUIRE_THROWS_AS(opt.value(), gul::bad_optional_access);
+    REQUIRE_THROWS_AS(opt.value(), gul14::bad_optional_access);
 }
 
 // vi:ts=4:sw=4:sts=4:et

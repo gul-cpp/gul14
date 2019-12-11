@@ -24,12 +24,12 @@
 #include "gul14/catch.h"
 #include "gul14/trim.h"
 
-using gul::trim;
-using gul::trim_sv;
-using gul::trim_left;
-using gul::trim_left_sv;
-using gul::trim_right;
-using gul::trim_right_sv;
+using gul14::trim;
+using gul14::trim_sv;
+using gul14::trim_left;
+using gul14::trim_left_sv;
+using gul14::trim_right;
+using gul14::trim_right_sv;
 
 using namespace std::literals;
 

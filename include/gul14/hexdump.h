@@ -44,7 +44,7 @@
 //
 //////
 
-namespace gul {
+namespace gul14 {
 
 namespace detail {
 
@@ -184,7 +184,7 @@ StreamT& hexdump_stream(StreamT& dest, const IteratorT& begin, const IteratorT& 
  *
  * \code
  * std::string x = "test\nthe Ä west!\t\r\n";
- * std::string str = gul::hexdump(x.begin(), x.end(), "debug -> ");
+ * std::string str = gul14::hexdump(x.begin(), x.end(), "debug -> ");
  * std::cerr << str;
  * \endcode
 \verbatim
@@ -194,7 +194,7 @@ deBug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. we
  *
  * \code
  * std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
- * std::string str = gul::hexdump(begin(ar), end(ar));
+ * std::string str = gul14::hexdump(begin(ar), end(ar));
  * std::cout << str;
  * \endcode
 \verbatim
@@ -376,8 +376,8 @@ private:
  * via operator<<. This means that the following two lines produce the exact same output,
  * but the stream version uses less resources:
  * \code
- * std::cout << gul::hexdump_stream(x.begin(), x.end()) << "\n"; // good
- * std::cout << gul::hexdump(x.begin(), x.end()) << "\n"; // also good, but allocates a temporary string
+ * std::cout << gul14::hexdump_stream(x.begin(), x.end()) << "\n"; // good
+ * std::cout << gul14::hexdump(x.begin(), x.end()) << "\n"; // also good, but allocates a temporary string
  * \endcode
  *
  * The elements of the data range must be of integral type. They are dumped as unsigned
@@ -388,7 +388,7 @@ private:
  *
  * \code
  * std::string x = "test\nthe Ä west!\t\r\n";
- * std::cerr << gul::hexdump_stream(x.begin(), x.end(), "debug -> ");
+ * std::cerr << gul14::hexdump_stream(x.begin(), x.end(), "debug -> ");
  * \endcode
 \verbatim
 debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west
@@ -397,7 +397,7 @@ debug -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. we
  *
  * \code
  * std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
- * std::cout << gul::hexdump_stream(begin(ar), end(ar));
+ * std::cout << gul14::hexdump_stream(begin(ar), end(ar));
  * \endcode
 \verbatim
 000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf
@@ -456,6 +456,6 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
 
 
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:et

@@ -26,10 +26,10 @@
 
 using namespace std::literals;
 
-using gul::tokenize;
-using gul::tokenize_sv;
+using gul14::tokenize;
+using gul14::tokenize_sv;
 
-TEST_CASE("gul::tokenize() works with \"Hello World\"", "[tokenize]")
+TEST_CASE("gul14::tokenize() works with \"Hello World\"", "[tokenize]")
 {
     auto tokens = tokenize("Hello World");
 
@@ -40,7 +40,7 @@ TEST_CASE("gul::tokenize() works with \"Hello World\"", "[tokenize]")
     REQUIRE(tokens[1].length() == 5);
 }
 
-TEST_CASE("gul::tokenize() works with \" Hello World\" with odd whitespace", "[tokenize]")
+TEST_CASE("gul14::tokenize() works with \" Hello World\" with odd whitespace", "[tokenize]")
 {
     auto tokens = tokenize("\t Hello\n\rWorld\t\t  ");
 
@@ -49,7 +49,7 @@ TEST_CASE("gul::tokenize() works with \" Hello World\" with odd whitespace", "[t
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize() works with custom delimiters and null characters", "[tokenize]")
+TEST_CASE("gul14::tokenize() works with custom delimiters and null characters", "[tokenize]")
 {
     const auto input = "\t Hel\0lo\n\rWorld\t\t  "s;
     auto tokens = tokenize(input, " \t\n\r");
@@ -60,7 +60,7 @@ TEST_CASE("gul::tokenize() works with custom delimiters and null characters", "[
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize() works with empty delimiter string", "[tokenize]")
+TEST_CASE("gul14::tokenize() works with empty delimiter string", "[tokenize]")
 {
     auto tokens = tokenize("Hello World", "");
 
@@ -68,7 +68,7 @@ TEST_CASE("gul::tokenize() works with empty delimiter string", "[tokenize]")
     REQUIRE(tokens[0] == "Hello World");
 }
 
-TEST_CASE("gul::tokenize_sv() works with \"Hello World\"", "[tokenize]")
+TEST_CASE("gul14::tokenize_sv() works with \"Hello World\"", "[tokenize]")
 {
     auto tokens = tokenize_sv("Hello World");
 
@@ -79,7 +79,7 @@ TEST_CASE("gul::tokenize_sv() works with \"Hello World\"", "[tokenize]")
     REQUIRE(tokens[1].length() == 5);
 }
 
-TEST_CASE("gul::tokenize_sv() works with \" Hello World\" with odd whitespace", "[tokenize]")
+TEST_CASE("gul14::tokenize_sv() works with \" Hello World\" with odd whitespace", "[tokenize]")
 {
     auto tokens = tokenize_sv("\t Hello\n\rWorld\t\t  ");
 
@@ -88,7 +88,7 @@ TEST_CASE("gul::tokenize_sv() works with \" Hello World\" with odd whitespace", 
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize_sv() works with custom delimiters and null characters", "[tokenize]")
+TEST_CASE("gul14::tokenize_sv() works with custom delimiters and null characters", "[tokenize]")
 {
     const auto input = "\t Hel\0lo\n\rWorld\t\t  "s;
     auto tokens = tokenize_sv(input, " \t\n\r");
@@ -99,7 +99,7 @@ TEST_CASE("gul::tokenize_sv() works with custom delimiters and null characters",
     REQUIRE(tokens[1] == "World");
 }
 
-TEST_CASE("gul::tokenize_sv() works with empty delimiter string", "[tokenize]")
+TEST_CASE("gul14::tokenize_sv() works with empty delimiter string", "[tokenize]")
 {
     auto tokens = tokenize_sv("Hello World", "");
 

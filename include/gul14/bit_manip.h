@@ -28,7 +28,7 @@
 
 #include "gul14/internal.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Return type of the bit manipulation functions.
@@ -180,6 +180,6 @@ bool constexpr inline bit_test(T bits, unsigned bit) noexcept {
     return bits & bit_set<T>(bit);
 }
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:et

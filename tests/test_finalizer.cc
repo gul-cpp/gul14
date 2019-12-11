@@ -31,7 +31,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("Closure as temporary") {
         int foo = 1;
         {
-            auto _ = gul::finally([&foo] { foo += 2; });
+            auto _ = gul14::finally([&foo] { foo += 2; });
         }
         REQUIRE(foo == 3);
     }
@@ -43,7 +43,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
             auto xxx = [&foo] { foo += 2; };
             auto yyy { xxx };
 
-            auto _ = gul::finally(yyy);
+            auto _ = gul14::finally(yyy);
         }
         REQUIRE(foo == 3);
     }
@@ -59,7 +59,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
             foo = 1;
             {
                 auto yyy{ xxx };
-                auto _ = gul::finally(yyy);
+                auto _ = gul14::finally(yyy);
             }
             REQUIRE(foo == 3);
             REQUIRE(xxx() == 2);
@@ -74,7 +74,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
             auto xxx = [&foo] { foo += 2; };
             auto yyy { xxx };
 
-            auto _ = gul::FinalAction<decltype(yyy)>(yyy);
+            auto _ = gul14::FinalAction<decltype(yyy)>(yyy);
         }
         REQUIRE(foo == 3);
     }
@@ -82,7 +82,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("Call on exception") {
         int foo = 1;
         try {
-            auto _ = gul::finally([&foo] { foo += 2; });
+            auto _ = gul14::finally([&foo] { foo += 2; });
             throw "Foo bar";
         } catch (...) {
             foo++;
@@ -98,7 +98,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
             buffer = new char[100];
             if (buffer == nullptr)
                 break;
-            auto _ = gul::finally([&buffer] { delete[] buffer; buffer = nullptr; });
+            auto _ = gul14::finally([&buffer] { delete[] buffer; buffer = nullptr; });
 
             snprintf(buffer, 100, "%.1f", some_float);
             some_string = buffer;
@@ -114,7 +114,7 @@ TEST_CASE("Finalizer Tests", "[finalizer]")
     SECTION("Closure move") {
         int foo = 1;
         {
-            auto _1 = gul::finally([&foo]() { foo += 2; });
+            auto _1 = gul14::finally([&foo]() { foo += 2; });
             {
                 auto _2 = std::move(_1);
                 REQUIRE(foo == 1);
@@ -146,7 +146,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
     SECTION("Function pointer temporary") {
         global_foo = 1;
         {
-            auto _ = gul::finally(&helper);
+            auto _ = gul14::finally(&helper);
         }
         REQUIRE(global_foo == 3);
     }
@@ -155,7 +155,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         global_foo = 1;
         {
             auto x = &helper;
-            auto _ = gul::finally(x);
+            auto _ = gul14::finally(x);
         }
         REQUIRE(global_foo == 3);
     }
@@ -164,9 +164,9 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         global_foo = 1;
         {
             auto x = &helper;
-            auto a = gul::finally(x);
+            auto a = gul14::finally(x);
             {
-                auto b = gul::finally(x);
+                auto b = gul14::finally(x);
                 b = std::move(a);
                 REQUIRE(global_foo == 1);
             }
@@ -179,7 +179,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
          global_foo = 1;
          {
              // Lazy man's version, implicit conversion to function pointer
-             auto _ = gul::finally(helper);
+             auto _ = gul14::finally(helper);
          }
          REQUIRE(global_foo == 3);
     }
@@ -188,7 +188,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         global_foo = 1;
         {
             // Use FinalAction directly
-            auto _ = gul::FinalAction<decltype(&helper)>(helper);
+            auto _ = gul14::FinalAction<decltype(&helper)>(helper);
         }
         REQUIRE(global_foo == 3);
     }
@@ -198,7 +198,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         {
             // Use FinalAction directly
             auto x = &helper;
-            auto _ = gul::FinalAction<decltype(x)>(helper);
+            auto _ = gul14::FinalAction<decltype(x)>(helper);
         }
         REQUIRE(global_foo == 3);
     }
@@ -207,7 +207,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
         global_foo = 1;
         {
             // Use FinalAction directly
-            auto _ = gul::FinalAction<decltype(&helper)>(helper);
+            auto _ = gul14::FinalAction<decltype(&helper)>(helper);
         }
         REQUIRE(global_foo == 3);
     }
@@ -215,7 +215,7 @@ TEST_CASE("Finalizer with function", "[finalizer]")
     SECTION("finally with std::bind") {
         int foo = 1;
         {
-            auto _ = gul::finally(std::bind(&helper2, std::ref(foo)));
+            auto _ = gul14::finally(std::bind(&helper2, std::ref(foo)));
             CHECK(foo == 1);
         }
         CHECK(foo == 3);

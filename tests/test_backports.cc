@@ -26,11 +26,11 @@
 
 using namespace std::literals;
 
-TEST_CASE("gul::string_view accepts a string as both char * and std::string, and both "
+TEST_CASE("gul14::string_view accepts a string as both char * and std::string, and both "
           "compare equal", "[string_view]")
 {
-    REQUIRE( gul::string_view{"Test"} == gul::string_view{"Test"s} );
-    REQUIRE( gul::string_view{""} == gul::string_view{""s} );
+    REQUIRE( gul14::string_view{"Test"} == gul14::string_view{"Test"s} );
+    REQUIRE( gul14::string_view{""} == gul14::string_view{""s} );
 }
 
 TEMPLATE_TEST_CASE("span", "[span]", signed char, unsigned char, short, unsigned short,
@@ -38,7 +38,7 @@ TEMPLATE_TEST_CASE("span", "[span]", signed char, unsigned char, short, unsigned
 {
     TestType arr[5] { 1, 2, 3, 4, 5 };
 
-    gul::span<TestType> s;
+    gul14::span<TestType> s;
     REQUIRE(s.empty());
 
     s = arr;

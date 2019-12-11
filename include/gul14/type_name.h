@@ -28,7 +28,7 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * A helper class to debug types.
@@ -43,7 +43,7 @@ namespace gul {
  * A using example:
  * \code
  * auto t = some_type_or_another{ };
- * gul::FailToInstantiate<decltype(t)>{};
+ * gul14::FailToInstantiate<decltype(t)>{};
  * \endcode
  * A more realistic example for people shying away from ``auto``:
  * \code
@@ -51,7 +51,7 @@ namespace gul {
  * void my_function(T param)
  * {
  *     // wondering if T is what I expect...
- *     gul::FailToInstantiate<T>{};
+ *     gul14::FailToInstantiate<T>{};
  * }
  * \endcode
  */
@@ -73,7 +73,7 @@ class FailToInstantiate;
  * Use like this:
  * \code
  * auto& literal = "test";
- * std::cout << "The type is " << gul::type_name<decltype(literal)>() << '\n';
+ * std::cout << "The type is " << gul14::type_name<decltype(literal)>() << '\n';
  * \endcode
  *
  * \tparam T Type that shall be described
@@ -99,7 +99,7 @@ constexpr string_view type_name()
 #elif defined(_MSC_VER)
     // MSVC returns something like "return_type function_name<template_parameter>()"
     auto s = string_view{ __FUNCSIG__ };
-    auto const start_idx = s.find("gul::type_name<") + sizeof("gul::type_name<") - 1;
+    auto const start_idx = s.find("gul14::type_name<") + sizeof("gul14::type_name<") - 1;
     s.remove_prefix(start_idx);
 
     for (auto end_idx = s.length() - 1; end_idx; --end_idx) {
@@ -114,6 +114,6 @@ constexpr string_view type_name()
 #endif
 }
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:et:sts=4

@@ -22,7 +22,7 @@
 
 #include "gul14/cat.h"
 
-namespace gul {
+namespace gul14 {
 
 
 std::string cat(const ConvertingStringView& s1, const ConvertingStringView& s2)
@@ -60,4 +60,4 @@ std::string cat(std::initializer_list<ConvertingStringView> pieces)
     return str;
 }
 
-} // namespace gul
+} // namespace gul14

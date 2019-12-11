@@ -22,7 +22,7 @@
 
 #include "gul14/tokenize.h"
 
-namespace gul {
+namespace gul14 {
 
 // Anonymous namespace to make the template visible only to this translation unit
 namespace {
@@ -66,4 +66,4 @@ std::vector<string_view> tokenize_sv(string_view str, string_view delimiters)
     return tokenize<string_view>(str, delimiters);
 }
 
-} // namespace gul
+} // namespace gul14

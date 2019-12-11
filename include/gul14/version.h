@@ -25,7 +25,7 @@
 #include "gul14/internal.h"
 #include "string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Holds the git version tag of the sources that the library has
@@ -39,4 +39,4 @@ extern const string_view version_git;
  */
 extern const string_view version_api;
 
-} // namespace gul
+} // namespace gul14

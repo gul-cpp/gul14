@@ -26,7 +26,7 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Determine whether a string contains another string.
@@ -289,6 +289,6 @@ constexpr inline bool starts_with_nocase(string_view str, char c) noexcept
     return !str.empty() && lowercase_ascii(str.front()) == lowercase_ascii(c);
 }
 
-} /* namespace gul */
+} // namespace gul14
 
 /* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

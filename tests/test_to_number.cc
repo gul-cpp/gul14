@@ -32,7 +32,7 @@
 
 using namespace std::literals::string_literals;
 using namespace Catch::Matchers;
-using gul::to_number;
+using gul14::to_number;
 
 // Allowed deviation from ideal result in ULP
 int constexpr long_double_lenience = 3;
@@ -112,7 +112,7 @@ TEMPLATE_TEST_CASE("to_number(): Floating point types", "[to_number]", float, do
     auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
     for (auto const& test : cases) {
         CAPTURE(test.input);
-        REQUIRE(gul::within_ulp(to_number<TestType>(test.input).value(),
+        REQUIRE(gul14::within_ulp(to_number<TestType>(test.input).value(),
             TestType(test.output), lenience) == true);
     }
     std::array<TestCase, 12> special_cases = {{
@@ -219,7 +219,7 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
         ss.str("");
         ss << num;
         CAPTURE(ss.str());
-        REQUIRE(true == gul::within_ulp(to_number<TestType>(ss.str()).value(), num, lenience));
+        REQUIRE(true == gul14::within_ulp(to_number<TestType>(ss.str()).value(), num, lenience));
     }
 }
 
@@ -232,7 +232,7 @@ TEMPLATE_TEST_CASE("to_number(): max and overflow floating point", "[to_number]"
     auto numb = ss.str();
 
     auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), max, lenience));
+    REQUIRE(true == gul14::within_ulp(to_number<TestType>(numb).value(), max, lenience));
 
     if (numb[0] < '9')
         ++numb[0];
@@ -257,7 +257,7 @@ TEMPLATE_TEST_CASE("to_number(): lowest and overflow floating point", "[to_numbe
     auto numb = ss.str();
 
     auto const lenience = sizeof(TestType) > sizeof(double) ? long_double_lenience : double_lenience;
-    REQUIRE(true == gul::within_ulp(to_number<TestType>(numb).value(), lowest, lenience));
+    REQUIRE(true == gul14::within_ulp(to_number<TestType>(numb).value(), lowest, lenience));
 
     assert(numb[0] == '-');
     if (numb[1] < '9')
@@ -345,10 +345,10 @@ TEMPLATE_TEST_CASE("to_number(): random round trip conversion", "[to_number]",
             REQUIRE(std::signbit(num) == std::signbit(*converted));
         } else if (not std::isnormal(num)) {
             CAPTURE("subnormal " + std::to_string(++i_sub));
-            REQUIRE(true == gul::within_ulp(*converted, num, 30));
+            REQUIRE(true == gul14::within_ulp(*converted, num, 30));
         } else {
             CAPTURE("normal " + std::to_string(++i_nor));
-            REQUIRE(true == gul::within_ulp(*converted, num, 3));
+            REQUIRE(true == gul14::within_ulp(*converted, num, 3));
         }
     }
 }
@@ -366,23 +366,23 @@ TEMPLATE_TEST_CASE("to_number(): Convert floating-point values with many leading
     auto const lenience = 0;
 
     auto const test1 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1");
-    REQUIRE(gul::within_ulp(test1.value(), TestType(0.1l), lenience) == true);
+    REQUIRE(gul14::within_ulp(test1.value(), TestType(0.1l), lenience) == true);
 
     auto const test2 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1"
             "00000000000000000000000000000000000000000000000000");
-    REQUIRE(gul::within_ulp(test2.value(), TestType(0.1l), lenience) == true);
+    REQUIRE(gul14::within_ulp(test2.value(), TestType(0.1l), lenience) == true);
 
     auto const test3 = to_number<TestType>("00000000000000000000000000000000000000000000000001"
             "e000000000000000000000000000000000000000000000000000");
-    REQUIRE(gul::within_ulp(test3.value(), TestType(1.0l), lenience) == true);
+    REQUIRE(gul14::within_ulp(test3.value(), TestType(1.0l), lenience) == true);
 
     auto const test4 = to_number<TestType>("00000000000000000000000000000000000000000000000000.1e"
             "0000000000000000000000000000000000000000000000000");
-    REQUIRE(gul::within_ulp(test4.value(), TestType(0.1l), lenience) == true);
+    REQUIRE(gul14::within_ulp(test4.value(), TestType(0.1l), lenience) == true);
 
     auto const test5 = to_number<TestType>("0.00000000000000000000000000000000000000000000000001"
             "e0000000000000000000000000000000000000000000000001");
-    REQUIRE(gul::within_ulp(test5.value(), TestType(1.0e-49l), lenience) == true);
+    REQUIRE(gul14::within_ulp(test5.value(), TestType(1.0e-49l), lenience) == true);
 }
 
 /* Disabled because doocsdev16's gcc has insufficient constexpr support (but works on
@@ -393,7 +393,7 @@ TEMPLATE_TEST_CASE("to_number(): Convert \"42\" to integer types, constexpr", "[
                    unsigned long long)
 {
     constexpr auto cstr = "42";
-    constexpr gul::string_view sv{ cstr, 2 };
+    constexpr gul14::string_view sv{ cstr, 2 };
     constexpr auto a = to_number<TestType>(sv);
     REQUIRE(a == 42);
 }
@@ -402,18 +402,18 @@ TEMPLATE_TEST_CASE("to_number(): Convert \"-42\" to integer types, constexpr", "
                    signed char, short, int, long, long long)
 {
     constexpr auto cstr = "-42";
-    constexpr gul::string_view sv{ cstr, 3 };
+    constexpr gul14::string_view sv{ cstr, 3 };
     constexpr auto a = to_number<TestType>(sv);
     REQUIRE(a == -42);
 }
 */
 
-/* Disabled because gul::string_view::find_first_of() is not really constexpr
+/* Disabled because gul14::string_view::find_first_of() is not really constexpr
 TEMPLATE_TEST_CASE("to_number(): Floating-point types, constexpr", "[to_number]",
                    float, double, long double)
 {
     constexpr auto cstr = "-42.2e1";
-    constexpr gul::string_view sv{ cstr, 7 };
+    constexpr gul14::string_view sv{ cstr, 7 };
 
     constexpr auto a = to_number<TestType>(sv);
     REQUIRE(a == TestType{ -42.2e1 });

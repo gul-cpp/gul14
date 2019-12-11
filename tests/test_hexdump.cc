@@ -32,48 +32,48 @@ using namespace std::literals::string_literals;
 TEST_CASE("Hexdump Test", "[hexdump]")
 {
     SECTION("empty dump test") {
-        std::string x = gul::hexdump(""s);
+        std::string x = gul14::hexdump(""s);
         auto answer1 = "000000:                                                  \n"s;
         REQUIRE(x == answer1);
 
         auto oss1 = std::ostringstream{ };
-        oss1 << gul::hexdump_stream(""s);
+        oss1 << gul14::hexdump_stream(""s);
         REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump strings") {
         auto x = "test\nthe Ä west!\t\r\n"s;
 
-        auto a1 = gul::hexdump(x.begin(), x.end(), "deBuk -> ");
+        auto a1 = gul14::hexdump(x.begin(), x.end(), "deBuk -> ");
         auto answer1 = "deBuk -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a1 == answer1);
 
         auto oss1 = std::ostringstream{ };
-        oss1 << gul::hexdump_stream(x.begin(), x.end(), "deBuk -> ");
+        oss1 << gul14::hexdump_stream(x.begin(), x.end(), "deBuk -> ");
         REQUIRE(oss1.str() == answer1);
 
-        auto a2 = gul::hexdump(x, "deBak -> ");
+        auto a2 = gul14::hexdump(x, "deBak -> ");
         auto answer2 = "deBak -> 000000: 74 65 73 74 0a 74 68 65 20 c3 84 20 77 65 73 74  test.the .. west\n"
                        "         000010: 21 09 0d 0a                                      !...\n"s;
         REQUIRE(a2 == answer2);
 
         auto oss3 = std::ostringstream{ };
-        oss3 << gul::hexdump_stream(x, "deBak -> ");
+        oss3 << gul14::hexdump_stream(x, "deBak -> ");
         REQUIRE(oss3.str() == answer2);
     }
     SECTION("dump full container") {
         auto ar = std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
 
-        auto a1 = gul::hexdump(ar);
+        auto a1 = gul14::hexdump(ar);
         auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
         REQUIRE(a1 == answer1);
 
         auto oss1 = std::ostringstream{ };
-        oss1 << gul::hexdump_stream(ar);
+        oss1 << gul14::hexdump_stream(ar);
         REQUIRE(oss1.str() == answer1);
 
         auto oss2 = std::ostringstream{ };
-        auto hdp_forward = gul::hexdump_stream(std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }});
+        auto hdp_forward = gul14::hexdump_stream(std::array<int, 8>{{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }});
         {
             // We need this complicate construct to replace the remnants of the temporary above with some
             // different object on the stack. ar2 now lives in the memory space of the temporary array
@@ -88,23 +88,23 @@ TEST_CASE("Hexdump Test", "[hexdump]")
         // Check if ar has been moved and left us with a corpse
         // Is ar still the same?
         auto oss3 = std::ostringstream{ };
-        oss3 << gul::hexdump_stream(ar);
+        oss3 << gul14::hexdump_stream(ar);
         REQUIRE(oss3.str() == answer1);
     }
     SECTION("dump with iterators") {
         std::array<int, 8> ar = {{ 0, 1, 5, 2, -0x300fffff, 2, 5, 1999 }};
 
-        auto a1 = gul::hexdump(ar.begin(), ar.end());
+        auto a1 = gul14::hexdump(ar.begin(), ar.end());
         auto answer1 = "000000: 00000000 00000001 00000005 00000002 cff00001 00000002 00000005 000007cf \n"s;
         REQUIRE(a1 == answer1);
 
         auto oss1 = std::ostringstream{ };
-        oss1 << gul::hexdump_stream(ar.begin(), ar.end());
+        oss1 << gul14::hexdump_stream(ar.begin(), ar.end());
         REQUIRE(oss1.str() == answer1);
     }
     SECTION("dump unsigned long long") {
         std::array<unsigned long long, 1> ar = {{ std::numeric_limits<unsigned long long>::max() }};
-        auto a1 = gul::hexdump(ar);
+        auto a1 = gul14::hexdump(ar);
         auto answer1 = "000000: " + std::string(sizeof(ar[0]) * 2, 'f') + " \n"s;
         REQUIRE(a1 == answer1);
     }

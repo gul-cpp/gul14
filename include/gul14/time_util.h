@@ -27,7 +27,7 @@
 #include "gul14/internal.h"
 #include "gul14/Trigger.h"
 
-namespace gul {
+namespace gul14 {
 
 
 /**
@@ -158,4 +158,4 @@ inline bool sleep(double seconds)
     return sleep(std::chrono::duration<double>{ seconds });
 }
 
-} // namespace gul
+} // namespace gul14

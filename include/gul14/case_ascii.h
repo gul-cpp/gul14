@@ -27,14 +27,14 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Return the ASCII lowercase equivalent of the given character (or the unchanged
  * character, if it is not an ASCII letter).
  * \param c  The original character.
  * \since GUL version 1.2
- * \see lowercase_ascii(gul::string_view), lowercase_ascii_inplace(std::string &),
+ * \see lowercase_ascii(gul14::string_view), lowercase_ascii_inplace(std::string &),
  *      uppercase_ascii(char)
  */
 constexpr char lowercase_ascii(char c) noexcept
@@ -51,10 +51,10 @@ constexpr char lowercase_ascii(char c) noexcept
  * \param str  The original string.
  * \since GUL version 1.2
  * \see lowercase_ascii(char), lowercase_ascii_inplace(std::string &),
- *      uppercase_ascii(gul::string_view)
+ *      uppercase_ascii(gul14::string_view)
  */
 GUL_EXPORT
-std::string lowercase_ascii(gul::string_view str);
+std::string lowercase_ascii(gul14::string_view str);
 
 /**
  * Replace all ASCII characters in a string by their lowercase equivalents.
@@ -63,7 +63,7 @@ std::string lowercase_ascii(gul::string_view str);
  * \param str  The string to be modified.
  * \returns a reference to the string argument.
  * \since GUL version 1.2
- * \see lowercase_ascii(char), lowercase_ascii(gul::string_view),
+ * \see lowercase_ascii(char), lowercase_ascii(gul14::string_view),
  *      uppercase_ascii_inplace(std::string &)
  */
 GUL_EXPORT
@@ -74,7 +74,7 @@ std::string &lowercase_ascii_inplace(std::string &str) noexcept;
  * character, if it is not an ASCII letter).
  * \param c  The original character.
  * \since GUL version 1.2
- * \see uppercase_ascii(gul::string_view), uppercase_ascii_inplace(std::string &),
+ * \see uppercase_ascii(gul14::string_view), uppercase_ascii_inplace(std::string &),
  *      lowercase_ascii(char)
  */
 constexpr char uppercase_ascii(char c) noexcept
@@ -91,10 +91,10 @@ constexpr char uppercase_ascii(char c) noexcept
  * \param str  The original string.
  * \since GUL version 1.2
  * \see uppercase_ascii(char), uppercase_ascii_inplace(std::string &),
- *      lowercase_ascii(gul::string_view)
+ *      lowercase_ascii(gul14::string_view)
  */
 GUL_EXPORT
-std::string uppercase_ascii(gul::string_view str);
+std::string uppercase_ascii(gul14::string_view str);
 
 /**
  * Replace all ASCII characters in a string by their uppercase equivalents.
@@ -103,12 +103,12 @@ std::string uppercase_ascii(gul::string_view str);
  * \param str  The string to be modified.
  * \returns a reference to the string argument.
  * \since GUL version 1.2
- * \see uppercase_ascii(char), uppercase_ascii(gul::string_view),
+ * \see uppercase_ascii(char), uppercase_ascii(gul14::string_view),
  *      lowercase_ascii_inplace(std::string &)
  */
 GUL_EXPORT
 std::string &uppercase_ascii_inplace(std::string &str) noexcept;
 
-} // namespace gul
+} // namespace gul14
 
 /* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

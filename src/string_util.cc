@@ -23,10 +23,10 @@
 
 #include "gul14/string_util.h"
 
-namespace gul {
+namespace gul14 {
 
 const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
 
-} // namespace gul
+} // namespace gul14
 
 /* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

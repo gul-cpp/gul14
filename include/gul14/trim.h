@@ -27,7 +27,7 @@
 #include "gul14/string_util.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 
 /**
@@ -154,7 +154,7 @@ string_view trim_right_sv(string_view str, string_view ws_chars = default_whites
 // TODO: Add trim_*_inplace
 
 
-} // namespace gul
+} // namespace gul14
 
 
 /**

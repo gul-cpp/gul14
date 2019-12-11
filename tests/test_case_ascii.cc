@@ -25,7 +25,7 @@
 #include "gul14/catch.h"
 
 using namespace std::literals;
-using namespace gul;
+using namespace gul14;
 
 TEST_CASE("lowercase_ascii()", "[case_ascii]")
 {

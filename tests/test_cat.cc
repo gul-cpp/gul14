@@ -24,9 +24,9 @@
 #include "gul14/catch.h"
 
 using namespace std::literals;
-using gul::cat;
+using gul14::cat;
 
-TEST_CASE("gul::cat() works for fixed test cases from 0 to 6 arguments", "[cat]")
+TEST_CASE("gul14::cat() works for fixed test cases from 0 to 6 arguments", "[cat]")
 {
     REQUIRE(cat() == "");
     REQUIRE(cat("Lo") == "Lo");

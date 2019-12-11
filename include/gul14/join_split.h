@@ -28,7 +28,7 @@
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
-namespace gul {
+namespace gul14 {
 
 /**
  * Separate a string at all occurrences of a delimiter, returning the strings between the
@@ -40,7 +40,7 @@ namespace gul {
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
  *
- * split() is the inverse function of gul::join(). It is guaranteed that
+ * split() is the inverse function of gul14::join(). It is guaranteed that
  * `join(split(text, del), del) == text`.
  *
  * \param text       The string that is to be deconstructed
@@ -76,7 +76,7 @@ std::vector<std::string> split(string_view text, string_view delimiter);
  * \returns an array of substrings that were separated by delimiters in the original
  *          string.
  *
- * \see split(gul::string_view, gul::string_view) splits at a fixed substring,<br>
+ * \see split(gul14::string_view, gul14::string_view) splits at a fixed substring,<br>
  *      split_sv() does the same returning a vector of string_views, and<br>
  *      join() can join the vector back into a string.
  */
@@ -93,7 +93,7 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
  *
- * The inverse function of split_sv() is gul::join(). It is guaranteed that
+ * The inverse function of split_sv() is gul14::join(). It is guaranteed that
  * `join(split_sv(text, del), del) == text`.
  *
  * \param text       The string that is to be deconstructed
@@ -109,13 +109,13 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
  *      join() can join the vector back into a string.
  */
 GUL_EXPORT
-std::vector<gul::string_view> split_sv(string_view text, string_view delimiter);
+std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter);
 
 /**
  * Concatenate a vector of strings into one single string, placing a delimiter between
  * them.
  *
- * This is the inverse function of gul::split(). It is guaranteed that
+ * This is the inverse function of gul14::split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
  * \param parts  Array of strings that are to be concatenated
@@ -123,7 +123,7 @@ std::vector<gul::string_view> split_sv(string_view text, string_view delimiter);
  *
  * \returns all strings glued together with the delimiter glue.
  *
- * \see join(const std::vector<gul::string_view> &, string_view) accepts a vector of
+ * \see join(const std::vector<gul14::string_view> &, string_view) accepts a vector of
  *      string_view objects, split() and associated functions can be used to split a
  *      string into a vector of substrings.
  */
@@ -134,7 +134,7 @@ std::string join(const std::vector<std::string>& parts, string_view glue);
  * Concatenate a vector of string_views into one single string, placing a delimiter
  * between them.
  *
- * This is the inverse function of gul::split(). It is guaranteed that
+ * This is the inverse function of gul14::split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
  * \param parts  Array of strings that are to be concatenated
@@ -149,6 +149,6 @@ std::string join(const std::vector<std::string>& parts, string_view glue);
 GUL_EXPORT
 std::string join(const std::vector<string_view>& parts, string_view glue);
 
-} /* namespace gul */
+} // namespace gul14
 
 /* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

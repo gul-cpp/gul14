@@ -25,7 +25,7 @@
 
 using namespace std::literals::string_literals;
 
-namespace gul {
+namespace gul14 {
 
 
 namespace {
@@ -56,7 +56,7 @@ std::string join(const std::vector<StringType>& parts, string_view glue) {
 }
 
 template<typename StringType>
-std::vector<StringType> split(gul::string_view text, gul::string_view delimiter) {
+std::vector<StringType> split(gul14::string_view text, gul14::string_view delimiter) {
     using SizeType = typename StringType::size_type;
 
     auto result = std::vector<StringType>{ };
@@ -114,6 +114,6 @@ std::string join(const std::vector<string_view>& parts, string_view glue) {
     return join<string_view>(parts, glue);
 }
 
-} // namespace gul
+} // namespace gul14
 
 // vi:ts=4:sw=4:et

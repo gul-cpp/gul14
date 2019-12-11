@@ -33,7 +33,7 @@
 #include "gul14/string_view.h"
 #include "gul14/substring_checks.h"
 
-namespace gul {
+namespace gul14 {
 
 /// \cond HIDE_SYMBOLS
 namespace detail {
@@ -57,7 +57,7 @@ constexpr inline bool is_nan_specifier(char c) noexcept
 }
 
 template <typename NumberType, bool count_magnitude = false>
-constexpr inline optional<NumberType> to_unsigned_integer(gul::string_view str,
+constexpr inline optional<NumberType> to_unsigned_integer(gul14::string_view str,
         NumberType* magnitude = nullptr) noexcept
 {
 #ifndef __GNUC__
@@ -147,10 +147,10 @@ using FloatConversionIntType = uint64_t;
  * \tparam NumberType Destination numeric type.
  * \param str  The signless string to be converted.
  *
- * \returns a ParseInfNanResult that contains a gul::optional with the number
+ * \returns a ParseInfNanResult that contains a gul14::optional with the number
  */
 template <typename NumberType>
-constexpr inline gul::optional<NumberType> to_normalized_float(gul::string_view i1, gul::string_view i2) noexcept
+constexpr inline gul14::optional<NumberType> to_normalized_float(gul14::string_view i1, gul14::string_view i2) noexcept
 {
     static_assert(std::numeric_limits<FloatConversionIntType>::digits10
             >= std::numeric_limits<NumberType>::digits10,
@@ -195,7 +195,7 @@ struct ParseInfNanResult {
  * \tparam NumberType Destination numeric type.
  * \param str  The signless string to be converted.
  *
- * \returns a ParseInfNanResult that contains a gul::optional with the number
+ * \returns a ParseInfNanResult that contains a gul14::optional with the number
  *          if the conversion was successful. If there was a conversion error,
  *          the returned optional is empty. If nothing special has been found
  *          the result_valid member is false.
@@ -208,22 +208,22 @@ struct ParseInfNanResult {
  * - !result_valid (on nothing-to-do, i.e possibly number found)
  */
 template <typename NumberType>
-constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul::string_view str) noexcept
+constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul14::string_view str) noexcept
 {
     auto const strlength = str.length();
     if (strlength == 0)
         return { true, {} };
 
-    if (gul::starts_with_nocase(str, "inf")) {
+    if (gul14::starts_with_nocase(str, "inf")) {
         if (strlength == 3 /* strlen("inf") */ )
             return { true, make_optional(std::numeric_limits<NumberType>::infinity()) };
         if (strlength == 8 /* strlen("infinity") */
-                and gul::starts_with_nocase(str.substr(3), "inity"))
+                and gul14::starts_with_nocase(str.substr(3), "inity"))
             return { true, make_optional(std::numeric_limits<NumberType>::infinity()) };
         return { true, {} };
     }
 
-    if (gul::starts_with_nocase(str, "nan")) {
+    if (gul14::starts_with_nocase(str, "nan")) {
         if (strlength == 3 /* strlen("nan") */ )
             return { true, make_optional(std::numeric_limits<NumberType>::quiet_NaN()) };
         if (strlength < 5 /* strlen("nan()") */ or str[3] != '(' or str.back() != ')')
@@ -255,11 +255,11 @@ constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul::string_view st
  * \tparam NumberType Destination numeric type.
  * \param str  The signless string to be converted.
  *
- * \returns a gul::optional that contains the number if the conversion was successful. If
+ * \returns a gul14::optional that contains the number if the conversion was successful. If
  *          there was a conversion error, the return value is empty.
  */
 template <typename NumberType>
-constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) noexcept
+constexpr inline optional<NumberType> to_unsigned_float(gul14::string_view str) noexcept
 {
     auto inf_nan = parse_inf_nan<NumberType>(str);
     if (inf_nan.result_valid)
@@ -267,7 +267,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
 
     int exponent = 0;
     auto e_pos = str.find_first_of("eE");
-    if (e_pos != gul::string_view::npos)
+    if (e_pos != gul14::string_view::npos)
     {
         if (e_pos + 1 == str.size())
             return nullopt;
@@ -284,11 +284,11 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
         exponent = *opt_exp;
     }
 
-    gul::string_view str_before_point{ str };
-    gul::string_view str_after_point;
+    gul14::string_view str_before_point{ str };
+    gul14::string_view str_after_point;
 
     auto point_pos = str.find('.');
-    if (point_pos != gul::string_view::npos)
+    if (point_pos != gul14::string_view::npos)
     {
         str_before_point = str.substr(0, point_pos);
         str_after_point = str.substr(point_pos + 1);
@@ -346,13 +346,13 @@ constexpr inline optional<NumberType> to_unsigned_float(gul::string_view str) no
  * \returns an optional that contains std::strtold()'s return value (include HUGE_VAL).
  * Parsing failure (including number end before string end) is returned by std::nullopt.
  *
- * \note This function is used as fallback solution if we can not use gul::to_unsigned_float()
+ * \note This function is used as fallback solution if we can not use gul14::to_unsigned_float()
  * for the desired conversions. This can have two reasons:
  * - The internally used integer type is too small compared to the floating point type.
  * - On Apple clang 8.0.0 std::pow<long double>() is inaccurate.
  */
 template <typename NumberType>
-inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept
+inline optional<NumberType> strtold_wrapper(gul14::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
@@ -383,7 +383,7 @@ inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept
  * an optional integer or floating-point number.
  *
  * \code
- * gul::optional<int> result = gul::to_number<int>("42");
+ * gul14::optional<int> result = gul14::to_number<int>("42");
  *
  * if (result.has_value())
  *     std::cout << "The answer is " << result.value() << ".\n";
@@ -398,7 +398,7 @@ inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept
  * follows its own set of design goals:
  * - Its input type is string_view: No null-termination and no temporary std::string are
  *   required for the conversion.
- * - Conversion errors are reported by returning a gul::optional without a value.
+ * - Conversion errors are reported by returning a gul14::optional without a value.
  * - The function does not allocate.
  * - Performance should in most cases be better than and in few cases not much worse than
  *   std::sto[ildf].
@@ -431,7 +431,7 @@ inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept
  *
  * \tparam NumberType Destination numeric type
  * \param str  The string to be converted into a number.
- * \returns a gul::optional that contains the number if the conversion was successful. If
+ * \returns a gul14::optional that contains the number if the conversion was successful. If
  *          there was a conversion error, the return value is empty.
  *          If the input describes a number whose parsed value is not in the range representable
  *          by \b NumberType, the return value is empty.
@@ -451,7 +451,7 @@ inline optional<NumberType> strtold_wrapper(gul::string_view str) noexcept
 template <typename NumberType,
           std::enable_if_t<std::is_integral<NumberType>::value &&
                            std::is_unsigned<NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
+constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 {
     return detail::to_unsigned_integer<NumberType>(str);
 }
@@ -460,7 +460,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 template <typename NumberType,
           std::enable_if_t<std::is_integral<NumberType>::value &&
                            std::is_signed<NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
+constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
@@ -491,7 +491,7 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
 // Overload for floating-point types.
 template <typename NumberType,
     std::enable_if_t<std::is_floating_point<NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
+constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
@@ -529,6 +529,6 @@ constexpr inline optional<NumberType> to_number(gul::string_view str) noexcept
     return detail::to_unsigned_float<NumberType>(str);
 }
 
-} /* namespace gul */
+} // namespace gul14
 
 // vi:ts=4:sw=4:et:sts=4
