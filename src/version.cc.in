@@ -25,5 +25,5 @@
 // The "@ string @" sequences are replaced with the actual strings by the meson build
 // system and written into the build directory as version.cc. That file is compiled and
 // linked if specified.
-const gul14::string_view gul14::version_git{ "@GIT_FULL_API_VERSION@" };
-const gul14::string_view gul14::version_api{ "@LIBGUL_API_VERSION@" };
+char const* gul14::version_git{ "@GIT_FULL_API_VERSION@" };
+char const* gul14::version_api{ "@LIBGUL_API_VERSION@" };

@@ -27,7 +27,7 @@ TEST_CASE("Symbols can be reached via alias namespace gul::", "[namespace]")
 {
     REQUIRE(gul::cat('a', 'b', 'c') == "abc");
     REQUIRE(gul::to_number<int>("42") == 42);
-    REQUIRE(gul::version_api.empty() == false);
+    REQUIRE(gul::version_api[0] != '\0');
 }
 
 // vi:ts=4:sw=4:sts=4:et
