@@ -87,12 +87,18 @@ namespace gul14 {
  *
  * \section usage Usage
  *
- * To use the library, include the single header file \ref gul14/gul.h and link your code
- * against the library (-lgul). If you are on Windows, see \ref using_gul_on_windows.
+ * To use the library:
  *
- * GUL requires at least C++14. All utility functions and classes are enclosed in the
- * namespace \ref gul14. The main header file defines a convenience alias so that also the
- * namespace qualifier `gul::` can be used.
+ *  - Include the main header file \ref gul14/gul.h.
+ *  - Link your code against the library (-lgul).
+ *  - If you are on Windows, see \ref using_gul_on_windows.
+ *
+ * All functions and classes are enclosed in the namespace \ref gul14. The main header
+ * file defines a convenience alias so that also the namespace qualifier `gul::` can be
+ * used.
+ *
+ * GUL14 requires at least C++14. It works fine with newer versions of the standard, but
+ * uses its own backport types (e.g. gul14::string_view) in function interfaces.
  *
  * \section source_code Obtaining the Source Code
  *
