@@ -90,7 +90,7 @@ namespace gul14 {
  * To use the library:
  *
  *  - Include the main header file \ref gul14/gul.h.
- *  - Link your code against the library (-lgul).
+ *  - Link your code against the library (-lgul14).
  *  - If you are on Windows, see \ref using_gul_on_windows.
  *
  * All functions and classes are enclosed in the namespace \ref gul14. The main header

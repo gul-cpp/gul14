@@ -54,5 +54,5 @@ cd "$SOURCEDIR" \
 	&& ( \
 		sed -e "s!^\(OUTPUT_DIRECTORY\s*=\s*\).*!\1$OUTDIR!" "${CONF}" \
 		| doxygen $@ - 2>&1 1>&3 \
-		| ( grep -v 'include/gul/string_view.h:[0-9]\+: warning:' || true ) 1>&2 \
+		| ( grep -v 'include/gul14/string_view.h:[0-9]\+: warning:' || true ) 1>&2 \
 	) 3>&1
