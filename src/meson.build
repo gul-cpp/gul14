@@ -87,21 +87,21 @@ if meson.get_compiler('cpp').has_argument('-Wshadow')
     add_cpp_args += [ '-Wshadow' ]
 endif
 
-libgul = shared_library('gul', libgul_src + [ version_cc ],
+libgul = shared_library(meson.project_name(), libgul_src + [ version_cc ],
                         soversion : so_version,
                         cpp_args : add_cpp_args,
                         include_directories : inc,
                         gnu_symbol_visibility : 'hidden',
                         install : true)
 
-libgul_s = static_library('gul', libgul_src + [ version_cc ],
+libgul_s = static_library(meson.project_name(), libgul_src + [ version_cc ],
                           cpp_args : add_cpp_args,
                           include_directories : inc,
                           install : true)
 
 pkg = import('pkgconfig')
 pkg.generate(libraries : libgul,
-             name : 'libgul',
+             name : 'lib' + meson.project_name(),
              description : 'General Utility Library',
              version : '@0@'.format(libgul_api_version))
 

@@ -2,13 +2,13 @@
 # Only called if deb_install == true
 
 # These are the standard package names
-deb_name_default = meson.project_name()
-deb_dev_name_default = meson.project_name() + '-dev'
+deb_name_default = 'lib' + meson.project_name()
+deb_dev_name_default = 'lib' + meson.project_name() + '-dev'
 
 # Generate package name the user wants to have
 # Thereby @0@ is substituted with the official package name
-deb_name = get_option('deb-name').format(meson.project_name())
-deb_dev_name = get_option('deb-dev-name').format(meson.project_name())
+deb_name = get_option('deb-name').format('lib' + meson.project_name())
+deb_dev_name = get_option('deb-dev-name').format('lib' + meson.project_name())
 
 # Autogenerate debian/changelog
 if not changelogger.found()
