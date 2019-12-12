@@ -1,5 +1,5 @@
 /**
- * \file    gul.h
+ * \file    include/gul.h
  * \authors \ref contributors
  * \date    Created on August 24, 2018
  * \brief   Compatibility include file for the General Utility Library.
