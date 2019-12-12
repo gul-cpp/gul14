@@ -30,6 +30,7 @@ tests = [
     'test_hexdump.cc',
     'test_join_split.cc',
     'test_main.cc',
+    'test_namespace.cc',
     'test_num_util.cc',
     'test_optional.cc',
     'test_replace.cc',
