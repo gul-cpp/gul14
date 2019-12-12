@@ -32,11 +32,13 @@ namespace gul14 {
  * been build with.
  * It has the format returned by git describe --tags --always --dirty
  */
+GUL_EXPORT
 extern char const* version_git;
 
 /**
  * Holds the API version of the library.
  */
+GUL_EXPORT
 extern char const* version_api;
 
 } // namespace gul14
