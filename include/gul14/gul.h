@@ -56,7 +56,7 @@ namespace gul14 {
 /**
  * \mainpage
  *
- * \image html gul_big.png
+ * \image html gul14_big.png
  *
  * \section introduction Introduction
  *
