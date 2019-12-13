@@ -34,6 +34,7 @@ libgul_sub_headers = files(standalone_headers)
 libgul_sub_headers += files([
     'gul14/gul.h',
     'gul14/catch.h',
+    'gul/catch.h',
     'gul14/internal.h',
     'gul14/optional.h',
     'gul14/string_view.h',
