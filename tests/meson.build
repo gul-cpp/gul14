@@ -63,10 +63,10 @@ all_header_checks = [ ]
 loop_number = 0
 foreach header_to_check : standalone_headers
     loop_number += 1
-    if not header_to_check.startswith('gul14/') or not header_to_check.endswith('.h')
+    if not header_to_check.startswith(meson.project_name() + '/') or not header_to_check.endswith('.h')
         continue
     endif
-    header_name = header_to_check.split('gul14/')[1].split('.h')[0]
+    header_name = header_to_check.split(meson.project_name() + '/')[1].split('.h')[0]
 
     header_conf = configuration_data()
     header_conf.set('HEADER_TO_INCLUDE', header_to_check)
