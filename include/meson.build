@@ -34,7 +34,6 @@ libgul_sub_headers = files(standalone_headers)
 libgul_sub_headers += files([
     'gul14/gul.h',
     'gul14/catch.h',
-    'gul/catch.h',
     'gul14/internal.h',
     'gul14/optional.h',
     'gul14/string_view.h',
@@ -51,5 +50,12 @@ inc = [ include_directories([
     '.',
     'gul14'
 ])]
+
+# Compatibility header for old projects using <gul/catch.h>,
+# will be removed later when all project use <gul14/catch.h> directly instead.
+install_headers(
+    'gul/catch.h',
+    subdir : 'gul'
+)
 
 # vi:ts=4:sw=4:sts=4:et
