@@ -31,6 +31,11 @@ if build_machine.cpu_family() == 'arm' or build_machine.cpu_family() == 'aarch64
     deb_ninja_args = '-j 1'
 endif
 
+# GUL has been renamed from libgul to libgul14. For compatibility reasons some files in the
+# old path are also provided by the new package. To avoid clashes the old packets need to
+# conflict.
+typical_old_dev_names = 'dev-doocs-libgul, libgul-dev'
+
 # Configure all the debian files
 deb_conf = configuration_data()
 deb_conf.set('PREFIX', get_option('prefix'))
@@ -39,8 +44,7 @@ deb_conf.set('INCLUDEDIR', get_option('includedir'))
 deb_conf.set('NAME', deb_name)
 deb_conf.set('NAME-BASE', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
-deb_conf.set('CONFLICTS', '')
-deb_conf.set('CONFLICTS-DEV', '')
+deb_conf.set('CONFLICTS-DEV', typical_old_dev_names)
 deb_conf.set('VERSION', get_variable('git_version_num', libgul_api_version)
                         + get_variable('git_patch', ''))
 deb_conf.set('CONFIG_CHECKER', meson.build_root() + '/@0@'.format(config_checker))
@@ -53,11 +57,10 @@ if deb_name != deb_name_default or get_option('deb-vers-pack')
     git_version_suf = '-' + '-'.join(git_version_parts)
     deb_name = deb_name + git_version_suf
     deb_conf.set('NAME', deb_name)
-    deb_conf.set('CONFLICTS', deb_name_default)
 endif
 if deb_dev_name != deb_dev_name_default
     deb_conf.set('NAME-DEV', deb_dev_name)
-    deb_conf.set('CONFLICTS-DEV', deb_dev_name_default)
+    deb_conf.set('CONFLICTS-DEV', typical_old_dev_names + ', ' + deb_dev_name_default)
 endif
 
 debian_files = [

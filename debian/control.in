@@ -9,7 +9,6 @@ Homepage: https://stash.desy.de/projects/GUL/repos/libgul
 Package: @NAME@
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: @CONFLICTS@
 Description: general utility library
  The general utility library contains often-used utility
  functions and types that form the foundation for other
