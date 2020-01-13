@@ -22,4 +22,11 @@ check_conf.set('VERSION_TAG', get_option('deb-vers-tag'))
 config_checker = configure_file(configuration : check_conf,
     input : 'config_checker.in', output : 'config_checker')
 
+conf_inst = configuration_data()
+conf_inst.set('SONAME', meson.project_name())
+conf_inst.set('LIBDIR', get_option('libdir'))
+add_compat_link = configure_file(configuration : conf_inst,
+    input : 'add_compat_link.py.in', output : 'add_compat_link.py')
+meson.add_install_script(join_paths(meson.current_build_dir(), 'add_compat_link.py'))
+
 # vi:ts=4:sw=4:sts=4:et
