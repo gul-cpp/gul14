@@ -29,5 +29,4 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	@DESTDIR=${PWD}/debian/tmp ninja @NINJA-ARGS@ install
-	# Compatibility link for naming transition gul -> gul14
-	@ln -s `basename ${PWD}/debian/tmp/export/doocs/lib/*.so` ${PWD}/debian/tmp/export/doocs/lib/libgul.so || true
+
