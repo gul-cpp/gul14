@@ -605,7 +605,7 @@ public:
          * \param buff Reference to the SlidingBuffer the iterator points into.
          * \param num  Index of the element the iterator points to.
          */
-        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0)
+        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0) noexcept
             : position_{ num }
             , buffer_{ buff }
         {
@@ -635,14 +635,16 @@ public:
 
         /// Add an integer to an iterator.
         friend auto
-        operator+(const SlidingBufferIterator &it, difference_type d) -> SlidingBufferIterator
+        operator+(const SlidingBufferIterator &it, difference_type d) noexcept
+        -> SlidingBufferIterator
         {
             return SlidingBufferIterator{ it.buffer_, it.position_ + d };
         }
 
         /// Add an integer and an iterator.
         friend auto
-        operator+(difference_type d, const SlidingBufferIterator &it) -> SlidingBufferIterator
+        operator+(difference_type d, const SlidingBufferIterator &it) noexcept
+        -> SlidingBufferIterator
         {
             return SlidingBufferIterator{ it.buffer_, it.position_ + d };
         }
@@ -671,20 +673,22 @@ public:
 
         /// Subtract an integer from an iterator.
         friend auto
-        operator-(const SlidingBufferIterator &it, difference_type d) -> SlidingBufferIterator
+        operator-(const SlidingBufferIterator &it, difference_type d) noexcept
+        -> SlidingBufferIterator
         {
             return SlidingBufferIterator{ it.buffer_, it.position_ - d };
         }
 
         /// Subtract two iterators.
         friend auto
-        operator-(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) -> difference_type
+        operator-(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> difference_type
         {
             return rhs.position_ - lhs.position_;
         }
 
         /// Access element pointed to by the iterator
-        auto operator*() const -> typename std::conditional_t<
+        auto operator*() const noexcept -> typename std::conditional_t<
             std::is_const<std::remove_pointer_t<BufferPointer>>::value,
             const_reference, reference>
         {
@@ -692,7 +696,7 @@ public:
         }
 
         /// Access member of element pointed to by the iterator
-        auto operator->() const -> typename std::conditional_t<
+        auto operator->() const noexcept -> typename std::conditional_t<
             std::is_const<std::remove_pointer_t<BufferPointer>>::value,
             const_pointer, pointer>
         {
