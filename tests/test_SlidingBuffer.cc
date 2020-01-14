@@ -1253,4 +1253,153 @@ TEST_CASE("SlidingBufferExposed: Shrinking behavior", "[SlidingBuffer]")
     }
 }
 
+TEST_CASE("SlidingBufferIterator: LegacyIterator requirements", "[SlidingBufferIterator]")
+{
+    SlidingBuffer<int, 10> buf;
+    for (auto i = 0u; i < buf.capacity(); i++)
+        buf.push_back(i);
+
+    // prefix operator++ and dereferencing
+    int cnt = 0;
+    for (auto it = buf.begin(); it != buf.end(); ++it)
+    {
+        REQUIRE(*it == cnt);
+        ++cnt;
+    }
+}
+
+TEST_CASE("SlidingBufferIterator: LegacyForwardIterator requirements",
+          "[SlidingBufferIterator]")
+{
+    SlidingBuffer<int, 10> buf;
+    for (auto i = 0u; i < buf.capacity(); i++)
+        buf.push_back(i);
+
+    // postfix operator++
+    int cnt = 0;
+    for (auto it = buf.begin(); it != buf.end(); )
+    {
+        REQUIRE(*it++ == cnt);
+        ++cnt;
+    }
+
+    // Equality and inequality operators
+    // Comparison operators
+    auto a = buf.begin();
+    auto b = a;
+    ++b;
+
+    REQUIRE((a == a) == true);
+    REQUIRE((a == b) == false);
+    REQUIRE((a != a) == false);
+    REQUIRE((a != b) == true);
+}
+
+TEST_CASE("SlidingBufferIterator: LegacyBidirectionalIterator requirements",
+          "[SlidingBufferIterator]")
+{
+    SlidingBuffer<int, 10> buf;
+    for (auto i = 0u; i < buf.capacity(); i++)
+        buf.push_back(i);
+
+    // prefix operator--
+    int cnt = buf.size() - 1;
+    for (auto it = buf.end(); it != buf.begin(); )
+    {
+        --it;
+        REQUIRE(*it == cnt);
+        --cnt;
+    }
+
+    // postfix operator--
+    auto it = buf.end();
+    it--;
+    for (int i = buf.size() - 1; i >= 0; --i)
+        REQUIRE(*it-- == i);
+}
+
+TEST_CASE("SlidingBufferIterator: LegacyRandomAccessIterator requirements",
+          "[SlidingBufferIterator]")
+{
+    SlidingBuffer<int, 10> buf;
+    for (auto i = 0u; i < buf.capacity(); i++)
+        buf.push_back(i);
+
+    // operator+=
+    int cnt = 0;
+    for (auto it = buf.begin(); it != buf.end(); it += 2)
+    {
+        REQUIRE(*it == cnt);
+        cnt += 2;
+    }
+
+    // operator+(iterator, int)
+    cnt = 0;
+    for (auto it = buf.begin(); it != buf.end(); )
+    {
+        REQUIRE(*it == cnt);
+        it = it + 2;
+        cnt += 2;
+    }
+
+    // operator+(int, iterator)
+    cnt = 0;
+    for (auto it = buf.begin(); it != buf.end(); )
+    {
+        REQUIRE(*it == cnt);
+        it = 2 + it;
+        cnt += 2;
+    }
+
+    // operator-=
+    cnt = 10;
+    auto it = buf.end();
+    while (true)
+    {
+        CAPTURE(buf.size());
+
+        it -= 2;
+        cnt -= 2;
+        REQUIRE(*it == cnt);
+
+        if (cnt == 0)
+            break;
+    }
+
+    // operator-(iterator, int)
+    cnt = 8;
+    it = buf.end();
+    while (true)
+    {
+        it = it - 2;
+        REQUIRE(*it == cnt);
+        cnt -= 2;
+        if (it == buf.begin())
+            break;
+    }
+
+    // operator[]
+    it = buf.begin();
+    for (auto i = 0u; i < buf.size(); ++i)
+        REQUIRE(it[i] == buf[i]);
+
+    ++it;
+    for (int i = -1; i < static_cast<int>(buf.size()) - 1; ++i)
+        REQUIRE(it[i] == buf[i + 1]);
+
+    // Comparison operators
+    auto l = buf.begin();
+    auto r = l + 2;
+    REQUIRE((l < r) == true);
+    REQUIRE((r < l) == false);
+    REQUIRE((l > r) == false);
+    REQUIRE((r > l) == true);
+    REQUIRE((l <= r) == true);
+    REQUIRE((r <= l) == false);
+    REQUIRE((l >= r) == false);
+    REQUIRE((r >= l) == true);
+    REQUIRE((l <= l) == true);
+    REQUIRE((l >= l) == true);
+}
+
 // vi:ts=4:sw=4:sts=4:et

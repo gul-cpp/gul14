@@ -555,9 +555,9 @@ public:
     }
 
     /**
-     * Iterator of the SlidingBuffer.
+     * Iterator of the SlidingBuffer container.
      *
-     * This is a bidirectional iterator.
+     * This is a random access iterator.
      *
      * \par Invalidation
      * An iterator is considered invalid if at least one of these conditions is true:
@@ -590,7 +590,7 @@ public:
      * \tparam BufferPointer Type of the pointer used to access the SlidingBuffer
      */
     template <typename BufferPointer>
-    struct SlidingBufferIterator : std::iterator<std::bidirectional_iterator_tag, value_type> {
+    struct SlidingBufferIterator : std::iterator<std::random_access_iterator_tag, value_type> {
     protected:
         /// This is the logical index we are currently pointing at.
         size_type position_{ 0 };
@@ -626,6 +626,27 @@ public:
             return previous;
         }
 
+        /// Increase iterator by a given number of positions.
+        auto operator+=(difference_type d) noexcept -> SlidingBufferIterator&
+        {
+            position_ += d;
+            return *this;
+        }
+
+        /// Add an integer to an iterator.
+        friend auto
+        operator+(const SlidingBufferIterator &it, difference_type d) -> SlidingBufferIterator
+        {
+            return SlidingBufferIterator{ it.buffer_, it.position_ + d };
+        }
+
+        /// Add an integer and an iterator.
+        friend auto
+        operator+(difference_type d, const SlidingBufferIterator &it) -> SlidingBufferIterator
+        {
+            return SlidingBufferIterator{ it.buffer_, it.position_ + d };
+        }
+
         /// Pre-decrement iterator by one position
         auto operator--() noexcept -> SlidingBufferIterator&
         {
@@ -639,6 +660,27 @@ public:
             auto previous = *this;
             --(*this);
             return previous;
+        }
+
+        /// Decrease iterator by a given number of positions.
+        auto operator-=(difference_type d) noexcept -> SlidingBufferIterator&
+        {
+            position_ -= d;
+            return *this;
+        }
+
+        /// Subtract an integer from an iterator.
+        friend auto
+        operator-(const SlidingBufferIterator &it, difference_type d) -> SlidingBufferIterator
+        {
+            return SlidingBufferIterator{ it.buffer_, it.position_ - d };
+        }
+
+        /// Subtract two iterators.
+        friend auto
+        operator-(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) -> difference_type
+        {
+            return rhs.position_ - lhs.position_;
         }
 
         /// Access element pointed to by the iterator
@@ -655,6 +697,12 @@ public:
             const_pointer, pointer>
         {
             return &(*buffer_)[position_];
+        }
+
+        /// Dereference the iterator at a certain index offset.
+        auto operator[](difference_type offs) noexcept -> reference
+        {
+            return *(*this + offs);
         }
 
         /**
@@ -675,6 +723,37 @@ public:
         auto operator!=(SlidingBufferIterator other) const noexcept -> bool
         {
             return not (*this == other);
+        }
+
+        /**
+         * Determine if the left iterator refers to a greater position than the right one.
+         */
+        auto operator>(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return position_ > other.position_;
+        }
+
+        /// Determine if the left iterator refers to a lower position than the right one.
+        auto operator<(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return position_ < other.position_;
+        }
+
+        /**
+         * Determine if the left iterator refers to position that is greater than or equal
+         * to than the right one.
+         */
+        auto operator>=(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return position_ >= other.position_;
+        }
+        /**
+         * Determine if the left iterator refers to a position that is less than or equal
+         * to than the right one.
+         */
+        auto operator<=(SlidingBufferIterator other) const noexcept -> bool
+        {
+            return position_ <= other.position_;
         }
     };
 
