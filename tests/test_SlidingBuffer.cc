@@ -32,6 +32,8 @@
 #include "gul14/tokenize.h"
 
 using namespace std::literals::string_literals;
+using gul14::SlidingBuffer;
+using gul14::SlidingBufferExposed;
 
 // A dummy struct for tests with nontrivial elements.
 struct MyStruct {
@@ -66,7 +68,7 @@ template<typename ElementT, std::size_t fixed_capacity = 0u,
     typename Container = typename std::conditional_t<(fixed_capacity >= 1u),
         std::array<ElementT, fixed_capacity>,
         std::vector<ElementT>>,
-    typename UnderlyingBuffer = gul14::SlidingBuffer<ElementT, fixed_capacity, Container>
+    typename UnderlyingBuffer = SlidingBuffer<ElementT, fixed_capacity, Container>
     >
 class SlidingBufferDebug : public UnderlyingBuffer {
 public:
@@ -83,7 +85,7 @@ template<typename ElementT, std::size_t fixed_capacity = 0u,
     typename Container = typename std::conditional_t<(fixed_capacity >= 1u),
         std::array<ElementT, fixed_capacity>,
         std::vector<ElementT>>,
-    typename UnderlyingBuffer = gul14::SlidingBufferExposed<ElementT, fixed_capacity, Container>
+    typename UnderlyingBuffer = SlidingBufferExposed<ElementT, fixed_capacity, Container>
     >
 class SlidingBufferExposedDebug : public UnderlyingBuffer {
 public:
@@ -195,10 +197,10 @@ TEST_CASE("SlidingBuffer test", "[SlidingBuffer]")
     SECTION("queueing tests") {
         auto constexpr buffer_size = 12u;
 
-        auto buff_array = gul14::SlidingBuffer<TestElement<double, unsigned int>, buffer_size>{};
+        auto buff_array = SlidingBuffer<TestElement<double, unsigned int>, buffer_size>{};
         do_queueing_tests<buffer_size>(buff_array);
 
-        auto buff_vector = gul14::SlidingBuffer<TestElement<double, unsigned int>, 0>{};
+        auto buff_vector = SlidingBuffer<TestElement<double, unsigned int>, 0>{};
         buff_vector.resize(buffer_size);
         do_queueing_tests<buffer_size>(buff_vector);
     }
@@ -212,15 +214,15 @@ TEST_CASE("SlidingBuffer test", "[SlidingBuffer]")
         do_dumping_tests(buff_vector);
     }
     SECTION("vector construction tests") {
-        auto buff1 = gul14::SlidingBuffer<TestElement<double, unsigned int>, 0>{};
+        auto buff1 = SlidingBuffer<TestElement<double, unsigned int>, 0>{};
         REQUIRE(buff1.capacity() == 0);
         buff1.resize(10);
         REQUIRE(buff1.capacity() == 10);
-        auto buff2 = gul14::SlidingBuffer<TestElement<double, unsigned int>>{};
+        auto buff2 = SlidingBuffer<TestElement<double, unsigned int>>{};
         REQUIRE(buff2.capacity() == 0);
-        auto buff3 = gul14::SlidingBuffer<TestElement<double, unsigned int>>{ 11 };
+        auto buff3 = SlidingBuffer<TestElement<double, unsigned int>>{ 11 };
         REQUIRE(buff3.capacity() == 11);
-        auto buff4 = gul14::SlidingBuffer<TestElement<double, unsigned int>>(12);
+        auto buff4 = SlidingBuffer<TestElement<double, unsigned int>>(12);
         REQUIRE(buff4.capacity() == 12);
     }
     SECTION("iterator tests") {
@@ -259,7 +261,7 @@ TEST_CASE("SlidingBuffer test", "[SlidingBuffer]")
         x->val = 2;
         REQUIRE(buff1.front().val == 2);
 
-        auto buff2 = gul14::SlidingBuffer<int, 10>{ };
+        auto buff2 = SlidingBuffer<int, 10>{ };
         buff2.push_front(0);
         buff2.push_front(1);
         buff2.push_front(2);
@@ -601,7 +603,7 @@ TEST_CASE("SlidingBuffer resize", "[SlidingBuffer]")
 TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at() on array-based buffer",
           "[SlidingBuffer]")
 {
-    gul14::SlidingBuffer<double, 2> buf;
+    SlidingBuffer<double, 2> buf;
 
     REQUIRE(buf.empty());
     REQUIRE(buf.size() == 0);
@@ -647,7 +649,7 @@ TEST_CASE("SlidingBuffer: push_front(), empty(), size(), clear(), at() on array-
 TEST_CASE("SlidingBuffer: push_back(), empty(), size(), clear(), at() on array-based buffer",
           "[SlidingBuffer]")
 {
-    gul14::SlidingBuffer<double, 2> buf;
+    SlidingBuffer<double, 2> buf;
 
     REQUIRE(buf.empty());
     REQUIRE(buf.size() == 0);
@@ -691,10 +693,10 @@ TEST_CASE("SlidingBuffer: push_back(), empty(), size(), clear(), at() on array-b
 
 TEST_CASE("SlidingBuffer: empty(), clear() on vector-based buffer", "[SlidingBuffer]")
 {
-    const gul14::SlidingBuffer<int> buf{};
+    const SlidingBuffer<int> buf{};
     REQUIRE(buf.empty()); // can be called in a const context
 
-    gul14::SlidingBuffer<int> buf2;
+    SlidingBuffer<int> buf2;
     buf2.resize(2);
     REQUIRE(buf2.empty());
 
@@ -710,7 +712,7 @@ TEST_CASE("SlidingBuffer: empty(), clear() on vector-based buffer", "[SlidingBuf
 
 TEST_CASE("SlidingBuffer copying and moving", "[SlidingBuffer]")
 {
-    auto buffer = gul14::SlidingBuffer<TestElement<double, unsigned int>>(6);
+    auto buffer = SlidingBuffer<TestElement<double, unsigned int>>(6);
     for (auto i = 0u; i < 20; ++i)
         buffer.push_front({ 100.0 + 1.0 * i, i });
 
@@ -790,10 +792,10 @@ TEST_CASE("SlidingBufferExposed test", "[SlidingBuffer]")
     SECTION("queueing tests") {
         auto constexpr buffer_size = 12u;
 
-        auto buff_array = gul14::SlidingBufferExposed<TestElement<double, unsigned int>, buffer_size>{};
+        auto buff_array = SlidingBufferExposed<TestElement<double, unsigned int>, buffer_size>{};
         do_queueing_tests<buffer_size>(buff_array);
 
-        auto buff_vector = gul14::SlidingBufferExposed<TestElement<double, unsigned int>, 0>{};
+        auto buff_vector = SlidingBufferExposed<TestElement<double, unsigned int>, 0>{};
         buff_vector.resize(buffer_size);
         do_queueing_tests<buffer_size>(buff_vector);
     }
@@ -849,7 +851,7 @@ TEST_CASE("SlidingBuffer: push_front(const T&) with nontrivial T", "[SlidingBuff
 {
     MyStruct obj = { 1, "Hello" };
 
-    gul14::SlidingBuffer<MyStruct, 4> buf;
+    SlidingBuffer<MyStruct, 4> buf;
 
     buf.push_front(obj);
 
@@ -861,7 +863,7 @@ TEST_CASE("SlidingBuffer: push_front(T&&) with nontrivial T", "[SlidingBuffer]")
 {
     MyStruct obj = { 1, "Hello" };
 
-    gul14::SlidingBuffer<MyStruct, 4> buf;
+    SlidingBuffer<MyStruct, 4> buf;
 
     buf.push_front(std::move(obj));
 
@@ -873,7 +875,7 @@ TEST_CASE("SlidingBuffer: push_back(const T&) with nontrivial T", "[SlidingBuffe
 {
     MyStruct obj = { 1, "Hello" };
 
-    gul14::SlidingBuffer<MyStruct, 4> buf;
+    SlidingBuffer<MyStruct, 4> buf;
 
     buf.push_back(obj);
 
@@ -885,7 +887,7 @@ TEST_CASE("SlidingBuffer: push_back(T&&) with nontrivial T", "[SlidingBuffer]")
 {
     MyStruct obj = { 1, "Hello" };
 
-    gul14::SlidingBuffer<MyStruct, 4> buf;
+    SlidingBuffer<MyStruct, 4> buf;
 
     buf.push_back(std::move(obj));
 
@@ -896,7 +898,7 @@ TEST_CASE("SlidingBuffer: push_back(T&&) with nontrivial T", "[SlidingBuffer]")
 TEST_CASE("SlidingBufferExposed: begin() and end() with push_back()",
           "[SlidingBufferExposed]")
 {
-    gul14::SlidingBufferExposed<int, 4> buf;
+    SlidingBufferExposed<int, 4> buf;
 
     REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
     REQUIRE(std::find(buf.begin(), buf.end(), 1) == buf.end());
@@ -928,21 +930,21 @@ TEST_CASE("SlidingBufferExposed: begin() and end() with push_back()",
 
 TEST_CASE("SlidingBuffer: begin() and end() on const buffer", "[SlidingBuffer]")
 {
-    const gul14::SlidingBuffer<int, 4> buf{};
+    const SlidingBuffer<int, 4> buf{};
     REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
 }
 
 TEST_CASE("SlidingBufferExposed: begin() and end() on const buffer",
           "[SlidingBufferExposed]")
 {
-    const gul14::SlidingBufferExposed<int, 4> buf{};
+    const SlidingBufferExposed<int, 4> buf{};
     REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
 }
 
 TEST_CASE("SlidingBufferExposed: begin() and end() with push_front()",
           "[SlidingBufferExposed]")
 {
-    gul14::SlidingBufferExposed<int, 4> buf;
+    SlidingBufferExposed<int, 4> buf;
 
     REQUIRE(std::distance(buf.begin(), buf.end()) == 0);
     REQUIRE(std::find(buf.begin(), buf.end(), 1) == buf.end());
@@ -975,7 +977,7 @@ TEST_CASE("SlidingBufferExposed: begin() and end() with push_front()",
 TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
 {
     SECTION("SlidingBuffer") {
-        gul14::SlidingBuffer<int, 7> buf;
+        SlidingBuffer<int, 7> buf;
         REQUIRE(buf.size() == 0);
         buf.push_front(1);
         REQUIRE(buf.size() == 1);
@@ -997,7 +999,7 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
     }
 
     SECTION("SlidingBufferExposed") {
-        gul14::SlidingBufferExposed<int, 7> buf;
+        SlidingBufferExposed<int, 7> buf;
         REQUIRE(buf.size() == 0);
         buf.push_front(1);
         REQUIRE(buf.size() == 1);
@@ -1015,7 +1017,7 @@ TEST_CASE("SlidingBuffer: mixed directions", "[SlidingBuffer]")
 TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer]")
 {
     SECTION("SlidingBufferExposed shrink right align") {
-        gul14::SlidingBufferExposed<int> buf{7};
+        SlidingBufferExposed<int> buf{7};
         buf.push_front(1);
         buf.push_front(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
@@ -1028,7 +1030,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
     }
 
     SECTION("SlidingBufferExposed grow right align") {
-        gul14::SlidingBufferExposed<int> buf{7};
+        SlidingBufferExposed<int> buf{7};
         buf.push_front(1);
         buf.push_front(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
@@ -1041,7 +1043,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
     }
 
     SECTION("SlidingBufferExposed shrink left align") {
-        gul14::SlidingBufferExposed<int> buf{7};
+        SlidingBufferExposed<int> buf{7};
         buf.push_back(1);
         buf.push_back(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
@@ -1054,7 +1056,7 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
     }
 
     SECTION("SlidingBufferExposed grow left align") {
-        gul14::SlidingBufferExposed<int> buf{7};
+        SlidingBufferExposed<int> buf{7};
         buf.push_back(1);
         buf.push_back(2);
         REQUIRE(std::distance(buf.begin(), buf.end()) == 2);
@@ -1066,8 +1068,6 @@ TEST_CASE("SlidingBuffer: resizing and begin()/end() guarantee", "[SlidingBuffer
         REQUIRE(buf[3] == 11);
     }
 }
-
-//using gul14::SlidingBuffer::ShrinkBehavior;
 
 template <typename Buffer>
 auto do_a_dump(Buffer buf, int start, int end, bool backwards,
