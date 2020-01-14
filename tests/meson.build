@@ -63,11 +63,11 @@ all_header_checks = [ ]
 loop_number = 0
 foreach header_to_check : standalone_headers
     loop_number += 1
-    if header_to_check.startswith(meson.project_name() + '/') and header_to_check.endswith('.h')
-        header_name = header_to_check.split(meson.project_name() + '/')[1].split('.h')[0]
+    if header_to_check.endswith('.h')
+        header_name = header_to_check.split('.h')[0]
 
         header_conf = configuration_data()
-        header_conf.set('HEADER_TO_INCLUDE', header_to_check)
+        header_conf.set('HEADER_TO_INCLUDE', meson.project_name() + '/' + header_to_check)
         header_conf.set('DUMMY_FUNCTION_NAME', 'a@0@'.format(loop_number))
 
         header_check = configure_file(input : 'test_self_containment.cc.in',
