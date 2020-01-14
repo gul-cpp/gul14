@@ -76,8 +76,10 @@ version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
 
 if not (git_version == 'unknown')
     so_version = git_version_num + git_patch
+    darwin_vers = git_version_num
 else
     so_version = libgul_api_version
+    darwin_vers = libgul_api_version
 endif
 
 # There seems to be a bug in meson versions prior 0.46.0 that prevent
@@ -89,6 +91,7 @@ endif
 
 libgul = shared_library(meson.project_name(), libgul_src + [ version_cc ],
                         soversion : so_version,
+                        darwin_versions : darwin_vers,
                         cpp_args : add_cpp_args,
                         include_directories : inc,
                         gnu_symbol_visibility : 'hidden',
