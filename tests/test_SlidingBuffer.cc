@@ -1303,7 +1303,7 @@ TEST_CASE("SlidingBufferIterator: LegacyBidirectionalIterator requirements",
         buf.push_back(i);
 
     // prefix operator--
-    int cnt = buf.size() - 1;
+    auto cnt = static_cast<int>(buf.size()) - 1;
     for (auto it = buf.end(); it != buf.begin(); )
     {
         --it;
@@ -1314,7 +1314,7 @@ TEST_CASE("SlidingBufferIterator: LegacyBidirectionalIterator requirements",
     // postfix operator--
     auto it = buf.end();
     it--;
-    for (int i = buf.size() - 1; i >= 0; --i)
+    for (auto i = static_cast<int>(buf.size()) - 1; i >= 0; --i)
         REQUIRE(*it-- == i);
 }
 
