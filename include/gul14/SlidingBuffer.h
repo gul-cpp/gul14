@@ -704,7 +704,9 @@ public:
         }
 
         /// Dereference the iterator at a certain index offset.
-        auto operator[](difference_type offs) noexcept -> reference
+        auto operator[](difference_type offs) noexcept -> typename std::conditional_t<
+            std::is_const<std::remove_pointer_t<BufferPointer>>::value,
+            const_reference, reference>
         {
             return *(*this + offs);
         }
