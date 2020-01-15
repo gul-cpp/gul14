@@ -714,9 +714,11 @@ public:
          *
          * Both iterators must be from the same container, or the result is undefined.
          */
-        auto operator==(SlidingBufferIterator other) const noexcept -> bool
+        friend auto
+        operator==(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> bool
         {
-            return position_ == other.position_;
+            return lhs.position_ == rhs.position_;
         }
 
         /**
@@ -724,40 +726,51 @@ public:
          *
          * Both iterators must be from the same container, or the result is undefined.
          */
-        auto operator!=(SlidingBufferIterator other) const noexcept -> bool
+        friend auto
+        operator!=(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> bool
         {
-            return not (*this == other);
+            return not(lhs == rhs);
         }
 
         /**
          * Determine if the left iterator refers to a greater position than the right one.
          */
-        auto operator>(SlidingBufferIterator other) const noexcept -> bool
+        friend auto
+        operator>(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> bool
         {
-            return position_ > other.position_;
+            return lhs.position_ > rhs.position_;
         }
 
         /// Determine if the left iterator refers to a lower position than the right one.
-        auto operator<(SlidingBufferIterator other) const noexcept -> bool
+        friend auto
+        operator<(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> bool
         {
-            return position_ < other.position_;
+            return lhs.position_ < rhs.position_;
         }
 
         /**
          * Determine if the left iterator refers to position that is greater than or equal
          * to than the right one.
          */
-        auto operator>=(SlidingBufferIterator other) const noexcept -> bool
+        friend auto
+        operator>=(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> bool
         {
-            return position_ >= other.position_;
+            return lhs.position_ >= rhs.position_;
         }
+
         /**
          * Determine if the left iterator refers to a position that is less than or equal
          * to than the right one.
          */
-        auto operator<=(SlidingBufferIterator other) const noexcept -> bool
+        friend auto
+        operator<=(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
+        -> bool
         {
-            return position_ <= other.position_;
+            return lhs.position_ <= rhs.position_;
         }
     };
 
