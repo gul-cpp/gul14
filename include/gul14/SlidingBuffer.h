@@ -588,6 +588,11 @@ public:
      * push_front() are used.
      *
      * \tparam BufferPointer Type of the pointer used to access the SlidingBuffer
+     *
+     * \since GUL version 1.10, SlidingBufferIterator fulfills the requirements of a
+     * <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator">LegacyRandomAccessIterator</a>.
+     * In previous versions, it only fulfilled the requirements of a
+     * <a href="https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator">LegacyBidirectionalIterator</a>.
      */
     template <typename BufferPointer>
     struct SlidingBufferIterator : std::iterator<std::random_access_iterator_tag, value_type> {
