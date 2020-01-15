@@ -7,7 +7,7 @@ project('gul14', 'cpp',
     default_options : [ 'cpp_std=c++14',
                         'warning_level=3',
                         'datadir=share' ],
-    version : '1.9',
+    version : '2.0',
     meson_version : '>=0.37')
 
 # Enforce that the version number is according to specs

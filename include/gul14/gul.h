@@ -129,14 +129,16 @@ namespace gul14 {
 /**
  * \page release_notes Release Notes
  *
- * \section changelog_1_x 1.x Versions
+ * \section changelog_2_x 2.x Versions
  *
- * \subsection v1_10 Version 1.10
+ * \subsection v2_0 Version 2.0
  *
  * - *Released with DOOCS 20.1.0*
  * - Rename GUL to GUL14 (applies to namespace, include directory, library name)
  * - Make \ref gul14::SlidingBufferIterator "SlidingBufferIterator" random access instead
  *   of bidirectional
+ *
+ * \section changelog_1_x 1.x Versions
  *
  * \subsection v1_9 Version 1.9
  *

@@ -589,7 +589,7 @@ public:
      *
      * \tparam BufferPointer Type of the pointer used to access the SlidingBuffer
      *
-     * \since GUL version 1.10, SlidingBufferIterator fulfills the requirements of a
+     * \since GUL version 2.0, SlidingBufferIterator fulfills the requirements of a
      * <a href="https://en.cppreference.com/w/cpp/named_req/RandomAccessIterator">LegacyRandomAccessIterator</a>.
      * In previous versions, it only fulfilled the requirements of a
      * <a href="https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator">LegacyBidirectionalIterator</a>.
