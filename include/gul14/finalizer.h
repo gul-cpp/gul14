@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 23 October 2018
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -43,42 +43,50 @@ namespace gul14 {
  * be created in the beginning of a function and no hassle with diverse possible return
  * points.
  * \code
- *  #include <cstdlib>
- *  #include <ctime>
- *  #include <gul/time_util.h>
+ * #include <cstdlib>
+ * #include <ctime>
+ * #include <gul14/gul.h>
  *
- *  void foo() {
- *      auto _ = gul14::finally([start = gul14::tic()] {
- *          std::cerr << "Function foo() took " << gul14::toc(start) << "s.\n";
- *      });
+ * using gul14::finally;
+ * using gul14::sleep;
+ * using gul14::tic;
+ * using gul14::toc;
  *
- *      std::srand(std::time(nullptr));
- *      if (std::rand() % 2) {
- *          std::cout << "Premature exit\n";
- *          return;
- *      }
- *      gul14::sleep(10); // do important stuff (like sleeping)
- *      std::cout << "Normal exit\n";
- *  }
+ * void foo() {
+ *     auto _ = finally([start = tic()] {
+ *         std::cerr << "Function foo() took " << toc(start) << " s.\n";
+ *     });
+ *
+ *     std::srand(std::time(nullptr));
+ *     if (std::rand() % 2) {
+ *         std::cout << "Premature exit\n";
+ *         return;
+ *     }
+ *     sleep(10); // do important stuff (like sleeping)
+ *     std::cout << "Normal exit\n";
+ * }
  * \endcode
  *
  * A (bad; use containers instead) example is allocation with RAII:
  * \code
- *  #include <string>
- *  #include <new>
+ * #include <new>
+ * #include <string>
+ * #include <gul14/gul.h>
  *
- *  std::string bar(float some_float) {
- *      char* buffer = new char[100];
- *      if (buffer == nullptr)
- *          return;
- *      auto _ = gul14::finally([&] { delete[] buffer; buffer = nullptr; });
+ * using gul14::finally;
  *
- *      // do stuff that might throw here
+ * std::string bar(float some_float) {
+ *     char* buffer = new char[100];
+ *     if (buffer == nullptr)
+ *         return;
+ *     auto _ = finally([&] { delete[] buffer; buffer = nullptr; });
  *
- *      snprintf(buffer, 100, "%.1f", some_float);
- *      return { buffer };
- *      // get rid of buffer automagically
- *  }
+ *     // do stuff that might throw here
+ *
+ *     snprintf(buffer, 100, "%.1f", some_float);
+ *     return { buffer };
+ *     // get rid of buffer automagically
+ * }
  * \endcode
  *
  * \tparam F The type of the closure/function to be called.
