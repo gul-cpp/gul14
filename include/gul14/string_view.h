@@ -1,12 +1,13 @@
 /**
  * \file   string_view.h
- * \author Marshall Clow, Beman Dawes
+ * \author Marshall Clow, Beman Dawes, \ref contributors
  * \brief  Provides a gul14::string_view that is fully compatible with C++17's
  *         std::string_view.
  *
  * \copyright
- * Copyright (c) Marshall Clow 2012-2015.
+ * Copyright Marshall Clow 2012-2015
  * Copyright Beman Dawes 2015
+ * Copyright \ref contributors 2018-2020 (modifications for GUL)
  *
  * Distributed under the Boost Software License, Version 1.0. (See \ref license_boost_1_0
  * or http://www.boost.org/LICENSE_1_0.txt)
@@ -18,8 +19,6 @@
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3442.html
  * Updated July 2015 to reflect the Library Fundamentals TS
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4480.html
- * 
- * Modified August 2018, August 2019 for GUL (L. Froehlich)
  */
 
 #pragma once
@@ -32,12 +31,6 @@
 #include <cstring>
 #include <iosfwd>
 #include "gul14/internal.h"
-
-#if __cpp_constexpr >= 201304
-#define STX_CONSTEXPR14 constexpr
-#else
-#define STX_CONSTEXPR14
-#endif
 
 namespace gul14 {
 
@@ -74,7 +67,7 @@ struct char_traits : public BaseT
         c1 = c2;
     }
 
-    static STX_CONSTEXPR14 int compare(const char_type* s1, const char_type* s2, size_t n) noexcept
+    static constexpr int compare(const char_type* s1, const char_type* s2, size_t n) noexcept
     {
         for (;n > 0; --n, ++s1, ++s2) {
             if (lt(*s1, *s2))
@@ -85,7 +78,7 @@ struct char_traits : public BaseT
         return 0;
     }
 
-    static STX_CONSTEXPR14 size_t length(const char_type* s) noexcept
+    static constexpr size_t length(const char_type* s) noexcept
     {
         auto len = std::size_t{ };
         while (!eq(s[len], char_type{ }))
@@ -93,7 +86,7 @@ struct char_traits : public BaseT
         return len;
     }
 
-    static STX_CONSTEXPR14 const char_type* find(const char_type* s, std::size_t n, const char_type& a) noexcept
+    static constexpr const char_type* find(const char_type* s, std::size_t n, const char_type& a) noexcept
     {
         for (;n > 0; --n, ++s) {
             if (eq(*s, a))
@@ -176,20 +169,20 @@ public:
     constexpr const_pointer data()    const noexcept { return ptr_; }
 
     // modifiers
-    STX_CONSTEXPR14 void remove_prefix(size_type n) {
+    constexpr void remove_prefix(size_type n) {
         if ( n > len_ )
             n = len_;
         ptr_ += n;
         len_ -= n;
     }
 
-    STX_CONSTEXPR14 void remove_suffix(size_type n) {
+    constexpr void remove_suffix(size_type n) {
         if ( n > len_ )
             n = len_;
         len_ -= n;
     }
 
-    STX_CONSTEXPR14 void swap(basic_string_view& s) noexcept {
+    constexpr void swap(basic_string_view& s) noexcept {
         std::swap(ptr_, s.ptr_);
         std::swap(len_, s.len_);
     }
@@ -215,7 +208,7 @@ public:
         return rlen;
     }
 
-    STX_CONSTEXPR14 basic_string_view substr(size_type pos, size_type n=npos) const {
+    constexpr basic_string_view substr(size_type pos, size_type n=npos) const {
         if ( pos > size())
             throw std::out_of_range ( "string_view::substr" );
         if (n == npos || pos + n > size())
@@ -223,36 +216,36 @@ public:
         return basic_string_view(data() + pos, n);
     }
 
-    STX_CONSTEXPR14 int compare(basic_string_view x) const noexcept {
+    constexpr int compare(basic_string_view x) const noexcept {
         const int cmp = traits::compare(ptr_, x.ptr_, (std::min)(len_, x.len_));
         return cmp != 0 ? cmp : (len_ == x.len_ ? 0 : len_ < x.len_ ? -1 : 1);
     }
 
-    STX_CONSTEXPR14 int compare(size_type pos1, size_type n1, basic_string_view x)
+    constexpr int compare(size_type pos1, size_type n1, basic_string_view x)
     const noexcept {
         return substr(pos1, n1).compare(x);
     }
 
-    STX_CONSTEXPR14 int compare(size_type pos1, size_type n1,
+    constexpr int compare(size_type pos1, size_type n1,
                                       basic_string_view x, size_type pos2, size_type n2) const {
         return substr(pos1, n1).compare(x.substr(pos2, n2));
     }
 
-    STX_CONSTEXPR14 int compare(const charT* x) const {
+    constexpr int compare(const charT* x) const {
         return compare(basic_string_view(x));
     }
 
-    STX_CONSTEXPR14 int compare(size_type pos1, size_type n1, const charT* x) const {
+    constexpr int compare(size_type pos1, size_type n1, const charT* x) const {
         return substr(pos1, n1).compare(basic_string_view(x));
     }
 
-    STX_CONSTEXPR14 int compare(size_type pos1, size_type n1,
+    constexpr int compare(size_type pos1, size_type n1,
                                       const charT* x, size_type n2) const {
         return substr(pos1, n1).compare(basic_string_view(x, n2));
     }
 
     //  find
-    STX_CONSTEXPR14 size_type find(basic_string_view s, size_type pos = 0) const noexcept {
+    constexpr size_type find(basic_string_view s, size_type pos = 0) const noexcept {
         if (pos > size())
             return npos;
         if (s.empty())
@@ -266,15 +259,15 @@ public:
         }
         return npos;
     }
-    STX_CONSTEXPR14 size_type find(charT c, size_type pos = 0) const noexcept
+    constexpr size_type find(charT c, size_type pos = 0) const noexcept
     { return find(basic_string_view(&c, 1), pos); }
-    STX_CONSTEXPR14 size_type find(const charT* s, size_type pos, size_type n) const noexcept
+    constexpr size_type find(const charT* s, size_type pos, size_type n) const noexcept
     { return find(basic_string_view(s, n), pos); }
-    STX_CONSTEXPR14 size_type find(const charT* s, size_type pos = 0) const noexcept
+    constexpr size_type find(const charT* s, size_type pos = 0) const noexcept
     { return find(basic_string_view(s), pos); }
 
     //  rfind
-    STX_CONSTEXPR14 size_type rfind(basic_string_view s, size_type pos = npos) const noexcept {
+    constexpr size_type rfind(basic_string_view s, size_type pos = npos) const noexcept {
         if (len_ < s.len_)
             return npos;
         if (pos > len_ - s.len_)
@@ -288,30 +281,30 @@ public:
                 return npos;
         };
     }
-    STX_CONSTEXPR14 size_type rfind(charT c, size_type pos = npos) const noexcept
+    constexpr size_type rfind(charT c, size_type pos = npos) const noexcept
     { return rfind(basic_string_view(&c, 1), pos); }
-    STX_CONSTEXPR14 size_type rfind(const charT* s, size_type pos, size_type n) const noexcept
+    constexpr size_type rfind(const charT* s, size_type pos, size_type n) const noexcept
     { return rfind(basic_string_view(s, n), pos); }
-    STX_CONSTEXPR14 size_type rfind(const charT* s, size_type pos = npos) const noexcept
+    constexpr size_type rfind(const charT* s, size_type pos = npos) const noexcept
     { return rfind(basic_string_view(s), pos); }
 
     //  find_first_of
-    STX_CONSTEXPR14 size_type find_first_of(basic_string_view s, size_type pos = 0) const noexcept {
+    constexpr size_type find_first_of(basic_string_view s, size_type pos = 0) const noexcept {
         if (pos >= len_ || s.len_ == 0)
             return npos;
         const_iterator iter = std::find_first_of
                 (this->cbegin () + pos, this->cend (), s.cbegin (), s.cend (), traits::eq);
         return iter == this->cend () ? npos : std::distance ( this->cbegin (), iter );
     }
-    STX_CONSTEXPR14 size_type find_first_of(charT c, size_type pos = 0) const noexcept
+    constexpr size_type find_first_of(charT c, size_type pos = 0) const noexcept
     { return find_first_of(basic_string_view(&c, 1), pos); }
-    STX_CONSTEXPR14 size_type find_first_of(const charT* s, size_type pos, size_type n) const noexcept
+    constexpr size_type find_first_of(const charT* s, size_type pos, size_type n) const noexcept
     { return find_first_of(basic_string_view(s, n), pos); }
-    STX_CONSTEXPR14 size_type find_first_of(const charT* s, size_type pos = 0) const noexcept
+    constexpr size_type find_first_of(const charT* s, size_type pos = 0) const noexcept
     { return find_first_of(basic_string_view(s), pos); }
 
     //  find_last_of
-    STX_CONSTEXPR14 size_type find_last_of(basic_string_view s, size_type pos = npos) const noexcept {
+    constexpr size_type find_last_of(basic_string_view s, size_type pos = npos) const noexcept {
         if (s.len_ == 0u)
             return npos;
         if (pos >= len_)
@@ -322,15 +315,15 @@ public:
                 ( this->crbegin () + pos, this->crend (), s.cbegin (), s.cend (), traits::eq );
         return iter == this->crend () ? npos : reverse_distance ( this->crbegin (), iter);
     }
-    STX_CONSTEXPR14 size_type find_last_of(charT c, size_type pos = npos) const noexcept
+    constexpr size_type find_last_of(charT c, size_type pos = npos) const noexcept
     { return find_last_of(basic_string_view(&c, 1), pos); }
-    STX_CONSTEXPR14 size_type find_last_of(const charT* s, size_type pos, size_type n) const noexcept
+    constexpr size_type find_last_of(const charT* s, size_type pos, size_type n) const noexcept
     { return find_last_of(basic_string_view(s, n), pos); }
-    STX_CONSTEXPR14 size_type find_last_of(const charT* s, size_type pos = npos) const noexcept
+    constexpr size_type find_last_of(const charT* s, size_type pos = npos) const noexcept
     { return find_last_of(basic_string_view(s), pos); }
 
     //  find_first_not_of
-    STX_CONSTEXPR14 size_type find_first_not_of(basic_string_view s, size_type pos = 0) const noexcept {
+    constexpr size_type find_first_not_of(basic_string_view s, size_type pos = 0) const noexcept {
         if (pos >= len_)
             return npos;
         if (s.len_ == 0)
@@ -338,15 +331,15 @@ public:
         const_iterator iter = find_not_of ( this->cbegin () + pos, this->cend (), s );
         return iter == this->cend () ? npos : std::distance ( this->cbegin (), iter );
     }
-    STX_CONSTEXPR14 size_type find_first_not_of(charT c, size_type pos = 0) const noexcept
+    constexpr size_type find_first_not_of(charT c, size_type pos = 0) const noexcept
     { return find_first_not_of(basic_string_view(&c, 1), pos); }
-    STX_CONSTEXPR14 size_type find_first_not_of(const charT* s, size_type pos, size_type n) const noexcept
+    constexpr size_type find_first_not_of(const charT* s, size_type pos, size_type n) const noexcept
     { return find_first_not_of(basic_string_view(s, n), pos); }
-    STX_CONSTEXPR14 size_type find_first_not_of(const charT* s, size_type pos = 0) const noexcept
+    constexpr size_type find_first_not_of(const charT* s, size_type pos = 0) const noexcept
     { return find_first_not_of(basic_string_view(s), pos); }
 
     //  find_last_not_of
-    STX_CONSTEXPR14 size_type find_last_not_of(basic_string_view s, size_type pos = npos) const noexcept {
+    constexpr size_type find_last_not_of(basic_string_view s, size_type pos = npos) const noexcept {
         if (pos >= len_)
             pos = len_ - 1;
         if (s.len_ == 0u)
@@ -355,11 +348,11 @@ public:
         const_reverse_iterator iter = find_not_of ( this->crbegin () + pos, this->crend (), s );
         return iter == this->crend () ? npos : reverse_distance ( this->crbegin (), iter );
     }
-    STX_CONSTEXPR14 size_type find_last_not_of(charT c, size_type pos = npos) const noexcept
+    constexpr size_type find_last_not_of(charT c, size_type pos = npos) const noexcept
     { return find_last_not_of(basic_string_view(&c, 1), pos); }
-    STX_CONSTEXPR14 size_type find_last_not_of(const charT* s, size_type pos, size_type n) const noexcept
+    constexpr size_type find_last_not_of(const charT* s, size_type pos, size_type n) const noexcept
     { return find_last_not_of(basic_string_view(s, n), pos); }
-    STX_CONSTEXPR14 size_type find_last_not_of(const charT* s, size_type pos = npos) const noexcept
+    constexpr size_type find_last_not_of(const charT* s, size_type pos = npos) const noexcept
     { return find_last_not_of(basic_string_view(s), pos); }
 
 private:
