@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -130,6 +130,13 @@ namespace gul14 {
  * \page release_notes Release Notes
  *
  * \section changelog_1_x 1.x Versions
+ *
+ * \subsection v1_10 Version 1.10
+ *
+ * - *Released with DOOCS 20.1.0*
+ * - Rename GUL to GUL14 (applies to namespace, include directory, library name)
+ * - Make \ref gul14::SlidingBufferIterator "SlidingBufferIterator" random access instead
+ *   of bidirectional
  *
  * \subsection v1_9 Version 1.9
  *
