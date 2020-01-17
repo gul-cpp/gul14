@@ -123,11 +123,16 @@ inline bool sleep(double seconds, const Trigger &trg)
 
 /**
  * Sleep for a given time span.
- * 
+ *
+ * This is equivalent to a call of std::this_thread::sleep_for(), which means that control
+ * is handed back to the operating system's task scheduler. This may result in a somewhat
+ * bigger effective delay than expected, especially where very small sleep times are
+ * requested and the system load is high.
+ *
  * Example:
  * \code
- * using std::literals; // for the "ms" suffix
- * sleep(5ms); // Wait 5 milliseconds
+ * using namespace std::literals; // for the "ms" suffix
+ * sleep(50ms); // Wait 50 milliseconds
  * \endcode
  *
  * \param duration   Time span to wait, as a std::chrono::duration type.
@@ -144,9 +149,14 @@ bool sleep(const std::chrono::duration<Rep, Period>& duration)
 /**
  * Sleep for a given number of seconds.
  *
+ * This is equivalent to a call of std::this_thread::sleep_for(), which means that control
+ * is handed back to the operating system's task scheduler. This may result in a somewhat
+ * bigger effective delay than expected, especially where very small sleep times are
+ * requested and the system load is high.
+ *
  * Example:
  * \code
- * sleep(0.005); // Wait 5 milliseconds
+ * sleep(0.05); // Wait 50 milliseconds
  * \endcode
  *
  * \param seconds  Seconds to wait.
