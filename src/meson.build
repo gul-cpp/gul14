@@ -97,6 +97,19 @@ libgul = shared_library(meson.project_name(), libgul_src + [ version_cc ],
                         gnu_symbol_visibility : 'hidden',
                         install : true)
 
+# The Meson suffix defaults cannot be fetched. Valid if nothing different is provided
+# as shared_library() name_suffix parameter
+# Needed for the GUL renaming compatibility softlink
+so_suff = 'so'
+if host_machine.system() == 'darwin'
+    so_suff = 'dylib'
+elif host_machine.system() == 'windows'
+    so_suff = 'dll'
+endif
+if not libgul.full_path().contains(so_suff)
+    error('Can not detect dynamic library suffix')
+endif
+
 libgul_s = static_library(meson.project_name(), libgul_src + [ version_cc ],
                           cpp_args : add_cpp_args,
                           include_directories : inc,

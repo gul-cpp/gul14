@@ -4,8 +4,8 @@ import os
 
 prefix = os.environ['MESON_INSTALL_DESTDIR_PREFIX']
 
-src = 'lib@SONAME@.so'
-dst = os.path.join(prefix, '@LIBDIR@', 'libgul.so')
+src = 'lib@SONAME@.@SOSUFF@'
+dst = os.path.join(prefix, '@LIBDIR@', 'libgul.@SOSUFF@')
 
 try:
     os.remove(dst)
