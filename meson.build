@@ -8,7 +8,7 @@ project('gul14', 'cpp',
                         'warning_level=3',
                         'datadir=share' ],
     version : '2.0',
-    meson_version : '>=0.37')
+    meson_version : '>=0.48')
 
 # Enforce that the version number is according to specs
 version_parts = meson.project_version().split('.')
