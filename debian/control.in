@@ -19,6 +19,7 @@ Section: libdevel
 Architecture: any
 Depends: @NAME@ (= ${binary:Version}), ${misc:Depends}
 Conflicts: @CONFLICTS-DEV@
+Replaces: @CONFLICTS-DEV@
 Description: general utility library
  The general utility library contains often-used utility
  functions and types that form the foundation for other
