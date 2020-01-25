@@ -48,8 +48,6 @@
 
 /**
  * Namespace gul14 contains all functions and classes of the General Utility Library.
- * The main header file gul14/gul.h defines an alias namespace `gul` that can be used
- * instead.
  */
 namespace gul14 {
 
@@ -93,9 +91,7 @@ namespace gul14 {
  *  - Link your code against the library (-lgul14).
  *  - If you are on Windows, see \ref using_gul_on_windows.
  *
- * All functions and classes are enclosed in the namespace \ref gul14. The main header
- * file defines a convenience alias so that also the namespace qualifier `gul::` can be
- * used.
+ * All functions and classes are enclosed in the namespace \ref gul14.
  *
  * GUL14 requires at least C++14. It works fine with newer versions of the standard, but
  * uses its own backport types (e.g. gul14::string_view) in function interfaces.
@@ -499,7 +495,7 @@ namespace gul14 {
  * Please note that unlike all other include files provided with GUL, `catch.h` is *not*
  * automatically included by the default include directive:
  * \code
- * #include "gul.h"
+ * #include "gul14/gul.h"
  * // Catch2 is not included!
  * \endcode
  */
@@ -608,7 +604,3 @@ namespace gul14 {
  */
 
 } // namespace gul14
-
-
-/// Namespace gul is a convenience alias for namespace gul14.
-namespace gul = gul14;
