@@ -24,11 +24,11 @@
 #include <gul14/gul.h>
 
 using std::cout;
-using gul::trim;
-using gul::trim_left;
-using gul::trim_right;
-using gul::trim_left_sv;
-using gul::trim_right_sv;
+using gul14::trim;
+using gul14::trim_left;
+using gul14::trim_right;
+using gul14::trim_left_sv;
+using gul14::trim_right_sv;
 
 int main()
 {
