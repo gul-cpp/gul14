@@ -29,7 +29,7 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
         capture : true,
         output : 'docs', # This is how the target is called
         # build_by_default : false,  This is the default default
-        depend_files : libgul_main_header + libgul_sub_headers + libgul_src,
+        depend_files : libgul_sub_headers + libgul_src,
         )
 
     if rsync.found()
