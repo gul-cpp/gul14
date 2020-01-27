@@ -10,6 +10,8 @@ if get_option('docs') and doxygen.found()
     graphviz = find_program('dot', required : false)
     if graphviz.found()
         doxy_run = find_program('doxywrap') # this is required because it should always be there
+    else
+        message('Hint: dot is usually a part of the graphviz package')
     endif # if graphviz
 endif # if get_option('docs')
 
