@@ -4,7 +4,7 @@
  * \date   Created on Feb 7, 2019
  * \brief  Test suite for the SlidingBuffer{}
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -1378,6 +1378,14 @@ TEST_CASE("SlidingBufferIterator: LegacyRandomAccessIterator requirements",
             break;
     }
 
+    // operator-(iterator, iterator)
+    cnt = 0;
+    for (auto it = buf.begin(); it != buf.end(); ++it)
+    {
+        REQUIRE(it - buf.begin() == cnt);
+        ++cnt;
+    }
+
     // operator[]
     it = buf.begin();
     for (auto i = 0u; i < buf.size(); ++i)
@@ -1401,5 +1409,17 @@ TEST_CASE("SlidingBufferIterator: LegacyRandomAccessIterator requirements",
     REQUIRE((l <= l) == true);
     REQUIRE((l >= l) == true);
 }
+
+TEST_CASE("SlidingBufferIterator: std::distance()", "[SlidingBufferIterator]")
+{
+    SlidingBuffer<int, 10> buf;
+    for (auto i = 0u; i < buf.capacity(); i++)
+        buf.push_back(i);
+
+    REQUIRE(std::distance(buf.begin(), buf.begin()) == 0);
+    REQUIRE(std::distance(buf.begin(), buf.begin() + 2) == 2);
+    REQUIRE(std::distance(buf.begin(), buf.end()) == 10);
+}
+
 
 // vi:ts=4:sw=4:sts=4:et
