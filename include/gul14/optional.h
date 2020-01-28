@@ -24,8 +24,8 @@
  * Modified July, August 2019 for GUL (Lars Froehlich).
  */
 
-#ifndef OPTIONAL_H_
-#define OPTIONAL_H_
+#ifndef GUL14_OPTIONAL_H_
+#define GUL14_OPTIONAL_H_
 
 #include <cassert>
 #include <functional>
@@ -915,4 +915,4 @@ struct hash<gul14::optional<T&>>
 #undef GUL_OPTIONAL_REQUIRES
 #undef GUL_OPTIONAL_ASSERTED_EXPRESSION
 
-#endif // OPTIONAL_H_
+#endif // GUL14_OPTIONAL_H_
