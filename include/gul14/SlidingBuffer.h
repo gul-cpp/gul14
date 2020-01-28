@@ -4,7 +4,7 @@
  * \date    Created on Feb 7, 2019
  * \brief   Declaration of the SlidingBuffer class for the General Utility Library.
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -689,7 +689,7 @@ public:
         operator-(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
         -> difference_type
         {
-            return rhs.position_ - lhs.position_;
+            return lhs.position_ - rhs.position_;
         }
 
         /// Access element pointed to by the iterator
