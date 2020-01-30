@@ -92,7 +92,7 @@ The ``deb-*name`` switch can be used to configure the debian package building pr
 
 The ``deb-vers-ext`` switch forces the package names and versions to be based on the latest 'git external tag'. This is a tag in the git repository that does not start with 'v'. It is expected to give the version number to use in the form ``DESCRIPTION_major_minor_patch``, where major, minor, and patch are positive integers.
 
-The ``deb-vers-pack`` switch appends the version number to the library and package names.
+The ``deb-vers-pack`` switch appends the version number to the library and package names. With this multiple different versions of GUL can be installed in parallel.
 
 The ``deb-vers-tag`` option specifies how git tag start that are considered as version number tags. Tags selected here shall have a number after their start, in the form ``[0-9]+[._][0-9]+([._][0-9])?``. The actual version is deduced from this and the changelog walks the git repository to find previous versions that fit this pattern. Note that only the startstring is used to identify these tags, that they conform to the given regex is to be ensured by the user.
 
@@ -193,17 +193,45 @@ The versioning of libgul can be divided into two entities:
 * the API version
 * the packet version
 
-While the API version is also hard-coded in the main meson.build file the version numbers are embedded in the git repository. Git tags are used to identify a specific version. These tags are parsed and determine the two versions from above. The tags shall be annotated git tags, to preserve information on the tagger and tag date.
+The API has a semantic version number. It has a major and a minor number. Major is increased on non-backward compatible changes to the API, while the minor part
+is increased when features are added. This results in a API versions like ``1.7``.
+The API version is hard coded in the main meson.build file, and the git revision where it is introduced is tagged with an annotated tag like ``v1.7`` - the lower case letter ``v`` followed by the API version.
+Note that the 'patch number' of usual semantic versioning schemes is not defined here.
 
-While the API version is fixed to tags starting with 'v' (e.g. ``v3.5``) the packet version can examine a different/custom set of tags. Normal Debian packets of course have the same (base) version as the API.
+The packet version is determined by the latest annotated git tag, that matches a given format: It has to start with the string given as deb-vers-tag.
+The default is to look for tags starting with ``v``, which are the API version tags.
+To continue with the example of the previous paragraph the build system will look for the latest tag that starts
+with ``v`` and finds ``v1.7`` extracts the version identifier (all that follows the deb-vers-tag: ``1.7``).
+
+The packet version needs to take into account that we could have bugfix packets (packets with the same API version). For this purpose the 'patchlevel' or
+patch number is calculated: It is the number of git commits that the current HEAD is separated from the tagged API version commit.
+If GUL is packaged directly from a commit with a new deb-vers-tag version this will be zero. If there are for example 2 bug-fix commits on top, that
+number will be two.
+
+Example:
+```
+bf184c8 (HEAD) bugfix: Do standalone test on string_util.h
+9990745 Remove some static code analysis warnings
+8ab1913 tests: Fix time critical tests on Windows
+b4b6847 (tag: v1.7) Bump version number to 1.7
+18499a3 to_number: Do less thoroughly random test on ARM
+...
+```
+
+If we package the HEAD commit, the API version is ``1.7``, the packet version is ``1.7.3``.
+
+
+While the API version is fixed to tags starting with 'v' (e.g. ``v3.5``) the packet version can examine a different/custom set of tags (deb-vers-tag option). Normal Debian packets of course have the same (base) version as the API.
+
+So here once again:
 
 The first tag family donates the API version of the package that is in effect starting with the tagged commit. The version uses semantic versioning, and the format is defined as ``v1.2`` where 1 is the major, 2 the minor version-part. It always starts with a lower case ``v``. This tag is cross checked with the project version number given in the main meson.build file.
 
-The API version patchlevel is automatically determined from the number of commits since the API version tagged commit, and added where appropriate as third number.
-
 Package versioning can be based on that API version tags, or on any other tags set that start with the same text. Normal packets use the API tags. If another tag is desired the ``deb-vers-tag`` prefix must be specified.
 
-That tags are used to tag specific points in time when a packet has been created from the project. Its form is ``name_1_2_3``, and again 1, 2, and 3 donate version number parts, that might or might not be semantic (see recommended format as regex in the description of the deb-vers-tags option). These tags can be used to create packet names in the form libgul14-1.2.3 (with ``-D deb-vers-pack=true`` set in meson). Note that the ``name_`` part is ignored and can be arbitrary, as long as it does not start with lower case 'v'. The amount of numbers is arbitrary and just all ``_`` or ``.`` get substituted by ``-`` resp. ``.`` to fit required formats.
+The package version patchlevel is automatically determined from the number of commits since the package version tagged commit, and added where appropriate as third number.
+
+That tags are used to tag specific points in time when a packet has been created from the project. Its form is ``name_1.2.3``, and again 1, 2, and 3 donate version number parts, that might or might not be semantic (see recommended format in the description of the deb-vers-tags option). These tags can be used to create packet names in the form libgul14-1-2-3 (with ``-D deb-vers-pack=true`` set in meson). Note that the ``name_`` part is ignored and can be arbitrary, as long as it does not start with lower case 'v'. The amount of numbers is arbitrary and just all ``_`` or ``.`` get substituted by ``-`` to fit required format.
 
 Here again a patchlevel is determined by the number of commits since the packet version tagged commit, and added where appropriate as either a semantic versioning patchlevel (i.e. third number) or explicit patchlevel (i.e. added ``p<number>``)
 
@@ -211,10 +239,10 @@ The packaging rules prevent building dirty repositories. Commit your changes fir
 
 ### Version number examples <a name="Version-number-examples"></a>
 
-The versioning related switches work in the following way. Assume that the api version tag is ``v0.1`` and it is 3 commits behind; and the external tag version is ``D_18_11_7`` and it is 5 commits behind.
+The versioning related switches work in the following way. Assume that the API version tag is ``v0.1`` and it is 3 commits behind; and the external tag version is ``D_18_11_7`` and it is 5 commits behind.
 
     deb-vers-tag   dev-vers-pack
         'v'            false            libgul14_0.1.3.deb                       ->   libgul14.so.0.1
-        'v'            true             libgul14-0-1_0.1.3.deb                   ->   libgul14.so.0.1.3
+        'v'            true             libgul14-0-1_0.1.3.deb                   ->   libgul14.so.0.1
         'D_'           false            libgul14_18.11.7.p5.deb                  ->   libgul14.so.18.11.7
-        'D_'           true             libgul14-18-11-7_18.11.7.p5.deb          ->   libgul14.so.18.11.7.p5
+        'D_'           true             libgul14-18-11-7_18.11.7.p5.deb          ->   libgul14.so.18.11.7

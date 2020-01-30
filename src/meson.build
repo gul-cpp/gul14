@@ -75,7 +75,7 @@ version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
                             configuration : git_conf)
 
 if not (git_version == 'unknown')
-    so_version = git_version_num + git_patch
+    so_version = git_version_num
     darwin_vers = git_version_num
 else
     so_version = libgul_api_version
