@@ -44,9 +44,7 @@ if git_exe.found()
     # Get the number of commits since the relevant version tag
     git_pat = run_command(git_exe, '-C', meson.source_root(),
                          'rev-list', '--count', git_version + '..')
-    if git_pat.returncode() != 0
-        git_patch = ''
-    else
+    if git_pat.returncode() == 0
         # Ignore patchlevel if it is zero
         git_patch = git_pat.stdout().strip()
         if git_patch != '0'
@@ -56,8 +54,6 @@ if git_exe.found()
             else
                 git_patch = '.' + git_patch
             endif
-        else
-            git_patch = ''
         endif
     endif
 
@@ -65,7 +61,6 @@ else
     # Have no information whatsoever
     git_full_api_version = 'unknown'
     git_version = 'unknown'
-    git_patch = ''
 endif
 
 git_conf = configuration_data()
