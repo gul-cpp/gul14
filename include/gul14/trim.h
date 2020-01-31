@@ -5,7 +5,7 @@
  * \brief  Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(),
  *         and trim_right_sv().
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,7 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_TRIM_H_
+#define GUL14_TRIM_H_
 
 #include "gul14/internal.h"
 #include "gul14/string_util.h"
@@ -162,3 +163,5 @@ string_view trim_right_sv(string_view str, string_view ws_chars = default_whites
  * A simple example on how to use the trim() family of functions for stripping characters
  * from one or both sides of a string.
  */
+
+#endif

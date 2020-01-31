@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 7 Aug 2019
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_INTERNAL_H_
+#define GUL14_INTERNAL_H_
 
 // For old Visual C++ compilers, including <ciso646> enables the alternative operator
 // representations "and", "or", and "not".
@@ -42,6 +43,8 @@
 #   define GUL_EXPORT __attribute__ ((visibility ("default")))
 #else
 #   define GUL_EXPORT
+#endif
+
 #endif
 
 // vi:ts=4:sw=4:et:sts=4

@@ -4,7 +4,7 @@
  * \date   Created on April 11, 2019
  * \brief  Definition of type_name()
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -23,7 +23,8 @@
  * His code has been inspired by posts of Jamboree at Stackoverflow.
  */
 
-#pragma once
+#ifndef GUL14_TYPE_NAME_H_
+#define GUL14_TYPE_NAME_H_
 
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
@@ -115,5 +116,7 @@ constexpr string_view type_name()
 }
 
 } // namespace gul14
+
+#endif
 
 // vi:ts=4:sw=4:et:sts=4

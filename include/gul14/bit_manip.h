@@ -1,11 +1,11 @@
 /**
  * \file    bit_manip.h
- * \brief   Declaration of bit manipulation utility functions for the General
- *          Utility Library.
+ * \brief   Declaration of bit manipulation utility functions for the General Utility
+ *          Library.
  * \authors \ref contributors
  * \date    Created on 17 October 2019
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,7 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_BIT_MANIP_H_
+#define GUL14_BIT_MANIP_H_
 
 #include <cassert>
 #include <type_traits>
@@ -181,5 +182,7 @@ bool constexpr inline bit_test(T bits, unsigned bit) noexcept {
 }
 
 } // namespace gul14
+
+#endif
 
 // vi:ts=4:sw=4:et

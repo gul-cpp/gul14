@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_FINALIZER_H_
+#define GUL14_FINALIZER_H_
 
 #include <type_traits>
 #include <utility>
@@ -163,5 +164,7 @@ FinalAction<typename std::decay_t<F>> finally(F&& f) noexcept {
 }
 
 } // namespace gul14
+
+#endif
 
 // vi:et:sts=4:sw=4:ts=4

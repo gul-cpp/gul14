@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_SLIDINGBUFFER_H_
+#define GUL14_SLIDINGBUFFER_H_
 
 #include <algorithm>
 #include <array>
@@ -1259,5 +1260,7 @@ public:
 };
 
 } // namespace gul14
+
+#endif
 
 // vi:ts=4:sw=4:sts=4:et

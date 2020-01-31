@@ -4,7 +4,7 @@
  * \date   Created on September 25, 2018
  * \brief  Declarations of hexdump()
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_HEXDUMP_H_
+#define GUL14_HEXDUMP_H_
 
 #include <iomanip>
 #include <sstream>
@@ -454,8 +455,8 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
              std::forward<ContainerT>(cont) };
 }
 
-
-
 } // namespace gul14
+
+#endif
 
 // vi:ts=4:sw=4:et

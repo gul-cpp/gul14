@@ -1,5 +1,5 @@
 /**
- * \file    gul14/gul.h
+ * \file    gul.h
  * \authors \ref contributors
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_GUL_H_
+#define GUL14_GUL_H_
 
 #include "gul14/bit_manip.h"
 #include "gul14/case_ascii.h"
@@ -604,3 +605,5 @@ namespace gul14 {
  */
 
 } // namespace gul14
+
+#endif

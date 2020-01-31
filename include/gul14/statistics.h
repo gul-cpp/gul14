@@ -5,7 +5,7 @@
  * \authors \ref contributors
  * \date    Created on 7 February 2019
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,7 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_STATISTICS_H_
+#define GUL14_STATISTICS_H_
 
 #include <algorithm>
 #include <cmath>
@@ -701,5 +702,7 @@ auto accumulate(const IteratorT& begin, const IteratorT& end, OpClosure op,
 }
 
 } // namespace gul14
+
+#endif
 
 // vi:ts=4:sw=4:et

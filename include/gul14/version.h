@@ -4,7 +4,7 @@
  * \date   Created on September 14, 2018
  * \brief  Provide information about the library version
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_VERSION_H_
+#define GUL14_VERSION_H_
 
 #include "gul14/internal.h"
 #include "string_view.h"
@@ -42,3 +43,5 @@ GUL_EXPORT
 extern char const* version_api;
 
 } // namespace gul14
+
+#endif

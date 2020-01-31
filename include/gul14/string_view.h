@@ -21,7 +21,8 @@
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4480.html
  */
 
-#pragma once
+#ifndef GUL14_STRING_VIEW_H_
+#define GUL14_STRING_VIEW_H_
 
 #include <cstddef>
 #include <stdexcept>
@@ -673,5 +674,6 @@ inline std::string operator+(string_view a, std::string b)
 
 /// \endcond
 
-
 } // namespace gul14
+
+#endif

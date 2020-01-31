@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_JOIN_SPLIT_H_
+#define GUL14_JOIN_SPLIT_H_
 
 #include <string>
 #include <regex>
@@ -150,5 +151,7 @@ GUL_EXPORT
 std::string join(const std::vector<string_view>& parts, string_view glue);
 
 } // namespace gul14
+
+#endif
 
 /* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

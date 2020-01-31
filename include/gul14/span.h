@@ -16,7 +16,8 @@
  * Modified November 2019 for GUL (L. Froehlich)
  */
 
-#pragma once
+#ifndef GUL14_SPAN_H_
+#define GUL14_SPAN_H_
 
 #include <array>
 #include <cstddef>
@@ -602,5 +603,7 @@ public:
 };
 
 } // namespace std
+
+#endif
 
 // vi:ts=4:sw=4:sts=4:et

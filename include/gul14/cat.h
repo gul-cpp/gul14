@@ -5,7 +5,7 @@
  * \brief  Declaration of the overload set for cat() and of the associated class
  *         ConvertingStringView.
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,7 +21,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_CAT_H_
+#define GUL14_CAT_H_
 
 #include <string>
 #include <type_traits>
@@ -112,3 +113,5 @@ inline std::string cat(const Args&... args)
 }
 
 } // namespace gul14
+
+#endif

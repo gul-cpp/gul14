@@ -4,7 +4,7 @@
  * \date    Created on September 3, 2018
  * \brief   Declaration of tokenize(), tokenize_sv().
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_TOKENIZE_H_
+#define GUL14_TOKENIZE_H_
 
 #include <string>
 #include <vector>
@@ -69,3 +70,5 @@ std::vector<string_view> tokenize_sv(string_view str,
     string_view delimiters = default_whitespace_characters);
 
 } // namespace gul14
+
+#endif

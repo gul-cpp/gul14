@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 26 November 2018
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,7 +20,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef GUL14_SUBSTRING_CHECKS_H_
+#define GUL14_SUBSTRING_CHECKS_H_
 
 #include "gul14/case_ascii.h"
 #include "gul14/internal.h"
@@ -290,5 +291,7 @@ constexpr inline bool starts_with_nocase(string_view str, char c) noexcept
 }
 
 } // namespace gul14
+
+#endif
 
 /* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
