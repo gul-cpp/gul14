@@ -77,10 +77,10 @@ else
     darwin_vers = libgul_api_version
 endif
 
-# There seems to be a bug in meson versions prior 0.46.0 that prevent
-# correct assignment and evaluation of cpp_args, so we do it here by hand :-(
-add_cpp_args = [ '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version), '-DGUL_COMPILING_SHARED_LIB' ]
-if meson.get_compiler('cpp').has_argument('-Wshadow')
+add_cpp_args = [
+    '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
+    '-DGUL_COMPILING_SHARED_LIB' ]
+if meson.get_compiler('cpp').has_argument('-Wshadow') # msvc doesnt have
     add_cpp_args += [ '-Wshadow' ]
 endif
 
