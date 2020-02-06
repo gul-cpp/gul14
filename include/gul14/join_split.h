@@ -41,6 +41,19 @@ namespace gul14 {
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
  *
+ * \code
+ * std::vector<std::string> parts1 = split(" hello world", " ");
+ * assert(parts1.size() == 3);
+ * assert(parts1[0] == ""s);
+ * assert(parts1[1] == "hello"s);
+ * assert(parts1[2] == "world"s);
+ *
+ * std::vector<std::string> parts2 = split("<>", "<>");
+ * assert(parts2.size() == 2);
+ * assert(parts2[0] == ""s);
+ * assert(parts2[1] == ""s);
+ * \endcode
+ *
  * split() is the inverse function of gul14::join(). It is guaranteed that
  * `join(split(text, del), del) == text`.
  *
@@ -68,6 +81,14 @@ std::vector<std::string> split(string_view text, string_view delimiter);
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
  *
+ * \code
+ * std::vector<std::string> parts = split("one\ntwo\nthree"s, std::regex{"[^[:print:]]"});
+ * assert(y.size() == 3);
+ * assert(y[0] == "one"s);
+ * assert(y[1] == "two"s);
+ * assert(y[2] == "three"s);
+ * \endcode
+ *
  * This version of split() does not accept string_view parameters because standard regexes
  * are not compatible with string_view.
  *
@@ -77,7 +98,7 @@ std::vector<std::string> split(string_view text, string_view delimiter);
  * \returns an array of substrings that were separated by delimiters in the original
  *          string.
  *
- * \see split(gul14::string_view, gul14::string_view) splits at a fixed substring,<br>
+ * \see split(string_view, string_view) splits at a fixed substring,<br>
  *      split_sv() does the same returning a vector of string_views, and<br>
  *      join() can join the vector back into a string.
  */
@@ -93,6 +114,19 @@ std::vector<std::string> split(const std::string& text, const std::regex& delimi
  * between them is the empty string. If the delimiter is directly at the end of the
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
+ *
+ * \code
+ * std::vector<string_view> parts1 = split(" hello world", " ");
+ * assert(parts1.size() == 3);
+ * assert(parts1[0] == "");
+ * assert(parts1[1] == "hello");
+ * assert(parts1[2] == "world");
+ *
+ * std::vector<string_view> parts2 = split("<>", "<>");
+ * assert(parts2.size() == 2);
+ * assert(parts2[0] == "");
+ * assert(parts2[1] == "");
+ * \endcode
  *
  * The inverse function of split_sv() is gul14::join(). It is guaranteed that
  * `join(split_sv(text, del), del) == text`.
