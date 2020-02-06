@@ -39,7 +39,8 @@ namespace gul14 {
  * \returns true if \c haystack contains at least one occurrence of \c needle, false
  *          otherwise.
  *
- * \see contains(char), ends_with(), starts_with()
+ * \see contains(string_view, char), contains_nocase(string_view, string_view),
+ *      ends_with(string_view, string_view), starts_with(string_view, string_view)
  */
 constexpr inline bool contains(string_view haystack, string_view needle) noexcept
 {
@@ -55,7 +56,8 @@ constexpr inline bool contains(string_view haystack, string_view needle) noexcep
  * \returns true if \c haystack contains at least one occurrence of \c needle, false
  *          otherwise.
  *
- * \see contains(string_view), ends_with(), starts_with()
+ * \see contains(string_view, string_view), contains_nocase(string_view, char),
+ *      ends_with(string_view, char), starts_with(string_view, char)
  */
 constexpr inline bool contains(string_view haystack, char needle) noexcept
 {
@@ -67,19 +69,19 @@ constexpr inline bool contains(string_view haystack, char needle) noexcept
  * The comparison is case sensitive. If the searched-for suffix is empty, the result is
  * true.
  *
- * \param haystack  The full string to be tested.
- * \param stack     The suffix to be looked for at the end of \c haystack.
- * \returns true if \c haystack ends with \c stack, false otherwise.
+ * \param str     The full string to be tested.
+ * \param suffix  The suffix to be looked for at the end of \c str.
+ * \returns true if \c str ends with \c suffix, false otherwise.
  *
- * \see ends_with(string_view, char), starts_with(string_view, string_view),
- *      starts_with(string_view, char)
+ * \see ends_with(string_view, char), ends_with_nocase(string_view, string_view),
+ *      starts_with(string_view, string_view), contains(string_view, string_view)
  */
-constexpr inline bool ends_with(string_view haystack, string_view stack) noexcept
+constexpr inline bool ends_with(string_view str, string_view suffix) noexcept
 {
-    const auto hsl = haystack.length();
-    const auto sl = stack.length();
+    const auto hsl = str.length();
+    const auto sl = suffix.length();
 
-    return hsl >= sl && haystack.compare(hsl - sl, sl, stack) == 0;
+    return hsl >= sl && str.compare(hsl - sl, sl, suffix) == 0;
 }
 
 /**
@@ -90,8 +92,8 @@ constexpr inline bool ends_with(string_view haystack, string_view stack) noexcep
  * \param c    The character to be looked for at the end of \c str.
  * \returns true if \c str ends with \c c, false otherwise.
  *
- * \see ends_with(string_view, string), starts_with(string_view, string_view),
- *      starts_with(string_view, char)
+ * \see ends_with(string_view, string_view), ends_with_nocase(string_view, char),
+ *      starts_with(string_view, char), contains(string_view, char)
  */
 constexpr inline bool ends_with(string_view str, char c) noexcept
 {
@@ -103,19 +105,19 @@ constexpr inline bool ends_with(string_view str, char c) noexcept
  * The comparison is case sensitive. If the searched-for prefix is empty, the result is
  * true.
  *
- * \param haystack  The full string to be tested.
- * \param hay       The prefix to be looked for at the beginning of \c haystack.
- * \returns true if \c haystack starts with \c hay, false otherwise.
+ * \param str     The full string to be tested.
+ * \param prefix  The prefix to be looked for at the beginning of \c str.
+ * \returns true if \c str starts with \c prefix, false otherwise.
  *
- * \see starts_with(string_view, char), ends_with(string_view, string_view),
- *      ends_with(string_view, char)
+ * \see starts_with(string_view, char), starts_with_nocase(string_view, string_view),
+ *      ends_with(string_view, string_view), contains(string_view, string_view)
  */
-constexpr inline bool starts_with(string_view haystack, string_view hay) noexcept
+constexpr inline bool starts_with(string_view str, string_view prefix) noexcept
 {
-    const auto hsl = haystack.length();
-    const auto hl = hay.length();
+    const auto hsl = str.length();
+    const auto hl = prefix.length();
 
-    return hsl >= hl && string_view{ haystack.data(), hl }.compare(hay) == 0;
+    return hsl >= hl && string_view{ str.data(), hl }.compare(prefix) == 0;
 }
 
 /**
@@ -126,8 +128,8 @@ constexpr inline bool starts_with(string_view haystack, string_view hay) noexcep
  * \param c    The character to be looked for at the beginning of \c str.
  * \returns true if \c str starts with \c c, false otherwise.
  *
- * \see starts_with(string_view, string_view), ends_with(string_view, string_view),
- *      ends_with(string_view, char)
+ * \see starts_with(string_view, string_view), starts_with_nocase(string_view, char),
+ *      ends_with(string_view, char), contains(string_view, char)
  */
 constexpr inline bool starts_with(string_view str, char c) noexcept
 {
@@ -140,21 +142,24 @@ constexpr inline bool starts_with(string_view str, char c) noexcept
 
 /**
  * Determine whether a string contains another string.
- * The comparison is case insensitive based on the C locale.
+ * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  * If the searched-for string is empty, the result is true.
- *
- * \note This function might have lower performance than combining
- *       contains() and lowercase_ascii(). But this function does not
- *       allocate any memory to buffer the case-insensitiv-ed chars.
  *
  * \param haystack  The string in which to search.
  * \param needle    The string that should be searched for.
  * \returns true if \c haystack contains at least one occurrence of \c needle, false
  *          otherwise.
  *
+ * \note
+ * This function does not allocate memory to buffer the case-transformed input strings.
+ * It might therefore have lower performance than combining contains() and
+ * lowercase_ascii().
+ *
  * \since GUL version 1.7
  *
- * \see contains_nocase(char), ends_with_nocase(), starts_with_nocase()
+ * \see contains_nocase(string_view, char), contains(string_view, string_view),
+ *      ends_with_nocase(string_view, string_view),
+ *      starts_with_nocase(string_view, string_view)
  */
 constexpr inline bool contains_nocase(string_view haystack, string_view needle) noexcept
 {
@@ -178,7 +183,7 @@ constexpr inline bool contains_nocase(string_view haystack, string_view needle) 
 
 /**
  * Determine whether a string contains a certain character.
- * The comparison is case insensitive based on the C locale.
+ * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  *
  * \param haystack  The string in which to search.
  * \param needle    The character that should be searched for.
@@ -187,7 +192,8 @@ constexpr inline bool contains_nocase(string_view haystack, string_view needle) 
  *
  * \since GUL version 1.7
  *
- * \see contains_nocase(string_view), ends_with_nocase(), starts_with_nocase()
+ * \see contains_nocase(string_view, string_view), contains(string_view, char),
+ *      ends_with_nocase(string_view, char), starts_with_nocase(string_view, char)
  */
 constexpr inline bool contains_nocase(string_view haystack, char needle) noexcept
 {
@@ -202,34 +208,35 @@ constexpr inline bool contains_nocase(string_view haystack, char needle) noexcep
 
 /**
  * Determine whether a string ends with another string.
- * The comparison is case insensitive (C locale).
+ * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  * If the searched-for suffix is empty, the result is true.
  *
- * \param haystack  The full string to be tested.
- * \param hay       The suffix to be looked for at the end of \c haystack.
- * \returns true if \c haystack ends with \c hay, false otherwise.
+ * \param str     The full string to be tested.
+ * \param suffix  The suffix to be looked for at the end of \c str.
+ * \returns true if \c str ends with \c suffix, false otherwise.
  *
  * \since GUL version 1.7
  *
- * \see ends_with_nocase(string_view, char), starts_with_nocase(string_view, string_view),
- *      starts_with_nocase(string_view, char)
+ * \see ends_with_nocase(string_view, char), ends_with(string_view, string_view),
+ *      starts_with_nocase(string_view, string_view),
+ *      contains_nocase(string_view, string_view)
  */
-constexpr inline bool ends_with_nocase(string_view haystack, string_view hay) noexcept
+constexpr inline bool ends_with_nocase(string_view str, string_view suffix) noexcept
 {
-    while (not haystack.empty()) {
-        if (hay.empty())
+    while (not str.empty()) {
+        if (suffix.empty())
             return true;
-        if (lowercase_ascii(haystack.back()) != lowercase_ascii(hay.back()))
+        if (lowercase_ascii(str.back()) != lowercase_ascii(suffix.back()))
             return false;
-        haystack.remove_suffix(1);
-        hay.remove_suffix(1);
+        str.remove_suffix(1);
+        suffix.remove_suffix(1);
     }
-    return hay.empty();
+    return suffix.empty();
 }
 
 /**
  * Determine whether a string ends with a certain character.
- * The comparison is case insensitive (C locale).
+ * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  *
  * \param str  The string to be tested.
  * \param c    The character to be looked for at the end of \c str.
@@ -237,8 +244,8 @@ constexpr inline bool ends_with_nocase(string_view haystack, string_view hay) no
  *
  * \since GUL version 1.7
  *
- * \see ends_with_nocase(string_view, string), starts_with_nocase(string_view, string_view),
- *      starts_with_nocase(string_view, char)
+ * \see ends_with_nocase(string_view, string_view), ends_with(string_view, char),
+ *      starts_with_nocase(string_view, char), contains_nocase(string_view, char)
  */
 constexpr inline bool ends_with_nocase(string_view str, char c) noexcept
 {
@@ -247,34 +254,35 @@ constexpr inline bool ends_with_nocase(string_view str, char c) noexcept
 
 /**
  * Determine whether a string starts with another string.
- * The comparison is case insensitive (C locale).
+ * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  * If the searched-for prefix is empty, the result is true.
  *
- * \param haystack  The full string to be tested.
- * \param hay       The prefix to be looked for at the beginning of \c haystack.
- * \returns true if \c haystack starts with \c hay, false otherwise.
+ * \param str     The full string to be tested.
+ * \param prefix  The prefix to be looked for at the beginning of \c str.
+ * \returns true if \c str starts with \c prefix, false otherwise.
  *
  * \since GUL version 1.7
  *
- * \see starts_with_nocase(string_view, char), ends_with_nocase(string_view, string_view),
- *      ends_with_nocase(string_view, char)
+ * \see starts_with_nocase(string_view, char), starts_with(string_view, string_view),
+ *      ends_with_nocase(string_view, string_view),
+ *      contains_nocase(string_view, string_view)
  */
-constexpr inline bool starts_with_nocase(string_view haystack, string_view hay) noexcept
+constexpr inline bool starts_with_nocase(string_view str, string_view prefix) noexcept
 {
-    while (not haystack.empty()) {
-        if (hay.empty())
+    while (not str.empty()) {
+        if (prefix.empty())
             return true;
-        if (lowercase_ascii(haystack.front()) != lowercase_ascii(hay.front()))
+        if (lowercase_ascii(str.front()) != lowercase_ascii(prefix.front()))
             return false;
-        haystack.remove_prefix(1);
-        hay.remove_prefix(1);
+        str.remove_prefix(1);
+        prefix.remove_prefix(1);
     }
-    return hay.empty();
+    return prefix.empty();
 }
 
 /**
  * Determine whether a string starts with a certain character.
- * The comparison is case insensitive (C locale).
+ * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  *
  * \param str  The string to be tested.
  * \param c    The character to be looked for at the beginning of \c str.
@@ -282,8 +290,8 @@ constexpr inline bool starts_with_nocase(string_view haystack, string_view hay) 
  *
  * \since GUL version 1.7
  *
- * \see starts_with_nocase(string_view, string_view), ends_with_nocase(string_view, string_view),
- *      ends_with_nocase(string_view, char)
+ * \see starts_with_nocase(string_view, string_view), starts_with(string_view, char),
+ *      ends_with_nocase(string_view, char), contains_nocase(string_view, char)
  */
 constexpr inline bool starts_with_nocase(string_view str, char c) noexcept
 {
