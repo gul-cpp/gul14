@@ -128,6 +128,9 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_1 Version 2.1
+ * - Add equals_nocase()
+ *
  * \subsection v2_0 Version 2.0
  *
  * - *Released with DOOCS 20.1.0*
@@ -212,7 +215,7 @@ namespace gul14 {
  *
  * \section copyright_notice Copyright Notice
  *
- * Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -283,6 +286,20 @@ namespace gul14 {
  *
  * <h3>Functions</h3>
  *
+ * <h4>Comparisons</h4>
+ *
+ * equals_nocase(): Determine if two strings are equal, making no distinction between
+ *      upper and lower case ASCII characters.
+ *
+ * contains(), contains_nocase(): Check if a string contains a certain string or
+ *      character.
+ *
+ * ends_with(), ends_with_nocase(): Check if a string ends with a certain string or
+ *      character.
+ *
+ * starts_with(), starts_with_nocase(): Check if a string starts with a certain string or
+ *      character.
+ *
  * <h4>Joining & Splitting</h4>
  *
  * cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
@@ -296,14 +313,6 @@ namespace gul14 {
  *
  * tokenize(), tokenize_sv(): Split a string at delimiter characters, returning a vector
  *         of string or string_view tokens. `tokenize(" hi ")` returns `{"hi"}`.
- *
- * <h4>Checking for Substrings</h4>
- *
- * contains(), contains_nocase(): Check if a string contains a certain string or character.
- *
- * ends_with(), ends_with_nocase(): Check if a string ends with a certain string or character.
- *
- * starts_with(), starts_with_nocase(): Check if a string starts with a certain string or character.
  *
  * <h4>Replacing & Trimming</h4>
  *

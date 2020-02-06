@@ -141,6 +141,43 @@ constexpr inline bool starts_with(string_view str, char c) noexcept
 //
 
 /**
+ * Determine whether a string is equal to another one, making no distinction between upper
+ * and lower case ASCII characters.
+ * In other terms, this function performs a case insensitive string comparison using the C
+ * locale.
+ *
+ * \param str1, str2  The two strings that should be compared.
+ * \returns true if the ASCII-lowercase versions of \c str1 and \c str2 are equal, or
+ *          false otherwise.
+ *
+ * \since GUL version 2.1
+ *
+ * \see contains_nocase(string_view, string_view),
+ *      ends_with_nocase(string_view, string_view),
+ *      starts_with_nocase(string_view, string_view)
+ */
+constexpr inline bool equals_nocase(string_view str1, string_view str2) noexcept
+{
+    if (str1.size() != str2.size())
+        return false;
+
+    // Hand-rolled version of std::equal() to maintain constexprness prior to C++20
+    auto it1 = str1.cbegin();
+    auto it2 = str2.cbegin();
+
+    while (it1 != str1.cend())
+    {
+        if (lowercase_ascii(*it1) != lowercase_ascii(*it2))
+            return false;
+
+        ++it1;
+        ++it2;
+    }
+
+    return true;
+}
+
+/**
  * Determine whether a string contains another string.
  * The comparison is case insensitive as far as ASCII characters are concerned (C locale).
  * If the searched-for string is empty, the result is true.

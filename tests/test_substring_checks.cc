@@ -4,7 +4,7 @@
  * \date   Created on November 26, 2018
  * \brief  Test suite for contains(), ends_with(), and starts_with().
  *
- * \copyright Copyright 2018 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -144,6 +144,15 @@ TEST_CASE("ends_with_nocase(string_view, char)", "[substring_checks]")
     REQUIRE(!ends_with_nocase("Hello World", 't'));
     REQUIRE(!ends_with_nocase("", 'd'));
     REQUIRE(ends_with_nocase("Hello World\0"s, '\0'));
+}
+
+TEST_CASE("equals_nocase(string_view, string_view)", "[substring_checks]")
+{
+    auto constexpr test_constexprness = equals_nocase("Hello World", "HELLO WORLD");
+    REQUIRE(test_constexprness == true);
+    REQUIRE(equals_nocase("Hello\0World"s, "HELLO\0WORLD"s) == true);
+    REQUIRE(equals_nocase("", "") == true);
+    REQUIRE(equals_nocase("Hello", "HELL") == false);
 }
 
 TEST_CASE("starts_with(string_view, string_view)", "[substring_checks]")
