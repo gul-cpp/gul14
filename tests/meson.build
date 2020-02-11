@@ -4,8 +4,8 @@
 if not get_option('tests')
     message('This build is defined to have no tests.')
     message('Use \'meson configure -Dtests=true\' to enable building tests (mesonconf for ancient meson versions).')
-    # subdir_done() to avoid long 'else', meson 0.46+
-else
+    subdir_done()
+endif
 
 # Find out if we run the tests on ARM (i.e. Raspberry)
 if host_machine.cpu_family() == 'arm' or host_machine.cpu_family() == 'aarch64'
@@ -80,7 +80,5 @@ static_library('_ignore_me', all_header_checks,
                cpp_args : add_cpp_args,
                include_directories : inc,
                install : false)
-
-endif # if not get_option('tests') else
 
 # vi:ts=4:sw=4:sts=4:et

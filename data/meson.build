@@ -28,7 +28,7 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
         input : dox,
         capture : true,
         output : 'docs', # This is how the target is called
-        # build_by_default : false,  This is the default default
+        build_by_default : false,
         depend_files : libgul_sub_headers + libgul_src,
         )
 
@@ -46,7 +46,7 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
             input : docs_gen,
             capture : true,
             output : 'install_docs',
-            # build_by_default : false,  This is the default default
+            build_by_default : false,
         )
     endif # have rsync
 
