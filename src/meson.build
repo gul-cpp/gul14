@@ -91,6 +91,10 @@ libgul = shared_library(meson.project_name(), libgul_src + [ version_cc ],
                         include_directories : inc,
                         gnu_symbol_visibility : 'hidden',
                         install : true)
+libgul_dep = declare_dependency(
+    include_directories : inc,
+    link_with : libgul,
+)
 
 # The Meson suffix defaults cannot be fetched. Valid if nothing different is provided
 # as shared_library() name_suffix parameter
@@ -105,10 +109,14 @@ if not libgul.full_path().contains(so_suff)
     error('Can not detect dynamic library suffix')
 endif
 
-libgul_s = static_library(meson.project_name(), libgul_src + [ version_cc ],
+libgul_static = static_library(meson.project_name(), libgul_src + [ version_cc ],
                           cpp_args : add_cpp_args,
                           include_directories : inc,
                           install : true)
+libgul_static_dep = declare_dependency(
+    include_directories : inc,
+    link_with : libgul_static,
+)
 
 pkg = import('pkgconfig')
 pkg.generate(libraries : libgul,
