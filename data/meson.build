@@ -22,7 +22,7 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
     docs_gen = custom_target('doxy_generate', # This is not the ninja target name
         command : [ doxy_run,
                     # "Usage: doxywrap source_root output_root config_file [doxygen parameters]"
-                    meson.source_root(),
+                    join_paths(meson.current_source_dir(), '..'),
                     docs_outdir,
                     '@INPUT@' ],
         input : dox,
