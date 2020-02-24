@@ -1,5 +1,19 @@
 # This is not a standalone project
-# Only called if deb_install == true
+
+deb_install = false
+if build_machine.system() != 'linux'
+    # disable packaging on all non linux platforms
+    message('Debian packaging disabled (machine in not linux)')
+    subdir_done()
+elif meson.is_subproject()
+    message('Debian packaging disabled (this is a subproject)')
+    subdir_done()
+elif get_option('prefix') == '/usr/local'
+    message('Debian packaging disabled (Packets installing files to /usr/local forbidden)')
+    message('                          Enable by specifying correct prefix e.g. --prefix=/usr')
+    subdir_done()
+endif
+deb_install = true
 
 # These are the standard package names
 deb_name_default = 'lib' + meson.project_name()

@@ -14,14 +14,6 @@ project('gul14', 'cpp',
 version_parts = meson.project_version().split('.')
 libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
 
-if build_machine.system() == 'linux'
-    # Find out if this is a normal (not local) install (i.e. not into /usr/local)
-    deb_install = get_option('prefix') != '/usr/local'
-else
-    # disable packaging on all non linux platforms
-    deb_install = false
-endif
-
 subdir('include')
 subdir('src')
 
@@ -30,15 +22,8 @@ subdir('data')
 
 subdir('tests')
 
-# Add debian/* files
 message('Install prefix: ' + get_option('prefix'))
-if deb_install
-    message('Install for debian packaging: @0@'.format(deb_install))
-    subdir('debian')
-else
-    message('Install for debian packaging: @0@ (packets installing files to /usr/local forbidden)'.format(deb_install))
-    message('                              Enable by specifying correct prefix e.g. --prefix=/usr')
-endif
+subdir('debian')
 
 message('LIBGUL_API_VERSION       @0@'.format(libgul_api_version))
 message('GIT FULL API VERSION    @0@'.format(git_full_api_version))
