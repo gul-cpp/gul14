@@ -45,13 +45,15 @@ tests = [
 ]
 
 test('all',
-     executable('libgul-test',
-                tests + [ catch_main ],
-                cpp_args : test_cpp_args,
-                dependencies : thread_dep,
-                include_directories : test_inc,
-                link_with : libgul),
-     timeout : test_time)
+    executable('libgul-test',
+        tests + [ catch_main ],
+        cpp_args : test_cpp_args,
+        dependencies : thread_dep,
+        include_directories : test_inc,
+        link_with : libgul,
+    ),
+    timeout : test_time
+)
 
 ######
 # Test if all headers are self-contained (Core Guidelines SF.11)
@@ -69,16 +71,20 @@ foreach header_to_check : standalone_headers
         header_conf.set('HEADER_TO_INCLUDE', meson.project_name() + '/' + header_to_check)
         header_conf.set('DUMMY_FUNCTION_NAME', 'a@0@'.format(loop_number))
 
-        header_check = configure_file(input : 'test_self_containment.cc.in',
-                                      output : 'incl_' + header_name + '.cc',
-                                      configuration : header_conf)
+        header_check = configure_file(
+            input : 'test_self_containment.cc.in',
+            output : 'incl_' + header_name + '.cc',
+            configuration : header_conf,
+        )
         all_header_checks += [ header_check ]
     endif
 endforeach
 
-static_library('_ignore_me', all_header_checks,
-               cpp_args : add_cpp_args,
-               include_directories : inc,
-               install : false)
+static_library(
+    '_ignore_me', all_header_checks,
+    cpp_args : add_cpp_args,
+    include_directories : inc,
+    install : false,
+)
 
 # vi:ts=4:sw=4:sts=4:et

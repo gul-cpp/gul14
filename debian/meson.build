@@ -1,4 +1,4 @@
-# This is not a standalone project
+# All about debian packaging
 
 deb_install = false
 if build_machine.system() != 'linux'
@@ -30,11 +30,12 @@ if not changelogger.found()
 endif
 
 changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
-if get_option('deb-vers-pack')
-    changelg_run = run_command(changelogger, '-tp', get_option('deb-vers-tag') + '*', changelog_gen)
-else
-    changelg_run = run_command(changelogger, '-t', get_option('deb-vers-tag') + '*', changelog_gen)
-endif
+changelg_run = run_command(
+    changelogger,
+    get_option('deb-vers-pack') ? '-tp' : '-t',
+    get_option('deb-vers-tag') + '*',
+    changelog_gen
+)
 
 if changelg_run.returncode() != 0
     error(changelg_run.stdout())
@@ -75,27 +76,37 @@ if deb_dev_name != deb_dev_name_default
 endif
 
 debian_files = [
-  'control',
-  'compat',
-  'copyright',
-  'rules',
+    'control',
+    'compat',
+    'copyright',
+    'rules',
 ]
 
 foreach f : debian_files
-    configure_file(input : f + '.in', output : f,
-                   configuration : deb_conf)
+    configure_file(
+        input : f + '.in',
+        output : f,
+        configuration : deb_conf
+    )
 endforeach
 
-configure_file(input : changelog_gen, output : 'changelog',
-               configuration : deb_conf)
+configure_file(
+    input : changelog_gen,
+    output : 'changelog',
+    configuration : deb_conf
+)
 
 # The install files need to be renamed, if the package name is not standard,
 # so we handle them individually
-configure_file(input : deb_name_default + '.install.in',
-               output : deb_name + '.install',
-               configuration : deb_conf)
-configure_file(input : deb_dev_name_default + '.install.in',
-               output : deb_dev_name + '.install',
-               configuration : deb_conf)
+configure_file(
+    input : deb_name_default + '.install.in',
+    output : deb_name + '.install',
+    configuration : deb_conf
+)
+configure_file(
+    input : deb_dev_name_default + '.install.in',
+    output : deb_dev_name + '.install',
+    configuration : deb_conf
+)
 
 # vi:ts=4:sw=4:sts=4:et

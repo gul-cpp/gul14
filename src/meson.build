@@ -18,8 +18,10 @@ git_exe = find_program('git', required : false, native : true)
 if git_exe.found()
 
     # Get full description based on git tag API version ('v0.2-22-g3d8867c-dirty')
-    git_f_api = run_command(git_exe, '-C', meson.current_source_dir(),
-                           'describe', '--tags', '--always', '--dirty', '--match', 'v*')
+    git_f_api = run_command(
+        git_exe, '-C', meson.current_source_dir(),
+            'describe', '--tags', '--always', '--dirty', '--match', 'v*'
+    )
     if git_f_api.returncode() != 0
         git_full_api_version = 'unknown'
     else
@@ -27,9 +29,11 @@ if git_exe.found()
     endif
 
     # Get description based on git version tag ('v0.2' or 'DOOCSVERSION_18_11_6')
-    git_vers = run_command(git_exe, '-C', meson.current_source_dir(),
-                           'describe', '--tags', '--always', '--abbrev=0', '--match',
-                           get_option('deb-vers-tag') + '*')
+    git_vers = run_command(
+        git_exe, '-C', meson.current_source_dir(),
+            'describe', '--tags', '--always', '--abbrev=0', '--match',
+            get_option('deb-vers-tag') + '*'
+    )
     if git_vers.returncode() != 0
         git_version = 'unknown'
     else
@@ -42,8 +46,10 @@ if git_exe.found()
     endif
 
     # Get the number of commits since the relevant version tag
-    git_pat = run_command(git_exe, '-C', meson.current_source_dir(),
-                         'rev-list', '--count', git_version + '..')
+    git_pat = run_command(
+        git_exe, '-C', meson.current_source_dir(),
+            'rev-list', '--count', git_version + '..'
+    )
     if git_pat.returncode() == 0
         # Ignore patchlevel if it is zero
         git_patch = git_pat.stdout().strip()
@@ -66,28 +72,30 @@ endif
 git_conf = configuration_data()
 git_conf.set('GIT_FULL_API_VERSION', git_full_api_version)
 git_conf.set('LIBGUL_API_VERSION', libgul_api_version)
-version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
-                            configuration : git_conf)
+version_cc = configure_file(
+    input : 'version.cc.in',
+    output : 'version.cc',
+    configuration : git_conf,
+)
 
-if not (git_version == 'unknown')
-    so_version = git_version_num
-else
-    so_version = libgul_api_version
-endif
+so_version = (git_version != 'unknown') ? git_version_num : libgul_api_version
 
 add_cpp_args = [
     '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
-    '-DGUL_COMPILING_SHARED_LIB' ]
+    '-DGUL_COMPILING_SHARED_LIB',
+]
 if meson.get_compiler('cpp').has_argument('-Wshadow') # msvc doesnt have
     add_cpp_args += [ '-Wshadow' ]
 endif
 
-libgul = shared_library(meson.project_name(), libgul_src + [ version_cc ],
-                        soversion : so_version,
-                        cpp_args : add_cpp_args,
-                        include_directories : inc,
-                        gnu_symbol_visibility : 'hidden',
-                        install : true)
+libgul = shared_library(
+    meson.project_name(), libgul_src + [ version_cc ],
+    soversion : so_version,
+    cpp_args : add_cpp_args,
+    include_directories : inc,
+    gnu_symbol_visibility : 'hidden',
+    install : true
+)
 libgul_dep = declare_dependency(
     include_directories : inc,
     link_with : libgul,
@@ -106,19 +114,23 @@ if not libgul.full_path().contains(so_suff)
     error('Can not detect dynamic library suffix')
 endif
 
-libgul_static = static_library(meson.project_name(), libgul_src + [ version_cc ],
-                          cpp_args : add_cpp_args,
-                          include_directories : inc,
-                          install : true)
+libgul_static = static_library(
+    meson.project_name(), libgul_src + [ version_cc ],
+    cpp_args : add_cpp_args,
+    include_directories : inc,
+    install : true,
+)
 libgul_static_dep = declare_dependency(
     include_directories : inc,
     link_with : libgul_static,
 )
 
 pkg = import('pkgconfig')
-pkg.generate(libraries : libgul,
-             name : 'lib' + meson.project_name(),
-             description : 'General Utility Library',
-             version : '@0@'.format(libgul_api_version))
+pkg.generate(
+    libraries : libgul,
+    name : 'lib' + meson.project_name(), # This is in fact wrong (but usually correct)
+    description : 'General Utility Library',
+    version : '@0@'.format(libgul_api_version)
+)
 
 # vi:ts=4:sw=4:sts=4:et

@@ -4,9 +4,11 @@
 # Increase the minor project version in project() on API extensions
 
 project('gul14', 'cpp',
-    default_options : [ 'cpp_std=c++14',
-                        'warning_level=3',
-                        'datadir=share' ],
+    default_options : [
+        'cpp_std=c++14',
+        'warning_level=3',
+        'datadir=share',
+    ],
     version : '2.1',
     meson_version : '>=0.48')
 
