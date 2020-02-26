@@ -71,10 +71,8 @@ version_cc = configure_file(input : 'version.cc.in', output : 'version.cc',
 
 if not (git_version == 'unknown')
     so_version = git_version_num
-    darwin_vers = git_version_num
 else
     so_version = libgul_api_version
-    darwin_vers = libgul_api_version
 endif
 
 add_cpp_args = [
@@ -86,7 +84,6 @@ endif
 
 libgul = shared_library(meson.project_name(), libgul_src + [ version_cc ],
                         soversion : so_version,
-                        darwin_versions : darwin_vers,
                         cpp_args : add_cpp_args,
                         include_directories : inc,
                         gnu_symbol_visibility : 'hidden',
