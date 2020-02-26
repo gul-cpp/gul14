@@ -133,4 +133,4 @@ pkg.generate(
     version : '@0@'.format(libgul_api_version)
 )
 
-# vi:ts=4:sw=4:sts=4:et
+# vi:ts=4:sw=4:sts=4:et:syn=conf

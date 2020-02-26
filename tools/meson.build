@@ -27,4 +27,4 @@ config_checker = configure_file(
     configuration : check_conf,
 )
 
-# vi:ts=4:sw=4:sts=4:et
+# vi:ts=4:sw=4:sts=4:et:syn=conf

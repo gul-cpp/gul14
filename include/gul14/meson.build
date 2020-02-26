@@ -37,4 +37,4 @@ install_headers(
     subdir : meson.project_name()
 )
 
-# vi:ts=4:sw=4:sts=4:et
+# vi:ts=4:sw=4:sts=4:et:syn=conf

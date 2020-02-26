@@ -50,4 +50,4 @@ if not (git_full_api_version == 'unknown')
     endif
 endif
 
-# vi:ts=4:sw=4:sts=4:et
+# vi:ts=4:sw=4:sts=4:et:syn=conf

@@ -87,4 +87,4 @@ static_library(
     install : false,
 )
 
-# vi:ts=4:sw=4:sts=4:et
+# vi:ts=4:sw=4:sts=4:et:syn=conf
