@@ -10,7 +10,6 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
 
     docs_data = configuration_data()
     docs_data.set('PROJECT_NUMBER', meson.project_version())
-    docs_data.set('PROJECT_NAME', meson.project_name())
 
     dox = configure_file(
         input : 'Doxyfile.in',
