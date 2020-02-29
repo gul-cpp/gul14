@@ -14,7 +14,6 @@ else
     test_cpp_args = []
 endif
 
-test_inc = inc + [ include_directories('.') ]
 catch_main = 'test_main.cc'
 test_time = 10 # Default timeout
 
@@ -48,9 +47,7 @@ test('all',
     executable('libgul-test',
         tests + [ catch_main ],
         cpp_args : test_cpp_args,
-        dependencies : thread_dep,
-        include_directories : test_inc,
-        link_with : libgul,
+        dependencies : [ thread_dep, libgul_dep ],
     ),
     timeout : test_time
 )
