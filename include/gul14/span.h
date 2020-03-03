@@ -5,6 +5,9 @@
  *
  * \copyright
  * Copyright Tristan Brindle 2018.
+ * Copyright Deutsches Elektronen-Synchrotron (DESY), Hamburg 2019-2020 (modifications for
+ * GUL, \ref contributors).
+ *
  * Distributed under the Boost Software License, Version 1.0. (See \ref license_boost_1_0
  * or http://www.boost.org/LICENSE_1_0.txt)
  *
@@ -12,8 +15,6 @@
  *
  * This is an implementation of C++20's std::span
  *   http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf
- *
- * Modified November 2019 for GUL (L. Froehlich)
  */
 
 #ifndef GUL14_SPAN_H_
@@ -30,54 +31,14 @@ namespace gul14 {
 
 /// \cond HIDE_SYMBOLS
 
-// Various feature test macros
-#if __cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
-#define GUL_SPAN_HAVE_CPP17
-#endif
-
-#if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_inline_variables)
-#define GUL_SPAN_INLINE_VAR inline
-#else
-#define GUL_SPAN_INLINE_VAR
-#endif
-
+// Feature test macro for defaulted constexpr assignment operator
 #if (!defined(_MSC_VER) || _MSC_VER > 1900)
 #define GUL_SPAN_CONSTEXPR_ASSIGN constexpr
 #else
 #define GUL_SPAN_CONSTEXPR_ASSIGN
 #endif
 
-#if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_deduction_guides)
-#define GUL_SPAN_HAVE_DEDUCTION_GUIDES
-#endif
-
-#if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_lib_byte)
-#define GUL_SPAN_HAVE_STD_BYTE
-#endif
-
-#if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_lib_array_constexpr)
-#define GUL_SPAN_HAVE_CONSTEXPR_STD_ARRAY_ETC
-#endif
-
-#if defined(GUL_SPAN_HAVE_CONSTEXPR_STD_ARRAY_ETC)
-#define GUL_SPAN_ARRAY_CONSTEXPR constexpr
-#else
-#define GUL_SPAN_ARRAY_CONSTEXPR
-#endif
-
-#ifdef GUL_SPAN_HAVE_STD_BYTE
-using byte = std::byte;
-#else
-using byte = unsigned char;
-#endif
-
-#if defined(GUL_SPAN_HAVE_CPP17)
-#define GUL_SPAN_NODISCARD [[nodiscard]]
-#else
-#define GUL_SPAN_NODISCARD
-#endif
-
-GUL_SPAN_INLINE_VAR constexpr std::size_t dynamic_extent = SIZE_MAX;
+constexpr std::size_t dynamic_extent = SIZE_MAX;
 
 template <typename ElementType, std::size_t Extent = dynamic_extent>
 class span;
@@ -107,11 +68,6 @@ struct span_storage<E, dynamic_extent> {
     std::size_t size = 0;
 };
 
-// Reimplementation of C++17 std::size() and std::data()
-#if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_lib_nonmember_container_access)
-using std::data;
-using std::size;
-#else
 template <class C>
 constexpr auto size(const C& c) -> decltype(c.size())
 {
@@ -147,18 +103,12 @@ constexpr const E* data(std::initializer_list<E> il) noexcept
 {
     return il.begin();
 }
-#endif // GUL_SPAN_HAVE_CPP17
 
-#if defined(GUL_SPAN_HAVE_CPP17) || defined(__cpp_lib_void_t)
-using std::void_t;
-#else
 template <typename...>
 using void_t = void;
-#endif
 
 template <typename T>
-using uncvref_t =
-    typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+using uncvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
 template <typename>
 struct is_span : std::false_type {};
@@ -280,7 +230,7 @@ public:
                       detail::is_container_element_type_compatible<
                           std::array<value_type, N>&, ElementType>::value,
                   int>::type = 0>
-    GUL_SPAN_ARRAY_CONSTEXPR span(std::array<value_type, N>& arr) noexcept
+    span(std::array<value_type, N>& arr) noexcept
         : storage_(arr.data(), N)
     {}
 
@@ -290,7 +240,7 @@ public:
                       detail::is_container_element_type_compatible<
                           const std::array<value_type, N>&, ElementType>::value,
                   int>::type = 0>
-    GUL_SPAN_ARRAY_CONSTEXPR span(const std::array<value_type, N>& arr) noexcept
+    span(const std::array<value_type, N>& arr) noexcept
         : storage_(arr.data(), N)
     {}
 
@@ -387,7 +337,7 @@ public:
         return size() * sizeof(element_type);
     }
 
-    GUL_SPAN_NODISCARD constexpr bool empty() const noexcept
+    constexpr bool empty() const noexcept
     {
         return size() == 0;
     }
@@ -419,22 +369,22 @@ public:
 
     constexpr const_iterator cend() const noexcept { return end(); }
 
-    GUL_SPAN_ARRAY_CONSTEXPR reverse_iterator rbegin() const noexcept
+    reverse_iterator rbegin() const noexcept
     {
         return reverse_iterator(end());
     }
 
-    GUL_SPAN_ARRAY_CONSTEXPR reverse_iterator rend() const noexcept
+    reverse_iterator rend() const noexcept
     {
         return reverse_iterator(begin());
     }
 
-    GUL_SPAN_ARRAY_CONSTEXPR const_reverse_iterator crbegin() const noexcept
+    const_reverse_iterator crbegin() const noexcept
     {
         return const_reverse_iterator(cend());
     }
 
-    GUL_SPAN_ARRAY_CONSTEXPR const_reverse_iterator crend() const noexcept
+    const_reverse_iterator crend() const noexcept
     {
         return const_reverse_iterator(cbegin());
     }
@@ -451,26 +401,6 @@ private:
 };
 
 /// \cond HIDE_SYMBOLS
-
-#ifdef GUL_SPAN_HAVE_DEDUCTION_GUIDES
-
-/* Deduction Guides */
-template <class T, size_t N>
-span(T (&)[N])->span<T, N>;
-
-template <class T, size_t N>
-span(std::array<T, N>&)->span<T, N>;
-
-template <class T, size_t N>
-span(const std::array<T, N>&)->span<const T, N>;
-
-template <class Container>
-span(Container&)->span<typename Container::value_type>;
-
-template <class Container>
-span(const Container&)->span<const typename Container::value_type>;
-
-#endif // GUL_HAVE_DEDUCTION_GUIDES
 
 /* Comparison operators */
 // Implementation note: the implementations of == and < are equivalent to
@@ -544,11 +474,11 @@ constexpr bool operator>=(span<T, X> lhs, span<U, Y> rhs)
  * \since GUL version 1.9
  */
 template <typename ElementType, std::size_t Extent>
-span<const byte, ((Extent == dynamic_extent) ? dynamic_extent
+span<const unsigned char, ((Extent == dynamic_extent) ? dynamic_extent
                                              : sizeof(ElementType) * Extent)>
 as_bytes(span<ElementType, Extent> s) noexcept
 {
-    return {reinterpret_cast<const byte*>(s.data()), s.size_bytes()};
+    return {reinterpret_cast<const unsigned char *>(s.data()), s.size_bytes()};
 }
 
 /**
@@ -562,11 +492,11 @@ as_bytes(span<ElementType, Extent> s) noexcept
 template <
     class ElementType, size_t Extent,
     typename std::enable_if<!std::is_const<ElementType>::value, int>::type = 0>
-span<byte, ((Extent == dynamic_extent) ? dynamic_extent
+span<unsigned char, ((Extent == dynamic_extent) ? dynamic_extent
                                        : sizeof(ElementType) * Extent)>
 as_writable_bytes(span<ElementType, Extent> s) noexcept
 {
-    return {reinterpret_cast<byte*>(s.data()), s.size_bytes()};
+    return {reinterpret_cast<unsigned char *>(s.data()), s.size_bytes()};
 }
 
 /**
