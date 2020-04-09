@@ -16,10 +16,10 @@
 @IF NOT DEFINED MESON set MESON="meson.exe"
 
 @set TOOLDIR=%~p0
-@call :get_repo_root %TOOLDIR:~0,-1%
+@call :get_repo_root "%TOOLDIR:~0,-1%"
 
 @IF NOT "%~1%"=="mrproper" GOTO after_mrproper
-@IF EXIST %REPO_ROOT%build\ rmdir /S /Q %REPO_ROOT%build
+@IF EXIST "%REPO_ROOT%build" rmdir /S /Q "%REPO_ROOT%build"
 @GOTO end
 :after_mrproper
 
@@ -60,7 +60,7 @@
 
 
 :prepare_build_dir
-@IF NOT EXIST %REPO_ROOT%build\ md %REPO_ROOT%build
+@IF NOT EXIST "%REPO_ROOT%build" md "%REPO_ROOT%build"
 
 @IF "%PLATFORM%"=="" GOTO show_usage
 
@@ -80,18 +80,18 @@
 
 :prepare_platform_dir
 set FOLDER=build\%PLATFORM%-windows
-IF NOT EXIST %REPO_ROOT%%FOLDER%\ md %REPO_ROOT%%FOLDER%
+IF NOT EXIST "%REPO_ROOT%%FOLDER%" md "%REPO_ROOT%%FOLDER%"
 
 @IF "%BUILDTYPE%" == "" GOTO show_usage
 
 @set FOLDER=%FOLDER%\%BUILDTYPE%
 
-@IF EXIST %FOLDER%\ GOTO after_meson
-%MESON% --buildtype=%BUILDTYPE% %REPO_ROOT%%FOLDER% %REPO_ROOT%
+@IF EXIST %FOLDER% GOTO after_meson
+%MESON% --buildtype=%BUILDTYPE% "%REPO_ROOT%%FOLDER%" "%REPO_ROOT:~0,-1%"
 :after_meson
 
 :ninja
-ninja -C %REPO_ROOT%%FOLDER% %TARGET%
+ninja -C "%REPO_ROOT%%FOLDER%" %TARGET%
 
 @echo Finished. Build directory: %FOLDER%
 @GOTO end
