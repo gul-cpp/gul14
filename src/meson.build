@@ -88,7 +88,7 @@ if meson.get_compiler('cpp').has_argument('-Wshadow') # msvc doesnt have
     add_cpp_args += [ '-Wshadow' ]
 endif
 
-libgul = shared_library(
+libgul = both_libraries(
     meson.project_name(), libgul_src + [ version_cc ],
     soversion : so_version,
     cpp_args : add_cpp_args,
@@ -98,7 +98,11 @@ libgul = shared_library(
 )
 libgul_dep = declare_dependency(
     include_directories : inc,
-    link_with : libgul,
+    link_with : libgul.get_shared_lib(),
+)
+libgul_static_dep = declare_dependency(
+    include_directories : inc,
+    link_with : libgul.get_static_lib(),
 )
 
 # The Meson suffix defaults cannot be fetched. Valid if nothing different is provided
@@ -113,29 +117,6 @@ endif
 if not libgul.full_path().contains(so_suff)
     error('Can not detect dynamic library suffix')
 endif
-
-# This simulates the both_libraries() behaviour: avoid double compiling if possible
-# With Meson <= 0.41 we can not query the user supplied setting and assume the default
-# With Meson >= 0.46 we could simplify this with both_libraries()
-if meson.version().version_compare('<=0.41') or get_option('b_staticpic')
-    libgul_static = static_library(
-        meson.project_name(),
-        objects : libgul.extract_all_objects(),
-        install : true,
-    )
-else
-    libgul_static = static_library(
-        meson.project_name(), libgul_src + [ version_cc ],
-        cpp_args : add_cpp_args,
-        include_directories : inc,
-        install : true,
-    )
-endif
-
-libgul_static_dep = declare_dependency(
-    include_directories : inc,
-    link_with : libgul_static,
-)
 
 pkg = import('pkgconfig')
 pkg.generate(
