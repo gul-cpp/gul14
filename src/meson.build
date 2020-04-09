@@ -105,19 +105,6 @@ libgul_static_dep = declare_dependency(
     link_with : libgul.get_static_lib(),
 )
 
-# The Meson suffix defaults cannot be fetched. Valid if nothing different is provided
-# as shared_library() name_suffix parameter
-# Needed for the GUL renaming compatibility softlink
-so_suff = 'so'
-if host_machine.system() == 'darwin'
-    so_suff = 'dylib'
-elif host_machine.system() == 'windows'
-    so_suff = 'dll'
-endif
-if not libgul.full_path().contains(so_suff)
-    error('Can not detect dynamic library suffix')
-endif
-
 pkg = import('pkgconfig')
 pkg.generate(
     libraries : libgul,
