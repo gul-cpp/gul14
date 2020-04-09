@@ -4,7 +4,7 @@
  * \date   Created on Feb 7, 2019
  * \brief  Test suite for statistics functions.
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,11 +20,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+#include <array>
 #include <deque>
+#include <random>
 #include <sstream>
 
 #include "gul14/catch.h"
 #include "gul14/statistics.h"
+
+using gul14::accumulate;
+using gul14::maximum;
+using gul14::mean;
+using gul14::median;
+using gul14::minimum;
+using gul14::min_max;
+using gul14::remove_outliers;
+using gul14::rms;
+using gul14::standard_deviation;
 
 template <typename DataT, typename StateT = void>
 struct StatisticsElement {
@@ -70,9 +83,32 @@ auto bit(int bit) -> unsigned int
     return 1u << bit;
 }
 
+TEMPLATE_TEST_CASE("minimum(), maximum(), min_max() on random integers", "[statistics]",
+    short, unsigned short, int, unsigned int, long, unsigned long,
+    long long, unsigned long long)
+{
+    std::array<TestType, 10> arr;
+
+    std::random_device rd;  //Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+    
+    std::uniform_int_distribution<TestType> dis(std::numeric_limits<TestType>::lowest());
+
+    for (auto &el : arr)
+        el = dis(gen);
+
+    auto p = std::minmax_element(arr.begin(), arr.end());
+    auto min_value = *(p.first);
+    auto max_value = *(p.second);
+
+    REQUIRE(minimum(arr) == min_value);
+    REQUIRE(maximum(arr) == max_value);
+    REQUIRE(min_max(arr).min == min_value);
+    REQUIRE(min_max(arr).max == max_value);
+}
+
 TEST_CASE("Container Statistics Tests", "[statistics]")
 {
-    using namespace gul14;
     auto op_max = [](const auto a, const auto b) { return std::max(a, b); };
     auto op_or = [](const auto a, const auto b) { return a | b; };
     auto acc_state = [](const auto& e) { return e.sta; };
@@ -85,6 +121,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(std::isnan(rms(fifo, accessor)));
         REQUIRE(std::isnan(median(fifo, accessor)));
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == 0u);
+        REQUIRE(std::isnan(minimum(fifo, accessor)));
+        REQUIRE(std::isnan(maximum(fifo, accessor)));
         REQUIRE(std::isnan(min_max(fifo, accessor).min));
         REQUIRE(std::isnan(min_max(fifo, accessor).max));
         REQUIRE(std::isnan(standard_deviation(fifo, accessor).sigma()));
@@ -96,6 +134,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(rms(fifo, accessor) == value1);
         REQUIRE(median(fifo, accessor) == value1);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state1);
+        REQUIRE(minimum(fifo, accessor) == value1);
+        REQUIRE(maximum(fifo, accessor) == value1);
         REQUIRE(min_max(fifo, accessor).min == value1);
         REQUIRE(min_max(fifo, accessor).max == value1);
 
@@ -107,6 +147,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(rms(fifo, accessor) == Approx(rmsval));
         REQUIRE(median(fifo, accessor) == (value1 + value2) / 2.0);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
+        REQUIRE(minimum(fifo, accessor) == value2);
+        REQUIRE(maximum(fifo, accessor) == value1);
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
 
@@ -125,8 +167,12 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(median(fifo, accessor) == value3);
         REQUIRE(median(fifo.cbegin(), fifo.cend(), accessor) == value3);
         REQUIRE(accumulate<unsigned int>(fifo, op_max, acc_state) == state2);
+        REQUIRE(minimum(fifo, accessor) == value2);
+        REQUIRE(maximum(fifo, accessor) == value1);
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
+        REQUIRE(minimum(fifo.rbegin(), fifo.rend(), accessor) == value2);
+        REQUIRE(maximum(fifo.rbegin(), fifo.rend(), accessor) == value1);
         REQUIRE(min_max(fifo.rbegin(), fifo.rend(), accessor).min == value2);
         REQUIRE(min_max(fifo.rbegin(), fifo.rend(), accessor).max == value1);
         REQUIRE(fifo.size() == 3);
@@ -149,6 +195,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         // so we need to specify that we want to use GUL's accumulate rather than std::accumulate
         REQUIRE(gul14::accumulate<unsigned int>(fifo.begin(), fifo.end(), op_max, acc_state) == state2);
         REQUIRE(accumulate<unsigned int>(fifo, op_or, acc_state) == (state1 | state2 | state3 | state4 | state5));
+        REQUIRE(minimum(fifo, accessor) == value2);
+        REQUIRE(maximum(fifo, accessor) == value1);
         REQUIRE(min_max(fifo, accessor).min == value2);
         REQUIRE(min_max(fifo, accessor).max == value1);
 
@@ -172,8 +220,14 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE_THAT(rms(vec.begin(), vec.end()), Catch::Matchers::WithinAbs(6.032, 0.001));
         REQUIRE(median(vec) == 5.6); // exactly
         REQUIRE(median(vec.begin(), vec.end()) == 5.6);
+        REQUIRE(minimum(vec) == 1.2);
+        REQUIRE(minimum(vec.begin(), vec.end()) == 1.2);
+        REQUIRE(maximum(vec) == 9.1);
+        REQUIRE(maximum(vec.begin(), vec.end()) == 9.1);
         REQUIRE(min_max(vec).min == 1.2);
+        REQUIRE(min_max(vec).max == 9.1);
         REQUIRE(min_max(vec.begin(), vec.end()).min == 1.2);
+        REQUIRE(min_max(vec.begin(), vec.end()).max == 9.1);
         REQUIRE_THAT(standard_deviation(vec).sigma(),
                 Catch::Matchers::WithinAbs(3.136, 0.001));
         REQUIRE_THAT(standard_deviation(vec.begin(), vec.end()).sigma(),
@@ -282,7 +336,9 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
             { 127ul, { { 1663.7f, 16 }, { 1050.8f,  5 }, { 1826.9f,  9 }, { 1786.6f, 15 } } }, // 1725.15
             { 128ul, { { 1660.9f,  3 }, { 1974.3f,  4 }, { 1595.3f,  4 }, { 1771.7f,  4 } } } }; // 1716.3
 
-        auto trainrange = min_max(my_trains, [](const auto& e){ return e.id; } );
+        auto train_min = minimum(my_trains, [](const auto& e){ return e.id; } );
+        auto train_max = maximum(my_trains, [](const auto &e) { return e.id; });
+        auto trainrange = min_max(my_trains, [](const auto &e) { return e.id; });
         auto mean_of_median_c = mean(my_trains, [](const auto& e){ return median(e.meas,
                                                     [] (const auto& f){ return f.val;}); } );
         auto lasermax = min_max(my_trains, [](const auto& e){ return min_max(e.meas,
@@ -290,6 +346,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
 
         REQUIRE(trainrange.min == 123ul);
         REQUIRE(trainrange.max == 128ul);
+        REQUIRE(train_max == 128ul);
+        REQUIRE(train_min == 123ul);
         REQUIRE_THAT(mean_of_median_c, Catch::Matchers::WithinULP(1602.78333f, 5)); // 5 because many operations
         REQUIRE(lasermax.max == 17u);
     }
@@ -299,6 +357,8 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         auto mm = min_max(digits); // std::minmax() also useful in simple cases like these
         REQUIRE(mm.min == '0');
         REQUIRE(mm.max == 'r');
+        REQUIRE(minimum(digits) == '0');
+        REQUIRE(maximum(digits) == 'r');
 
         auto digits_clustered = remove_outliers(digits, 2);
         auto clusterlimits = min_max(digits_clustered);

@@ -201,7 +201,7 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
 /**
  * Calculate the root mean square of all elements in a container.
  *
- * The rms value is calculated as the square root of the the sum of all squared elements
+ * The rms value is calculated as the square root of the sum of all squared elements
  * divided by the number of elements:
  * ``rms -> sqrt (sum 0..n-1 (element i * element i) / n)``
  *
@@ -297,15 +297,125 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
     }
 
     return median;
+}
 
+/**
+ * Return the maximum element value in a container.
+ *
+ * The value of each element is determined through the accessor function. The maximum
+ * value is returned. Its type (DataT, the return type of the accessor) must provide
+ * `operator==()` and `operator<=()`. If DataT supports not-a-number (NaN) values, such
+ * values are ignored. If the container is empty, the return value is NaN (if supported)
+ * or `std::numeric_limits<DataT>::lowest()`.
+ *
+ * Hint: If looking for an iterator to the maximum element instead of its value, use
+ * `std::max_element()` from the STL algorithm collection.
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container
+ *                     element.
+ * \returns            the maximum value.
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see
+ * maximum(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * a container.\n
+ * minimum() returns the minimum value, min_max() returns both the minimum and the
+ * maximum.
+ *
+ * \since GUL version 2.2
+ */
+template <typename ContainerT,
+    typename ElementT = typename ContainerT::value_type,
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename DataT = typename std::result_of_t<Accessor(ElementT)>,
+    typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
+>
+auto maximum(const ContainerT &container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    constexpr auto initial_value = std::numeric_limits<DataT>::has_quiet_NaN ?
+        std::numeric_limits<DataT>::quiet_NaN() : std::numeric_limits<DataT>::lowest();
+
+    return std::accumulate(
+        container.cbegin(), container.cend(), initial_value,
+        [&accessor](const DataT &accu, const ElementT &el) -> DataT {
+            auto const val = accessor(el);
+            // Test portably for not-NAN (some compilers do not have std::isnan() for
+            // integral types)
+            if (val == val) {
+                if (not (val <= accu)) // inverted logic to handle NAN correctly
+                    return val;
+            }
+            return accu; });
+}
+
+/**
+ * Return the minimum element value in a container.
+ *
+ * The value of each element is determined through the accessor function. The minimum
+ * value is returned. Its type (DataT, the return type of the accessor) must provide
+ * `operator==()` and `operator>=()`. If DataT supports not-a-number (NaN) values, such
+ * values are ignored. If the container is empty, the return value is NaN (if supported)
+ * or `std::numeric_limits<DataT>::max()`.
+ *
+ * Hint: If looking for an iterator to the minimum element instead of its value, use
+ * `std::min_element()` from the STL algorithm collection.
+ *
+ * \param container    Container of the elements to examine
+ * \param accessor     Helper function to access the numeric value of one container
+ *                     element.
+ * \returns            the minimum value.
+ *
+ * \tparam ContainerT  Type of the container to examine
+ * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
+ * \tparam Accessor    Type of the accessor function
+ * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
+ *
+ * \see
+ * minimum(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * a container.\n
+ * maximum() returns the maximum value, min_max() returns both the minimum and the
+ * maximum.
+ *
+ * \since GUL version 2.2
+ */
+template <typename ContainerT,
+    typename ElementT = typename ContainerT::value_type,
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename DataT = typename std::result_of_t<Accessor(ElementT)>,
+    typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
+>
+auto minimum(const ContainerT &container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    constexpr auto initial_value = std::numeric_limits<DataT>::has_quiet_NaN ?
+        std::numeric_limits<DataT>::quiet_NaN() : std::numeric_limits<DataT>::max();
+
+    return std::accumulate(
+        container.cbegin(), container.cend(), initial_value,
+        [&accessor](const DataT &accu, const ElementT &el) -> DataT {
+            auto const val = accessor(el);
+            // Test portably for not-NAN (some compilers do not have std::isnan() for
+            // integral types)
+            if (val == val) {
+                if (not (val >= accu)) // inverted logic to handle NAN correctly
+                    return val;
+            }
+            return accu; });
 }
 
 /**
  * Find the minimum and maximum element values in a container.
  *
  * The value of each element is determined through the accessor function. The minimum and
- * the maximum of these values are returned. The element type (i.e. the return type of the
- * accessor) must provide `operator<()`.
+ * the maximum of these values are returned. Their type (DataT, the return type of the
+ * accessor) must provide `operator==(), `operator<=()`, and `operator>=()`. If DataT
+ * supports not-a-number (NaN) values, such values are ignored. If the container is empty,
+ * the return values are NaN (if supported) or `std::numeric_limits<DataT>::max()` for the
+ * minimum and `std::numeric_limits<DataT>::lowest()` for the maximum.
  *
  * This behaves like (symbolic code):
  * \code
@@ -326,8 +436,11 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
- * \see min_max(const IteratorT&, const IteratorT&, Accessor) accepts two iterators
- *      instead of a container.
+ *
+ * \see
+ * min_max(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * a container.\n
+ * minimum() returns only the minimum value, maximum() only the maximum value.
  */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
@@ -615,6 +728,44 @@ auto median(const IteratorT& begin, const IteratorT& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     return median<ResultT>(make_view(begin, end), accessor);
+}
+
+/**
+ * \overload
+ *
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see max(const ContainerT&, Accessor) accepts a container instead of iterators.
+ */
+template <typename IteratorT,
+    typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename DataT = std::result_of_t<Accessor(ElementT)>>
+    auto maximum(const IteratorT &begin, const IteratorT &end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    return maximum(make_view(begin, end), accessor);
+}
+
+/**
+ * \overload
+ *
+ * \param begin     Iterator to first elements to examine in the container
+ * \param end       Iterator past the last element to examine in the container
+ * \param accessor  Helper function to access the numeric value of one container element
+ *
+ * \see max(const ContainerT&, Accessor) accepts a container instead of iterators.
+ */
+template <typename IteratorT,
+    typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename DataT = std::result_of_t<Accessor(ElementT)>>
+    auto minimum(const IteratorT &begin, const IteratorT &end,
+        Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+{
+    return minimum(make_view(begin, end), accessor);
 }
 
 /**
