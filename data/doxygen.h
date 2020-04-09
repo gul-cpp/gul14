@@ -101,7 +101,11 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_2 Version 2.2
+ * - Add minimum() and maximum()
+ *
  * \subsection v2_1 Version 2.1
+ * - *Released with DOOCS 20.2.0 and DOOCS 20.3.0*
  * - Add equals_nocase()
  *
  * \subsection v2_0 Version 2.0
@@ -364,11 +368,17 @@ namespace gul14 {
  *     Return the values of all elements somehow combined. A closure has to be specified
  *     to describe how to values are combined.
  *
+ * maximum():
+ *     Return the maximum value.
+ *
  * mean():
  *     Calculate the arithmetic mean.
  *
  * median():
  *     Calculate the median.
+ *
+ * minimum():
+ *     Return the minimum value.
  *
  * min_max():
  *     Return the minimum and maximum value.
