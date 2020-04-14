@@ -306,7 +306,7 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
  * value is returned. Its type (DataT, the return type of the accessor) must provide
  * `operator==()` and `operator<=()`. If DataT supports not-a-number (NaN) values, such
  * values are ignored. If the container is empty, the return value is NaN (if supported)
- * or `std::numeric_limits<DataT>::lowest()`.
+ * or \c std::numeric_limits<DataT>::lowest().
  *
  * Hint: If looking for an iterator to the maximum element instead of its value, use
  * `std::max_element()` from the STL algorithm collection.
@@ -360,7 +360,7 @@ auto maximum(const ContainerT &container, Accessor accessor = ElementAccessor<El
  * value is returned. Its type (DataT, the return type of the accessor) must provide
  * `operator==()` and `operator>=()`. If DataT supports not-a-number (NaN) values, such
  * values are ignored. If the container is empty, the return value is NaN (if supported)
- * or `std::numeric_limits<DataT>::max()`.
+ * or \c std::numeric_limits<DataT>::max().
  *
  * Hint: If looking for an iterator to the minimum element instead of its value, use
  * `std::min_element()` from the STL algorithm collection.
@@ -414,8 +414,8 @@ auto minimum(const ContainerT &container, Accessor accessor = ElementAccessor<El
  * the maximum of these values are returned. Their type (DataT, the return type of the
  * accessor) must provide `operator==(), `operator<=()`, and `operator>=()`. If DataT
  * supports not-a-number (NaN) values, such values are ignored. If the container is empty,
- * the return values are NaN (if supported) or `std::numeric_limits<DataT>::max()` for the
- * minimum and `std::numeric_limits<DataT>::lowest()` for the maximum.
+ * the return values are NaN (if supported) or \c std::numeric_limits<DataT>::max() for the
+ * minimum and \c std::numeric_limits<DataT>::lowest() for the maximum.
  *
  * This behaves like (symbolic code):
  * \code
