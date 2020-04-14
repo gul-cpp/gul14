@@ -182,39 +182,41 @@ class span {
     using storage_type = detail::span_storage<ElementType, Extent>;
 
 public:
-
-/// \{
-
     // constants and types
-    using element_type = ElementType;
-    using value_type = typename std::remove_cv<ElementType>::type;
-    using index_type = std::size_t;
-    using difference_type = std::ptrdiff_t;
-    using pointer = element_type*;
-    using const_pointer = const element_type*;
-    using reference = element_type&;
-    using iterator = pointer;
-    using const_iterator = const_pointer;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using element_type = ElementType; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using value_type = typename std::remove_cv<ElementType>::type; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using index_type = std::size_t; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using difference_type = std::ptrdiff_t; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using pointer = element_type*; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using const_pointer = const element_type*; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using reference = element_type&; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using iterator = pointer; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using const_iterator = const_pointer; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using reverse_iterator = std::reverse_iterator<iterator>; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>; ///< See [std::span](https://en.cppreference.com/w/cpp/container/span).
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     static constexpr index_type extent = Extent;
 
     // [span.cons], span constructors, copy, assignment, and destructor
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <
         std::size_t E = Extent,
         typename std::enable_if<(E == dynamic_extent || E <= 0), int>::type = 0>
     constexpr span() noexcept
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span(pointer ptr, index_type count)
         : storage_(ptr, count)
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span(pointer first_elem, pointer last_elem)
         : storage_(first_elem, last_elem - first_elem)
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t N, std::size_t E = Extent,
               typename std::enable_if<
                   (E == dynamic_extent || N == E) &&
@@ -224,6 +226,7 @@ public:
     constexpr span(element_type (&arr)[N]) noexcept : storage_(arr, N)
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t N, std::size_t E = Extent,
               typename std::enable_if<
                   (E == dynamic_extent || N == E) &&
@@ -234,6 +237,7 @@ public:
         : storage_(arr.data(), N)
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t N, std::size_t E = Extent,
               typename std::enable_if<
                   (E == dynamic_extent || N == E) &&
@@ -244,6 +248,7 @@ public:
         : storage_(arr.data(), N)
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <
         typename Container, std::size_t E = Extent,
         typename std::enable_if<
@@ -255,6 +260,7 @@ public:
         : storage_(detail::data(cont), detail::size(cont))
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <
         typename Container, std::size_t E = Extent,
         typename std::enable_if<
@@ -266,8 +272,10 @@ public:
         : storage_(detail::data(cont), detail::size(cont))
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span(const span& other) noexcept = default;
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <typename OtherElementType, std::size_t OtherExtent,
               typename std::enable_if<
                   (Extent == OtherExtent || Extent == dynamic_extent) &&
@@ -278,24 +286,29 @@ public:
         : storage_(other.data(), other.size())
     {}
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     ~span() noexcept = default;
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     GUL_SPAN_CONSTEXPR_ASSIGN span&
     operator=(const span& other) noexcept = default;
 
     // [span.sub], span subviews
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t Count>
     constexpr span<element_type, Count> first() const
     {
         return {data(), Count};
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t Count>
     constexpr span<element_type, Count> last() const
     {
         return {data() + (size() - Count), Count};
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t Offset, std::size_t Count = dynamic_extent>
     using subspan_return_t =
         span<ElementType, Count != dynamic_extent
@@ -303,6 +316,7 @@ public:
                               : (Extent != dynamic_extent ? Extent - Offset
                                                           : dynamic_extent)>;
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     template <std::size_t Offset, std::size_t Count = dynamic_extent>
     constexpr subspan_return_t<Offset, Count> subspan() const
     {
@@ -310,18 +324,21 @@ public:
                 Count != dynamic_extent ? Count : size() - Offset};
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span<element_type, dynamic_extent>
     first(index_type count) const
     {
         return {data(), count};
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span<element_type, dynamic_extent>
     last(index_type count) const
     {
         return {data() + (size() - count), count};
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span<element_type, dynamic_extent>
     subspan(index_type offset, index_type count = dynamic_extent) const
     {
@@ -330,74 +347,88 @@ public:
     }
 
     // [span.obs], span observers
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr index_type size() const noexcept { return storage_.size; }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr index_type size_bytes() const noexcept
     {
         return size() * sizeof(element_type);
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr bool empty() const noexcept
     {
         return size() == 0;
     }
 
     // [span.elem], span element access
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr reference operator[](index_type idx) const
     {
         return *(data() + idx);
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr reference front() const
     {
         return *data();
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr reference back() const
     {
         return *(data() + (size() - 1));
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr pointer data() const noexcept { return storage_.ptr; }
 
     // [span.iterators], span iterator support
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr iterator begin() const noexcept { return data(); }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr iterator end() const noexcept { return data() + size(); }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr const_iterator cbegin() const noexcept { return begin(); }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr const_iterator cend() const noexcept { return end(); }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     reverse_iterator rbegin() const noexcept
     {
         return reverse_iterator(end());
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     reverse_iterator rend() const noexcept
     {
         return reverse_iterator(begin());
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     const_reverse_iterator crbegin() const noexcept
     {
         return const_reverse_iterator(cend());
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     const_reverse_iterator crend() const noexcept
     {
         return const_reverse_iterator(cbegin());
     }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     friend constexpr iterator begin(span s) noexcept { return s.begin(); }
 
+    /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     friend constexpr iterator end(span s) noexcept { return s.end(); }
 
 private:
     storage_type storage_{};
-
-/// \}
-
 };
 
 /// \cond HIDE_SYMBOLS
