@@ -102,9 +102,12 @@ namespace gul14 {
  * \section changelog_2_x 2.x Versions
  *
  * \subsection v2_2 Version 2.2
+ *
+ * - *Released with DOOCS 20.4.0*
  * - Add minimum() and maximum()
  *
  * \subsection v2_1 Version 2.1
+ *
  * - *Released with DOOCS 20.2.0 and DOOCS 20.3.0*
  * - Add equals_nocase()
  *
