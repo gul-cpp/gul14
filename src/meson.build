@@ -107,7 +107,7 @@ libgul_static_dep = declare_dependency(
 
 pkg = import('pkgconfig')
 pkg.generate(
-    libraries : libgul,
+    libgul,
     name : 'lib' + meson.project_name(), # This is in fact wrong (but usually correct)
     description : 'General Utility Library',
     version : '@0@'.format(libgul_api_version)
