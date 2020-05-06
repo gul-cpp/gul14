@@ -103,7 +103,7 @@ namespace gul14 {
  *
  * \subsection v2_2 Version 2.2
  *
- * - *Released with DOOCS 20.4.0*
+ * - *Released with DOOCS 20.5.0*
  * - Add minimum() and maximum()
  *
  * \subsection v2_1 Version 2.1
