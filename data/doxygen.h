@@ -101,6 +101,10 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_3 Version 2.3
+ *
+ * - Allow join() to accept arbitrary containers and add a two-iterator interface
+ *
  * \subsection v2_2 Version 2.2
  *
  * - *Released with DOOCS 20.5.0*
@@ -285,7 +289,7 @@ namespace gul14 {
  * cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
  *         string_views, or numbers.
  *
- * join(): Concatenate a vector of strings, adding some glue in between.
+ * join(): Concatenate a collection of strings, adding some glue in between.
  *
  * split(), split_sv(): Split a string at all occurrences of a delimiter string or
  *         regular expression, returning a vector of string or string_view tokens.

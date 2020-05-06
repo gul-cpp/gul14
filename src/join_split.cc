@@ -1,10 +1,10 @@
 /**
  * \file    join_split.cc
- * \brief   Implementation of string utility functions for the General Utility Library.
+ * \brief   Implementation of split() and split_sv().
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -29,31 +29,6 @@ namespace gul14 {
 
 
 namespace {
-
-template<typename StringType>
-std::string join(const std::vector<StringType>& parts, string_view glue) {
-    using SizeType = typename StringType::size_type;
-
-    if (parts.empty())
-        return "";
-
-    const SizeType last_idx = parts.size() - 1; // last valid index
-
-    SizeType len = 0;
-    for (const auto &part : parts)
-        len += part.size();
-    len += last_idx * glue.size();
-
-    std::string result;
-    result.reserve(len);
-
-    for (SizeType i = 0; i < last_idx; ++i) {
-        result += parts[i];
-        result.append(glue.data(), glue.size());
-    }
-    result += parts[last_idx];
-    return result;
-}
 
 template<typename StringType>
 std::vector<StringType> split(gul14::string_view text, gul14::string_view delimiter) {
@@ -104,14 +79,6 @@ std::vector<std::string> split(string_view text, string_view delimiter) {
 
 std::vector<string_view> split_sv(string_view text, string_view delimiter) {
     return split<string_view>(text, delimiter);
-}
-
-std::string join(const std::vector<std::string>& parts, string_view glue) {
-    return join<std::string>(parts, glue);
-}
-
-std::string join(const std::vector<string_view>& parts, string_view glue) {
-    return join<string_view>(parts, glue);
 }
 
 } // namespace gul14

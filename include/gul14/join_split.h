@@ -147,42 +147,93 @@ GUL_EXPORT
 std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter);
 
 /**
- * Concatenate a vector of strings into one single string, placing a delimiter between
+ * Concatenate a collection of strings into one single string, placing a delimiter between
  * them.
  *
  * This is the inverse function of gul14::split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
- * \param parts  Array of strings that are to be concatenated
+ * \param parts  A container holding strings or string views that are to be concatenated
  * \param glue   String that is put between each element of parts
  *
  * \returns all strings glued together with the delimiter glue.
  *
- * \see join(const std::vector<gul14::string_view> &, string_view) accepts a vector of
- *      string_view objects, split() and associated functions can be used to split a
- *      string into a vector of substrings.
+ * \tparam StringContainer  A container type that holds strings, e.g.
+ *                          std::vector<std::string> or std::list<gul14::string_view>.
+ *                          The container must provide an STL-like forward iterator
+ *                          interface. The string type must support concatenation with
+ *                          std::string using operator+=.
+ *
+ * \see
+ * join(Iterator, Iterator, string_view) has a two-iterator interface,
+ * split() and associated functions can be used to split a string into a vector of
+ * substrings.
+ *
+ * \since GUL version 2.3, join() accepts arbitrary containers or iterators (it was
+ *        limited to std::vector before).
  */
-GUL_EXPORT
-std::string join(const std::vector<std::string>& parts, string_view glue);
+template <typename StringContainer>
+std::string join(const StringContainer &parts, string_view glue)
+{
+    return join(parts.begin(), parts.end(), glue);
+}
 
 /**
- * Concatenate a vector of string_views into one single string, placing a delimiter
- * between them.
+ * Concatenate a collection of strings into one single string, placing a delimiter between
+ * them.
  *
- * This is the inverse function of gul14::split(). It is guaranteed that
- * `join(split(text, del), del) == text` (unless del is a std::regex object).
- *
- * \param parts  Array of strings that are to be concatenated
+ * \param begin  Iterator pointing to the first string
+ * \param end    Iterator pointing past the last string
  * \param glue   String that is put between each element of parts
  *
  * \returns all strings glued together with the delimiter glue.
  *
- * \see join(const std::vector<std::string> &, string_view) accepts a vector of strings,
- *      split() and associated functions can be used to split a string into a vector of
- *      substrings.
+ * \tparam Iterator  A forward iterator type that dereferences to a string type. The
+ *                   string type must support concatenation with std::string using
+ *                   operator+=.
+ *
+ * \see
+ * join(StringContainer, string_view) is a convenience overload for joining entire
+ * containers, split() and associated functions can be used to split a string into a
+ * vector of substrings.
+ *
+ * \since GUL version 2.3
  */
-GUL_EXPORT
-std::string join(const std::vector<string_view>& parts, string_view glue);
+template <typename Iterator>
+std::string join(Iterator begin, Iterator end, string_view glue)
+{
+    std::string result;
+
+    if (begin == end)
+        return result; // Return an empty string
+
+    std::size_t num_strings = 0;
+    std::size_t len = 0;
+
+    for (auto it = begin; it != end; ++it)
+    {
+        ++num_strings;
+        len += it->size();
+    }
+    len += (num_strings - 1) * glue.size();
+
+    result.reserve(len);
+
+    auto it = begin;
+
+    // Iterate over all but the last string
+    for (std::size_t i = 1; i != num_strings; ++i)
+    {
+        result += *it;
+        result.append(glue.data(), glue.size());
+
+        ++it;
+    }
+    result += *it;
+
+    return result;
+}
+
 
 } // namespace gul14
 
