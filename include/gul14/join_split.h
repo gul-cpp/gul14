@@ -147,8 +147,7 @@ GUL_EXPORT
 std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter);
 
 /**
- * Concatenate a collection of strings into one single string, placing a delimiter between
- * them.
+ * Concatenate all strings in a range, placing a delimiter between them.
  *
  * This is the inverse function of gul14::split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
@@ -179,8 +178,7 @@ std::string join(const StringContainer &parts, string_view glue)
 }
 
 /**
- * Concatenate a collection of strings into one single string, placing a delimiter between
- * them.
+ * Concatenate all strings in a range, placing a delimiter between them.
  *
  * \param begin  Iterator pointing to the first string
  * \param end    Iterator pointing past the last string
