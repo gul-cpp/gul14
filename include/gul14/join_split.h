@@ -23,8 +23,9 @@
 #ifndef GUL14_JOIN_SPLIT_H_
 #define GUL14_JOIN_SPLIT_H_
 
-#include <string>
+#include <iterator>
 #include <regex>
+#include <string>
 #include <vector>
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
@@ -217,17 +218,14 @@ std::string join(Iterator begin, Iterator end, string_view glue)
 
     result.reserve(len);
 
-    auto it = begin;
+    result += *begin;
 
     // Iterate over all but the last string
-    for (std::size_t i = 1; i != num_strings; ++i)
+    for (auto it = std::next(begin); it != end; ++it)
     {
-        result += *it;
         result.append(glue.data(), glue.size());
-
-        ++it;
+        result += *it;
     }
-    result += *it;
 
     return result;
 }
