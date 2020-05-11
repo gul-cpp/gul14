@@ -150,6 +150,9 @@ std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter
 /**
  * Concatenate all strings in a range, placing a delimiter between them.
  *
+ * This algorithm iterates twice over the range in order to pre-allocate a string of the
+ * correct size.
+ *
  * This is the inverse function of gul14::split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
@@ -180,6 +183,9 @@ std::string join(const StringContainer &parts, string_view glue)
 
 /**
  * Concatenate all strings in a range, placing a delimiter between them.
+ *
+ * This algorithm iterates twice over the range in order to pre-allocate a string of the
+ * correct size.
  *
  * \param begin  Iterator pointing to the first string
  * \param end    Iterator pointing past the last string
