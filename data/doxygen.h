@@ -103,6 +103,7 @@ namespace gul14 {
  *
  * \subsection v2_3 Version 2.3
  *
+ * - *Released with DOOCS 20.6.0*
  * - Allow join() to accept arbitrary containers and add a two-iterator interface
  *
  * \subsection v2_2 Version 2.2
