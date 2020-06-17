@@ -93,6 +93,8 @@ libgul = both_libraries(
     soversion : so_version,
     cpp_args : add_cpp_args,
     include_directories : inc,
+    build_rpath : meson.current_build_dir(),
+    install_rpath : join_paths(get_option('prefix'),get_option('libdir')),
     gnu_symbol_visibility : 'hidden',
     install : true
 )
@@ -108,6 +110,7 @@ libgul_static_dep = declare_dependency(
 pkg = import('pkgconfig')
 pkg.generate(
     libgul,
+    libraries : [ '-Wl,-rpath,${libdir}' ],
     name : 'lib' + meson.project_name(), # This is in fact wrong (but usually correct)
     description : 'General Utility Library',
     version : '@0@'.format(libgul_api_version)
