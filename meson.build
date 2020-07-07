@@ -31,6 +31,7 @@ message('GIT FULL API VERSION    @0@'.format(git_full_api_version))
 message('GIT VERSION TAG         @0@'.format(git_version))
 if deb_install
     message('Debian package names    ' + deb_name + ', ' + deb_dev_name)
+    message('Debian package version  ' + debian_package_version)
 endif
 if git_version == 'unknown'
     message('Shared library version patchlevel can\'t be determined from git')

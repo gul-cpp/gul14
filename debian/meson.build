@@ -41,6 +41,8 @@ if changelg_run.returncode() != 0
     error(changelg_run.stdout())
 endif
 
+debian_package_version = get_variable('git_version_num', libgul_api_version) + get_variable('git_patch', '')
+
 # Find out if we run on ARM, and limit ninja if we do
 if build_machine.cpu_family() == 'arm' or build_machine.cpu_family() == 'aarch64'
     deb_ninja_args = '-j 1'
@@ -56,8 +58,7 @@ deb_conf.set('NAME-BASE', deb_name)
 deb_conf.set('NAME-DEV', deb_dev_name)
 deb_conf.set('CONFLICTS', '')
 deb_conf.set('CONFLICTS-DEV', '')
-deb_conf.set('VERSION', get_variable('git_version_num', libgul_api_version)
-                        + get_variable('git_patch', ''))
+deb_conf.set('VERSION', debian_package_version)
 deb_conf.set('CONFIG_CHECKER', meson.build_root() + '/@0@'.format(config_checker))
 deb_conf.set('NINJA-ARGS', get_variable('deb_ninja_args', ''))
 

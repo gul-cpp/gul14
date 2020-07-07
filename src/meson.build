@@ -52,13 +52,13 @@ if git_exe.found()
     )
     if git_pat.returncode() == 0
         # Ignore patchlevel if it is zero
-        git_patch = git_pat.stdout().strip()
-        if git_patch != '0'
+        git_patch_lvl = git_pat.stdout().strip()
+        if git_patch_lvl != '0'
             if git_version_num.split('.').length() >= 3
                 # If we already have 3 numbers add patchlevel with letter p
-                git_patch = '.p' + git_patch
+                git_patch = '.p' + git_patch_lvl
             else
-                git_patch = '.' + git_patch
+                git_patch = '.' + git_patch_lvl
             endif
         endif
     endif
