@@ -93,8 +93,6 @@ libgul = both_libraries(
     soversion : so_version,
     cpp_args : add_cpp_args,
     include_directories : inc,
-    build_rpath : meson.current_build_dir(),
-    install_rpath : join_paths(get_option('prefix'),get_option('libdir')),
     gnu_symbol_visibility : 'hidden',
     install : true
 )
