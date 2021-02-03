@@ -4,7 +4,7 @@
  * \date   Created on Feb 7, 2019
  * \brief  Test suite for the SlidingBuffer{}
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -708,6 +708,89 @@ TEST_CASE("SlidingBuffer: empty(), clear() on vector-based buffer", "[SlidingBuf
 
     buf2.push_back(1);
     REQUIRE(!buf2.empty());
+}
+
+TEST_CASE("SlidingBuffer: pop_back()", "[SlidingBuffer]")
+{
+    SlidingBuffer<int, 2> buf;
+
+    buf.push_back(0);
+    buf.push_back(1);
+    buf.push_back(2);
+    REQUIRE(buf.size() == 2u);
+    REQUIRE(buf.filled() == true);
+    REQUIRE(buf[0] == 1);
+    REQUIRE(buf[1] == 2);
+
+    buf.pop_back();
+    REQUIRE(buf.size() == 1u);
+    REQUIRE(buf.filled() == false);
+    REQUIRE(buf[0] == 1);
+
+    buf.push_back(3);
+    REQUIRE(buf.size() == 2u);
+    REQUIRE(buf.filled() == true);
+    REQUIRE(buf[0] == 1);
+    REQUIRE(buf[1] == 3);
+
+    buf.push_back(4);
+    REQUIRE(buf.size() == 2u);
+    REQUIRE(buf.filled() == true);
+    REQUIRE(buf[0] == 3);
+    REQUIRE(buf[1] == 4);
+
+    buf.pop_back();
+    REQUIRE(buf.size() == 1u);
+    REQUIRE(buf.filled() == false);
+    REQUIRE(buf[0] == 3);
+
+    buf.pop_back();
+    REQUIRE(buf.size() == 0u);
+    REQUIRE(buf.filled() == false);
+}
+
+TEST_CASE("SlidingBuffer: pop_front()", "[SlidingBuffer]")
+{
+    SlidingBuffer<int, 2> buf;
+
+    buf.push_back(0);
+    buf.push_back(1);
+    buf.push_back(2);
+    REQUIRE(buf.size() == 2u);
+    REQUIRE(buf.filled() == true);
+    REQUIRE(buf[0] == 1);
+    REQUIRE(buf[1] == 2);
+
+    buf.pop_front();
+    REQUIRE(buf.size() == 1u);
+    REQUIRE(buf.filled() == false);
+    REQUIRE(buf[0] == 2);
+
+    buf.push_back(3);
+    REQUIRE(buf.size() == 2u);
+    REQUIRE(buf.filled() == true);
+    REQUIRE(buf[0] == 2);
+    REQUIRE(buf[1] == 3);
+
+    buf.pop_front();
+    REQUIRE(buf.size() == 1u);
+    REQUIRE(buf.filled() == false);
+    REQUIRE(buf[0] == 3);
+
+    buf.push_front(4);
+    REQUIRE(buf.size() == 2u);
+    REQUIRE(buf.filled() == true);
+    REQUIRE(buf[0] == 4);
+    REQUIRE(buf[1] == 3);
+
+    buf.pop_front();
+    REQUIRE(buf.size() == 1u);
+    REQUIRE(buf.filled() == false);
+    REQUIRE(buf[0] == 3);
+
+    buf.pop_front();
+    REQUIRE(buf.size() == 0u);
+    REQUIRE(buf.filled() == false);
 }
 
 TEST_CASE("SlidingBuffer copying and moving", "[SlidingBuffer]")

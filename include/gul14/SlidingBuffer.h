@@ -4,7 +4,7 @@
  * \date    Created on Feb 7, 2019
  * \brief   Declaration of the SlidingBuffer class for the General Utility Library.
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -68,9 +68,9 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  * object (std::array), in the latter case it is dynamically allocated (std::vector).
  *
  * The SlidingBuffer shares many characteristics with traditional ring buffers: It has a
- * fixed maximum size and new elements are added with push_front() or push_back().
- * However, there is no way to *pop* elements out of the buffer. They drop out
- * automatically at the other end of the sliding window if the capacity is reached:
+ * fixed maximum size and new elements are added with push_front() or push_back(). If this
+ * is done when the buffer is filled() to capacity, an element automatically drops out
+ * at the other end of the sliding window:
  *
  * \code
  * SlidingBuffer<int, 2> buf; // Create a buffer with up to 2 entries
@@ -92,8 +92,8 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  * thread safe.
  *
  * Differing from arrays this buffer will start empty (with a size of zero).
- * Once the buffer has grown to its designated size, it will never change in size again,
- * except when 'clear'ed.
+ * Once the buffer has grown to its designated size (i.e. capacity), its size() only changes if
+ * clear(), pop_front(), or pop_back() are used.
  *
  * A typical application would be to analyze an incoming stream of elements in a finite
  * impulse response filter.
@@ -126,8 +126,8 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  *     push_front        Insert an element at the front of the buffer
  *     operator[]        Access element by index, unchecked
  *     at                Access element by index with bounds checking
- *     front             Access foremost element (i.e. [0])
- *     back              Access backmost element (i.e. [size() - 1])
+ *     front             Access the foremost element (i.e. [0])
+ *     back              Access the last element (i.e. [size() - 1])
  *   Iterators:
  *     begin, cbegin     Return an iterator to the first element of the container
  *     end, cend         Return an iterator to the element following the last element of the container
@@ -142,6 +142,8 @@ enum class ShrinkBehavior { keep_front_elements, keep_back_elements };
  *     reserve           Change the maximum number of elements (only if fixed_size==0)
  *   Modifiers:
  *     clear             Empty the buffer
+ *     pop_back          Drop the last element
+ *     pop_front         Drop the foremost element
  *
  * Non-member functions:
  *   operator<<          Dump the raw data of the buffer to an ostream
@@ -248,6 +250,39 @@ protected:
     Container storage_{ };
 
 public:
+    /**
+     * Remove the last element from the buffer.
+     *
+     * The end() iterator and any iterators to the last element are invalidated.
+     *
+     * \warning
+     * Calling pop_back() on an empty SlidingBuffer results in undefined behavior.
+     *
+     * \since GUL version 2.4
+     */
+    auto pop_back() -> void
+    {
+        decrease_idx(idx_end_);
+        full_ = false;
+    }
+
+    /**
+     * Remove the first element from the buffer.
+     *
+     * The end() iterator and any iterators to the last element are invalidated. All other
+     * iterators can still be dereferenced, but point to elements that have been shifted.
+     *
+     * \warning
+     * Calling pop_front() on an empty SlidingBuffer results in undefined behavior.
+     *
+     * \since GUL version 2.4
+     */
+    auto pop_front() -> void
+    {
+        increase_idx(idx_begin_);
+        full_ = false;
+    }
+
     /**
      * Insert one element at the end of the buffer; if it is full, an element at the front
      * is dropped to make room.
