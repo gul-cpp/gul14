@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Doxygen input file for the General Utility Library.
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -101,9 +101,13 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_4 Version 2.4
+ *
+ * - Add \ref SlidingBuffer::pop_front() and \ref SlidingBuffer::pop_back()
+ *
  * \subsection v2_3 Version 2.3
  *
- * - *Released with DOOCS 20.6.0 and DOOCS 20.6.1*
+ * - *Released with DOOCS 20.6.0–20.10.1*
  * - Allow join() to accept arbitrary containers and add a two-iterator interface
  *
  * \subsection v2_2 Version 2.2
