@@ -24,7 +24,6 @@
 #define GUL14_VERSION_H_
 
 #include "gul14/internal.h"
-#include "string_view.h"
 
 namespace gul14 {
 
