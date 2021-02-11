@@ -63,7 +63,6 @@ fi
 
 tag_pre=$1
 outfile=$2
-printf "" > ${outfile}
 
 # Collect all relevant information
 # HEAD, TAGS..., ROOT-commit
@@ -110,6 +109,8 @@ else
 		header="${packname} (${version}) stable; urgency=low"
 	fi
 fi
+
+printf "" > ${outfile}
 
 printf "${tags}\n${root}\n" | \
 while read entry_next; do
