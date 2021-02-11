@@ -1,13 +1,17 @@
 #!/bin/sh
 #
 # Autogenerate the debian/changelog from git tags
-# The output will be further configured by meson
+# The output can be further configured by meson, or use -N
 #
-# This is version 1.4 "Anteater", changed 16 May 2019
+# This is version 2.0 "Binturong", changed 5 Feb 2021
 #
 # A git version tag have the form 'name_M_m_p' where M, m and p are
-# positive integers with the semantic version number. name is a non-
-# numeric string that is ignored and must be specified with parameter tag_prefix.
+# positive integers with the semantic version number. If no p is given
+# in the tag a 0 is asumed for p.
+# The delimiter between (M and m) and (m and p) can be any single non
+# numeric character, e.g. 6_3_2 or 6-3-2 or 6.3.2.
+# name is a (usually non-numeric) string that is ignored and must be
+# specified with parameter tag_prefix.
 #
 # Parameter tag_prefix is used to find the tags that denote the version this script
 # shall use. It is evaluated by git for-each-ref and usually needs to end in a wildcard
@@ -16,7 +20,7 @@
 # Note that the matching is rather sloppy, this only works when no
 # strange tags are created.
 
-while getopts ":hptvC:" opt; do
+while getopts ":hptvC:N:" opt; do
 	case $opt in
 	h)
 		hint=1;;
@@ -28,6 +32,9 @@ while getopts ":hptvC:" opt; do
 		verbose='\n';;
 	C)
 		workdir="-C ${OPTARG}";;
+	N)
+		packname="${OPTARG}"
+		packbasename="${OPTARG}";;
 	\?)
 		echo "Invalid option: -$OPTARG"
 		hint=1;;
@@ -44,7 +51,14 @@ if [ -n "${hint}" -o $# -ne 2 ]; then
 	echo "          -t          Show tags in commit messages"
 	echo "          -v          Generate verbose changelog with more empty lines"
 	echo "          -C path     Change to path before doing anything"
+	echo "          -N name     Specify package name in non Meson mode"
+	echo "                      (do not use @NAME@, @VERSION@, and @NAME_BASE@)"
 	exit 1
+fi
+
+if [ -z "${packname}" ] ; then
+	packname="@NAME@"
+	packbasename="@NAME-BASE@"
 fi
 
 tag_pre=$1
@@ -74,7 +88,28 @@ eval "${entry_begin}"
 # The top entry will get the version number always from meson to make sure we do
 # not go wrong, ever. If the following entries have wrong versions this is just
 # a cosmetic glitch
-header="@NAME@ (@VERSION@) stable; urgency=low"
+# In non-Meson mode we get all version numbers from the git log.
+if [ -z "${packname}" ] ; then
+	# Meson mode
+	header="${packname} (@VERSION@) stable; urgency=low"
+else
+	# Stand alone mode - need special treatment of non tagged HEAD
+	if [ ${patches} -lt 1 ]; then
+		version=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
+		vername=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
+	else
+		# HEAD not tagged: use next tagged ref for base version and append number of patches
+		eval `printf "${tags}" | head -n 1`
+		version=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`.p${patches}
+		vername=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
+		eval "${entry_begin}"
+	fi
+	if [ -n "${pack_vers}" ]; then
+		header="${packbasename}-${vername} (${version}) stable; urgency=low"
+	else
+		header="${packname} (${version}) stable; urgency=low"
+	fi
+fi
 
 printf "${tags}\n${root}\n" | \
 while read entry_next; do
@@ -97,8 +132,8 @@ while read entry_next; do
 	version=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/./g;s/^\([0-9]\+\.[0-9]\+\)$/\1.0/'`
 	vername=`printf "${ref}" | sed 's/[^0-9]*//;s/[^0-9]/-/g'`
 	if [ -n "${pack_vers}" ]; then
-		header="@NAME-BASE@-${vername} (${version}) stable; urgency=low"
+		header="${packbasename}-${vername} (${version}) stable; urgency=low"
 	else
-		header="@NAME@ (${version}) stable; urgency=low"
+		header="${packname} (${version}) stable; urgency=low"
 	fi
 done
