@@ -19,6 +19,8 @@ Here you find more detailed information on:
 * [Building](#Building)
   * [Build configuration switches](#Build-configuration-switches)
   * [Default Configurations](#Default-configurations)
+  * [Building on Windows with Visual C++](Windows)
+  * [Single header use](#Single-header-use)
 * [Testing](#Testing)
 * [Coverage report generation](#Coverage-report)
 * [Versioning](#Versioning)
@@ -185,6 +187,15 @@ It is not possible to build GUL with a version prior to Visual Studio 2017 versi
 (a.k.a. 19.14), because basic language features are
 [missing](https://docs.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance)
 (e.g. two phase name lookup is needed, N3652 and N3653 are used in GUL code).
+
+### Single header use <a name="Single-header-use"></a>
+
+Under some circumstances it is nice to have all of GUL in only one header file that can
+be included - and no library to link to. For example when doing experiments with online
+compilers.
+
+This is not the recommended way to use GUL, but you can use the script `tools/single_gul`
+to create such a complete header file (without Catch2).
 
 ## Testing <a name="Testing"></a>
 

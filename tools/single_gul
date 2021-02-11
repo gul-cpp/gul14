@@ -1,0 +1,89 @@
+#!/bin/bash
+#
+# This script creates a single file GUL, that can be used in web compilers
+# for example wandbox.org.
+#
+# It has 1 option:
+# $1: The output-file name
+#
+# Usual call for users is in the GUL project source root:
+# .../git/libgul/$ tools/single_gul singlegul.h
+#
+# To use it for example in Wandbox you can do:
+# .../git/libgul/$ tools/single_gul allgul.h
+# .../git/libgul/$ cat allgul.h | xclip -i
+# and then past that into a secondary file in the browser window.
+#
+#
+# Fini Jastrow, 12 Feb 2021, for the Doocs Lecture Series on GUL
+
+outfile=${1}
+processed=""
+# To tame the read command:
+IFS=
+
+recurse_header()
+{
+	# This function recursively collects all header files into one file and avoids multiple inclusion.
+	# Doing it recursively makes sure we get the order right.
+	# It does not parse anything expect #include "" directives (in a primitive manner).
+	headerfile=${1}
+	processed="${processed}:${headerfile}"
+	
+	while read -r line; do
+		if [[ "${line}" =~ ^#include ]] ; then
+			file=include/`printf "${line}" | sed 's/.*"\([^"]\+\).*/\1/'`
+			if [ -f "$file" ] ; then
+				already_done=`[[ "${processed}" =~ "${file}" ]] ; echo $?`
+				if [ "${already_done}" -ne 0 ] ; then
+					recurse_header "${file}"
+					processed=`printf "%s" "${processed}" | tr -s ':' '\n' | sort | uniq | tr '\n' ':'`
+				fi
+			else
+				printf "%s\n" "${line}" >> "${outfile}"
+			fi
+		else
+			printf "%s\n" "$line" >> "${outfile}"
+		fi
+	done < "${headerfile}"
+}
+
+echo "" > "${outfile}"
+
+echo "Collecting all header files..."
+recurse_header "include/gul14/gul.h"
+echo "            " `echo "${processed}" | tr -s ':' ' ' | wc \
+	| tr -s '[:space:]' ' ' | sed 's/[0-9]\+ \([0-9]\+\) [0-9]\+/\1/'` " files"
+
+echo "Collecting all code files..."
+num=0
+cat << END >> ${outfile}
+#ifndef GUL14_SINGLEFILE_CPP_FILES
+#define GUL14_SINGLEFILE_CPP_FILES
+END
+
+for infile in src/*.cc ; do
+	num=$(($num + 1))
+	while read -r line; do
+		if [[ "${line}" =~ ^#include ]] ; then
+			file=include/`printf "${line}" | sed 's/.*"\([^"]\+\).*/\1/'`
+			if [ -f "$file" ] ; then
+				# skip lines with headers we already incorporated
+				already_done=`[[ "${processed}" =~ "${file}" ]] ; echo $?`
+				if [ "${already_done}" -ne 0 ] ; then
+					printf "%s\n" "${line}" >> "${outfile}"
+				fi
+			else
+				printf "%s\n" "${line}" >> "${outfile}"
+			fi
+		else
+			printf "%s\n" "${line}" >> "${outfile}"
+		fi
+	done < "${infile}"
+done
+cat << END >> ${outfile}
+#endif // GUL14_SINGLEFILE_CPP_FILES
+END
+
+echo "            " "${num}" " files"
+echo "Done"
