@@ -116,7 +116,6 @@ printf "${tags}\n${root}\n" | \
 while read entry_next; do
 	email=$(echo ${email} | sed 's/>.*/>/')
 	footer=" -- ${email}  ${dat}"
-	echo "FOOTER FOOTER FOOTER $footer"
 	if [ -z "${tagger}" ]; then
 		footer=`printf "  [Note] No tagger-id available, using topmost commit's author-id as maintainer-id\n${footer}"`
 	fi
