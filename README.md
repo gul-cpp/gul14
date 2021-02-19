@@ -19,7 +19,7 @@ Here you find more detailed information on:
 * [Building](#Building)
   * [Build configuration switches](#Build-configuration-switches)
   * [Default Configurations](#Default-configurations)
-  * [Building on Windows with Visual C++](Windows)
+  * [Building on Windows with Visual C++](#Building-on-Windows-with-Visual-C)
   * [Single header use](#Single-header-use)
 * [Testing](#Testing)
 * [Coverage report generation](#Coverage-report)
@@ -152,7 +152,7 @@ the following commands:
 * ``make doc`` builds documentation under build/x86\_64-linux-gnu/release/resources/doxygenerated (needs Doxygen and Graphviz)
 * ``make localinstall`` makes a local installation of the library under /home/Ubuntu-16.04-x86\_64/lib
 
-### Building on Windows with Visual C++ <a name="Windows"></a>
+### Building on Windows with Visual C++ <a name="Building-on-Windows-with-Visual-C"></a>
 
 GUL can be built with Visual C++, although the integration with the Visual Studio IDE is
 somewhat patchy. In principle, meson and ninja can be used as outlined above. However,
