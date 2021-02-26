@@ -1,10 +1,10 @@
 /**
  * \file    join_split.h
- * \brief   Declarations of string utility functions for the General Utility Library.
+ * \brief   Implementation of join(), split(), and split_sv().
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -26,21 +26,26 @@
 #include <iterator>
 #include <regex>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include "gul14/internal.h"
+#include "gul14/string_util.h"
 #include "gul14/string_view.h"
 
 namespace gul14 {
 
 /**
  * Separate a string at all occurrences of a delimiter, returning the strings between the
- * delimiters in a vector.
+ * delimiters in a container.
  *
  * The result has at least one element. If the delimiter is not present in the text, the
  * whole text is returned. If there are consecutive delimiters, the collected string
  * between them is the empty string. If the delimiter is directly at the end of the
  * input, the collected string between the end of the input and the delimiter is again the
  * empty string.
+ *
+ * split() is the inverse function of join(). It is guaranteed that
+ * `join(split(text, del), del) == text`.
  *
  * \code
  * std::vector<std::string> parts1 = split(" hello world", " ");
@@ -55,97 +60,169 @@ namespace gul14 {
  * assert(parts2[1] == ""s);
  * \endcode
  *
- * split() is the inverse function of gul14::join(). It is guaranteed that
- * `join(split(text, del), del) == text`.
+ * This function returns a `std::vector<std::string>` by default, but a compatible
+ * container for string/string_view types can be specified via a template parameter:
  *
- * \param text       The string that is to be deconstructed
+ * \tparam StringContainer     A container for strings or string_view-like types, e.g.
+ *                             std::vector<std::string> or std::list<gul14::string_view>
+ * \tparam ContainerInsertFct  Type for the \c insert_fct function parameter.
+ *
+ * \param text       The string to be split
  * \param delimiter  The delimiting substring
+ * \param insert_fct By default, split() calls the \c emplace_back() member function on
+ *                   the container to insert strings. This parameter may contain a
+ *                   different function pointer or object with the signature
+ *                   `void f(StringContainer&, gul14::string_view)` that is called
+ *                   instead. This can be useful for containers that do not provide
+ *                   \c emplace_back() or for other customizations.
  *
- * \returns an array of substrings that were separated by delimiter in the original
- *          string.
+ * \returns a container filled with the substrings that were separated by delimiter in the
+ *          original string.
+ *
+ * \code
+ * // Different string type
+ * auto parts1 = split<std::vector<gul14::string_view>>("Hello world", " "); // behaves like split_sv()
+ * assert(parts1.size() == 2);
+ * assert(parts1[0] == "Hello"); // No lifetime problems because "Hello world" is a
+ * assert(parts1[1] == "world"); // string literal with static storage duration
+ *
+ * // Custom container type
+ * auto parts2 = split<gul14::SmallVector<std::string, 3>>("a--b--c", "--");
+ * assert(parts2.size() == 3);
+ * assert(parts2[0] == "a");
+ * assert(parts2[1] == "b");
+ * assert(parts2[2] == "c");
+ *
+ * // For a container without emplace_back(), use a custom inserter:
+ * using WeirdContainer = std::queue<std::string>;
+ * auto inserter = [](WeirdContainer& c, gul14::string_view sv) { c.emplace(sv); };
+ * auto parts3 = split<WeirdContainer>("a.b", ".", inserter);
+ * assert(parts3.size() == 2);
+ * assert(parts3.front() == "a");
+ * assert(parts3.back() == "b");
+ * \endcode
  *
  * \see split_sv() returns a vector of string_views,<br>
- *      split(const std::string &, const std::regex &) splits at a delimiter described by
+ *      split(const std::string&, const std::regex&) splits at a delimiter described by
  *      a regular expression, and<br>
  *      join() can join the vector back into a string.
+ *
+ * \since GUL version 2.5, the return type of split() can be specified as a template
+ *        parameter and a custom inserter can be specified (it always returned
+ *        std::vector<std::string> before).
  */
-GUL_EXPORT
-std::vector<std::string> split(string_view text, string_view delimiter);
+template <typename StringContainer = std::vector<std::string>,
+          typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
+inline StringContainer
+split(string_view text, string_view delimiter,
+      ContainerInsertFct insert_fct = detail::emplace_back)
+{
+    using StringType = typename StringContainer::value_type;
+    using SizeType = typename StringType::size_type;
+
+    auto result = StringContainer{ };
+    auto search_start = SizeType{ 0 };
+    auto push_start = search_start;
+
+    for (;;) {
+        const auto hit = text.find(delimiter.data(), search_start, delimiter.size());
+        if (hit == StringType::npos)
+            break;
+        const auto hit_len = hit - push_start;
+        insert_fct(result, text.substr(push_start, hit_len));
+        search_start += std::max(delimiter.size() + hit_len, SizeType{ 1 });
+        push_start += delimiter.size() + hit_len;
+    }
+    insert_fct(result, text.substr(push_start));
+    return result;
+}
 
 /**
  * Separate a string at all occurrences of a delimiter described by a regular expression,
- * returning the strings between the delimiters in a vector.
+ * returning the strings between the delimiters in a container.
  *
- * The result has at least one element. If the delimiter is not present in the text the
- * whole text is returned as one. If there are consecutive delimiters, the collected
- * string between them is the empty string. If the delimiter is directly at the end of the
- * input, the collected string between the end of the input and the delimiter is again the
- * empty string.
- *
+ * This function is a variant of split(string_view, string_view, ContainerInsertFct)
+ * that accepts a std::regex object to describe the delimiter:
  * \code
- * std::vector<std::string> parts = split("one\ntwo\nthree"s, std::regex{"[^[:print:]]"});
+ * // Return type is std::vector<std::string>
+ * auto parts = split("one\ntwo\nthree"s, std::regex{"[^[:print:]]"});
  * assert(y.size() == 3);
  * assert(y[0] == "one"s);
  * assert(y[1] == "two"s);
  * assert(y[2] == "three"s);
  * \endcode
  *
- * This version of split() does not accept string_view parameters because standard regexes
- * are not compatible with string_view.
- *
- * \param text       The string that is to be deconstructed
+ * \param text       The string to be split
  * \param delimiter  A std::regex object describing the delimiters
+ * \param insert_fct Custom container inserter function
  *
- * \returns an array of substrings that were separated by delimiters in the original
- *          string.
- *
- * \see split(string_view, string_view) splits at a fixed substring,<br>
- *      split_sv() does the same returning a vector of string_views, and<br>
- *      join() can join the vector back into a string.
+ * \see
+ * split(string_view, string_view, ContainerInsertFct) splits at a fixed substring,<br>
+ * split_sv() does the same returning a vector of string_views, and<br>
+ * join() can join the vector back into a string.
  */
-GUL_EXPORT
-std::vector<std::string> split(const std::string& text, const std::regex& delimiter);
+template <typename StringContainer = std::vector<std::string>,
+          typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
+inline StringContainer
+split(string_view text, const std::regex& delimiter,
+      ContainerInsertFct insert_fct = detail::emplace_back)
+{
+    auto const end = std::cregex_iterator{ };
+    auto result = StringContainer{ };
+
+    auto parts = std::cregex_iterator(text.begin(), text.end(), delimiter);
+    if (parts == end)
+    {
+        insert_fct(result, text);
+    }
+    else
+    {
+        auto previous = std::cregex_iterator{ };
+        for (; parts != end; ++parts) {
+            if (parts == previous and not parts->length())
+                break;
+            auto const& match = parts->prefix();
+            insert_fct(result, string_view(match.first, match.length()));
+            previous = parts;
+        }
+
+        auto const& match = previous->suffix();
+        insert_fct(result, string_view(match.first, match.length()));
+    }
+
+    return result;
+}
 
 /**
- * Separate a string at all occurrences of a delimiter, returning the text between the
- * delimiters as a vector of string_views.
+ * Separate a string at all occurrences of a delimiter, returning the strings between the
+ * delimiters in a vector.
  *
- * The result has at least one element. If the delimiter is not present in the text, the
- * whole text is returned. If there are consecutive delimiters, the collected string
- * between them is the empty string. If the delimiter is directly at the end of the
- * input, the collected string between the end of the input and the delimiter is again the
- * empty string.
- *
+ * This function is identical to split(string_view, string_view, ContainerInsertFct)
+ * except that it returns a std::vector of string_views instead of strings by default:
  * \code
- * std::vector<string_view> parts1 = split(" hello world", " ");
- * assert(parts1.size() == 3);
- * assert(parts1[0] == "");
- * assert(parts1[1] == "hello");
- * assert(parts1[2] == "world");
- *
- * std::vector<string_view> parts2 = split("<>", "<>");
- * assert(parts2.size() == 2);
- * assert(parts2[0] == "");
- * assert(parts2[1] == "");
+ * auto parts = split_sv("hello world", " "); // Return type is std::vector<gul14::string_view>
+ * assert(parts.size() == 2);
+ * assert(parts[0] == "hello"); // No problems with lifetime because "hello world"
+ * assert(parts[1] == "world"); // is a string literal with static storage duration
  * \endcode
  *
- * The inverse function of split_sv() is gul14::join(). It is guaranteed that
- * `join(split_sv(text, del), del) == text`.
- *
- * \param text       The string that is to be deconstructed
- * \param delimiter  The delimiting substring
- *
- * \returns an array of substrings that were separated by delimiter in the original
- *          string. The substrings are string_view objects that point into the original
- *          string passed to the function.
- *
- * \see split() returns a vector of copied substrings,<br>
- *      split(const std::string &, const std::regex &) splits at a delimiter described by
+ * \see split(string_view, string_view, ContainerInsertFct) returns a vector of strings,<br>
+ *      split(const std::string&, const std::regex&) splits at a delimiter described by
  *      a regular expression, and<br>
  *      join() can join the vector back into a string.
+ *
+ * \since GUL version 2.5, the return type of split_sv() can be specified as a template
+ *        parameter and a custom inserter can be specified (it always returned
+ *        std::vector<std::string> before).
  */
-GUL_EXPORT
-std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter);
+template <typename StringContainer = std::vector<string_view>,
+          typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
+inline StringContainer
+split_sv(string_view text, string_view delimiter,
+      ContainerInsertFct insert_fct = detail::emplace_back)
+{
+    return split<StringContainer>(text, delimiter, insert_fct);
+}
 
 /**
  * Concatenate all strings in a range, placing a delimiter between them.
@@ -153,7 +230,7 @@ std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter
  * This algorithm iterates twice over the range in order to pre-allocate a string of the
  * correct size.
  *
- * This is the inverse function of gul14::split(). It is guaranteed that
+ * This is the inverse function of split(). It is guaranteed that
  * `join(split(text, del), del) == text` (unless del is a std::regex object).
  *
  * \param parts  A container holding strings or string views that are to be concatenated
@@ -176,7 +253,8 @@ std::vector<gul14::string_view> split_sv(string_view text, string_view delimiter
  *        limited to std::vector before).
  */
 template <typename StringContainer>
-std::string join(const StringContainer &parts, string_view glue)
+inline std::string
+join(const StringContainer& parts, string_view glue)
 {
     return join(parts.begin(), parts.end(), glue);
 }
@@ -205,7 +283,8 @@ std::string join(const StringContainer &parts, string_view glue)
  * \since GUL version 2.3
  */
 template <typename Iterator>
-std::string join(Iterator begin, Iterator end, string_view glue)
+inline std::string
+join(Iterator begin, Iterator end, string_view glue)
 {
     std::string result;
 

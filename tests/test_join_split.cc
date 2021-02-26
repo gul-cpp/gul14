@@ -4,7 +4,7 @@
  * \date   Created on August 31, 2018
  * \brief  Test suite for join(), split(), and split_sv().
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,55 +21,58 @@
  */
 
 #include <forward_list>
+#include <list>
+#include <queue>
 #include <regex>
+#include <set>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include "gul14/catch.h"
 #include "gul14/join_split.h"
+#include "gul14/SmallVector.h"
 
 using namespace std::literals::string_literals;
+using gul14::SmallVector;
 using gul14::split;
 using gul14::split_sv;
 using gul14::string_view;
 using gul14::join;
 
-TEST_CASE("split()", "[join_split]")
+TEST_CASE("split(string_view, string_view) with default return type", "[join_split]")
 {
-    auto const x = split("Testmenoe"s, std::regex{"X"});
+    auto const x = split("Hello world", " ");
+    using ReturnType = typename std::remove_const_t<decltype(x)>;
+    static_assert(std::is_same<ReturnType, std::vector<std::string>>::value == true,
+        "split() returns wrong type");
+    REQUIRE(x.size() == 2);
+    REQUIRE(x[0] == "Hello");
+    REQUIRE(x[1] == "world");
+}
+
+TEMPLATE_TEST_CASE("split(string_view, string_view)", "[join_split]",
+    std::vector<std::string>, std::vector<gul14::string_view>,
+    (SmallVector<std::string, 3>), (SmallVector<gul14::string_view, 4>))
+{
+    auto const x = split<TestType>("Testmenoe", "X");
+    using ReturnType = typename std::remove_const<decltype(x)>::type;
+    static_assert(std::is_same<ReturnType, TestType>::value == true,
+        "split() returns wrong type");
     REQUIRE(x.size() == 1);
-    REQUIRE(x[0] == "Testmenoe"s);
+    REQUIRE(x[0] == "Testmenoe");
 
-    auto const x2 = split("Testmenoe"s, "X"s);
-    REQUIRE(x2.size() == 1);
-    REQUIRE(x2[0] == "Testmenoe"s);
-
-    auto const y = split("Test\nme\nnoe"s, std::regex{"[^[:print:]]"});
-    REQUIRE(y.size() == 3);
-    REQUIRE(y[0] == "Test"s);
-    REQUIRE(y[1] == "me"s);
-    REQUIRE(y[2] == "noe"s);
-
-    auto const y2 = split("Test\nme\nnoe"s, "\n"s);
+    auto const y2 = split<TestType>("Test\nme\nnoe", "\n");
     REQUIRE(y2.size() == 3);
     REQUIRE(y2[0] == "Test"s);
     REQUIRE(y2[1] == "me"s);
     REQUIRE(y2[2] == "noe"s);
 
-    auto const yy = split("TaaaT"s, std::regex{"aa"});
-    REQUIRE(yy.size() == 2);
-    REQUIRE(yy[0] == "T"s);
-    REQUIRE(yy[1] == "aT"s);
-
-    auto const xy = split("TaaaT"s, "aa");
+    auto const xy = split<TestType>("TaaaT", "aa");
     REQUIRE(xy.size() == 2);
     REQUIRE(xy[0] == "T"s);
     REQUIRE(xy[1] == "aT"s);
 
-    // This checks if indefinite loops are broken, somehow
-    // Empty regexes are UB anyhow
-    auto const z1 = split("TaaaT"s, std::regex{""});
-
-    auto const z2 = split("TaaaT"s, "");
+    auto const z2 = split<TestType>("TaaaT", "");
     REQUIRE(z2.size() == 7);
     REQUIRE(z2[0] == ""s);
     REQUIRE(z2[1] == "T"s);
@@ -80,24 +83,106 @@ TEST_CASE("split()", "[join_split]")
     REQUIRE(z2[6] == ""s);
 }
 
-TEST_CASE("split_sv()", "[join_split]")
+TEMPLATE_TEST_CASE("split<std::list<...>>()", "[join_split]",
+    std::list<std::string>, std::list<gul14::string_view>)
 {
-    std::vector<string_view> tok = split_sv("Testmenoe", "X");
+    auto const x = split<TestType>("Hello World", " ");
+
+    REQUIRE(x.size() == 2);
+    REQUIRE(x.front() == "Hello");
+    REQUIRE(x.back() == "World");
+}
+
+TEMPLATE_TEST_CASE("split<std::queue<...>>()", "[join_split]",
+    std::queue<std::string>, std::queue<gul14::string_view>)
+{
+    auto emplace = [](TestType& c, gul14::string_view sv) { c.emplace(sv); };
+
+    auto const x = split<TestType>("Hello World", " ", emplace);
+
+    REQUIRE(x.size() == 2);
+    REQUIRE(x.front() == "Hello");
+    REQUIRE(x.back() == "World");
+}
+
+TEMPLATE_TEST_CASE("split() with associative containers", "[join_split]",
+    std::set<std::string>, std::multiset<std::string>)
+{
+    auto emplace = [](TestType& c, gul14::string_view sv) { c.emplace(sv); };
+
+    auto const x = split<TestType>("Hello World", " ", emplace);
+
+    REQUIRE(x.size() == 2);
+    REQUIRE(std::find(x.begin(), x.end(), "Hello") != x.end());
+    REQUIRE(std::find(x.begin(), x.end(), "World") != x.end());
+}
+
+TEMPLATE_TEST_CASE("split(string_view, regex)", "[join_split]",
+    std::vector<std::string>, std::vector<gul14::string_view>,
+    (SmallVector<std::string, 3>), (SmallVector<gul14::string_view, 4>))
+{
+    auto const x = split<TestType>("Testmenoe", std::regex{ "X" });
+    REQUIRE(x.size() == 1);
+    REQUIRE(x[0] == "Testmenoe");
+
+    auto const y = split<TestType>("Test\nme\nnoe", std::regex{ "[^[:print:]]" });
+    REQUIRE(y.size() == 3);
+    REQUIRE(y[0] == "Test");
+    REQUIRE(y[1] == "me");
+    REQUIRE(y[2] == "noe");
+
+    auto const yy = split<TestType>("TaaaT", std::regex{ "aa" });
+    REQUIRE(yy.size() == 2);
+    REQUIRE(yy[0] == "T");
+    REQUIRE(yy[1] == "aT");
+
+    // This checks if indefinite loops are broken, somehow
+    // Empty regexes are UB anyhow
+    auto const z1 = split<TestType>("TaaaT", std::regex{ "" });
+}
+
+TEST_CASE("split_sv() with default return type", "[join_split]")
+{
+    std::string a = "Hello World";
+    auto tok = split_sv(a, " ");
+
+    using ReturnType = typename std::remove_const<decltype(tok)>::type;
+    static_assert(std::is_same<ReturnType, std::vector<gul14::string_view>>::value == true,
+        "split_sv() returns wrong type");
+
+    REQUIRE(tok.size() == 2);
+    REQUIRE(tok[0] == "Hello");
+    REQUIRE(tok[1] == "World");
+
+    a[1] = 'a';
+    a[10] = '!';
+    REQUIRE(tok[0] == "Hallo");
+    REQUIRE(tok[1] == "Worl!");
+}
+
+TEMPLATE_TEST_CASE("split_sv()", "[join_split]",
+    std::vector<std::string>, std::vector<gul14::string_view>,
+    (SmallVector<std::string, 2>), (SmallVector<gul14::string_view, 3>))
+{
+    auto tok = split_sv<TestType>("Testmenoe", "X");
+    using ReturnType = typename std::remove_const<decltype(tok)>::type;
+    static_assert(std::is_same<ReturnType, TestType>::value == true,
+        "split_sv() returns wrong type");
     REQUIRE(tok.size() == 1);
     REQUIRE(tok[0] == "Testmenoe");
 
-    tok = split_sv("Test\nme\nnoe", "\n");
+    tok = split_sv<TestType>("Test\nme\nnoe", "\n");
     REQUIRE(tok.size() == 3);
     REQUIRE(tok[0] == "Test");
     REQUIRE(tok[1] == "me");
     REQUIRE(tok[2] == "noe");
 
-    tok = split_sv("TaaaT", "aa");
+    tok = split_sv<TestType>("TaaaT", "aa");
     REQUIRE(tok.size() == 2);
     REQUIRE(tok[0] == "T");
     REQUIRE(tok[1] == "aT");
 
-    tok = split_sv("TaaaT", "");
+    tok = split_sv<TestType>("TaaaT", "");
     REQUIRE(tok.size() == 7);
     REQUIRE(tok[0] == "");
     REQUIRE(tok[1] == "T");
@@ -107,20 +192,49 @@ TEST_CASE("split_sv()", "[join_split]")
     REQUIRE(tok[5] == "T");
     REQUIRE(tok[6] == "");
 
-    tok = split_sv("", "Test");
+    tok = split_sv<TestType>("", "Test");
     REQUIRE(tok.size() == 1);
     REQUIRE(tok[0] == "");
 
     std::string a = "Hello World";
-    tok = split_sv(a, " ");
+    tok = split_sv<TestType>(a, " ");
     REQUIRE(tok.size() == 2);
     REQUIRE(tok[0] == "Hello");
     REQUIRE(tok[1] == "World");
+}
 
-    a[1] = 'a';
-    a[10] = '!';
-    REQUIRE(tok[0] == "Hallo");
-    REQUIRE(tok[1] == "Worl!");
+TEMPLATE_TEST_CASE("split_sv<std::list<...>>()", "[join_split]",
+    std::list<std::string>, std::list<gul14::string_view>)
+{
+    auto const x = split_sv<TestType>("Hello World", " ");
+
+    REQUIRE(x.size() == 2);
+    REQUIRE(x.front() == "Hello");
+    REQUIRE(x.back() == "World");
+}
+
+TEMPLATE_TEST_CASE("split_sv<std::queue<...>>()", "[join_split]",
+    std::queue<std::string>, std::queue<gul14::string_view>)
+{
+    auto emplace = [](TestType& c, gul14::string_view sv) { c.emplace(sv); };
+
+    auto const x = split_sv<TestType>("Hello World", " ", emplace);
+
+    REQUIRE(x.size() == 2);
+    REQUIRE(x.front() == "Hello");
+    REQUIRE(x.back() == "World");
+}
+
+TEMPLATE_TEST_CASE("split_sv() with associative containers", "[join_split]",
+    std::set<std::string>, std::multiset<std::string>)
+{
+    auto emplace = [](TestType& c, gul14::string_view sv) { c.emplace(sv); };
+
+    auto const x = split_sv<TestType>("Hello World", " ", emplace);
+
+    REQUIRE(x.size() == 2);
+    REQUIRE(std::find(x.begin(), x.end(), "Hello") != x.end());
+    REQUIRE(std::find(x.begin(), x.end(), "World") != x.end());
 }
 
 TEST_CASE("join()", "[join_split]")

@@ -4,10 +4,8 @@ libgul_src = files([
     'case_ascii.cc',
     'cat.cc',
     'escape.cc',
-    'join_split.cc',
     'replace.cc',
     'string_util.cc',
-    'tokenize.cc',
     'Trigger.cc',
     'trim.cc',
 ])

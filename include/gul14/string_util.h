@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -28,6 +28,20 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/// \cond HIDE_SYMBOLS
+namespace detail {
+
+// Add a gul14::string_view to the back of a string container using emplace_back().
+template <typename StringContainer>
+void emplace_back(StringContainer c, string_view sv)
+{
+    c.emplace_back(sv);
+}
+
+} // namespace detail
+/// \endcond
+
 
 /**
  * The default characters that are treated as whitespace by GUL.
