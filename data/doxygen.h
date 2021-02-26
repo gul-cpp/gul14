@@ -103,6 +103,7 @@ namespace gul14 {
  *
  * \subsection v2_4 Version 2.4
  *
+ * - Add \ref gul14::SmallVector "SmallVector"
  * - Add \ref SlidingBuffer::pop_front() and \ref SlidingBuffer::pop_back()
  *
  * \subsection v2_3 Version 2.3
@@ -204,7 +205,7 @@ namespace gul14 {
  *
  * \section copyright_notice Copyright Notice
  *
- * Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -547,7 +548,7 @@ namespace gul14 {
 /**
  * \page container_utilities Containers
  *
- * The General Utility Library provides some additional containers.
+ * The General Utility Library provides the following containers:
  *
  * SlidingBuffer:
  *     A circular data buffer of (semi-)fixed capacity to which elements can be added at
@@ -556,6 +557,10 @@ namespace gul14 {
  * SlidingBufferExposed:
  *     The same as SlidingBuffer, but with direct iterator access to the underlying buffer
  *     for maximum performance.
+ *
+ * SmallVector:
+ *     A resizable container with contiguous storage that can hold a specified number of
+ *     elements without allocating memory on the heap.
  */
 
 /**

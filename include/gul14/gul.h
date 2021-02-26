@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -34,6 +34,7 @@
 #include "gul14/optional.h"
 #include "gul14/replace.h"
 #include "gul14/SlidingBuffer.h"
+#include "gul14/SmallVector.h"
 #include "gul14/span.h"
 #include "gul14/statistics.h"
 #include "gul14/string_util.h"

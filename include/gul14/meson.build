@@ -10,6 +10,7 @@ standalone_headers = [
     'num_util.h',
     'replace.h',
     'SlidingBuffer.h',
+    'SmallVector.h',
     'span.h',
     'statistics.h',
     'string_util.h',
