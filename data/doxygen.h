@@ -101,9 +101,13 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_5 Version 2.5
+ *
+ * - Add support for more container types as return type of split() and tokenize()
+ * - Add \ref gul14::SmallVector "SmallVector"
+ *
  * \subsection v2_4 Version 2.4
  *
- * - Add \ref gul14::SmallVector "SmallVector"
  * - Add \ref SlidingBuffer::pop_front() and \ref SlidingBuffer::pop_back()
  *
  * \subsection v2_3 Version 2.3
@@ -324,7 +328,7 @@ namespace gul14 {
  *
  * lowercase_ascii_inplace(), uppercase_ascii_inplace(): Replace all ASCII characters in a
  *           string by their lowercase/uppercase equivalents.
- * 
+ *
  * <h4>Conversion to Numbers</h4>
  *
  * to_number(): Convert an ASCII string_view into an integer or floating-point number.
@@ -472,7 +476,7 @@ namespace gul14 {
  *     It should behave like
  *     [std::optional](https://en.cppreference.com/w/cpp/utility/optional)
  *     from C++17 for almost all use cases.
- * 
+ *
  * \ref gul14::span "span":
  *     A view to a contiguous sequence of objects. It should behave like
  *     [std::span](https://en.cppreference.com/w/cpp/container/span) from C++20 for almost
@@ -603,7 +607,7 @@ namespace gul14 {
  * between a statically and a dynamically linked library. GUL does this by means of a
  * preprocessor macro, `GUL_USING_STATIC_LIB_OR_OBJECTS`. We assume that most users will
  * prefer the DLL version, therefore we treat this as the default case:
- * 
+ *
  * - If you link your code against the DLL, there is no need to take any further action.
  *   The header files already provide the necessary import declarations.
  * - If you link your code against the static library (or directly against GUL's object

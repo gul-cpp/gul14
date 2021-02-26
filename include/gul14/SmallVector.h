@@ -65,7 +65,7 @@ namespace gul14 {
  * \tparam in_capacity  The number of elements that can be stored directly in the object
  *                      without allocating (the "inner capacity")
  *
- * \since GUL version 2.4
+ * \since GUL version 2.5
  *
  * <h3>Member function overview</h3>
  *
