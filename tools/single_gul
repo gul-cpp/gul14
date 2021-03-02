@@ -18,6 +18,11 @@
 # Fini Jastrow, 12 Feb 2021, for the Doocs Lecture Series on GUL
 
 outfile=${1}
+if [ -z "${outfile}" ] ; then
+	echo "No output filename given"
+	exit 1
+fi
+
 processed=""
 # To tame the read command:
 IFS=
