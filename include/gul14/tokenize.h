@@ -89,6 +89,14 @@ namespace gul14 {
  * assert(parts3.back() == "b");
  * \endcode
  *
+ * \note
+ * tokenize() does not assume a specific encoding for its input strings, but operates on
+ * individual `char`s. This can have surprising effects in code such as this:
+ * ```
+ * auto words = tokenize("Hörgeräteakkustiker hätten es gewußt", "ä");
+ * assert(words.size() == 3); // Might fail or succeed depending on the encoding
+ * ```
+ *
  * \see gul14::tokenize_sv() returns a vector<string_view> by default, gul14::split() uses
  *      a different approach to string splitting.
  *
