@@ -32,11 +32,27 @@ namespace gul14 {
 /// \cond HIDE_SYMBOLS
 namespace detail {
 
-// Add a gul14::string_view to the back of a string container using emplace_back().
-template <typename StringContainer>
-void emplace_back(StringContainer c, string_view sv)
+// Check if an object has a emplace_back() member function
+template <typename T, typename = int>
+struct HasEmplaceBack : std::false_type { };
+template <typename T>
+struct HasEmplaceBack<T, typename std::enable_if_t<true,
+    decltype(std::declval<T>().emplace_back(), 0)>> : std::true_type { };
+
+// Add an element to (the back of) a container using emplace_back()
+// if availabe or emplace() if not.
+template <typename Container, typename Element>
+auto emplace_back(Container& c, Element e)
+    -> std::enable_if_t<HasEmplaceBack<Container>::value>
 {
-    c.emplace_back(sv);
+    c.emplace_back(std::move(e));
+}
+
+template <typename Container, typename Element>
+auto emplace_back(Container& c, Element e)
+    -> std::enable_if_t<!HasEmplaceBack<Container>::value>
+{
+    c.emplace(std::move(e));
 }
 
 } // namespace detail
