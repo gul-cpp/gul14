@@ -115,7 +115,7 @@ template <typename StringContainer = std::vector<std::string>,
           typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
 inline StringContainer
 split(string_view text, string_view delimiter,
-      ContainerInsertFct insert_fct = detail::emplace_back)
+      ContainerInsertFct insert_fct = detail::emplace_back<StringContainer>)
 {
     using StringType = typename StringContainer::value_type;
     using SizeType = typename StringType::size_type;
@@ -165,7 +165,7 @@ template <typename StringContainer = std::vector<std::string>,
           typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
 inline StringContainer
 split(string_view text, const std::regex& delimiter,
-      ContainerInsertFct insert_fct = detail::emplace_back)
+      ContainerInsertFct insert_fct = detail::emplace_back<StringContainer>)
 {
     auto const end = std::cregex_iterator{ };
     auto result = StringContainer{ };
@@ -219,7 +219,7 @@ template <typename StringContainer = std::vector<string_view>,
           typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
 inline StringContainer
 split_sv(string_view text, string_view delimiter,
-      ContainerInsertFct insert_fct = detail::emplace_back)
+      ContainerInsertFct insert_fct = detail::emplace_back<StringContainer>)
 {
     return split<StringContainer>(text, delimiter, insert_fct);
 }

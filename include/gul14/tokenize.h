@@ -108,7 +108,7 @@ template <typename StringContainer = std::vector<std::string>,
           typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
 inline StringContainer
 tokenize(string_view str, string_view delimiters = default_whitespace_characters,
-         ContainerInsertFct insert_fct = detail::emplace_back)
+         ContainerInsertFct insert_fct = detail::emplace_back<StringContainer>)
 {
     StringContainer tokens;
 
@@ -162,7 +162,7 @@ template <typename StringContainer = std::vector<string_view>,
           typename ContainerInsertFct = void (*)(StringContainer&, string_view)>
 inline StringContainer
 tokenize_sv(string_view str, string_view delimiters = default_whitespace_characters,
-            ContainerInsertFct insert_fct = detail::emplace_back)
+            ContainerInsertFct insert_fct = detail::emplace_back<StringContainer>)
 {
     return tokenize<StringContainer>(str, delimiters, insert_fct);
 }
