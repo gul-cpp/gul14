@@ -186,6 +186,17 @@ TEMPLATE_TEST_CASE("tokenize(\"Hello World\")'s return type", "[tokenize]",
     REQUIRE(std::is_same<std::remove_const_t<decltype(ret_sv)>, TestType>::value == true);
 }
 
+TEST_CASE("tokenize(\"Hello World\")'s default return type", "[tokenize]")
+{
+    using DefaultReturnType = std::vector<std::string>;
+    decltype(auto) ret = tokenize("A Three Legged Horse");
+    REQUIRE(std::is_same<std::remove_const_t<decltype(ret)>, DefaultReturnType>::value == true);
+
+    using DefaultSVReturnType = std::vector<gul14::string_view>;
+    decltype(auto) ret_sv = tokenize_sv("A Three Legged Horse");
+    REQUIRE(std::is_same<std::remove_const_t<decltype(ret_sv)>, DefaultSVReturnType>::value == true);
+}
+
 TEST_CASE("tokenize(\"Hello World\") into std::map", "[tokenize]")
 {
     using TestType = std::map<std::string, std::string>;
