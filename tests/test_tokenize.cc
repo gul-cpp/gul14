@@ -189,7 +189,7 @@ TEMPLATE_TEST_CASE("tokenize(\"Hello World\")'s return type", "[tokenize]",
 TEST_CASE("tokenize(\"Hello World\") into std::map", "[tokenize]")
 {
     using TestType = std::map<std::string, std::string>;
-    auto emplace = [](TestType& c, gul14::string_view sv) { c.emplace(sv, gul14::uppercase_ascii(sv)); };
+    auto emplace = [](TestType& c, gul14::string_view sv) { c.emplace(std::string{ sv }, gul14::uppercase_ascii(sv)); };
 
     auto token = std::vector<TestType>{
         tokenize<TestType>("Hello World", " ", emplace),
