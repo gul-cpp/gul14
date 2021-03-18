@@ -24,6 +24,9 @@ if git_exe.found()
         git_full_api_version = 'unknown'
     else
         git_full_api_version = git_f_api.stdout().strip()
+        if not git_full_api_version.startswith('v') or not git_full_api_version.contains('.')
+            git_full_api_version = 'unknown'
+        endif
     endif
 
     # Get description based on git version tag ('v0.2' or 'DOOCSVERSION_18_11_6')
