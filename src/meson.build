@@ -36,11 +36,15 @@ if git_exe.found()
         git_version = 'unknown'
     else
         git_version = git_vers.stdout().strip()
-        git_version_pure = git_version.split(get_option('deb-vers-tag'))[1]
-        git_version_parts = git_version_pure.split('_')
-        git_version_parts = '-'.join(git_version_parts).split('-')
-        git_version_num = '.'.join(git_version_parts)
-        git_version_parts = git_version_num.split('.')
+        if git_version.startswith(get_option('deb-vers-tag'))
+            git_version_pure = git_version.split(get_option('deb-vers-tag'))[1]
+            git_version_parts = git_version_pure.split('_')
+            git_version_parts = '-'.join(git_version_parts).split('-')
+            git_version_num = '.'.join(git_version_parts)
+            git_version_parts = git_version_num.split('.')
+        else
+            git_version = 'unknown'
+        endif
     endif
 
     # Get the number of commits since the relevant version tag
