@@ -27,6 +27,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <exception>
+#include <limits>
 #include <type_traits>
 
 #include "gul14/internal.h"
