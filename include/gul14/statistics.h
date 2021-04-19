@@ -5,7 +5,7 @@
  * \authors \ref contributors
  * \date    Created on 7 February 2019
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -532,7 +532,7 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * Calculate the standard deviation of all elements in a container.
  *
  * The corrected sample standard deviation is calculated:
- * ``std_dev -> sqrt (sum 0..n-1 ((element i - mean) * (element i - mean)) / (n - 1))``
+ * ``standard_deviation -> sqrt (sum 0..n-1 ((element i - mean) * (element i - mean)) / (n - 1))``
  *
  * The returned StandardDeviationMean object can be used like this:
  * \code
@@ -548,9 +548,14 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * const auto [std, mean] = standard_deviation(something);
  * \endcode
  *
- * \param container    Container of the elements to examine
- * \param accessor     Helper function to access the numeric value of one container element
- * \returns            the standard deviation and mean values as a StandardDeviationMean object.
+ * If the container is empty, not-a-number is returned for both the standard deviation and
+ * the mean value. If it contains only a single element, not-a-number is returned for the
+ * standard deviation and the mean value is the value of the element.
+ *
+ * \param container Container of the elements to examine
+ * \param accessor  Helper function to access the numeric value of one container element
+ * \returns         the standard deviation and mean values as a StandardDeviationMean
+ *                  object.
  *
  * \tparam ResultT     Type of the result value
  * \tparam ContainerT  Type of the container to examine
@@ -574,9 +579,11 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
 
     if (len == 0)
         return { };
+
     auto mean_val = mean<ResultT>(container, accessor);
+
     if (len == 1)
-        return { mean_val, mean_val };
+        return { std::numeric_limits<ResultT>::quiet_NaN(), mean_val };
 
     auto sum = std::accumulate(container.cbegin(), container.cend(),
         ResultT{ },

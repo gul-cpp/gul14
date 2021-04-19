@@ -126,10 +126,10 @@ TEMPLATE_TEST_CASE("standard_deviation()", "[statistics]",
     SECTION("Container with single element")
     {
         std::array<TestType, 1> arr1{ 42 };
-        REQUIRE(standard_deviation(arr1) == 0.0);
+        REQUIRE(std::isnan(standard_deviation(arr1)));
 
         auto std_mean = standard_deviation(arr1);
-        REQUIRE(std_mean.sigma() == 0.0);
+        REQUIRE(std::isnan(std_mean.sigma()));
         REQUIRE(std_mean.mean() == TestType{ 42 });
     }
 
