@@ -4,7 +4,7 @@
  * \date   Created on Feb 7, 2019
  * \brief  Test suite for statistics functions.
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -38,6 +38,8 @@ using gul14::min_max;
 using gul14::remove_outliers;
 using gul14::rms;
 using gul14::standard_deviation;
+
+using Catch::Matchers::WithinAbs;
 
 template <typename DataT, typename StateT = void>
 struct StatisticsElement {
@@ -91,7 +93,7 @@ TEMPLATE_TEST_CASE("minimum(), maximum(), min_max() on random integers", "[stati
 
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    
+
     std::uniform_int_distribution<TestType> dis(std::numeric_limits<TestType>::lowest());
 
     for (auto &el : arr)
@@ -105,6 +107,41 @@ TEMPLATE_TEST_CASE("minimum(), maximum(), min_max() on random integers", "[stati
     REQUIRE(maximum(arr) == max_value);
     REQUIRE(min_max(arr).min == min_value);
     REQUIRE(min_max(arr).max == max_value);
+}
+
+TEMPLATE_TEST_CASE("standard_deviation()", "[statistics]",
+    short, unsigned short, int, unsigned int, long, unsigned long,
+    long long, unsigned long long, float, double)
+{
+    SECTION("Empty container")
+    {
+        std::vector<TestType> empty;
+        REQUIRE(std::isnan(standard_deviation(empty)));
+
+        auto std_mean = standard_deviation(empty);
+        REQUIRE(std::isnan(std_mean.sigma()));
+        REQUIRE(std::isnan(std_mean.mean()));
+    }
+
+    SECTION("Container with single element")
+    {
+        std::array<TestType, 1> arr1{ 42 };
+        REQUIRE(standard_deviation(arr1) == 0.0);
+
+        auto std_mean = standard_deviation(arr1);
+        REQUIRE(std_mean.sigma() == 0.0);
+        REQUIRE(std_mean.mean() == TestType{ 42 });
+    }
+
+    SECTION("Container with 4 elements")
+    {
+        std::array<TestType, 4> arr4{ 1, 2, 3, 4 };
+        REQUIRE_THAT(standard_deviation(arr4), WithinAbs(1.29099445, 1e-8));
+
+        auto std_mean = standard_deviation(arr4);
+        REQUIRE_THAT(std_mean.sigma(), WithinAbs(1.29099445, 1e-8));
+        REQUIRE_THAT(std_mean.mean(), WithinAbs(2.5, 1e-8));
+    }
 }
 
 TEST_CASE("Container Statistics Tests", "[statistics]")
