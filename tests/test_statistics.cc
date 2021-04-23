@@ -22,7 +22,9 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <deque>
+#include <limits>
 #include <random>
 #include <sstream>
 
@@ -116,7 +118,7 @@ TEMPLATE_TEST_CASE("standard_deviation()", "[statistics]",
     SECTION("Empty container")
     {
         std::vector<TestType> empty;
-        REQUIRE(std::isnan(standard_deviation(empty)));
+        REQUIRE(std::isnan(static_cast<gul14::statistics_result_type>(standard_deviation(empty))));
 
         auto std_mean = standard_deviation(empty);
         REQUIRE(std::isnan(std_mean.sigma()));
@@ -125,8 +127,8 @@ TEMPLATE_TEST_CASE("standard_deviation()", "[statistics]",
 
     SECTION("Container with single element")
     {
-        std::array<TestType, 1> arr1{ 42 };
-        REQUIRE(std::isnan(standard_deviation(arr1)));
+        std::array<TestType, 1> arr1{ { 42 } };
+        REQUIRE(std::isnan(static_cast<gul14::statistics_result_type>(standard_deviation(arr1))));
 
         auto std_mean = standard_deviation(arr1);
         REQUIRE(std::isnan(std_mean.sigma()));
@@ -135,8 +137,9 @@ TEMPLATE_TEST_CASE("standard_deviation()", "[statistics]",
 
     SECTION("Container with 4 elements")
     {
-        std::array<TestType, 4> arr4{ 1, 2, 3, 4 };
-        REQUIRE_THAT(standard_deviation(arr4), WithinAbs(1.29099445, 1e-8));
+        std::array<TestType, 4> arr4{ { 1, 2, 3, 4 } };
+        REQUIRE_THAT(static_cast<gul14::statistics_result_type>(standard_deviation(arr4)),
+                     WithinAbs(1.29099445, 1e-8));
 
         auto std_mean = standard_deviation(arr4);
         REQUIRE_THAT(std_mean.sigma(), WithinAbs(1.29099445, 1e-8));
