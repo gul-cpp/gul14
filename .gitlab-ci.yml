@@ -1,0 +1,22 @@
+image: lfroehli/ubuntu20-meson
+
+build:
+  stage: build
+  tags:
+    - docker
+    - ubuntu20
+  script:
+    - meson --buildtype=release build.release
+    - ninja -C build.release
+  artifacts:
+    paths:
+      - build.release
+    expire_in: 1 week
+
+test:
+  stage: test
+  tags:
+    - docker
+    - ubuntu20
+  script:
+    - ninja -C build.release test
