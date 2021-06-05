@@ -12,6 +12,9 @@ elif get_option('prefix') == '/usr/local'
     message('Debian packaging disabled (Packets installing files to /usr/local forbidden)')
     message('                          Enable by specifying correct prefix e.g. --prefix=/usr')
     subdir_done()
+elif git_full_api_version == 'unknown'
+    message('Debian packaging disabled (can not access git tags and most probably git log)')
+    subdir_done()
 endif
 deb_install = true
 
