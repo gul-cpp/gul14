@@ -110,7 +110,7 @@ inline StringContainer
 tokenize(string_view str, string_view delimiters = default_whitespace_characters,
          ContainerInsertFct insert_fct = detail::emplace_back<StringContainer>)
 {
-    StringContainer tokens;
+    StringContainer tokens{ };
 
     string_view::size_type token_start = 0;
     string_view::size_type token_end = 0;

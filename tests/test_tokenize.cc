@@ -223,4 +223,18 @@ TEST_CASE("tokenize(\"Hello World\") into std::map", "[tokenize]")
     REQUIRE(std::is_same<std::remove_const_t<decltype(ret_sv)>, TestType>::value == true);
 }
 
+TEST_CASE("tokenize() into bool", "[tokenize]")
+{
+    auto to_find = "4"s;
+    auto checker = [&to_find] (bool& present, gul14::string_view s) {
+            present |= (s == to_find);
+        };
+
+    auto is_present = gul14::tokenize<bool>("10  3 5  12 ", gul14::default_whitespace_characters, checker);
+    REQUIRE(is_present == false);
+    to_find = "3"s;
+    is_present = gul14::tokenize<bool>("10  3 5  12 ", gul14::default_whitespace_characters, checker);
+    REQUIRE(is_present == true);
+}
+
 // vi:ts=4:sw=4:sts=4:et
