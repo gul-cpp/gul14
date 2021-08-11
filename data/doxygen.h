@@ -101,8 +101,13 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_6 Version 2.6
+ *
+ * - Add safe_string()
+ *
  * \subsection v2_5 Version 2.5
  *
+ * - *Released with DOOCS 21.3.0–21.7.1*
  * - Add support for more container types as return type of split() and tokenize()
  * - Add \ref gul14::SmallVector "SmallVector"
  *
@@ -332,6 +337,10 @@ namespace gul14 {
  * <h4>Conversion to Numbers</h4>
  *
  * to_number(): Convert an ASCII string_view into an integer or floating-point number.
+ *
+ * <h4>C Strings</h4>
+ *
+ * safe_string(): Safely create a std::string from a char pointer and a length.
  *
  * <h3>Classes</h3>
  *
