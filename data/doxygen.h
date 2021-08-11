@@ -104,6 +104,7 @@ namespace gul14 {
  * \subsection v2_6 Version 2.6
  *
  * - Add safe_string()
+ * - Add hex_string()
  *
  * \subsection v2_5 Version 2.5
  *
@@ -334,8 +335,10 @@ namespace gul14 {
  * lowercase_ascii_inplace(), uppercase_ascii_inplace(): Replace all ASCII characters in a
  *           string by their lowercase/uppercase equivalents.
  *
- * <h4>Conversion to Numbers</h4>
+ * <h4>Number Conversions</h4>
  *
+ * hex_string(): Convert an integer or a range of integers into their hexadecimal ASCII
+ *           representation.
  * to_number(): Convert an ASCII string_view into an integer or floating-point number.
  *
  * <h4>C Strings</h4>
