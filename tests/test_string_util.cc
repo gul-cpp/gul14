@@ -1,10 +1,10 @@
 /**
- * \file    string_util.cc
- * \brief   Implementation of string utilities for the General Utility Library.
- * \authors \ref contributors
- * \date    Created on 31 August 2018
+ * \file   test_string_util.cc
+ * \author \ref contributors
+ * \date   Created on August 11, 2021
+ * \brief  Unit tests for safe_string().
  *
- * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,23 +20,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+#include "gul14/catch.h"
 #include "gul14/string_util.h"
 
-namespace gul14 {
+using gul14::safe_string;
 
-const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
+using namespace std::literals;
 
-std::string safe_string(const char* char_ptr, size_t length)
+TEST_CASE("safe_string()", "[string_util]")
 {
-    if (char_ptr == nullptr)
-        return "";
-
-    auto end_ptr = std::find(char_ptr, char_ptr + length, '\0');
-
-    return std::string(char_ptr, end_ptr);
+    REQUIRE(safe_string(nullptr, 0) == "");
+    REQUIRE(safe_string(nullptr, 10) == "");
+    REQUIRE(safe_string("hello", 0) == "");
+    REQUIRE(safe_string("hello", 10) == "hello");
+    REQUIRE(safe_string("hello\0", 6) == "hello");
+    REQUIRE(safe_string("hello\0world", 11) == "hello");
 }
-
-} // namespace gul14
-
-/* vim:set expandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */

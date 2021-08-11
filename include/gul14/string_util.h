@@ -60,6 +60,30 @@ auto emplace_back(Container& c, Element e)
 
 
 /**
+ * Safely construct a std::string from a char pointer and a length.
+ *
+ * If the pointer is null, an empty string is constructed. If there are no zero bytes in
+ * the input range, a string of length \c length is constructed. Otherwise, the input
+ * string is treated as a C string and the first zero byte is treated as the end of the
+ * string.
+ *
+ * \code
+ * auto a = safe_string(nullptr, 5);  // a == ""s
+ * auto b = safe_string("ABC", 2);    // b == "AB"s
+ * auto c = safe_string("ABC", 4);    // c == "ABC"s, trailing zero byte ends the string
+ * auto d = safe_string("AB\0CD", 5); // d == "AB"s, intermediate zero byte ends the string
+ * \endcode
+ *
+ * \param char_ptr  Pointer to a C string, an unterminated string of at least the
+ *                  specified length, or null.
+ * \param length    Maximum length of the generated string.
+ *
+ * \since GUL version 2.6
+ */
+GUL_EXPORT
+std::string safe_string(const char* char_ptr, size_t length);
+
+/**
  * The default characters that are treated as whitespace by GUL.
  * This is a string view that contains the space and the most common control characters,
  * namely (with their ASCII codes):

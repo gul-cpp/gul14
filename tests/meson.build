@@ -35,6 +35,7 @@ tests = [
     'test_SlidingBuffer.cc',
     'test_SmallVector.cc',
     'test_statistics.cc',
+    'test_string_util.cc',
     'test_substring_checks.cc',
     'test_time_util.cc',
     'test_tokenize.cc',
