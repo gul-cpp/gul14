@@ -1,6 +1,6 @@
 image: lfroehli/ubuntu20-meson
 
-build:
+build_release:
   stage: build
   tags:
     - docker
@@ -13,10 +13,31 @@ build:
       - build.release
     expire_in: 1 week
 
-test:
+build_asan:
+  stage: build
+  tags:
+    - docker
+    - ubuntu20
+  script:
+    - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
+    - ninja -C build.asan
+  artifacts:
+    paths:
+      - build.asan
+    expire_in: 1 week
+
+test_release:
   stage: test
   tags:
     - docker
     - ubuntu20
   script:
     - ninja -C build.release test
+
+test_asan:
+  stage: test
+  tags:
+    - docker
+    - ubuntu20
+  script:
+    - ninja -C build.asan test
