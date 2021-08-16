@@ -81,7 +81,7 @@ auto emplace_back(Container& c, Element e)
  * \since GUL version 2.6
  */
 GUL_EXPORT
-std::string safe_string(const char* char_ptr, size_t length);
+std::string safe_string(const char* char_ptr, std::size_t length);
 
 /**
  * The default characters that are treated as whitespace by GUL.

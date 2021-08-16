@@ -27,7 +27,7 @@ namespace gul14 {
 
 const string_view default_whitespace_characters{ " \t\r\n\a\b\f\v" };
 
-std::string safe_string(const char* char_ptr, size_t length)
+std::string safe_string(const char* char_ptr, std::size_t length)
 {
     if (char_ptr == nullptr)
         return "";
