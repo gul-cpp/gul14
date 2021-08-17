@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -20,32 +20,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-#include "gul14/escape.h"
-#include <array>
-#include <iomanip>
 #include <limits>
 #include <regex>
-#include <stdexcept>
-#include <sstream>
+#include "gul14/escape.h"
+#include "gul14/string_util.h"
 
 using namespace std::literals::string_literals;
 
 namespace gul14 {
-
-// anonymous namespace to confine helper functions to this translation unit
-namespace {
-
-static const std::array<char, 16> hex_table =
-    {{ '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' }};
-
-char get_last_nibble_as_hex(unsigned int i)
-{
-    return hex_table[i & 0xf];
-}
-
-} // anonymous namespace
-
 
 std::string escape(string_view in)
 {
@@ -82,8 +64,7 @@ std::string escape(string_view in)
                     // This applies also to all non-ASCII characters (>127) because they
                     // are mapped to negative values
                     escaped += "\\x";
-                    escaped += get_last_nibble_as_hex(c >> 4);
-                    escaped += get_last_nibble_as_hex(c);
+                    escaped += hex_string(c);
                 }
                 else
                 {
