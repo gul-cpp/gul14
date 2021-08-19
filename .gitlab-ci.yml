@@ -1,43 +1,54 @@
-image: lfroehli/ubuntu20-meson
+stages:
+        - build:macos
+        - build:focal
 
-build_release:
-  stage: build
-  tags:
-    - docker
-    - ubuntu20
-  script:
-    - meson --buildtype=release build.release
-    - ninja -C build.release
-  artifacts:
-    paths:
-      - build.release
-    expire_in: 1 week
+build-focal:
+        stage: build:focal
+        image: lfroehli/ubuntu20-meson
+        tags:
+                - ubuntu20
+                - docker
+        script:
+                - meson
+                  --buildtype=release
+                  --prefix=/export/doocs
+                  --libdir=lib
+                  --includedir=lib/include
+                  -D deb-vers-tag='DOOCSVERSION_'
+                  -D deb-vers-pack=true
+                  -D deb-name=doocs-@0@
+                  -D deb-dev-name=dev-doocs-@0@
+                  build.release
+                - ninja -C build.release
+                - ninja -C build.release test
+                - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
+                - ninja -C build.asan test
+                - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
+        artifacts:
+                paths:
+                        - build.release
+                        - focal_install
+                expire_in: 1 week
 
-build_asan:
-  stage: build
-  tags:
-    - docker
-    - ubuntu20
-  script:
-    - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
-    - ninja -C build.asan
-  artifacts:
-    paths:
-      - build.asan
-    expire_in: 1 week
-
-test_release:
-  stage: test
-  tags:
-    - docker
-    - ubuntu20
-  script:
-    - ninja -C build.release test
-
-test_asan:
-  stage: test
-  tags:
-    - docker
-    - ubuntu20
-  script:
-    - ninja -C build.asan test
+build-darwin:
+        stage: build:macos
+        tags:
+                - macOS-x86_64
+        script:
+                - export PATH=/usr/local/bin:${PATH}
+                - meson
+                  --buildtype=release
+                  --prefix=/local
+                  --libdir=lib
+                  --includedir=lib/include
+                  -D 'cpp_args= -arch x86_64'
+                  -D 'cpp_link_args= -arch x86_64'
+                  macos-build
+                - ninja -C macos-build
+                - macos-build/tests/libgul-test '~[time_util]' '~[Trigger]'
+                - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
+        artifacts:
+                paths:
+                        - macos-build
+                        - macos_install
+                expire_in: 1 week
