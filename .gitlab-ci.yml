@@ -1,6 +1,7 @@
 stages:
-        - build:macos
         - build:focal
+        - build:xenial
+        - build:macos
 
 build-focal:
         stage: build:focal
@@ -28,6 +29,51 @@ build-focal:
                 paths:
                         - build.release
                         - focal_install
+                expire_in: 1 week
+
+build-xenial:
+        stage: build:xenial
+        image: ubuntu:16.04
+        tags:
+                - ubuntu16
+        before_script:
+                # Install build dependencies
+                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    apt update && apt install -y wget gnupg)
+                # Add DOOCS repo with key
+                - echo "Installing MCS DOOCS package repository with key ..."
+                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
+                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                # Add backports for ninja
+                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
+                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
+                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
+        script:
+                - meson
+                  --buildtype=release
+                  --prefix=/export/doocs
+                  --libdir=lib
+                  --includedir=lib/include
+                  -D deb-vers-tag='DOOCSVERSION_'
+                  -D deb-vers-pack=true
+                  -D deb-name=doocs-@0@
+                  -D deb-dev-name=dev-doocs-@0@
+                  build.release
+                - ninja -C build.release
+                - ninja -C build.release test
+                - DESTDIR=${CI_PROJECT_DIR}/xenial_install ninja -C build.release install
+        artifacts:
+                paths:
+                        - build.release
+                        - xenial_install
                 expire_in: 1 week
 
 build-darwin:
