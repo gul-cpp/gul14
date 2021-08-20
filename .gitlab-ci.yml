@@ -3,7 +3,11 @@ stages:
         - test:focal
         - install:focal
         - build:xenial
+        - test:xenial
+        - install:xenial
         - build:macos
+        - test:macos
+        - install:macos
 
 build-focal:
         stage: build:focal
@@ -30,12 +34,13 @@ build-focal:
 
 test-focal:
         stage: test:focal
+        needs:
+                - job: build-focal
+                  artifacts: true
         image: lfroehli/ubuntu20-meson
         tags:
                 - ubuntu20
                 - docker
-        dependencies:
-                - build-focal
         script:
                 - ninja -C build.release test
                 - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
@@ -43,12 +48,15 @@ test-focal:
 
 install-focal:
         stage: install:focal
+        needs:
+                - job: test-focal
+                  artifacts: false
+                - job: build-focal
+                  artifacts: true
         image: lfroehli/ubuntu20-meson
         tags:
                 - ubuntu20
                 - docker
-        dependencies:
-                - build-focal
         script:
                 - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
         artifacts:
@@ -58,6 +66,9 @@ install-focal:
 
 build-xenial:
         stage: build:xenial
+        needs:
+                - job: build-focal
+                  artifacts: false
         image: ubuntu:16.04
         tags:
                 - ubuntu16
@@ -93,16 +104,84 @@ build-xenial:
                   -D deb-dev-name=dev-doocs-@0@
                   build.release
                 - ninja -C build.release
-                - ninja -C build.release test
-                - DESTDIR=${CI_PROJECT_DIR}/xenial_install ninja -C build.release install
         artifacts:
                 paths:
                         - build.release
+                expire_in: 1 week
+
+test-xenial:
+        stage: test:xenial
+        needs:
+                - job: build-xenial
+                  artifacts: true
+        image: ubuntu:16.04
+        tags:
+                - ubuntu16
+        before_script:
+                # Install build dependencies
+                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    apt update && apt install -y wget gnupg)
+                # Add DOOCS repo with key
+                - echo "Installing MCS DOOCS package repository with key ..."
+                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
+                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                # Add backports for ninja
+                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
+                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
+                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
+        script:
+                - ninja -C build.release test
+
+install-xenial:
+        stage: install:xenial
+        needs:
+                - job: build-xenial
+                  artifacts: true
+                - job: test-xenial
+                  artifacts: false
+        image: ubuntu:16.04
+        tags:
+                - ubuntu16
+        before_script:
+                # Install build dependencies
+                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    apt update && apt install -y wget gnupg)
+                # Add DOOCS repo with key
+                - echo "Installing MCS DOOCS package repository with key ..."
+                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
+                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                # Add backports for ninja
+                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
+                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
+                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
+        script:
+                - DESTDIR=${CI_PROJECT_DIR}/xenial_install ninja -C build.release install
+        artifacts:
+                paths:
                         - xenial_install
                 expire_in: 1 week
 
 build-darwin:
         stage: build:macos
+        needs:
+                - job: build-focal
+                  artifacts: false
         tags:
                 - macOS-x86_64
         script:
@@ -117,9 +196,39 @@ build-darwin:
                   macos-build
                 - ninja -C macos-build
                 - macos-build/tests/libgul-test '~[time_util]' '~[Trigger]'
-                - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
         artifacts:
                 paths:
                         - macos-build
+                expire_in: 1 week
+
+test-darwin:
+        stage: test:macos
+        needs:
+                - job: build-darwin
+                  artifacts: true
+        tags:
+                - macOS-x86_64
+        script:
+                - export PATH=/usr/local/bin:${PATH}
+                - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
+        artifacts:
+                paths:
+                        - macos_install
+                expire_in: 1 week
+
+install-darwin:
+        stage: install:macos
+        needs:
+                - job: test-darwin
+                  artifacts: false
+                - job: build-darwin
+                  artifacts: true
+        tags:
+                - macOS-x86_64
+        script:
+                - export PATH=/usr/local/bin:${PATH}
+                - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
+        artifacts:
+                paths:
                         - macos_install
                 expire_in: 1 week
