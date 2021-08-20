@@ -244,4 +244,4 @@ std::string safe_string(const char* char_ptr, std::size_t length);
 
 #endif
 
-/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */
+// vi:ts=4:sw=4:sts=4:et
