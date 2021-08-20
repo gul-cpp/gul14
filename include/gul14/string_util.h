@@ -28,6 +28,7 @@
 #include <string>
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
+#include "gul14/traits.h"
 
 namespace gul14 {
 
@@ -203,13 +204,12 @@ hex_string(const Integer (&array)[num_elements], string_view separator = "")
  * \param separator  A string that is inserted between the elements to separate them
  *                   visually (empty by default)
  *
- * \tparam Container  must be a class supporting std::begin() and std::end().
+ * \tparam Container  must be a gul14::IsContainerLike class
  *
  * \since GUL version 2.6
  */
 template <typename Container,
-          std::enable_if_t<not std::is_integral<Container>::value and
-                           not std::is_array<Container>::value, bool> = true>
+          std::enable_if_t<IsContainerLike<Container>::value, bool> = true>
 inline std::string
 hex_string(const Container& container, string_view separator = "")
 {
