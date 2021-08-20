@@ -213,7 +213,7 @@ template <typename Container,
 inline std::string
 hex_string(const Container& container, string_view separator = "")
 {
-    return hex_string(std::begin(container), std::end(container), separator);
+    return hex_string(std::cbegin(container), std::cend(container), separator);
 }
 
 /**
