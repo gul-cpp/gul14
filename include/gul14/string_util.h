@@ -104,11 +104,6 @@ template <typename Integer,
           std::enable_if_t<std::is_integral<Integer>::value, bool> = true>
 inline std::string hex_string(Integer v)
 {
-    #if (!defined(__GNUC__) || defined(__clang__) || __GNUC__ >= 6)
-        // Old GCC on Ubuntu 16.04 has constexpr problems
-        static_assert(hex_digits.size() == 16, "hex_digits has wrong size");
-    #endif
-
     auto u = static_cast<typename std::make_unsigned<Integer>::type>(v);
     std::string result;
 

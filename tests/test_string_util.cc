@@ -33,6 +33,11 @@ using gul14::hex_string;
 
 using namespace std::literals;
 
+TEST_CASE("hex_digits", "[string_util]")
+{
+    REQUIRE(gul14::hex_digits.size() == 16);
+}
+
 TEST_CASE("hex_string(Integer)", "[string_util]")
 {
     std::stringstream ss;
