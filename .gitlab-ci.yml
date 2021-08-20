@@ -1,5 +1,7 @@
 stages:
         - build:focal
+        - test:focal
+        - install:focal
         - build:xenial
         - build:macos
 
@@ -21,13 +23,36 @@ build-focal:
                   -D deb-dev-name=dev-doocs-@0@
                   build.release
                 - ninja -C build.release
-                - ninja -C build.release test
-                - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
-                - ninja -C build.asan test
-                - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
         artifacts:
                 paths:
                         - build.release
+                expire_in: 1 week
+
+test-focal:
+        stage: test:focal
+        image: lfroehli/ubuntu20-meson
+        tags:
+                - ubuntu20
+                - docker
+        dependencies:
+                - build-focal
+        script:
+                - ninja -C build.release test
+                - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
+                - ninja -C build.asan test
+
+install-focal:
+        stage: install:focal
+        image: lfroehli/ubuntu20-meson
+        tags:
+                - ubuntu20
+                - docker
+        dependencies:
+                - build-focal
+        script:
+                - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
+        artifacts:
+                paths:
                         - focal_install
                 expire_in: 1 week
 
