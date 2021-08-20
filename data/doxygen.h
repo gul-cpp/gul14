@@ -44,6 +44,7 @@ namespace gul14 {
  *  - \ref numeric_utilities
  *  - \ref container_utilities
  *  - \ref GSL_utilities
+ *  - \ref type_traits
  *  - \ref standard_library_backports
  *  - \ref unit_tests
  *
@@ -105,6 +106,7 @@ namespace gul14 {
  *
  * - Add safe_string()
  * - Add hex_string()
+ * - Add IsContainerLike<>
  *
  * \subsection v2_5 Version 2.5
  *
@@ -475,6 +477,16 @@ namespace gul14 {
  *
  * bit_test():
  *     Test a bit in an integral value.
+ */
+
+/**
+ * \page type_traits Type Traits
+ *
+ * The General Utility Library provides type traits that can be useful to express restraints
+ * or properties of types.
+ *
+ * \ref gul14::IsContainerLike "IsContainerLike":
+ *     A type trait to determine if a type behaves like a standard container.
  */
 
 /**

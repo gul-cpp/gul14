@@ -43,6 +43,7 @@
 #include "gul14/time_util.h"
 #include "gul14/tokenize.h"
 #include "gul14/to_number.h"
+#include "gul14/traits.h"
 #include "gul14/trim.h"
 #include "gul14/Trigger.h"
 #include "gul14/type_name.h"

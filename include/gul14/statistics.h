@@ -31,38 +31,11 @@
 #include <type_traits>
 #include <vector>
 #include "gul14/internal.h"
+#include "gul14/traits.h"
 
 namespace gul14 {
 
-    using statistics_result_type = double; ///< Type used to return statistic properties
-
-namespace {
-    /**
-     * Helper type trait object to determine of a type is a container.
-     *
-     * A container is identified by the presense of ``cbegin()`` and ``cend()``
-     * member functions and a ``value_type`` type alias.
-     *
-     * If the type specified as template parameter has the required members
-     * std::true_type is returned, otherwise std::false_type.
-     *
-     * \tparam T    Type to check
-     * \returns     std::true_type if the type is probably a container
-     */
-    template <typename T, typename = int>
-    struct IsContainerLike : std::false_type { };
-
-    template <typename T>
-    struct IsContainerLike <T,
-        typename std::enable_if_t<true,
-            decltype(std::declval<T>().cbegin(),
-                std::declval<T>().cend(),
-                std::declval<typename T::value_type>(),
-                0)
-        >>
-        : std::true_type { };
-
-} // namespace anonymous
+using statistics_result_type = double; ///< Type used to return statistic properties
 
 /**
  * Return a mock element accessor for containers of fundamental types.
@@ -863,4 +836,4 @@ auto accumulate(const IteratorT& begin, const IteratorT& end, OpClosure op,
 
 #endif
 
-// vi:ts=4:sw=4:et
+// vi:ts=4:sw=4:sts=4:et

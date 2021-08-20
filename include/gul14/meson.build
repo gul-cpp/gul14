@@ -18,6 +18,7 @@ standalone_headers = [
     'time_util.h',
     'to_number.h',
     'tokenize.h',
+    'traits.h',
     'Trigger.h',
     'trim.h',
     'type_name.h',
