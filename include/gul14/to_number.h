@@ -133,7 +133,23 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
     return *opt_exp;
 }
 
-using FloatConversionIntType = uint64_t;
+// For some 'long double' types with a big mantissa uint64 is not large enough.
+// We resort to __uint128, which is a non standard extension in GCC and clang.
+// But only if we need to.
+// Note that on some compilers there are no std::numeric_limits<> for the extension
+// type, and then asserts later on will fail. But usually that compilers have small
+// long double types.
+template <typename NumberType>
+using FloatConversionIntType =
+    typename std::conditional<
+        (std::numeric_limits<uint64_t>::digits10 >= std::numeric_limits<NumberType>::digits10),
+        uint64_t,
+        #ifdef __SIZEOF_INT128__ // GCC, clang, intel
+            __uint128_t
+        #else
+            uint64_t
+        #endif
+    >::type;
 
 /**
  * Convert two string_views into one floating point number.
@@ -154,28 +170,28 @@ using FloatConversionIntType = uint64_t;
 template <typename NumberType>
 constexpr inline gul14::optional<NumberType> to_normalized_float(gul14::string_view i1, gul14::string_view i2) noexcept
 {
-    static_assert(std::numeric_limits<FloatConversionIntType>::digits10
+    static_assert(std::numeric_limits<FloatConversionIntType<NumberType>>::digits10
             >= std::numeric_limits<NumberType>::digits10,
             "FloatConversionIntType is too small for NumberType");
 
     i1 = i1.substr(0, std::min(i1.length(),
-                size_t(std::numeric_limits<FloatConversionIntType>::digits10)));
+                size_t(std::numeric_limits<FloatConversionIntType<NumberType>>::digits10)));
     i2 = i2.substr(0, std::min(i2.length(),
-                size_t(std::numeric_limits<FloatConversionIntType>::digits10) - i1.length()));
+                size_t(std::numeric_limits<FloatConversionIntType<NumberType>>::digits10) - i1.length()));
 
-    FloatConversionIntType accu{ 0 };
+    FloatConversionIntType<NumberType> accu{ 0 };
 
-    auto magnitude = FloatConversionIntType{ 1 };
+    auto magnitude = FloatConversionIntType<NumberType>{ 1 };
 
     if (not i2.empty()) {
-        auto f2 = to_unsigned_integer<FloatConversionIntType, true>(i2, &magnitude);
+        auto f2 = to_unsigned_integer<FloatConversionIntType<NumberType>, true>(i2, &magnitude);
         if (not f2.has_value())
             return nullopt;
         accu = *f2;
     }
     if (not i1.empty()) {
         auto i2_magnitude = magnitude;
-        auto f1 = to_unsigned_integer<FloatConversionIntType, true>(i1, &magnitude);
+        auto f1 = to_unsigned_integer<FloatConversionIntType<NumberType>, true>(i1, &magnitude);
         if (not f1.has_value())
             return nullopt;
         accu += (*f1 * i2_magnitude);
@@ -508,7 +524,7 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 #    pragma warning( push )
 #    pragma warning( disable: 4127 ) // conditional expression is constant
 #endif
-            (std::numeric_limits<detail::FloatConversionIntType>::digits10
+            (std::numeric_limits<detail::FloatConversionIntType<NumberType>>::digits10
             <= std::numeric_limits<NumberType>::digits10)) {
 #ifdef _MSC_VER
 #    pragma warning( pop )
