@@ -8,6 +8,8 @@ stages:
         - build:macos
         - test:macos
         - install:macos
+        - build:windows
+        - test:windows
 
 build-focal:
         stage: build:focal
@@ -232,3 +234,30 @@ install-darwin:
                 paths:
                         - macos_install
                 expire_in: 1 week
+
+build-windows:
+        stage: build:windows
+        needs:
+                - job: build-focal
+                  artifacts: false
+        tags:
+                - windows10
+        allow_failure: true
+        script:
+                - tools\make_vs.bat mrproper
+                - tools\make_vs.bat debug x64
+        artifacts:
+                paths:
+                        - build
+                expire_in: 1 day
+
+test-windows:
+        stage: test:windows
+        needs:
+                - job: build-windows
+                  artifacts: true
+        tags:
+                - windows10
+        allow_failure: true
+        script:
+                - ninja -C .\build\x64-windows\debug\ test
