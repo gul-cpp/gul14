@@ -260,4 +260,9 @@ test-windows:
                 - windows10
         allow_failure: true
         script:
-                - ninja -C .\build\x64-windows\debug\ test
+                - cd build\x64-windows\debug\src
+                - ..\tests\libgul-test.exe -r junit > ..\tests\test.xml
+        artifacts:
+                when: always
+                reports:
+                        junit: build\x64-windows\debug\tests\test.xml
