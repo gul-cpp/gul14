@@ -19,9 +19,13 @@ test-focal:
                 - job: build-focal
                   artifacts: true
         script:
-                - ninja -C build.release test
+                - build.release/tests/libgul-test -r junit > test.xml
                 - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
                 - ninja -C build.asan test
+        artifacts:
+                when: always
+                reports:
+                        junit: test.xml
 
 install-focal:
         stage: deploy
@@ -56,7 +60,11 @@ test-xenial:
                 - job: build-xenial
                   artifacts: true
         script:
-                - ninja -C build.release test
+                - build.release/tests/libgul-test -r junit > test.xml
+        artifacts:
+                when: always
+                reports:
+                        junit: test.xml
 
 install-xenial:
         stage: deploy
@@ -105,11 +113,11 @@ test-darwin:
                   artifacts: true
         script:
                 - export PATH=/usr/local/bin:${PATH}
-                - macos-build/tests/libgul-test '~[time_util]' '~[Trigger]'
+                - macos-build/tests/libgul-test -r junit '~[time_util]' '~[Trigger]' > test.xml
         artifacts:
-                paths:
-                        - macos_install
-                expire_in: 1 week
+                when: always
+                reports:
+                        junit: test.xml
 
 install-darwin:
         stage: deploy
