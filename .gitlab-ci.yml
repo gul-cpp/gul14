@@ -6,17 +6,17 @@ stages:
 
 ########
 # Focal (Ubuntu 20.04)
-build-focal:
+Focal build:
         stage: initial_build
         extends:
             - .setup_focal
             - .meson_build
 
-test-focal:
+Focal test:
         stage: test
         extends: .setup_focal
         needs:
-                - job: build-focal
+                - job: Focal build
                   artifacts: true
         script:
                 - build.release/tests/libgul-test -r junit > test.xml
@@ -27,13 +27,13 @@ test-focal:
                 reports:
                         junit: test.xml
 
-install-focal:
+Focal install:
         stage: deploy
         extends: .setup_focal
         needs:
-                - job: test-focal
+                - job: Focal test
                   artifacts: false
-                - job: build-focal
+                - job: Focal build
                   artifacts: true
         script:
                 - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
@@ -44,20 +44,20 @@ install-focal:
 
 ########
 # Xenial (Ubuntu 16.04)
-build-xenial:
+Xenial build:
         stage: build
         extends:
                 - .setup_xenial
                 - .meson_build
         needs:
-                - job: build-focal
+                - job: Focal build
                   artifacts: false
 
-test-xenial:
+Xenial test:
         stage: test
         extends: .setup_xenial
         needs:
-                - job: build-xenial
+                - job: Xenial build
                   artifacts: true
         script:
                 - build.release/tests/libgul-test -r junit > test.xml
@@ -66,13 +66,13 @@ test-xenial:
                 reports:
                         junit: test.xml
 
-install-xenial:
+Xenial install:
         stage: deploy
         extends: .setup_xenial
         needs:
-                - job: build-xenial
+                - job: Xenial build
                   artifacts: true
-                - job: test-xenial
+                - job: Xenial test
                   artifacts: false
         script:
                 - DESTDIR=${CI_PROJECT_DIR}/xenial_install ninja -C build.release install
@@ -83,11 +83,11 @@ install-xenial:
 
 ########
 # Darwin
-build-darwin:
+Darwin build:
         stage: build
         extends: .setup_darwin
         needs:
-                - job: build-focal
+                - job: Focal build
                   artifacts: false
         script:
                 - export PATH=/usr/local/bin:${PATH}
@@ -105,11 +105,11 @@ build-darwin:
                         - macos-build
                 expire_in: 1 week
 
-test-darwin:
+Darwin test:
         stage: test
         extends: .setup_darwin
         needs:
-                - job: build-darwin
+                - job: Darwin build
                   artifacts: true
         script:
                 - export PATH=/usr/local/bin:${PATH}
@@ -119,13 +119,13 @@ test-darwin:
                 reports:
                         junit: test.xml
 
-install-darwin:
+Darwin install:
         stage: deploy
         extends: .setup_darwin
         needs:
-                - job: test-darwin
+                - job: Darwin test
                   artifacts: false
-                - job: build-darwin
+                - job: Darwin build
                   artifacts: true
         script:
                 - export PATH=/usr/local/bin:${PATH}
@@ -137,11 +137,11 @@ install-darwin:
 
 ########
 # Windows
-build-windows:
+Windows build:
         stage: build
         extends: .setup_windows
         needs:
-                - job: build-focal
+                - job: Focal build
                   artifacts: false
         allow_failure: true
         script:
@@ -152,11 +152,11 @@ build-windows:
                         - build
                 expire_in: 1 day
 
-test-windows:
+Windows test:
         stage: test
         extends: .setup_windows
         needs:
-                - job: build-windows
+                - job: Windows build
                   artifacts: true
         allow_failure: true
         script:
