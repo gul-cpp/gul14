@@ -1,64 +1,36 @@
 stages:
-        - build:focal
-        - test:focal
-        - install:focal
-        - build:xenial
-        - test:xenial
-        - install:xenial
-        - build:macos
-        - test:macos
-        - install:macos
-        - build:windows
-        - test:windows
+    - initial_build
+    - build
+    - test
+    - deploy
 
+########
+# Focal (Ubuntu 20.04)
 build-focal:
-        stage: build:focal
-        image: lfroehli/ubuntu20-meson
-        tags:
-                - ubuntu20
-                - docker
-        script:
-                - meson
-                  --buildtype=release
-                  --prefix=/export/doocs
-                  --libdir=lib
-                  --includedir=lib/include
-                  -D deb-vers-tag='DOOCSVERSION_'
-                  -D deb-vers-pack=true
-                  -D deb-name=doocs-@0@
-                  -D deb-dev-name=dev-doocs-@0@
-                  build.release
-                - ninja -C build.release
-        artifacts:
-                paths:
-                        - build.release
-                expire_in: 1 week
+        stage: initial_build
+        extends:
+            - .setup_focal
+            - .meson_build
 
 test-focal:
-        stage: test:focal
+        stage: test
+        extends: .setup_focal
         needs:
                 - job: build-focal
                   artifacts: true
-        image: lfroehli/ubuntu20-meson
-        tags:
-                - ubuntu20
-                - docker
         script:
                 - ninja -C build.release test
                 - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
                 - ninja -C build.asan test
 
 install-focal:
-        stage: install:focal
+        stage: deploy
+        extends: .setup_focal
         needs:
                 - job: test-focal
                   artifacts: false
                 - job: build-focal
                   artifacts: true
-        image: lfroehli/ubuntu20-meson
-        tags:
-                - ubuntu20
-                - docker
         script:
                 - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
         artifacts:
@@ -66,112 +38,34 @@ install-focal:
                         - focal_install
                 expire_in: 1 week
 
+########
+# Xenial (Ubuntu 16.04)
 build-xenial:
-        stage: build:xenial
+        stage: build
+        extends:
+                - .setup_xenial
+                - .meson_build
         needs:
                 - job: build-focal
                   artifacts: false
-        image: ubuntu:16.04
-        tags:
-                - ubuntu16
-        before_script:
-                # Install build dependencies
-                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    apt update && apt install -y wget gnupg)
-                # Add DOOCS repo with key
-                - echo "Installing MCS DOOCS package repository with key ..."
-                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
-                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                # Add backports for ninja
-                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
-                # Update APT cache
-                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
-                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
-                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
-                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
-        script:
-                - meson
-                  --buildtype=release
-                  --prefix=/export/doocs
-                  --libdir=lib
-                  --includedir=lib/include
-                  -D deb-vers-tag='DOOCSVERSION_'
-                  -D deb-vers-pack=true
-                  -D deb-name=doocs-@0@
-                  -D deb-dev-name=dev-doocs-@0@
-                  build.release
-                - ninja -C build.release
-        artifacts:
-                paths:
-                        - build.release
-                expire_in: 1 week
 
 test-xenial:
-        stage: test:xenial
+        stage: test
+        extends: .setup_xenial
         needs:
                 - job: build-xenial
                   artifacts: true
-        image: ubuntu:16.04
-        tags:
-                - ubuntu16
-        before_script:
-                # Install build dependencies
-                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    apt update && apt install -y wget gnupg)
-                # Add DOOCS repo with key
-                - echo "Installing MCS DOOCS package repository with key ..."
-                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
-                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                # Add backports for ninja
-                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
-                # Update APT cache
-                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
-                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
-                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
-                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
         script:
                 - ninja -C build.release test
 
 install-xenial:
-        stage: install:xenial
+        stage: deploy
+        extends: .setup_xenial
         needs:
                 - job: build-xenial
                   artifacts: true
                 - job: test-xenial
                   artifacts: false
-        image: ubuntu:16.04
-        tags:
-                - ubuntu16
-        before_script:
-                # Install build dependencies
-                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    apt update && apt install -y wget gnupg)
-                # Add DOOCS repo with key
-                - echo "Installing MCS DOOCS package repository with key ..."
-                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
-                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                # Add backports for ninja
-                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
-                # Update APT cache
-                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
-                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
-                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
-                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
         script:
                 - DESTDIR=${CI_PROJECT_DIR}/xenial_install ninja -C build.release install
         artifacts:
@@ -179,13 +73,14 @@ install-xenial:
                         - xenial_install
                 expire_in: 1 week
 
+########
+# Darwin
 build-darwin:
-        stage: build:macos
+        stage: build
+        extends: .setup_darwin
         needs:
                 - job: build-focal
                   artifacts: false
-        tags:
-                - macOS-x86_64
         script:
                 - export PATH=/usr/local/bin:${PATH}
                 - meson
@@ -197,36 +92,33 @@ build-darwin:
                   -D 'cpp_link_args= -arch x86_64'
                   macos-build
                 - ninja -C macos-build
-                - macos-build/tests/libgul-test '~[time_util]' '~[Trigger]'
         artifacts:
                 paths:
                         - macos-build
                 expire_in: 1 week
 
 test-darwin:
-        stage: test:macos
+        stage: test
+        extends: .setup_darwin
         needs:
                 - job: build-darwin
                   artifacts: true
-        tags:
-                - macOS-x86_64
         script:
                 - export PATH=/usr/local/bin:${PATH}
-                - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
+                - macos-build/tests/libgul-test '~[time_util]' '~[Trigger]'
         artifacts:
                 paths:
                         - macos_install
                 expire_in: 1 week
 
 install-darwin:
-        stage: install:macos
+        stage: deploy
+        extends: .setup_darwin
         needs:
                 - job: test-darwin
                   artifacts: false
                 - job: build-darwin
                   artifacts: true
-        tags:
-                - macOS-x86_64
         script:
                 - export PATH=/usr/local/bin:${PATH}
                 - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
@@ -235,13 +127,14 @@ install-darwin:
                         - macos_install
                 expire_in: 1 week
 
+########
+# Windows
 build-windows:
-        stage: build:windows
+        stage: build
+        extends: .setup_windows
         needs:
                 - job: build-focal
                   artifacts: false
-        tags:
-                - windows10
         allow_failure: true
         script:
                 - tools\make_vs.bat mrproper
@@ -252,12 +145,11 @@ build-windows:
                 expire_in: 1 day
 
 test-windows:
-        stage: test:windows
+        stage: test
+        extends: .setup_windows
         needs:
                 - job: build-windows
                   artifacts: true
-        tags:
-                - windows10
         allow_failure: true
         script:
                 - cd build\x64-windows\debug\src
@@ -266,3 +158,65 @@ test-windows:
                 when: always
                 reports:
                         junit: build\x64-windows\debug\tests\test.xml
+
+########
+# Helper Templates following
+
+# Template to set up the meson 'release' build on linuxes
+.meson_build:
+        script:
+                - meson
+                  --buildtype=release
+                  --prefix=/export/doocs
+                  --libdir=lib
+                  --includedir=lib/include
+                  -D deb-vers-tag='DOOCSVERSION_'
+                  -D deb-vers-pack=true
+                  -D deb-name=doocs-@0@
+                  -D deb-dev-name=dev-doocs-@0@
+                  build.release
+                - ninja -C build.release
+        artifacts:
+                paths:
+                        - build.release
+                expire_in: 1 week
+
+# Template to set up the individual target machines
+.setup_xenial:
+        image: ubuntu:16.04
+        tags:
+                - ubuntu16
+        before_script:
+                # Install build dependencies
+                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    apt update && apt install -y wget gnupg)
+                # Add DOOCS repo with key
+                - echo "Installing MCS DOOCS package repository with key ..."
+                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
+                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                # Add backports for ninja
+                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
+                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
+                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
+
+.setup_focal:
+        image: lfroehli/ubuntu20-meson
+        tags:
+                - ubuntu20
+                - docker
+
+.setup_darwin:
+        tags:
+                - macOS-x86_64
+
+.setup_windows:
+        tags:
+                - windows10
