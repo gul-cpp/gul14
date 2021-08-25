@@ -46,7 +46,11 @@ if not (git_full_api_version == 'unknown')
     git_api_version = '@0@.@1@'.format(git_major_version_parts[1], git_vers_parts[1].split('-')[0])
     if not (git_api_version == libgul_api_version)
         message('API version parsed from GIT version: @0@'.format(git_api_version))
-        error('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
+        if deb_install
+            error('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
+        else
+            warning('LIBGUL_API_VERSION and API version deduced from GIT VERSION do not match')
+        endif
     endif
 endif
 
