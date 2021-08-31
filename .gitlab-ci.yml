@@ -22,6 +22,8 @@ Focal test:
                 - build.release/tests/libgul-test -r junit > test.xml
                 - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
                 - ninja -C build.asan test
+                - meson --buildtype=debugoptimized -Db_sanitize=undefined build.ubsan
+                - ninja -C build.ubsan test
         artifacts:
                 when: always
                 reports:
