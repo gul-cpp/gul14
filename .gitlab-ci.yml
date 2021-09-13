@@ -190,7 +190,7 @@ Windows test:
 # Template to put debian packages in the gitlab package repo
 .deploy_debian:
         rules:
-                - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+                - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
         script:
                 - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
                     DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts)
