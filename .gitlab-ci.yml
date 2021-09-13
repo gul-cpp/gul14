@@ -31,18 +31,16 @@ Focal test:
 
 Focal install:
         stage: deploy
-        extends: .setup_focal
+        extends:
+                - .setup_focal
+                - .deploy_debian
         needs:
                 - job: Focal test
                   artifacts: false
                 - job: Focal build
                   artifacts: true
-        script:
-                - DESTDIR=${CI_PROJECT_DIR}/focal_install ninja -C build.release install
-        artifacts:
-                paths:
-                        - focal_install
-                expire_in: 1 week
+        variables:
+                PLATFORM: focal
 
 ########
 # Xenial (Ubuntu 16.04)
@@ -70,18 +68,16 @@ Xenial test:
 
 Xenial install:
         stage: deploy
-        extends: .setup_xenial
+        extends:
+                - .setup_xenial
+                - .deploy_debian
         needs:
                 - job: Xenial build
                   artifacts: true
                 - job: Xenial test
                   artifacts: false
-        script:
-                - DESTDIR=${CI_PROJECT_DIR}/xenial_install ninja -C build.release install
-        artifacts:
-                paths:
-                        - xenial_install
-                expire_in: 1 week
+        variables:
+                PLATFORM: xenial
 
 ########
 # Darwin
@@ -190,6 +186,19 @@ Windows test:
                 paths:
                         - build.release
                 expire_in: 1 week
+
+# Template to put debian packages in the gitlab package repo
+.deploy_debian:
+        rules:
+                - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+        script:
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts)
+                - (cd build.release; debuild -i -us -uc -b)
+                - export VERS=`basename doocs*.deb | sed 's/\([^_]*\).*/\1/'`
+                - 'export FILES="{`basename doocs*.deb`,`basename dev-doocs*.deb`}"'
+                - echo "Uploding version ${VERS} with files ${FILES}"
+                - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "${FILES}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PLATFORM}/${VERS}/"'
 
 # Template to set up the individual target machines
 .setup_xenial:
