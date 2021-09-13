@@ -199,6 +199,12 @@ Windows test:
                 - 'export FILES="{`basename doocs*.deb`,`basename dev-doocs*.deb`}"'
                 - echo "Uploding version ${VERS} with files ${FILES}"
                 - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "${FILES}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PLATFORM}/${VERS}/"'
+                - mkdir deb_packages
+                - mv `eval echo ${FILES}` deb_packages
+        artifacts:
+                paths:
+                        - deb_packages
+                expire_in: 1 week
 
 # Template to set up the individual target machines
 .setup_xenial:
