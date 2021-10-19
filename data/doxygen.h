@@ -341,6 +341,7 @@ namespace gul14 {
  *
  * hex_string(): Convert an integer or a range of integers into their hexadecimal ASCII
  *           representation.
+ *
  * to_number(): Convert an ASCII string_view into an integer or floating-point number.
  *
  * <h4>C Strings</h4>
