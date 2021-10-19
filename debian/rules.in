@@ -28,5 +28,5 @@ override_dh_auto_build:
 	@ninja @NINJA-ARGS@
 
 override_dh_auto_install:
-	@DESTDIR=`pwd`/debian/tmp ninja @NINJA-ARGS@ install
+	@DESTDIR=$(shell pwd)/debian/tmp ninja @NINJA-ARGS@ install
 
