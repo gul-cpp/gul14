@@ -214,8 +214,9 @@ Windows test:
         before_script:
                 # Install build dependencies
                 - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    apt update && apt install -y wget gnupg)
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   apt update && apt install -y wget gnupg)
                 # Add DOOCS repo with key
                 - echo "Installing MCS DOOCS package repository with key ..."
                 - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
@@ -225,35 +226,32 @@ Windows test:
                 - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
                 # Update APT cache
                 - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   apt update)
                 # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
-                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev build-essential
-                    binutils autotools-dev clang gcc-doc fakeroot debhelper cmake ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1
-                    pkg-config epics-base-dev epics-base libzmq3-dev ttf-scripts dev-libtine)
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
+                   git build-essential binutils autotools-dev g++ fakeroot debhelper cmake
+                   ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1 pkg-config)
 
 .setup_focal:
     image: ubuntu:20.04
     tags:
         - ubuntu20
     before_script:
-        # Install build dependencies
-        - echo "Install the basics (wget and gnupg) for setting up the docker focal image ..."
-        - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; 
-            apt update && apt install -y wget gnupg)
-        # Add DOOCS repo with key
-        - echo "Installing MCS DOOCS package repository with key ..."
-        - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
-        - echo "deb http://doocspkgs.desy.de/pub/doocs focal main" >> /etc/apt/sources.list.d/doocs-desy-intern.list 
-        - echo "deb-src http://doocspkgs.desy.de/pub/doocs focal main" >> /etc/apt/sources.list.d/doocs-desy-intern.list 
         # Update APT cache
         - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-        - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; apt update)
+        - (export http_proxy="http://xfelproxy:3128/";
+           export https_proxy="http://xfelproxy:3128/";
+           apt update)
         # Install part of the packages required to compile and link DOOCS core libraries on a focal system
-        - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/"; 
-            DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends git libldap2-dev libtirpc-dev 
-            build-essential binutils autotools-dev clang gcc-doc dh-exec dh-autoreconf cmake ninja-build meson pkg-config 
-            epics-dev libzmq3-dev ttf-scripts dev-libtine)
+        - (export http_proxy="http://xfelproxy:3128/";
+           export https_proxy="http://xfelproxy:3128/";
+           DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
+           git build-essential binutils autotools-dev g++ dh-exec dh-autoreconf cmake
+           meson pkg-config)
         - export DOOCSARCH=Ubuntu-20.04-x86_64
 
 
