@@ -193,7 +193,7 @@ Windows test:
                 - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
         script:
                 - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
-                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts)
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts curl)
                 - (cd build.release; debuild -i -us -uc -b)
                 - export VERS=`basename doocs*.deb | sed 's/\([^_]*\).*/\1/'`
                 - 'export FILES="{`basename doocs*.deb`,`basename dev-doocs*.deb`}"'
