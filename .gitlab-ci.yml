@@ -1,8 +1,8 @@
 stages:
-    - initial_build
-    - build
-    - test
-    - deploy
+        - initial_build
+        - build
+        - test
+        - deploy
 
 ########
 # Focal (Ubuntu 20.04)
@@ -237,23 +237,22 @@ Windows test:
                    ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1 pkg-config)
 
 .setup_focal:
-    image: ubuntu:20.04
-    tags:
-        - ubuntu20
-    before_script:
-        # Update APT cache
-        - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-        - (export http_proxy="http://xfelproxy:3128/";
-           export https_proxy="http://xfelproxy:3128/";
-           apt update)
-        # Install part of the packages required to compile and link DOOCS core libraries on a focal system
-        - (export http_proxy="http://xfelproxy:3128/";
-           export https_proxy="http://xfelproxy:3128/";
-           DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
-           git build-essential binutils autotools-dev g++ dh-exec dh-autoreconf cmake
-           meson pkg-config)
-        - export DOOCSARCH=Ubuntu-20.04-x86_64
-
+        image: ubuntu:20.04
+        tags:
+                - ubuntu20
+        before_script:
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a focal system
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
+                   git build-essential binutils autotools-dev g++ dh-exec dh-autoreconf cmake
+                   meson pkg-config)
+                - export DOOCSARCH=Ubuntu-20.04-x86_64
 
 .setup_darwin:
         tags:
