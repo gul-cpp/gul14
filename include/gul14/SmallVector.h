@@ -444,8 +444,12 @@ public:
      * \param first  Iterator to the first element to be copied
      * \param last   Iterator past the last element to be copied
      *
-     * \warning The behavior is undefined if the number of input elements exceeds
-     *          max_size().
+     * \note
+     * Unlike the corresponding function from `std::vector`, `SmallVector::assign()` does
+     * not allow narrowing conversions.
+     *
+     * \warning
+     * The behavior is undefined if the number of input elements exceeds max_size().
      */
     template<class InputIterator,
         typename = std::enable_if_t<not std::is_integral<InputIterator>::value>>
