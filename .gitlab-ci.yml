@@ -33,7 +33,7 @@ Focal test:
                 - job: Focal build
                   artifacts: true
         script:
-                - build.release/tests/libgul-test -r junit > test.xml
+                - build.release/tests/libgul-test -r junit | tee test.xml
                 - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
                 - ninja -C build.asan test
                 - meson --buildtype=debugoptimized -Db_sanitize=undefined build.ubsan
@@ -74,7 +74,7 @@ Xenial test:
                 - job: Xenial build
                   artifacts: true
         script:
-                - build.release/tests/libgul-test -r junit > test.xml
+                - build.release/tests/libgul-test -r junit | tee test.xml
         artifacts:
                 when: always
                 reports:
@@ -125,7 +125,7 @@ Darwin test:
                   artifacts: true
         script:
                 - export PATH=/usr/local/bin:${PATH}
-                - macos-build/tests/libgul-test -r junit '~[time_util]' '~[Trigger]' > test.xml
+                - macos-build/tests/libgul-test -r junit '~[time_util]' '~[Trigger]' | tee test.xml
         artifacts:
                 when: always
                 reports:
@@ -176,7 +176,7 @@ Windows test:
         allow_failure: true
         script:
                 - cd build\x64-windows\debug\src
-                - ..\tests\libgul-test.exe -r junit > ..\tests\test.xml
+                - ..\tests\libgul-test.exe -r junit | tee ..\tests\test.xml
         artifacts:
                 when: always
                 reports:
