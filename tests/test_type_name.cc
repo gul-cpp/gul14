@@ -43,7 +43,7 @@ TEST_CASE("Type-name Test", "[type_name]")
 
         oss.str("");
         oss << gul14::type_name<std::string>();
-        REQUIRE_THAT(oss.str(), Contains("basic_string"));
+        REQUIRE_THAT(oss.str(), Contains("basic_string") || Contains("std::string"));
 
         oss.str("");
         oss << gul14::type_name<std::size_t>();
