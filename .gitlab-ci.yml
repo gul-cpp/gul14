@@ -4,6 +4,10 @@ stages:
         - test
         - deploy
 
+variables:
+        GIT_DEPTH: 0
+        GIT_FETCH_EXTRA_FLAGS: --tags
+
 ########
 # Focal (Ubuntu 20.04)
 Focal build:
@@ -190,8 +194,15 @@ Windows test:
 # Template to put debian packages in the gitlab package repo
 .deploy_debian:
         rules:
-                - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+                - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH # Merge request merged (or direct push)
+                - if: $CI_COMMIT_TAG # Some tag pushed, we can regex here for just DOOCS_
         script:
+                - if [ -n "$CI_COMMIT_TAG" ]; then
+                        export TAG_COMMIT=`git log --oneline --decorate=short ${CI_COMMIT_SHA}^..${CI_COMMIT_SHA} | grep '[(, ]origin/master[),]' | wc -l`
+                  else
+                        export TAG_COMMIT=-1;
+                  fi
+                - if [ $TAG_COMMIT -eq 0 ]; then echo "Tag pipeline not for master branch"; exit 0; fi
                 - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
                     DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts curl)
                 - (cd build.release; debuild -i -us -uc -b)
