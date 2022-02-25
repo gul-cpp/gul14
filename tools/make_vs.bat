@@ -31,7 +31,7 @@
 :after_test
 
 @IF NOT "%~1%"=="release" GOTO after_release
-@set BUILDTYPE=release
+@set BUILDTYPE=debugoptimized
 @set PLATFORM=%~2%
 @set TARGET=
 @GOTO prepare_build_dir

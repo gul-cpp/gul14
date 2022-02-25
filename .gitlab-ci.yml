@@ -104,7 +104,7 @@ Darwin build:
         script:
                 - export PATH=/usr/local/bin:${PATH}
                 - meson
-                  --buildtype=release
+                  --buildtype=debugoptimized
                   --prefix=/local
                   --libdir=lib
                   --includedir=lib/include
@@ -189,7 +189,7 @@ Windows test:
 .meson_build:
         script:
                 - meson
-                  --buildtype=release
+                  --buildtype=debugoptimized
                   --prefix=/export/doocs
                   --libdir=lib
                   --includedir=lib/include

@@ -102,18 +102,18 @@ build/$(ARCH)/debug/build.ninja:
 
 build/$(ARCH)/doocs-release/build.ninja:
 	@printf "$(INTRO) $@ $(OUTRO)\n"
-	meson build/$(ARCH)/doocs-release --buildtype=release --prefix=$(PREFIX) \
+	meson build/$(ARCH)/doocs-release --buildtype=debugoptimized --prefix=$(PREFIX) \
 	      --libdir=lib --includedir=lib/include -D deb-vers-tag='DOOCSVERSION_' \
 	      -D deb-vers-pack=true -D deb-name=doocs-@0@ -D deb-dev-name=dev-doocs-@0@ \
 	      $(MESON_EXTRA_ARGS)
 
 build/$(ARCH)/release/build.ninja:
 	@printf "$(INTRO) $@ $(OUTRO)\n"
-	meson build/$(ARCH)/release --buildtype=release $(MESON_EXTRA_ARGS)
+	meson build/$(ARCH)/release --buildtype=debugoptimized $(MESON_EXTRA_ARGS)
 
 $(LOCALINSTDIR)/build.ninja:
 	@printf "$(INTRO) $@ $(OUTRO)\n"
 	meson --prefix ${LOCALINSTPRE} --bindir 'obj/${LOCALSECTION}' ${DOOCS_PATHS} \
-              --buildtype=release ${LOCALINSTDIR} $(MESON_EXTRA_ARGS)
+              --buildtype=debugoptimized ${LOCALINSTDIR} $(MESON_EXTRA_ARGS)
 
 .PHONY: build-tests debug clean doc doocs-release help install-doc libs localinstall mrproper release test
