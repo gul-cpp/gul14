@@ -6,7 +6,7 @@ stages:
 
 variables:
         GIT_DEPTH: 0
-        GIT_FETCH_EXTRA_FLAGS: --tags
+        GIT_FETCH_EXTRA_FLAGS: --tags --prune --prune-tags
 
 ########
 # Focal (Ubuntu 20.04)
