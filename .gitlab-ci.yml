@@ -213,7 +213,7 @@ Windows test:
                     DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts curl)
                 - (cd build.release; debuild -i -us -uc -b)
                 - export VERS=`basename doocs*.deb | sed 's/\([^_]*\).*/\1/'`
-                - 'export FILES="{`basename doocs*.deb`,`basename dev-doocs*.deb`}"'
+                - export FILES="{`ls -1 *doocs*.deb *doocs*.ddeb | tr '\n' ',' | sed 's/,$//'`}"
                 - echo "Uploding version ${VERS} with files ${FILES}"
                 - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "${FILES}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PLATFORM}/${VERS}/"'
                 - mkdir deb_packages
