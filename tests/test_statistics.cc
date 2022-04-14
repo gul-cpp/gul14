@@ -27,9 +27,12 @@
 #include <limits>
 #include <random>
 #include <sstream>
+#include <type_traits>
 
 #include "gul14/catch.h"
 #include "gul14/statistics.h"
+#include "gul14/substring_checks.h"
+#include "gul14/type_name.h"
 
 using gul14::accumulate;
 using gul14::maximum;
@@ -406,6 +409,91 @@ TEST_CASE("Container Statistics Tests", "[statistics]")
         REQUIRE(clusterlimits.max == '9');
     }
 
+}
+
+TEMPLATE_TEST_CASE("ElementAccessor", "[statistics]",
+    int, float)
+{
+    auto i = TestType{ };
+    SECTION("fundamental type access") {
+        auto x = i;
+        auto ea = gul14::ElementAccessor<decltype(x)>();
+        using T = decltype(ea(x));
+        INFO("Shall copy (by value):");
+        INFO(gul14::type_name<decltype(ea)>());
+        INFO(gul14::type_name<T>());
+        REQUIRE(not std::is_const<typename std::remove_reference<T>::type>::value);
+        REQUIRE(not std::is_reference<T>::value);
+    }
+    SECTION("pointer type access") {
+        auto x = &i;
+        auto ea = gul14::ElementAccessor<decltype(x)>();
+        using T = decltype(ea(x));
+        INFO("Shall copy (by value):");
+        INFO(gul14::type_name<decltype(ea)>());
+        INFO(gul14::type_name<T>());
+        REQUIRE(not std::is_const<typename std::remove_reference<T>::type>::value);
+        REQUIRE(not std::is_reference<T>::value);
+    }
+    SECTION("user type access") {
+        struct UserType { TestType e; };
+        auto x = UserType{ 0 };
+        auto ea = gul14::ElementAccessor<decltype(x)>();
+        using T = decltype(ea(x));
+        INFO("Shall use const reference:");
+        INFO(gul14::type_name<decltype(ea)>());
+        INFO(gul14::type_name<T>());
+        REQUIRE(std::is_const<typename std::remove_reference<T>::type>::value);
+        REQUIRE(std::is_reference<T>::value);
+    }
+}
+
+TEMPLATE_TEST_CASE("general accumulate()", "[statistics]",
+    int, float)
+{
+    SECTION("trivial accumulate") {
+        auto v = std::vector<TestType>{ };
+        v.push_back(1);
+        v.push_back(5);
+        v.push_back(3);
+        v.push_back(9);
+        REQUIRE(std::accumulate(v.cbegin(), v.cend(), TestType{ },
+                [](TestType a, TestType el) { return a + el; }) == 18);
+        REQUIRE(gul14::accumulate(v,
+                [](TestType a, TestType el) { return a + el; }) == 18);
+    }
+    SECTION("pointer accumulate") {
+        auto a = TestType{ 4 };
+        auto b = TestType{ 2 };
+        auto c = TestType{ 8 };
+        auto d = TestType{ 0 };
+        auto v = std::vector<TestType*>{ };
+        v.push_back(&a);
+        v.push_back(&b);
+        v.push_back(&c);
+        v.push_back(&d);
+        REQUIRE(std::accumulate(v.cbegin(), v.cend(), TestType{ },
+                [](TestType a, TestType* el) { return a + *el; }) == 14);
+        REQUIRE(gul14::accumulate(v,
+                [](TestType a, TestType* el) { return a + *el; }) == 14);
+    }
+    SECTION("user type accumulate") {
+        struct UserType {
+            TestType e;
+            bool b;
+            UserType(TestType val1, bool val2) : e{ val1 }, b{ val2 }
+            {}
+        };
+        auto v = std::vector<UserType>{ };
+        v.emplace_back(7, true);
+        v.emplace_back(2, true);
+        v.emplace_back(3, true);
+        v.emplace_back(7, true);
+        REQUIRE(std::accumulate(v.cbegin(), v.cend(), TestType{ },
+                [](TestType a, UserType const& el) { return a + el.e; }) == 19);
+        REQUIRE(gul14::accumulate(v,
+                [](TestType a, UserType const& el) { return a + el.e; }) == 19);
+    }
 }
 
 // vi:ts=4:sw=4:sts=4:et

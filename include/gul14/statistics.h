@@ -38,25 +38,32 @@ namespace gul14 {
 using statistics_result_type = double; ///< Type used to return statistic properties
 
 /**
- * Return a mock element accessor for containers of fundamental types.
+ * Return a mock element accessor for containers.
  *
  * All functions in statistics.h access the elements of the containers they
  * work on through accessor functions. If the container is simple, i.e. contains
- * just fundamental types (like std::vector<double>) we can automate the
- * generation of the accessor function, so that the user does not need to specify
- * it.
+ * just the types we want to work on (like double of std::vector<double>) we can
+ * automate the generation of the accessor function, so that the user does not need
+ * to specify it.
  *
- * The type returned from the accessor should be an fundamental and arithmetic type.
- * As this is expected the element's content is returned by value and not be reference.
+ * In most cases the type returned from the accessor should be a fundamental and
+ * arithmetic type. As this is expected the element's content is returned by value
+ * and not be reference.
+ *
+ * gul14::accumulate() can also work on complex user defined types. These are not
+ * copied but accessed as const reference.
  *
  * \tparam ElementT   Type of the elements in the container
  * \returns           Pointer to accessor function
  */
 template <typename ElementT>
-auto ElementAccessor() -> std::enable_if_t<std::is_fundamental<ElementT>::value,
-                                           ElementT(*)(const ElementT&)>
+auto ElementAccessor()
 {
-    return [](const ElementT& el) { return el; };
+    return [](const ElementT& el)
+        -> std::conditional_t<
+            std::is_fundamental<ElementT>::value or std::is_pointer<ElementT>::value,
+                ElementT, ElementT const&>
+        { return el; };
 }
 
 /**
