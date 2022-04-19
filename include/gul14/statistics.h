@@ -52,7 +52,7 @@ using statistics_result_type = double; ///< Type used to return statistic proper
 template <typename ElementT>
 auto ElementAccessor()
 {
-    return [](const ElementT& el) -> ElementT const&
+    return [](ElementT const& el) -> ElementT const&
         { return el; };
 }
 
@@ -148,22 +148,22 @@ public:
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
- * \see mean(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead
+ * \see mean(IteratorT const&, IteratorT const&, Accessor) accepts two iterators instead
  *      of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
+auto mean(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
             ResultT{ },
-            [accessor] (const ResultT& accu, const ElementT& el) {
+            [accessor] (ResultT const& accu, ElementT const& el) {
                 return static_cast<ResultT>(accu + accessor(el)); } );
     return sum / static_cast<ResultT>(container.size());
 }
@@ -185,23 +185,23 @@ auto mean(const ContainerT& container, Accessor accessor = ElementAccessor<Eleme
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
- * \see rms(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * \see rms(IteratorT const&, IteratorT const&, Accessor) accepts two iterators instead of
  *      a container.
 
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
+auto rms(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
             ResultT{ },
-            [accessor] (const ResultT& accu, const ElementT& el) {
+            [accessor] (ResultT const& accu, ElementT const& el) {
                 return accu + std::pow(static_cast<ResultT>(accessor(el)), 2); } );
     return std::sqrt(sum / container.size());
 }
@@ -227,17 +227,17 @@ auto rms(const ContainerT& container, Accessor accessor = ElementAccessor<Elemen
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
- * \see median(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead
+ * \see median(IteratorT const&, IteratorT const&, Accessor) accepts two iterators instead
  *      of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto median(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
+auto median(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const len = container.size();
     if (len == 0)
@@ -292,7 +292,7 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
  * \see
- * maximum(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * maximum(IteratorT const&, IteratorT const&, Accessor) accepts two iterators instead of
  * a container.\n
  * minimum() returns the minimum value, min_max() returns both the minimum and the
  * maximum.
@@ -301,18 +301,18 @@ auto median(const ContainerT& container, Accessor accessor = ElementAccessor<Ele
  */
 template <typename ContainerT,
     typename ElementT = typename ContainerT::value_type,
-    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
     typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
     typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
 >
-auto maximum(const ContainerT &container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto maximum(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     constexpr auto initial_value = std::numeric_limits<DataT>::has_quiet_NaN ?
         std::numeric_limits<DataT>::quiet_NaN() : std::numeric_limits<DataT>::lowest();
 
     return std::accumulate(
         container.cbegin(), container.cend(), initial_value,
-        [&accessor](const DataT &accu, const ElementT &el) -> DataT {
+        [&accessor](DataT const& accu, ElementT const& el) -> DataT {
             auto const val = accessor(el);
             // Test portably for not-NAN (some compilers do not have std::isnan() for
             // integral types)
@@ -346,7 +346,7 @@ auto maximum(const ContainerT &container, Accessor accessor = ElementAccessor<El
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
  * \see
- * minimum(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * minimum(IteratorT const&, IteratorT const&, Accessor) accepts two iterators instead of
  * a container.\n
  * maximum() returns the maximum value, min_max() returns both the minimum and the
  * maximum.
@@ -355,18 +355,18 @@ auto maximum(const ContainerT &container, Accessor accessor = ElementAccessor<El
  */
 template <typename ContainerT,
     typename ElementT = typename ContainerT::value_type,
-    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
     typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
     typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
 >
-auto minimum(const ContainerT &container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
+auto minimum(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     constexpr auto initial_value = std::numeric_limits<DataT>::has_quiet_NaN ?
         std::numeric_limits<DataT>::quiet_NaN() : std::numeric_limits<DataT>::max();
 
     return std::accumulate(
         container.cbegin(), container.cend(), initial_value,
-        [&accessor](const DataT &accu, const ElementT &el) -> DataT {
+        [&accessor](DataT const& accu, ElementT const& el) -> DataT {
             auto const val = accessor(el);
             // Test portably for not-NAN (some compilers do not have std::isnan() for
             // integral types)
@@ -408,23 +408,23 @@ auto minimum(const ContainerT &container, Accessor accessor = ElementAccessor<El
  *
  *
  * \see
- * min_max(const IteratorT&, const IteratorT&, Accessor) accepts two iterators instead of
+ * min_max(IteratorT const&, IteratorT const&, Accessor) accepts two iterators instead of
  * a container.\n
  * minimum() returns only the minimum value, maximum() only the maximum value.
  */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto min_max(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> MinMax<DataT>
+auto min_max(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> MinMax<DataT>
 {
     using MinMaxT = MinMax<DataT>;
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
             MinMaxT{ },
-            [accessor] (const MinMaxT& accu, const ElementT& el) -> MinMaxT {
+            [accessor] (MinMaxT const& accu, ElementT const& el) -> MinMaxT {
                 auto out{ accu };
                 auto const val = accessor(el);
                 // Test portably for not-NAN (some compilers do not have std::isnan() for
@@ -462,7 +462,7 @@ auto min_max(const ContainerT& container, Accessor accessor = ElementAccessor<El
  */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
@@ -471,7 +471,7 @@ auto remove_outliers(ContainerT&& cont, std::size_t outliers,
 {
     while (outliers-- > 0 and cont.size() > 0) {
         auto max_distant = std::max_element(cont.begin(), cont.end(),
-                [mean = mean(cont, accessor), accessor] (const ElementT& a, const ElementT& b)
+                [mean = mean(cont, accessor), accessor] (ElementT const& a, ElementT const& b)
                 { return std::abs(accessor(a) - mean) < std::abs(accessor(b) - mean); });
         cont.erase(max_distant);
     }
@@ -486,11 +486,11 @@ auto remove_outliers(ContainerT&& cont, std::size_t outliers,
  */
 template <typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto remove_outliers(const ContainerT& cont, std::size_t outliers,
+auto remove_outliers(ContainerT const& cont, std::size_t outliers,
         Accessor accessor = ElementAccessor<ElementT>()) -> std::vector<ElementT>
 {
     auto c = std::vector<ElementT>(cont.size());
@@ -533,17 +533,17 @@ auto remove_outliers(const ContainerT& cont, std::size_t outliers,
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
- * \see standard_deviation(const IteratorT&, const IteratorT&, Accessor) accepts two
+ * \see standard_deviation(IteratorT const&, IteratorT const&, Accessor) accepts two
  *      iterators instead of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto standard_deviation(const ContainerT& container, Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviationMean<ResultT>
+auto standard_deviation(ContainerT const& container, Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviationMean<ResultT>
 {
     auto const len = container.size();
 
@@ -557,7 +557,7 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
 
     auto sum = std::accumulate(container.cbegin(), container.cend(),
         ResultT{ },
-        [mean_val, accessor] (const ResultT& accu, const ElementT& el)
+        [mean_val, accessor] (ResultT const& accu, ElementT const& el)
         { return accu + std::pow(accessor(el) - mean_val, 2); });
 
     sum /= container.size() - 1;
@@ -586,23 +586,23 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * \tparam Accessor    Type of the accessor function
  * \tparam DataT       Type returned by the accessor, i.e. numeric value of ElementT
  *
- * \see accumulate(const IteratorT&, const IteratorT&, OpClosure, Accessor) accepts two
+ * \see accumulate(IteratorT const&, IteratorT const&, OpClosure, Accessor) accepts two
  *      iterators instead of a container.
  */
 template <typename ResultT = statistics_result_type,
           typename ContainerT,
           typename ElementT = typename ContainerT::value_type,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = typename std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename OpClosure,
           typename = std::enable_if_t<IsContainerLike<ContainerT>::value>
          >
-auto accumulate(const ContainerT& container, OpClosure op, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
+auto accumulate(ContainerT const& container, OpClosure op, Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     auto const sum = std::accumulate(
             container.cbegin(), container.cend(),
             ResultT{ },
-            [accessor, op] (const ResultT& accu, const ElementT& el) {
+            [accessor, op] (ResultT const& accu, ElementT const& el) {
                 return op(accu, accessor(el)); } );
     return sum;
 }
@@ -613,11 +613,11 @@ namespace {
 
     template <typename IteratorT>
     struct ContainerView {
-        const IteratorT& begin_;
-        const IteratorT& end_;
+        IteratorT const& begin_;
+        IteratorT const& end_;
         using value_type = std::decay_t<decltype(*begin_)>;
 
-        ContainerView(const IteratorT& i1, const IteratorT& i2)
+        ContainerView(IteratorT const& i1, IteratorT const& i2)
         : begin_{ i1 }
         , end_{ i2 }
         {
@@ -625,11 +625,11 @@ namespace {
 
         // Just implement the member functions that we use here
 
-        auto cbegin() const noexcept -> const IteratorT&
+        auto cbegin() const noexcept -> IteratorT const&
         {
             return begin_;
         }
-        auto cend() const noexcept -> const IteratorT&
+        auto cend() const noexcept -> IteratorT const&
         {
             return end_;
         }
@@ -641,7 +641,7 @@ namespace {
     };
 
     template<typename IteratorT>
-    auto make_view(const IteratorT& cbegin, const IteratorT& cend) -> const ContainerView<IteratorT>
+    auto make_view(IteratorT const& cbegin, IteratorT const& cend) -> ContainerView<IteratorT> const
     {
         return ContainerView<IteratorT>{ cbegin, cend };
     }
@@ -655,14 +655,14 @@ namespace {
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see mean(const ContainerT&, Accessor) accepts a container instead of iterators.
+ * \see mean(ContainerT const&, Accessor) accepts a container instead of iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-auto mean(const IteratorT& begin, const IteratorT& end,
+auto mean(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     return mean<ResultT>(make_view(begin, end), accessor);
@@ -675,14 +675,14 @@ auto mean(const IteratorT& begin, const IteratorT& end,
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see rms(const ContainerT&, Accessor) accepts a container instead of iterators.
+ * \see rms(ContainerT const&, Accessor) accepts a container instead of iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-auto rms(const IteratorT& begin, const IteratorT& end,
+auto rms(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     return rms<ResultT>(make_view(begin, end), accessor);
@@ -695,14 +695,14 @@ auto rms(const IteratorT& begin, const IteratorT& end,
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see median(const ContainerT&, Accessor) accepts a container instead of iterators.
+ * \see median(ContainerT const&, Accessor) accepts a container instead of iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-auto median(const IteratorT& begin, const IteratorT& end,
+auto median(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     return median<ResultT>(make_view(begin, end), accessor);
@@ -715,13 +715,13 @@ auto median(const IteratorT& begin, const IteratorT& end,
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see max(const ContainerT&, Accessor) accepts a container instead of iterators.
+ * \see max(ContainerT const&, Accessor) accepts a container instead of iterators.
  */
 template <typename IteratorT,
     typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
     typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-    auto maximum(const IteratorT &begin, const IteratorT &end,
+    auto maximum(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return maximum(make_view(begin, end), accessor);
@@ -734,13 +734,13 @@ template <typename IteratorT,
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see max(const ContainerT&, Accessor) accepts a container instead of iterators.
+ * \see max(ContainerT const&, Accessor) accepts a container instead of iterators.
  */
 template <typename IteratorT,
     typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT &),
+    typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
     typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-    auto minimum(const IteratorT &begin, const IteratorT &end,
+    auto minimum(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> DataT
 {
     return minimum(make_view(begin, end), accessor);
@@ -753,13 +753,13 @@ template <typename IteratorT,
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see min_max(const ContainerT&, Accessor) accepts a container instead of iterators.
+ * \see min_max(ContainerT const&, Accessor) accepts a container instead of iterators.
  */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-auto min_max(const IteratorT& begin, const IteratorT& end,
+auto min_max(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> MinMax<DataT>
 {
     return min_max(make_view(begin, end), accessor);
@@ -778,9 +778,9 @@ auto min_max(const IteratorT& begin, const IteratorT& end,
  */
 template <typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-auto remove_outliers(const IteratorT& begin, const IteratorT& end,
+auto remove_outliers(IteratorT const& begin, IteratorT const& end,
         std::size_t outliers, Accessor accessor = ElementAccessor<ElementT>()) -> std::vector<ElementT>
 {
     return remove_outliers(make_view(begin, end), outliers, accessor);
@@ -793,15 +793,15 @@ auto remove_outliers(const IteratorT& begin, const IteratorT& end,
  * \param end       Iterator past the last element to examine in the container
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see standard_deviation(const ContainerT&, Accessor) accepts a container instead of
+ * \see standard_deviation(ContainerT const&, Accessor) accepts a container instead of
  *      iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>>
-auto standard_deviation(const IteratorT& begin, const IteratorT& end,
+auto standard_deviation(IteratorT const& begin, IteratorT const& end,
         Accessor accessor = ElementAccessor<ElementT>()) -> StandardDeviationMean<ResultT>
 {
     return standard_deviation<ResultT>(make_view(begin, end), accessor);
@@ -815,16 +815,16 @@ auto standard_deviation(const IteratorT& begin, const IteratorT& end,
  * \param op        Binary operator to aggregate two values into one value
  * \param accessor  Helper function to access the numeric value of one container element
  *
- * \see accumulate(const ContainerT&, OpClosure, Accessor) accepts a container instead of
+ * \see accumulate(ContainerT const&, OpClosure, Accessor) accepts a container instead of
  *      iterators.
  */
 template <typename ResultT = statistics_result_type,
           typename IteratorT,
           typename ElementT = std::decay_t<decltype(*std::declval<IteratorT>())>,
-          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(const ElementT&),
+          typename Accessor = std::result_of_t<decltype(ElementAccessor<ElementT>())(ElementT)>(*)(ElementT const&),
           typename DataT = std::decay_t<std::result_of_t<Accessor(ElementT)>>,
           typename OpClosure>
-auto accumulate(const IteratorT& begin, const IteratorT& end, OpClosure op,
+auto accumulate(IteratorT const& begin, IteratorT const& end, OpClosure op,
         Accessor accessor = ElementAccessor<ElementT>()) -> ResultT
 {
     return accumulate<ResultT>(make_view(begin, end), op, accessor);
