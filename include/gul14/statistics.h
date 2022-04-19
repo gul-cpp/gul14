@@ -5,7 +5,7 @@
  * \authors \ref contributors
  * \date    Created on 7 February 2019
  *
- * \copyright Copyright 2019-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -571,7 +571,8 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * This is similar to std::accumulate, but
  * * works on a whole container,
  * * accesses the container elements through an accessor function,
- * * applies the binary operator `op` to a running sum and each element value, and
+ * * applies the binary operator `op` to a running sum and each element value,
+ * * the sum's type is in the first template parameter, and
  * * the initial value of the sum is its default constructed value.
  *
  * \param container    Container of the elements to examine
@@ -579,7 +580,7 @@ auto standard_deviation(const ContainerT& container, Accessor accessor = Element
  * \param accessor     Helper function to access the numeric value of one container element
  * \returns            the aggregate value.
  *
- * \tparam ResultT     Type of the result value
+ * \tparam ResultT     Type of the result value / accumulator
  * \tparam ContainerT  Type of the container to examine
  * \tparam ElementT    Type of an element in the container, i.e. ContainerT::value_type
  * \tparam Accessor    Type of the accessor function
