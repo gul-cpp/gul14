@@ -419,21 +419,21 @@ TEMPLATE_TEST_CASE("ElementAccessor", "[statistics]",
         auto x = i;
         auto ea = gul14::ElementAccessor<decltype(x)>();
         using T = decltype(ea(x));
-        INFO("Shall copy (by value):");
+        INFO("Shall use const reference:");
         INFO(gul14::type_name<decltype(ea)>());
         INFO(gul14::type_name<T>());
-        REQUIRE(not std::is_const<typename std::remove_reference<T>::type>::value);
-        REQUIRE(not std::is_reference<T>::value);
+        REQUIRE(std::is_const<typename std::remove_reference<T>::type>::value);
+        REQUIRE(std::is_reference<T>::value);
     }
     SECTION("pointer type access") {
         auto x = &i;
         auto ea = gul14::ElementAccessor<decltype(x)>();
         using T = decltype(ea(x));
-        INFO("Shall copy (by value):");
+        INFO("Shall use const reference:");
         INFO(gul14::type_name<decltype(ea)>());
         INFO(gul14::type_name<T>());
-        REQUIRE(not std::is_const<typename std::remove_reference<T>::type>::value);
-        REQUIRE(not std::is_reference<T>::value);
+        REQUIRE(std::is_const<typename std::remove_reference<T>::type>::value);
+        REQUIRE(std::is_reference<T>::value);
     }
     SECTION("user type access") {
         struct UserType { TestType e; };
