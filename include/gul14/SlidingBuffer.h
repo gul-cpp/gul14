@@ -631,7 +631,8 @@ public:
      * <a href="https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator">LegacyBidirectionalIterator</a>.
      */
     template <typename BufferPointer>
-    struct SlidingBufferIterator : std::iterator<std::random_access_iterator_tag, value_type> {
+    struct SlidingBufferIterator
+    {
     protected:
         /// This is the logical index we are currently pointing at.
         size_type position_{ 0 };
@@ -640,6 +641,19 @@ public:
         BufferPointer buffer_;
 
     public:
+        // Set of 5 member types that are needed by std::iterator_traits:
+
+        /// Defines the category of the iterator.
+        using iterator_category = std::random_access_iterator_tag;
+        /// The type "pointed to" by the iterator.
+        using value_type = ElementT;
+        /// Distance between iterators is represented as this type.
+        using difference_type = std::ptrdiff_t;
+        /// This type represents a pointer-to-value_type.
+        using pointer = value_type*;
+        /// This type represents a reference-to-value_type.
+        using reference = value_type&;
+
         /**
          * Create an iterator pointing into a SlidingBuffer.
          *
