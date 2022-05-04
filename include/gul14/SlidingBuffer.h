@@ -174,7 +174,7 @@ template<typename ElementT, std::size_t fixed_capacity = 0u,
 class SlidingBuffer {
 public:
     template <typename>
-    struct SlidingBufferIterator;
+    class SlidingBufferIterator;
     /// Type of the underlying container (e.g. std::array<value_type, ..>)
     using container_type = Container;
     /// Type of the elements in the underlying container
@@ -631,7 +631,7 @@ public:
      * <a href="https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator">LegacyBidirectionalIterator</a>.
      */
     template <typename BufferPointer>
-    struct SlidingBufferIterator
+    class SlidingBufferIterator
     {
     protected:
         /// This is the logical index we are currently pointing at.
