@@ -12,9 +12,14 @@
 #   $ cp build/meson-dist/gul14-<version>.tar.xz ~/rpmbuild/SOURCES
 #   $ cp libgul14.spec ~/rpmbuild/SPECS
 #
+#  On RHEL7 we need a newer compiler
+#   $ pkcon install centos-release-scl-rh && pkcon refresh && pkcon install devtoolset-7
+#
 # 3) Build the package
 #   $ cd ~/rpmbuild
 #   $ rpmbuild -ba SPECS/libgul14.spec
+#  RHEL7 only
+#   $ scl enable devtoolset-7 'rpmbuild -ba SPECS/libgul14.spec'
 #
 # https://rpm-packaging-guide.github.io/
 #
@@ -28,7 +33,10 @@ License:        GPLv2
 URL:            https://winweb.desy.de/mcs/docs/gul/
 Source0:        gul14-%{version}.tar.xz
 
-BuildRequires:  gcc-c++ >= 6.0
+%if 0%{?rhel} < 8
+BuildRequires:  devtoolset-7-gcc-c++
+%endif
+BuildRequires:  gcc-c++
 BuildRequires:  meson
 BuildRequires:  ninja-build
 # we actually use some git checks in meson
