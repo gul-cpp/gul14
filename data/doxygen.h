@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Doxygen input file for the General Utility Library.
  *
- * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -51,12 +51,20 @@ namespace gul14 {
  * To keep the library useful for as many users as possible, special-purpose code has no
  * place in it. Specifically, the library includes:
  *
- *  - No code that is useful for only one project
- *  - No control system related code (DOOCS, TINE, TANGO, ...)
+ *  - Only code that is potentially useful for a wide range of C++ projects
  *  - No external dependencies except for the C++ and C standard libraries
  *
- * The General Utility Library strives for a very high quality level. To ensure this, we
- * follow a list of \ref quality_standards.
+ * We strive for a very high quality level. To ensure this, we follow a list of
+ * \ref quality_standards.
+ *
+ * \section who_is_using_the_library Who Is Using GUL14?
+ *
+ * GUL14 was developed at the German national particle accelerator laboratory
+ * <a href="https://www.desy.de">DESY</a>. It was originally meant to provide a modern and
+ * well-tested foundation for the <a href="https://doocs.desy.de/">DOOCS</a> control
+ * system which drives most of the lab's accelerators. It is still used mainly in this
+ * role, but has since spread to many unrelated projects as well. At some point we decided
+ * to publish it on GitHub to make collaboration outside the lab easier.
  *
  * \section usage Usage
  *
@@ -73,17 +81,13 @@ namespace gul14 {
  *
  * \section source_code Obtaining the Source Code
  *
- * You can clone the current master branch of GUL from
- * https://stash.desy.de/scm/gul/libgul.git . You can also head over to
- * https://stash.desy.de/projects/GUL/repos/libgul to browse the source. If you have an
- * account, you can submit pull requests and access development branches there, too. If
- * you need an account, let us know.
+ * You can browse or clone the source code at https://github.com/gul-cpp/gul14.git.
  *
  * \section contributing Contributing
  *
- * Bug reports, feature requests and constructive criticism are always welcome. Patches
- * are welcome if they come with a lot of tests. Just contact any of the \ref contributors
- * (we are generally reachable under forename.surname@desy.de - you'll figure it out).
+ * Bug reports and feature requests are always welcome and highly appreciated. So are pull
+ * requests, but they should fit into the scope of the library – it may be better to
+ * discuss new features in a GitHub issue before diving into the implementation.
  *
  * \section behind_the_scenes Behind the Scenes
  *
@@ -217,7 +221,7 @@ namespace gul14 {
  *
  * \section copyright_notice Copyright Notice
  *
- * Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
