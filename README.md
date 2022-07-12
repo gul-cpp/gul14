@@ -44,16 +44,19 @@ Clone this repository:
 
 Use meson to configure the build you want to have. A list of the
 [build options](#Build-configuration-switches) is given below. Build directory name can be
-what you want. If you use directories starting with 'build' they will be ignored by git.
+what you want and can even be located outside of the projecte directory. E.g. on Linux you
+can place the build directory into a tmpfs mount (aka RAM disk).
+If your build directories are inside the project root directory and starting with 'build'
+they will be ignored by git.
 Examples:
 
-        meson setup build
-        meson setup -D tests=false build_without_tests
-        meson setup --prefix=/usr --buildtype=release build_rel
-        meson setup --buildtype=release -D unity=on build_rel_unity
-        meson setup --buildtype=release -D docs=false build_nodocs_rel
-        meson setup -Dcpp_args='-Wconversion -Wshadow' --buildtype=debug builddir
-        CXX=clang++ meson setup build_clang
+        meson setup <build-dir>
+        meson setup -D tests=false <build-without-tests-dir>
+        meson setup --prefix=/usr --buildtype=release <build-rel-dir>
+        meson setup --buildtype=release --unity=on <build-rel-unity-dir>
+        meson setup --buildtype=release -D docs=false <build-nodocs-rel-dir>
+        meson setup -Dcpp_args='-Wconversion -Wshadow' --buildtype=debug <build-with-extra-warnings-dir>
+        CXX=clang++ meson setup <build-clang-dir>
 
 Typical build configurations can be easily summoned as detailed in
 [Default configurations](#Default-configurations) below.
@@ -61,7 +64,7 @@ Typical build configurations can be easily summoned as detailed in
 Afterwards, enter the build directory – in this case, for the release build – and start
 the build process:
 
-        cd build_rel
+        cd <build-dir>
         ninja
         ninja test
         ninja data/docs
@@ -148,18 +151,18 @@ Overview of maybe useful standard project options:
 Some typical build configurations can be set up in build directories under ``build/`` with
 the following commands:
 
-* ``make release`` builds the release version of the library under build/x86\_64-linux-gnu/release
-* ``make debug`` builds the debug version of the library under build/x86\_64-linux-gnu/debug
-* ``make doocs-release`` builds a DOOCS release version that can be packaged with makeDdeb under build/x86\_64-linux-gnu/doocs-release
+* ``make release`` builds the release version of the library under ``build/x86\_64-linux-gnu/release``
+* ``make debug`` builds the debug version of the library under ``build/x86\_64-linux-gnu/debug``
+* ``make doocs-release`` builds a DOOCS release version that can be packaged with makeDdeb under ``build/x86\_64-linux-gnu/doocs-release``
 * ``make test`` runs unit tests on the release version
 * ``make BUILDTYPE=debug test`` runs unit tests on the debug version
-* ``make test-junit`` runs unit tests and generates output in JUnit XML format under build/x86\_64-linux-gnu/release/test.xml
+* ``make test-junit`` runs unit tests and generates output in JUnit XML format under ``build/x86\_64-linux-gnu/release/test.xml``
 * ``make JUNIT_XML_FILE=a.xml test-junit`` runs unit tests and generates output in JUnit XML format in the specified file
 * ``make clean`` cleans up the build files of the release version
 * ``make BUILDTYPE=debug clean`` cleans up the build files of the debug version
 * ``make mrproper`` removes all build directories completely
-* ``make doc`` builds documentation under build/x86\_64-linux-gnu/release/resources/doxygenerated (needs Doxygen and Graphviz)
-* ``make localinstall`` makes a local installation of the library under /home/Ubuntu-16.04-x86\_64/lib
+* ``make doc`` builds documentation under ``build/x86\_64-linux-gnu/release/resources/doxygenerated`` (needs Doxygen and Graphviz)
+* ``make localinstall`` makes a local installation of the library under ``$HOME/Ubuntu-16.04-x86\_64/lib``
 
 ### Building on Windows with Visual C++ <a name="Building-on-Windows-with-Visual-C"></a>
 
