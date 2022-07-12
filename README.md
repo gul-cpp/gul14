@@ -8,8 +8,10 @@ by the library are:
   * Concurrency
   * Time
   * Statistics and numerics
-  * Containers
   * Debugging
+  * Containers
+  * Type traits
+  * Core guideline support library (GSL) excerpts
   * Backports from new standard library extensions
 
 To get started, have a look at the [documentation website](https://winweb.desy.de/mcs/docs/gul/).
@@ -31,8 +33,8 @@ Here you find more detailed information on:
 
 Clone this repository:
 
-        git clone ssh://git@stash.desy.de:7999/gul/libgul.git
-        cd libgul
+        git clone https://github.com/gul-cpp/gul14.git
+        cd gul14
 
 Use meson to configure the build you want to have. A list of the
 [build options](#Build-configuration-switches) is given below. Build directory name can be
@@ -49,17 +51,17 @@ Examples:
 Typical build configurations can be easily summoned as detailed in
 [Default configurations](#Default-configurations) below.
 
-Afterwards enter you build directory and fire the build process:
+Afterwards, enter the build directory – in this case, for the release build – and start
+the build process:
 
         cd build_rel
         ninja
         ninja test
         ninja data/docs
 
-And then you might want to create a debian package _(Note 2)_:
+If you need one, a Debian package is easily created with _(Note 2)_:
 
         debuild
-        makeDdeb -D
 
 Packaging is closely coupled to how version information is extracted (see
 [Versioning](#Versioning) below). The debian/ files including the debian/changelog are
@@ -70,12 +72,12 @@ _Notes:_
 
 1. The configuration to be changed can immediately follow the ``-D`` for example
    ``-Dwarning_level=1``
-2. ``debuild`` is the normal debian packager, ``makeDdeb`` is a custom tool used
-   here
-3. It's not necessary to call ``ninja`` before you call ``makeDdeb``. But of
-   course you usually want to do a ``ninja test`` before you package
-4. ``makeDdeb`` has to be called in the build directory of choice (that has been
-   usually created with buildtype = release). Note that a proper Debian package
+2. ``debuild`` is the normal Debian packager. For DESY environments, consider using
+   ``makeDdeb`` instead.
+3. It is not necessary to call ``ninja`` before calling ``debuild``/``makeDdeb``. But of
+   course you usually want to run ``ninja test`` before you package.
+4. ``debuild``/``makeDdeb`` has to be called in the build directory of choice (that has
+   been usually created with buildtype = release). Note that a proper Debian package
    needs the prefix to be set to /usr (see examples above)
 
 ### Build configuration switches <a name="Build-configuration-switches"></a>
