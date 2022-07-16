@@ -60,6 +60,7 @@ TEST_CASE("hex_string(Integer)", "[string_util]")
     REQUIRE(hex_string(static_cast<uint32_t>(65536)) == "00010000");
     REQUIRE(hex_string(static_cast<int32_t>(-1)) == "ffffffff");
     REQUIRE(hex_string(static_cast<int64_t>(-1)) == "ffffffffffffffff");
+    REQUIRE(hex_string(static_cast<int64_t>(0xdeadbeef00000000LL)) == "deadbeef00000000");
 }
 
 TEST_CASE("hex_string(Iterator, Iterator, string_view)", "[string_util]")

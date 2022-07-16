@@ -110,7 +110,7 @@ inline std::string hex_string(Integer v)
 
     for (int idx = static_cast<int>(sizeof(Integer)) - 1; idx >= 0; --idx)
     {
-        unsigned int byte = u >> (8 * idx);
+        auto byte = u >> (8 * idx);
         unsigned int upper_nibble = (byte >> 4) & 0xf;
         unsigned int lower_nibble = byte & 0xf;
         result += hex_digits[upper_nibble];
