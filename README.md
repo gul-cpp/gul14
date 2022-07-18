@@ -28,6 +28,12 @@ Here you find more detailed information on:
 * [Versioning](#Versioning)
   * [Version number examples](#Version-number-examples)
 
+## Installing with vcpkg
+
+GUL14 is available from the [vcpkg](https://vcpkg.io/) package manager. Once you have
+vcpkg installed, just run:
+
+        vcpkg install gul14
 
 ## Building <a name="Building"></a>
 
