@@ -79,6 +79,13 @@ namespace gul14 {
  * GUL14 requires at least C++14. It works fine with newer versions of the standard, but
  * uses its own backport types (e.g. gul14::string_view) in function interfaces.
  *
+ * \section installation Installation
+ *
+ * If you are using the [vcpkg](https://vcpkg.io/) package manager, you can install the
+ * library simply by running \verbatim vcpkg install gul14\endverbatim. Otherwise, you may
+ * have to build and install it manually. Have a look at the
+ * [readme file on GitHub](https://github.com/gul-cpp/gul14/blob/main/README.md).
+ *
  * \section source_code Obtaining the Source Code
  *
  * You can browse or clone the source code at https://github.com/gul-cpp/gul14.git.
