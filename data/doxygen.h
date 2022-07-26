@@ -82,8 +82,9 @@ namespace gul14 {
  * \section installation Installation
  *
  * If you are using the [vcpkg](https://vcpkg.io/) package manager, you can install the
- * library simply by running \verbatim vcpkg install gul14\endverbatim. Otherwise, you may
- * have to build and install it manually. Have a look at the
+ * library simply by running:
+ * \verbatim vcpkg install gul14\endverbatim
+ * Otherwise, you may have to build and install it manually. Have a look at the
  * [readme file on GitHub](https://github.com/gul-cpp/gul14/blob/main/README.md).
  *
  * \section source_code Obtaining the Source Code
