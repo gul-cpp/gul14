@@ -116,6 +116,7 @@ namespace gul14 {
  *
  * \subsection v2_6 Version 2.6
  *
+ * - *Released with DOOCS 21.12.0–22.6.1*
  * - Add safe_string()
  * - Add hex_string()
  * - Add IsContainerLike<>
