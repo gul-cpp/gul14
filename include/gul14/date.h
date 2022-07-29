@@ -40,14 +40,6 @@
 #ifndef GUL14_DATE_H_
 #define GUL14_DATE_H_
 
-#ifndef HAS_STRING_VIEW
-#  if __cplusplus >= 201703 || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
-#    define HAS_STRING_VIEW 1
-#  else
-#    define HAS_STRING_VIEW 0
-#  endif
-#endif  // HAS_STRING_VIEW
-
 #include <cassert>
 #include <algorithm>
 #include <cctype>
@@ -69,11 +61,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#if HAS_STRING_VIEW
-# include <string_view>
-#endif
 #include <utility>
 #include <type_traits>
+
+#include "gul14/string_view.h"
 
 #ifdef __GNUC__
 # pragma GCC diagnostic push
@@ -8093,7 +8084,6 @@ public:
         , offset_(offset)
         {}
 
-#if HAS_STRING_VIEW
     parse_manip(const CharT* format, Parsable& tp,
                 std::basic_string<CharT, Traits, Alloc>* abbrev = nullptr,
                 std::chrono::minutes* offset = nullptr)
@@ -8103,7 +8093,7 @@ public:
         , offset_(offset)
         {}
 
-    parse_manip(std::basic_string_view<CharT, Traits> format, Parsable& tp,
+    parse_manip(gul14::basic_string_view<CharT, Traits> format, Parsable& tp,
                 std::basic_string<CharT, Traits, Alloc>* abbrev = nullptr,
                 std::chrono::minutes* offset = nullptr)
         : format_(format)
@@ -8111,7 +8101,6 @@ public:
         , abbrev_(abbrev)
         , offset_(offset)
         {}
-#endif  // HAS_STRING_VIEW
 };
 
 template <class Parsable, class CharT, class Traits, class Alloc>
