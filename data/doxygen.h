@@ -38,7 +38,7 @@ namespace gul14 {
  *
  *  - \ref string_utilities
  *  - \ref concurrency_utilities
- *  - \ref time_utilities
+ *  - \ref date_time_utilities
  *  - \ref statistics_utilities
  *  - \ref debugging_utilities
  *  - \ref numeric_utilities
@@ -260,6 +260,12 @@ namespace gul14 {
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     \ref license_boost_1_0 and https://github.com/catchorg/Catch2 for details).</dd>
  *
+ * <dt>date.h</dt>
+ * <dd>Copyright 2015, 2016, 2017 Howard Hinnant, 2016 Adrian Colomitchi, 2017 Florian
+ *     Dang, 2017 Paul Thompson, 2018, 2019 Tomasz Kamiński, 2019 Jiangang Zhuang.
+ *     Distributed under the MIT License (see \ref license_mit and \ref date.h for
+ *     details).</dd>
+ *
  * <dt>\ref optional.h</dt>
  * <dd>Copyright 2011-2012 Andrzej Krzemienski.
  *     Distributed under the Boost Software License, Version 1.0 (see
@@ -394,7 +400,7 @@ namespace gul14 {
  */
 
 /**
- * \page time_utilities Time Utilities
+ * \page date_time_utilities Date & Time Utilities
  *
  * The General Utility Library provides a few time-related utility functions.
  *
@@ -404,6 +410,12 @@ namespace gul14 {
  *
  * tic() & toc():
  *     Measure elapsed time.
+ *
+ * Furthermore, the library includes Howard Hinnant's date.h header, which extends C++14's
+ * `<chrono>` library with types and functionality for handling calendar dates. Most of
+ * this functionality has been standardized in C++20. Documentation is available on
+ * [GitHub](https://howardhinnant.github.io/date/date.html); just note that the GUL14
+ * version lives in the namespace `gul14::date`.
  */
 
 /**
@@ -637,6 +649,28 @@ namespace gul14 {
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
+ */
+
+/**
+ * \page license_mit MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /**
