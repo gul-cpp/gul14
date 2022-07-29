@@ -66,6 +66,8 @@
 
 #include "gul14/string_view.h"
 
+/// \cond HIDE_SYMBOLS
+
 #ifdef __GNUC__
 # pragma GCC diagnostic push
 # if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
@@ -7764,5 +7766,7 @@ operator<<(std::basic_ostream<CharT, Traits>& os,
 #ifdef __GNUC__
 # pragma GCC diagnostic pop
 #endif
+
+/// \endcond
 
 #endif  // GUL14_DATE_H_
