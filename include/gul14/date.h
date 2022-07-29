@@ -113,13 +113,6 @@ namespace date {
 #    define NOEXCEPT noexcept
 #  endif
 
-#elif defined(__SUNPRO_CC) && __SUNPRO_CC <= 0x5150
-// Oracle Developer Studio 12.6 and earlier
-#  define CONSTDATA constexpr const
-#  define CONSTCD11 constexpr
-#  define CONSTCD14
-#  define NOEXCEPT noexcept
-
 #elif __cplusplus >= 201402
 // C++14
 #  define CONSTDATA constexpr const
@@ -149,11 +142,6 @@ namespace date {
 #    define HAS_VOID_T 0
 #  endif
 #endif  // HAS_VOID_T
-
-// Protect from Oracle sun macro
-#ifdef sun
-#  undef sun
-#endif
 
 // Work around for a NVCC compiler bug which causes it to fail
 // to compile std::ratio_{multiply,divide} when used directly
@@ -4378,8 +4366,7 @@ operator+(std::basic_string<CharT, Traits, Alloc> x, const string_literal<CharT,
     return x;
 }
 
-#if __cplusplus >= 201402  && (!defined(__EDG_VERSION__) || __EDG_VERSION__ > 411) \
-                           && (!defined(__SUNPRO_CC) || __SUNPRO_CC > 0x5150)
+#if __cplusplus >= 201402  && (!defined(__EDG_VERSION__) || __EDG_VERSION__ > 411)
 
 template <class CharT,
           class = std::enable_if_t<std::is_same<CharT, char>::value ||
