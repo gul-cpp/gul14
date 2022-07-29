@@ -114,6 +114,10 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_7 Version 2.7 (release candidate)
+ *
+ * - Add Howard Hinnant's date.h header
+ *
  * \subsection v2_6 Version 2.6
  *
  * - *Released with DOOCS 21.12.0–22.6.1*
