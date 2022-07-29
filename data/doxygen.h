@@ -117,6 +117,7 @@ namespace gul14 {
  * \subsection v2_7 Version 2.7
  *
  * - Add repeat()
+ * - Add Howard Hinnant's date.h header
  *
  * \subsection v2_6 Version 2.6
  *
