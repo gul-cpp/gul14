@@ -2,9 +2,9 @@
  * \file   test_string_util.cc
  * \author \ref contributors
  * \date   Created on August 11, 2021
- * \brief  Unit tests for safe_string() and hex_string().
+ * \brief  Unit tests for string utility functions.
  *
- * \copyright Copyright 2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2021-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -24,12 +24,14 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
+
 #include "gul14/catch.h"
 #include "gul14/SmallVector.h"
 #include "gul14/string_util.h"
 
-using gul14::safe_string;
 using gul14::hex_string;
+using gul14::repeat;
+using gul14::safe_string;
 
 using namespace std::literals;
 
@@ -110,6 +112,14 @@ TEST_CASE("hex_string(Container, string_view)", "[string_util]")
     gul14::SmallVector<int64_t, 3> sll = { 256, -1, 0 };
     REQUIRE(hex_string(sll) == "0000000000000100ffffffffffffffff0000000000000000");
     REQUIRE(hex_string(sll, "/") == "0000000000000100/ffffffffffffffff/0000000000000000");
+}
+
+TEST_CASE("repeat()", "[string_util]")
+{
+    REQUIRE(repeat("du", 3) == "dududu");
+    REQUIRE(repeat("du", 0) == "");
+    REQUIRE(repeat("", 0) == "");
+    REQUIRE(repeat("\0\0"s, 2) == "\0\0\0\0"s);
 }
 
 TEST_CASE("safe_string()", "[string_util]")
