@@ -114,6 +114,10 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_7 Version 2.7
+ *
+ * - Add repeat()
+ *
  * \subsection v2_6 Version 2.6
  *
  * - *Released with DOOCS 21.12.0–22.6.1*
@@ -315,12 +319,14 @@ namespace gul14 {
  * starts_with(), starts_with_nocase(): Check if a string starts with a certain string or
  *      character.
  *
- * <h4>Joining & Splitting</h4>
+ * <h4>Joining, Splitting, Repeating</h4>
  *
  * cat(): Efficiently concatenate an arbitrary number of std::strings, C strings,
  *         string_views, or numbers.
  *
  * join(): Concatenate all strings in a range, placing a delimiter between them.
+ *
+ * repeat(): Repeat a string N times.
  *
  * split(), split_sv(): Split a string at all occurrences of a delimiter string or
  *         regular expression, returning a vector of string or string_view tokens.
