@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -215,6 +215,22 @@ hex_string(const Container& container, string_view separator = "")
 {
     return hex_string(std::cbegin(container), std::cend(container), separator);
 }
+
+/**
+ * Repeat a string N times.
+ * \code
+ * std::string str = repeat("du", 3); // str == "dududu"
+ * \endcode
+ *
+ * \param str  String to be repeated
+ * \param n    Number of repetitions
+ *
+ * \returns the N-fold concatenation of the input string.
+ *
+ * \since GUL version 2.7
+ */
+GUL_EXPORT
+std::string repeat(gul14::string_view str, std::size_t n);
 
 /**
  * Safely construct a std::string from a char pointer and a length.
