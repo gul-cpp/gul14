@@ -146,6 +146,7 @@ namespace gul14 {
  * \subsection v2_7 Version 2.7
  *
  * - Add repeat()
+ * - Add gcd() and lcm()
  * - Add Howard Hinnant's date.h header
  *
  * \subsection v2_6 Version 2.6
@@ -509,6 +510,14 @@ namespace gul14 {
  *
  * clamp():
  *     Coerce a value to be within a given range.
+ *
+ * <h4>Greatest Common Divisor & Least Common Multiple</h4>
+ *
+ * gcd():
+ *     Calculate the greatest common divisor of two integers.
+ *
+ * lcm():
+ *     Calculate the least common multiple of two integers.
  *
  * <h4>Converting to Numbers</h4>
  *

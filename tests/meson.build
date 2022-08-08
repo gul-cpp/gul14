@@ -26,6 +26,7 @@ tests = [
     'test_cat.cc',
     'test_escape.cc',
     'test_finalizer.cc',
+    'test_gcd_lcm.cc',
     'test_hexdump.cc',
     'test_join_split.cc',
     'test_main.cc',

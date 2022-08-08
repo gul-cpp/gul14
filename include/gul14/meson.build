@@ -6,6 +6,7 @@ standalone_headers = [
     'date.h',
     'escape.h',
     'finalizer.h',
+    'gcd_lcm.h',
     'hexdump.h',
     'join_split.h',
     'num_util.h',
