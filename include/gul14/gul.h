@@ -30,6 +30,7 @@
 // #include "gul14/date.h" not included by default to reduce compile times
 #include "gul14/escape.h"
 #include "gul14/finalizer.h"
+#include "gul14/gcd_lcm.h"
 #include "gul14/hexdump.h"
 #include "gul14/join_split.h"
 #include "gul14/num_util.h"
