@@ -118,6 +118,7 @@ TEST_CASE("repeat()", "[string_util]")
 {
     REQUIRE(repeat("du", 3) == "dududu");
     REQUIRE(repeat("du", 0) == "");
+    REQUIRE(repeat("", 3) == "");
     REQUIRE(repeat("", 0) == "");
     REQUIRE(repeat("\0\0"s, 2) == "\0\0\0\0"s);
 }
