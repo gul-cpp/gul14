@@ -3,6 +3,7 @@ standalone_headers = [
     'bit_manip.h',
     'case_ascii.h',
     'cat.h',
+    'date.h',
     'escape.h',
     'finalizer.h',
     'hexdump.h',
