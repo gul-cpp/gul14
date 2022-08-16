@@ -70,7 +70,8 @@ namespace gul14 {
  *
  * To use the library:
  *
- *  - Include the main header file \ref gul14/gul.h.
+ *  - Include the main header file \ref gul14/gul.h (or read more under
+ *    \ref how_to_include_gul_headers).
  *  - Link your code against the library (-lgul14).
  *  - If you are on Windows, see \ref using_gul_on_windows.
  *
@@ -107,6 +108,34 @@ namespace gul14 {
  *
  * \copyright
  * \ref copyright_notice
+ */
+
+/**
+ * \page how_to_include_gul_headers How to Include GUL14 Headers
+ *
+ * All header files of the library reside under `gul14/` with no further subdirectories.
+ * To get access to almost all of GUL14's functionality, it is sufficient to include the
+ * all-in-one header:
+ * \code
+ * #include <gul14/gul.h>
+ * \endcode
+ *
+ * Two specific header files are not included by this all-in-one header:
+ * <ul>
+ * <li>`gul14/catch.h`: The header file for the Catch2 unit test framework</li>
+ * <li>`gul14/date.h`: Howard Hinnant's header for calendar date functionality</li>
+ * </ul>
+ * While the unit test framework is simply not useful for inclusion into regular code,
+ * `date.h` is excluded chiefly because of its negative impact on compile times. Just
+ * include it directly where needed.
+ *
+ * If you prefer to shave the last seconds off your build times, you are of course free to
+ * include also the other GUL14 headers individually without going through `gul.h`. Just
+ * follow the documentation of the classes and functions you use to find the associated
+ * header files.
+ *
+ * We do not guarantee that individual header file names will never change (except for
+ * `gul14/gul.h`), but we can assure you that this will happen rarely, if ever.
  */
 
 /**
