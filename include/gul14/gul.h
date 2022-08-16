@@ -26,7 +26,8 @@
 #include "gul14/bit_manip.h"
 #include "gul14/case_ascii.h"
 #include "gul14/cat.h"
-#include "gul14/date.h"
+// #include "gul14/catch.h" not included because it is only useful for unit tests
+// #include "gul14/date.h" not included by default to reduce compile times
 #include "gul14/escape.h"
 #include "gul14/finalizer.h"
 #include "gul14/hexdump.h"
@@ -42,11 +43,11 @@
 #include "gul14/string_view.h"
 #include "gul14/substring_checks.h"
 #include "gul14/time_util.h"
-#include "gul14/tokenize.h"
 #include "gul14/to_number.h"
+#include "gul14/tokenize.h"
 #include "gul14/traits.h"
-#include "gul14/trim.h"
 #include "gul14/Trigger.h"
+#include "gul14/trim.h"
 #include "gul14/type_name.h"
 #include "gul14/version.h"
 
