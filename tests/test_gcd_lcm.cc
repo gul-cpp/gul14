@@ -102,6 +102,20 @@ TEST_CASE("lcm(): Explicit test cases", "[gcd_lcm]")
     REQUIRE(lcm(7, -5) == 35);
     REQUIRE(lcm(-7, -5) == 35);
 
+    REQUIRE(lcm(6, 10) == 30);
+    REQUIRE(lcm(60, 100) == 300);
+    REQUIRE(lcm(600, 1'000) == 3'000);
+    REQUIRE(lcm(6'000, 10'000) == 30'000);
+    REQUIRE(lcm(60'000, 100'000) == 300'000);
+
+    #if defined(INT64_MAX)
+    REQUIRE(lcm(60'000'000'000, 100'000'000'000) == 300'000'000'000);
+    REQUIRE(lcm(-60'000'000'000, 100'000'000'000) == 300'000'000'000);
+    REQUIRE(lcm(60'000'000'000, -100'000'000'000) == 300'000'000'000);
+    REQUIRE(lcm(-60'000'000'000, -100'000'000'000) == 300'000'000'000);
+    REQUIRE(lcm(60'000'000'000U, 100'000'000'000U) == 300'000'000'000U);
+    #endif
+
     REQUIRE(lcm(std::int16_t{ -256 }, std::int8_t{ -128 }) == std::int16_t{ 256 }); // Fails with GCC 9.3.0 std::lcm()
     REQUIRE(lcm(-288LL, std::int8_t{ -128 }) == 1152LL);
 
