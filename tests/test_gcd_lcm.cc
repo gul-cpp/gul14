@@ -106,7 +106,12 @@ TEST_CASE("lcm(): Explicit test cases", "[gcd_lcm]")
     REQUIRE(lcm(60, 100) == 300);
     REQUIRE(lcm(600, 1'000) == 3'000);
     REQUIRE(lcm(6'000, 10'000) == 30'000);
+
     REQUIRE(lcm(60'000, 100'000) == 300'000);
+    REQUIRE(lcm(-60'000, 100'000) == 300'000);
+    REQUIRE(lcm(60'000, -100'000) == 300'000);
+    REQUIRE(lcm(-60'000, -100'000) == 300'000);
+    REQUIRE(lcm(60'000U, 100'000U) == 300'000U);
 
     #if defined(INT64_MAX)
     REQUIRE(lcm(60'000'000'000, 100'000'000'000) == 300'000'000'000);
