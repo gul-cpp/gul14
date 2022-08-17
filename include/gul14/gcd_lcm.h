@@ -1,6 +1,6 @@
 /**
  * \file    gcd_lcm.h
- * \brief   Declarations of greatest_common_divisor() and least_common_multiple().
+ * \brief   Declarations of gcd() and lcm().
  * \authors \ref contributors
  * \date    Created on 5 August 2022
  *
@@ -23,7 +23,6 @@
 #ifndef GUL14_GCD_LCM_H_
 #define GUL14_GCD_LCM_H_
 
-#include <cstdint>
 #include <type_traits>
 #include "gul14/internal.h"
 #include "gul14/num_util.h"
@@ -31,8 +30,7 @@
 namespace gul14 {
 
 /**
- * Calculate the greatest common divisor (gcd) of two integers using the Euclidean
- * algorithm.
+ * Calculate the greatest common divisor of two integers using the Euclidean algorithm.
  *
  * If both numbers are zero, the function returns zero. Otherwise, the result is a
  * positive integer.
