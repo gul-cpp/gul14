@@ -23,6 +23,7 @@
 #ifndef GUL14_GCD_LCM_H_
 #define GUL14_GCD_LCM_H_
 
+#include <cstdint>
 #include <type_traits>
 #include "gul14/internal.h"
 #include "gul14/num_util.h"
@@ -129,7 +130,7 @@ lcm(IntTypeA a, IntTypeB b)
     if (a == 0 && b == 0)
         return CommonType{ 0 };
 
-    return static_cast<CommonType>(gul14::abs(a * b) / gcd(a, b));
+    return static_cast<CommonType>(gul14::abs((a / gcd(a, b)) * b));
 }
 
 } // namespace gul14
