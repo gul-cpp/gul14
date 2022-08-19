@@ -1,0 +1,48 @@
+name: Build and run tests on Linux and MacOS platforms
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        required: true
+        type: string
+
+jobs:
+  build-and-run-tests-posix:
+    runs-on: ${{ inputs.platform }}
+    steps:
+    - run: echo "Job triggered by ${{ github.event_name }} event, running on ${{ runner.os }}."
+    - run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
+
+    - name: Check out repository code
+      uses: actions/checkout@v3
+
+    - name: Install Ninja
+      run: sudo apt-get install ninja-build
+
+    - name: Retrieve Meson from cache
+      id: cache-meson
+      uses: actions/cache@v3
+      with:
+        path: meson-0.63.0
+        key: meson-0.63.0
+
+    - name: Download Meson
+      if: steps.cache-meson.outputs.cache-hit != 'true'
+      run: wget -q https://github.com/mesonbuild/meson/releases/download/0.63.0/meson-0.63.0.tar.gz &&
+           tar -xzf meson-0.63.0.tar.gz &&
+           rm meson-0.63.0.tar.gz
+
+    - name: Create symbolic link for Meson
+      run: ln -s meson-0.63.0/meson.py . &&
+           ls -la
+
+    - name: Configure build directories
+      run: ./meson.py --buildtype=release build.release &&
+           ./meson.py --buildtype=debug build.asan -Db_sanitize=address
+
+    - name: Build and run ASAN tests
+      run: ./meson.py test -C build.asan
+
+    - name: Build and run release tests
+      run: ./meson.py test -C build.release
