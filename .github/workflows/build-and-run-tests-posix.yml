@@ -19,11 +19,15 @@ jobs:
 
     - name: Install Ninja
       run: |
-        if [[ "${{ inputs.platform }}" == Linux ]]; then
+        if [[ "${{ inputs.platform }}" == ubuntu-latest ]]; then
           sudo apt-get install ninja-build
-        else
+        elif [[ "${{ inputs.platform }}" == macos-latest ]]; then
           brew install ninja
+        else
+          echo Do not know how to install Ninja on platform ${{ inputs.platform }}
+          false
         fi
+      shell: bash
 
     - name: Retrieve Meson from cache
       id: cache-meson
@@ -51,3 +55,11 @@ jobs:
 
     - name: Build and run release tests
       run: ./meson.py test -C build.release
+
+    - uses: actions/upload-artifact@v3
+      if: ${{ always() }}
+      with:
+        name: build-dirs-${{ inputs.platform }}
+        path: |
+          build.release/
+          build.asan/
