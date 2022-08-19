@@ -18,7 +18,12 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install Ninja
-      run: sudo apt-get install ninja-build
+      run: |
+        if [[ "${{ inputs.platform }}" == Linux ]]; then
+          sudo apt-get install ninja-build
+        else
+          brew install ninja
+        fi
 
     - name: Retrieve Meson from cache
       id: cache-meson
