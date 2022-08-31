@@ -35,6 +35,10 @@ Source0:        gul14-%{version}.tar.xz
 
 %if 0%{?rhel} < 8
 BuildRequires:  devtoolset-7-gcc-c++
+# This is needed to fix an issue with the currently meson
+# package, it might be obsolete as soon as a new meson
+# package is rolled out.
+BuildRequires:  epel-rpm-macros
 %endif
 BuildRequires:  gcc-c++
 BuildRequires:  meson
