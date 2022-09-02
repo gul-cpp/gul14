@@ -4,7 +4,7 @@
  * \date    Created on September 7, 2018
  * \brief   Declaration of time related functions for the General Utility Library.
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -25,6 +25,7 @@
 
 #include <chrono>
 #include <thread>
+
 #include "gul14/internal.h"
 #include "gul14/Trigger.h"
 
@@ -89,8 +90,13 @@ auto toc(std::chrono::steady_clock::time_point t0)
 }
 
 /**
- * Sleep for a given time span, with the option of being woken up from another thread.
- * The sleep can be interrupted from another thread via a shared \ref Trigger object.
+ * Sleep for at least the given time span, with the option of being woken up from another
+ * thread. The sleep can be interrupted from another thread via a shared \ref Trigger
+ * object.
+ *
+ * Calling sleep() may lead to a context switch of the operation system. Under heavy load
+ * or resource contention, this can produce a delay that is longer than expected.
+ *
  * \param duration   Time span to wait, as a std::chrono::duration type.
  * \param trg        Reference to a SleepInterrupt object that can be used to interrupt
  *                   the delay. If such an interruption occurs, false is returned.
@@ -109,6 +115,10 @@ bool sleep(const std::chrono::duration<Rep, Period>& duration, const Trigger& tr
  * Sleep for a given number of seconds, with the option of being woken up from another
  * thread. The sleep can be interrupted from another thread via a shared \ref Trigger
  * object.
+ *
+ * Calling sleep() may lead to a context switch of the operation system. Under heavy load
+ * or resource contention, this can produce a delay that is longer than expected.
+ *
  * \param seconds    Seconds to wait.
  * \param trg        Reference to a SleepInterrupt object that can be used to interrupt
  *                   the delay. If such an interruption occurs, false is returned.
