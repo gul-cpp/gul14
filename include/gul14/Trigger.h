@@ -142,7 +142,7 @@ public:
      * Setting it to true will cause any waiting threads to resume.
      */
     GUL_EXPORT
-    Trigger &operator=(bool interrupt) noexcept;
+    Trigger& operator=(bool interrupt) noexcept;
 
     /// Set the trigger to low (false).
     GUL_EXPORT
@@ -180,7 +180,7 @@ public:
      * For many applications, the free function sleep() is easier to use.
      */
     template <class Rep, class Period>
-    bool wait_for(const std::chrono::duration<Rep, Period> &delta_t) const
+    bool wait_for(const std::chrono::duration<Rep, Period>& delta_t) const
     {
         std::unique_lock<std::mutex> lock(mutex_);
         return cv_.wait_for(lock, delta_t, [this]{ return triggered_; });
@@ -203,7 +203,7 @@ public:
      * For many applications, the free function sleep() is easier to use.
      */
     template <class Clock, class Duration>
-    bool wait_until(const std::chrono::time_point<Clock, Duration> &t) const
+    bool wait_until(const std::chrono::time_point<Clock, Duration>& t) const
     {
         std::unique_lock<std::mutex> lock(mutex_);
         return cv_.wait_until(lock, t, [this]{ return triggered_; });
