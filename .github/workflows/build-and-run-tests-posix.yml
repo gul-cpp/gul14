@@ -38,17 +38,20 @@ jobs:
 
     - name: Download Meson
       if: steps.cache-meson.outputs.cache-hit != 'true'
-      run: wget -q https://github.com/mesonbuild/meson/releases/download/0.63.0/meson-0.63.0.tar.gz &&
-           tar -xzf meson-0.63.0.tar.gz &&
-           rm meson-0.63.0.tar.gz
+      run: |
+        wget -q https://github.com/mesonbuild/meson/releases/download/0.63.0/meson-0.63.0.tar.gz
+        tar -xzf meson-0.63.0.tar.gz
+        rm meson-0.63.0.tar.gz
 
     - name: Create symbolic link for Meson
-      run: ln -s meson-0.63.0/meson.py . &&
-           ls -la
+      run: |
+        ln -s meson-0.63.0/meson.py .
+        ls -la
 
     - name: Configure build directories
-      run: ./meson.py --buildtype=release build.release &&
-           ./meson.py --buildtype=debug build.asan -Db_sanitize=address
+      run: |
+        ./meson.py --buildtype=release build.release
+        ./meson.py --buildtype=debug build.asan -Db_sanitize=address
 
     - name: Build and run ASAN tests
       run: ./meson.py test -C build.asan
