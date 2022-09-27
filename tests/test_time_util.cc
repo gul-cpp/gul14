@@ -33,15 +33,6 @@ using gul14::toc;
 using gul14::sleep;
 using gul14::Trigger;
 
-namespace {
-
-// Tolerances for time measurements around sleep()
-constexpr int MS_BEFORE = 1;
-constexpr int US_BEFORE = MS_BEFORE * 1000;
-constexpr float S_BEFORE = MS_BEFORE * 1e-3f;
-
-} // anonymous namespace
-
 SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time_util]")
 {
     auto t0 = tic();
@@ -55,8 +46,8 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time_u
             const auto toc_s = toc(t0);
             const auto toc_us = toc<std::chrono::microseconds>(t0);
 
-            REQUIRE(toc_s > 0.050 - S_BEFORE);
-            REQUIRE(toc_us > 50000 - US_BEFORE);
+            REQUIRE(toc_s > 0.050);
+            REQUIRE(toc_us > 50000);
         }
 
         sleep(0.050);
@@ -66,8 +57,8 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time_u
             const auto toc_s = toc(t0);
             const auto toc_us = toc<std::chrono::microseconds>(t0);
 
-            REQUIRE(toc_s > 0.1 - S_BEFORE);
-            REQUIRE(toc_us > 100000 - US_BEFORE);
+            REQUIRE(toc_s > 0.1);
+            REQUIRE(toc_us > 100000);
         }
     }
 
@@ -80,8 +71,8 @@ SCENARIO("After tic() and sleep(), toc() yields the correct time span", "[time_u
             const auto toc_s = toc(t0);
             const auto toc_ms = toc<std::chrono::milliseconds>(t0);
 
-            REQUIRE(toc_s > 0.05 - S_BEFORE);
-            REQUIRE(toc_ms >= 50 - MS_BEFORE);
+            REQUIRE(toc_s > 0.05);
+            REQUIRE(toc_ms >= 50);
         }
     }
 }
@@ -135,7 +126,8 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time_util]")
     }
 }
 
-SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single thread", "[time_util]")
+SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single thread",
+         "[time_util]")
 {
     auto t0 = tic();
 
@@ -146,8 +138,8 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
         THEN("the elapsed time is at least 10 ms")
         {
-            REQUIRE(toc(t0) > 0.01 - S_BEFORE);
-            REQUIRE(toc<std::chrono::milliseconds>(t0) >= 10 - MS_BEFORE);
+            REQUIRE(toc(t0) > 0.01);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) >= 10);
         }
     }
 
@@ -199,8 +191,8 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time_
             const auto toc_s = toc(t0);
             const auto toc_ms = toc<std::chrono::milliseconds>(t0);
 
-            REQUIRE(toc_s > 0.015 - S_BEFORE);
-            REQUIRE(toc_ms >= 15 - MS_BEFORE);
+            REQUIRE(toc_s > 0.015);
+            REQUIRE(toc_ms >= 15);
         }
 
         THEN("an additional sleep does not wait anymore")
@@ -218,7 +210,7 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time_
 
             sleep(15ms, interrupt);
 
-            REQUIRE(toc<std::chrono::milliseconds>(t1) >= 15 - MS_BEFORE);
+            REQUIRE(toc<std::chrono::milliseconds>(t1) >= 15);
         }
     }
 }
