@@ -171,7 +171,7 @@ SCENARIO("sleep(..., interrupt) respects the SleepInterrupt state on a single th
 
 SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time_util]")
 {
-    WHEN("interrupting sleep(2s, interrupt) after 15 ms")
+    WHEN("interrupting sleep(5s, interrupt) after 15 ms")
     {
         Trigger interrupt;
         std::chrono::steady_clock::time_point t0;
@@ -184,15 +184,18 @@ SCENARIO("sleep(..., interrupt) can be interrupted from another thread", "[time_
                     interrupt = true;
                 });
 
-        sleep(2s, interrupt);
+        sleep(5s, interrupt);
 
-        THEN("the elapsed time is at least 15 ms")
+        THEN("the elapsed time is at least 15 ms, but less than 5 s")
         {
             const auto toc_s = toc(t0);
             const auto toc_ms = toc<std::chrono::milliseconds>(t0);
 
             REQUIRE(toc_s > 0.015);
             REQUIRE(toc_ms >= 15);
+
+            REQUIRE(toc_s < 5.0);
+            REQUIRE(toc_ms < 5000);
         }
 
         THEN("an additional sleep does not wait anymore")
