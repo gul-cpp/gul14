@@ -33,12 +33,6 @@ using gul14::toc;
 using gul14::sleep;
 using gul14::Trigger;
 
-namespace {
-
-constexpr int MS_BEFORE = 1;
-
-} // anonymous namespace
-
 TEST_CASE("Construction, assignment, equality and bool operator work", "[Trigger]")
 {
     Trigger trg;
@@ -74,7 +68,7 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[Trigger
 
             THEN("it resumes after >= 50 ms")
             {
-                REQUIRE(time_ms >= 50 - MS_BEFORE);
+                REQUIRE(time_ms >= 50);
             }
         }
 
@@ -85,7 +79,7 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[Trigger
 
             THEN("it resumes after >= 50 ms")
             {
-                REQUIRE(time_ms >= 50 - MS_BEFORE);
+                REQUIRE(time_ms >= 50);
             }
         }
 
@@ -96,7 +90,7 @@ SCENARIO("Trigger::wait*() resumes if another thread calls trigger()", "[Trigger
 
             THEN("it resumes after >= 50 ms, but before 5 s")
             {
-                REQUIRE(time_ms >= 50 - MS_BEFORE);
+                REQUIRE(time_ms >= 50);
                 REQUIRE(time_ms <= 5000);
             }
         }
@@ -117,7 +111,7 @@ SCENARIO("Trigger::wait_for() and wait_until() wait at least the requested amoun
 
         THEN("execution resumes after >= 50 ms")
         {
-            REQUIRE(time_ms >= 50 - MS_BEFORE);
+            REQUIRE(time_ms >= 50);
         }
     }
 
@@ -128,7 +122,7 @@ SCENARIO("Trigger::wait_for() and wait_until() wait at least the requested amoun
 
         THEN("execution resumes after >= 50 ms")
         {
-            REQUIRE(time_ms >= 50 - MS_BEFORE);
+            REQUIRE(time_ms >= 50);
         }
     }
 }
