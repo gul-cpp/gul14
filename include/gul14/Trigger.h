@@ -4,7 +4,7 @@
  * \date    Created on September 21, 2018
  * \brief   Declaration of the Trigger class for the General Utility Library.
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -163,15 +163,15 @@ public:
     void wait() const;
 
     /**
-     * Suspend execution of the current thread until the trigger goes high (true) or the
-     * given time span has passed.
+     * Suspend execution of the current thread until the trigger goes high (true) or at
+     * least the given time span has passed.
      * Execution is also resumed if the object is destructed.
      *
      * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
      * \tparam Duration  The duration type to be used, typically Clock::duration.
      *
      * \param delta_t  A time span to wait. If the trigger still has not become true after
-     *                 this time, the function returns false.
+     *                 (at least) this time, the function returns false.
      *
      * \returns the state of the trigger at the end of the call. If this is false, the
      *          function has exited due to timeout.
@@ -188,7 +188,7 @@ public:
 
     /**
      * Suspend execution of the current thread until the trigger goes high (true) or the
-     * given time point has been reached.
+     * given time point has been passed.
      * Execution is also resumed if the object is destructed.
      *
      * \tparam Clock  The type of the underlying clock, e.g. std::chrono::system_clock.
