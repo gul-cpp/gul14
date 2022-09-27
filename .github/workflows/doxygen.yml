@@ -1,0 +1,59 @@
+name: Doxygen update
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - include/**/*.h
+      - tools/doxywrap
+      - data/Doxyfile.in
+      - data/doxygen_footer.html
+      - data/doxygen.h
+      - data/doxygen_layout.xml
+      - data/gul14.png
+      - data/gul14_big.png
+      - data/style.css
+  workflow_dispatch:
+
+jobs:
+  doxyrun:
+    name: Create Docu
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v3
+
+      - name: Fetch Ninja
+        run: |
+          sudo apt install ninja-build doxygen graphviz
+
+      - name: Fetch modern Meson
+        uses: robinraju/release-downloader@v1.5
+        with:
+          repository: "mesonbuild/meson"
+          tag: "0.62.0"
+          fileName: "*.tar.gz"
+      - name: Unpack Meson
+        run: |
+          tar zxf meson*.tar.gz
+          ln -vs meson*/meson.py meson
+          which python || which python3
+          echo "PATH=${PATH}:$(pwd)" >> $GITHUB_ENV
+      - name: Try Meson and Ninja
+        run: |
+          meson --version
+          ninja --version
+
+      - name: Call Doxygen
+        run: |
+          make doc
+
+      - name: Publish Docu
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: "build/x86_64-linux/release/data/doxygenerated/html"
+          target-folder: "docs"
+          clean: true
+          commit-message: "[ci] Regenerate Doxygen docs"
+          git-config-name: GitHub Actions
