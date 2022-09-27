@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="gul14.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">General Utility Library for C++14
-   &#160;<span id="projectnumber">2.6</span>
+   &#160;<span id="projectnumber">2.7</span>
    </div>
   </td>
  </tr>
@@ -154,23 +154,27 @@ $(function() {
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespacegul14.html#adbaca240c1cd99e9a477f8c2eb8b8880">hex_string</a>(std::cbegin(container), std::cend(container), separator);</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;}</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160; </div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;GUL_EXPORT</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;std::string <a class="code" href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">safe_string</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* char_ptr, std::size_t length);</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;} <span class="comment">// namespace gul14</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">// vi:ts=4:sw=4:sts=4:et</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;GUL_EXPORT</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;std::string <a class="code" href="namespacegul14.html#aadeb4703880f1b68a77a35fd5bf8fb6b">repeat</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str, std::size_t n);</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;GUL_EXPORT</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;std::string <a class="code" href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">safe_string</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* char_ptr, std::size_t length);</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;} <span class="comment">// namespace gul14</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">// vi:ts=4:sw=4:sts=4:et</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassgul14_1_1basic__string__view_html"><div class="ttname"><a href="classgul14_1_1basic__string__view.html">gul14::basic_string_view&lt; char &gt;</a></div></div>
 <div class="ttc" id="anamespacegul14_html_a6ebb24dac7ab090d9145ff49abab9013"><div class="ttname"><a href="namespacegul14.html#a6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a></div><div class="ttdeci">basic_string_view&lt; char &gt; string_view</div><div class="ttdoc">A view to a contiguous sequence of chars.</div><div class="ttdef"><b>Definition:</b> string_view.h:628</div></div>
-<div class="ttc" id="anamespacegul14_html_af05731d015fe2827d95fffd6432ba74d"><div class="ttname"><a href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">gul14::safe_string</a></div><div class="ttdeci">GUL_EXPORT std::string safe_string(const char *char_ptr, std::size_t length)</div><div class="ttdoc">Safely construct a std::string from a char pointer and a length.</div><div class="ttdef"><b>Definition:</b> string_util.cc:32</div></div>
+<div class="ttc" id="anamespacegul14_html_af05731d015fe2827d95fffd6432ba74d"><div class="ttname"><a href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">gul14::safe_string</a></div><div class="ttdeci">GUL_EXPORT std::string safe_string(const char *char_ptr, std::size_t length)</div><div class="ttdoc">Safely construct a std::string from a char pointer and a length.</div><div class="ttdef"><b>Definition:</b> string_util.cc:43</div></div>
 <div class="ttc" id="anamespacegul14_html_a2dfe9f0d3222edbf1ddab35d9d452e4f"><div class="ttname"><a href="namespacegul14.html#a2dfe9f0d3222edbf1ddab35d9d452e4f">gul14::default_whitespace_characters</a></div><div class="ttdeci">const GUL_EXPORT string_view default_whitespace_characters</div><div class="ttdoc">The default characters that are treated as whitespace by GUL.</div><div class="ttdef"><b>Definition:</b> string_util.cc:28</div></div>
 <div class="ttc" id="astring__view_8h_html"><div class="ttname"><a href="string__view_8h.html">string_view.h</a></div><div class="ttdoc">Provides a gul14::string_view that is fully compatible with C++17's std::string_view.</div></div>
 <div class="ttc" id="ainternal_8h_html"><div class="ttname"><a href="internal_8h.html">internal.h</a></div><div class="ttdoc">Definition of macros used internally by GUL.</div></div>
 <div class="ttc" id="anamespacegul14_html"><div class="ttname"><a href="namespacegul14.html">gul14</a></div><div class="ttdoc">Namespace gul14 contains all functions and classes of the General Utility Library.</div><div class="ttdef"><b>Definition:</b> doxygen.h:26</div></div>
 <div class="ttc" id="anamespacegul14_html_adbaca240c1cd99e9a477f8c2eb8b8880"><div class="ttname"><a href="namespacegul14.html#adbaca240c1cd99e9a477f8c2eb8b8880">gul14::hex_string</a></div><div class="ttdeci">std::string hex_string(Integer v)</div><div class="ttdoc">Return the hexadecimal ASCII representation of an integer value.</div><div class="ttdef"><b>Definition:</b> string_util.h:106</div></div>
+<div class="ttc" id="anamespacegul14_html_aadeb4703880f1b68a77a35fd5bf8fb6b"><div class="ttname"><a href="namespacegul14.html#aadeb4703880f1b68a77a35fd5bf8fb6b">gul14::repeat</a></div><div class="ttdeci">GUL_EXPORT std::string repeat(gul14::string_view str, std::size_t n)</div><div class="ttdoc">Repeat a string N times.</div><div class="ttdef"><b>Definition:</b> string_util.cc:32</div></div>
 <div class="ttc" id="astring__util_8h_html"><div class="ttname"><a href="string__util_8h.html">string_util.h</a></div><div class="ttdoc">Declarations of string utility functions for the General Utility Library.</div></div>
 <div class="ttc" id="atraits_8h_html"><div class="ttname"><a href="traits_8h.html">traits.h</a></div><div class="ttdoc">Some metaprogramming traits for the General Utility Library.</div></div>
 <div class="ttc" id="anamespacegul14_html_a8fa061a14b864c17593e03fa540d3a51"><div class="ttname"><a href="namespacegul14.html#a8fa061a14b864c17593e03fa540d3a51">gul14::hex_digits</a></div><div class="ttdeci">const GUL_EXPORT std::array&lt; char, 16 &gt; hex_digits</div><div class="ttdoc">The 16 digits for hexadecimal numbers (&quot;0123456789abcdef&quot;).</div><div class="ttdef"><b>Definition:</b> string_util.cc:29</div></div>

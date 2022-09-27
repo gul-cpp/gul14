@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="gul14.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">General Utility Library for C++14
-   &#160;<span id="projectnumber">2.6</span>
+   &#160;<span id="projectnumber">2.7</span>
    </div>
   </td>
  </tr>
@@ -79,7 +79,7 @@ $(function() {
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    operator <span class="keywordtype">bool</span>() const noexcept;</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    GUL_EXPORT</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <a class="code" href="classgul14_1_1Trigger.html#a95eb69fcd0d60e83fe4bf9610cb8bbec">Trigger</a> &amp;operator=(<span class="keywordtype">bool</span> interrupt) noexcept;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <a class="code" href="classgul14_1_1Trigger.html#a95eb69fcd0d60e83fe4bf9610cb8bbec">Trigger</a>&amp; operator=(<span class="keywordtype">bool</span> interrupt) noexcept;</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    GUL_EXPORT</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classgul14_1_1Trigger.html#a2db2056677f08927c2dae7ebe9a929da">reset</a>() noexcept;</div>
@@ -91,14 +91,14 @@ $(function() {
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classgul14_1_1Trigger.html#af6a91ed056be8e9e120fdd8d30c49513">wait</a>() const;</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    template &lt;class Rep, class Period&gt;</div>
-<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="classgul14_1_1Trigger.html#ad22d4a3c46b975b95ff7e4073897d7a0">  183</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classgul14_1_1Trigger.html#ad22d4a3c46b975b95ff7e4073897d7a0">wait_for</a>(const std::chrono::duration&lt;Rep, Period&gt; &amp;delta_t)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="classgul14_1_1Trigger.html#ad22d4a3c46b975b95ff7e4073897d7a0">  183</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classgul14_1_1Trigger.html#ad22d4a3c46b975b95ff7e4073897d7a0">wait_for</a>(const std::chrono::duration&lt;Rep, Period&gt;&amp; delta_t)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        std::unique_lock&lt;std::mutex&gt; lock(mutex_);</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="keywordflow">return</span> cv_.wait_for(lock, delta_t, [<span class="keyword">this</span>]{ <span class="keywordflow">return</span> triggered_; });</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    }</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> Clock, <span class="keyword">class</span> Duration&gt;</div>
-<div class="line"><a name="l00206"></a><span class="lineno"><a class="line" href="classgul14_1_1Trigger.html#ac35a975570b06921fae8f2806abd7a68">  206</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classgul14_1_1Trigger.html#ac35a975570b06921fae8f2806abd7a68">wait_until</a>(<span class="keyword">const</span> std::chrono::time_point&lt;Clock, Duration&gt; &amp;t)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno"><a class="line" href="classgul14_1_1Trigger.html#ac35a975570b06921fae8f2806abd7a68">  206</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classgul14_1_1Trigger.html#ac35a975570b06921fae8f2806abd7a68">wait_until</a>(<span class="keyword">const</span> std::chrono::time_point&lt;Clock, Duration&gt;&amp; t)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        std::unique_lock&lt;std::mutex&gt; lock(mutex_);</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <span class="keywordflow">return</span> cv_.wait_until(lock, t, [<span class="keyword">this</span>]{ <span class="keywordflow">return</span> triggered_; });</div>
@@ -123,7 +123,7 @@ $(function() {
 <div class="ttc" id="aclassgul14_1_1Trigger_html_ac6ebf7488ea744176e8e167e6341567a"><div class="ttname"><a href="classgul14_1_1Trigger.html#ac6ebf7488ea744176e8e167e6341567a">gul14::Trigger::trigger</a></div><div class="ttdeci">GUL_EXPORT void trigger() noexcept</div><div class="ttdoc">Set the trigger to high (true).</div><div class="ttdef"><b>Definition:</b> Trigger.cc:60</div></div>
 <div class="ttc" id="ainternal_8h_html"><div class="ttname"><a href="internal_8h.html">internal.h</a></div><div class="ttdoc">Definition of macros used internally by GUL.</div></div>
 <div class="ttc" id="anamespacegul14_html"><div class="ttname"><a href="namespacegul14.html">gul14</a></div><div class="ttdoc">Namespace gul14 contains all functions and classes of the General Utility Library.</div><div class="ttdef"><b>Definition:</b> doxygen.h:26</div></div>
-<div class="ttc" id="aclassgul14_1_1Trigger_html_ad22d4a3c46b975b95ff7e4073897d7a0"><div class="ttname"><a href="classgul14_1_1Trigger.html#ad22d4a3c46b975b95ff7e4073897d7a0">gul14::Trigger::wait_for</a></div><div class="ttdeci">bool wait_for(const std::chrono::duration&lt; Rep, Period &gt; &amp;delta_t) const</div><div class="ttdoc">Suspend execution of the current thread until the trigger goes high (true) or the given time span has...</div><div class="ttdef"><b>Definition:</b> Trigger.h:183</div></div>
+<div class="ttc" id="aclassgul14_1_1Trigger_html_ad22d4a3c46b975b95ff7e4073897d7a0"><div class="ttname"><a href="classgul14_1_1Trigger.html#ad22d4a3c46b975b95ff7e4073897d7a0">gul14::Trigger::wait_for</a></div><div class="ttdeci">bool wait_for(const std::chrono::duration&lt; Rep, Period &gt; &amp;delta_t) const</div><div class="ttdoc">Suspend execution of the current thread until the trigger goes high (true) or at least the given time...</div><div class="ttdef"><b>Definition:</b> Trigger.h:183</div></div>
 <div class="ttc" id="aclassgul14_1_1Trigger_html_a2db2056677f08927c2dae7ebe9a929da"><div class="ttname"><a href="classgul14_1_1Trigger.html#a2db2056677f08927c2dae7ebe9a929da">gul14::Trigger::reset</a></div><div class="ttdeci">GUL_EXPORT void reset() noexcept</div><div class="ttdoc">Set the trigger to low (false).</div><div class="ttdef"><b>Definition:</b> Trigger.cc:54</div></div>
 <!-- HTML footer for doxygen 1.8.17-->
 <!-- start footer part -->

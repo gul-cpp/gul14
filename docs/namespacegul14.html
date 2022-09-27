@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="gul14.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">General Utility Library for C++14
-   &#160;<span id="projectnumber">2.6</span>
+   &#160;<span id="projectnumber">2.7</span>
    </div>
   </td>
  </tr>
@@ -197,6 +197,14 @@ Functions</h2></td></tr>
 <tr class="memitem:a4351c9c060eb9cefc28793e11d3932a5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classgul14_1_1FinalAction.html">FinalAction</a>&lt; typename std::decay_t&lt; F &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegul14.html#a4351c9c060eb9cefc28793e11d3932a5">finally</a> (F &amp;&amp;f) noexcept</td></tr>
 <tr class="memdesc:a4351c9c060eb9cefc28793e11d3932a5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespacegul14.html#a4351c9c060eb9cefc28793e11d3932a5" title="finally() - convenience function to generate a FinalAction">finally()</a> - convenience function to generate a <a class="el" href="classgul14_1_1FinalAction.html" title="FinalAction allows us to execute something if the FinalAction object leaves the scope.">FinalAction</a>  <a href="namespacegul14.html#a4351c9c060eb9cefc28793e11d3932a5">More...</a><br /></td></tr>
 <tr class="separator:a4351c9c060eb9cefc28793e11d3932a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9adf2e7dd142ec3b8797a0ff846aec5c"><td class="memTemplParams" colspan="2">template&lt;typename IntTypeA , typename IntTypeB &gt; </td></tr>
+<tr class="memitem:a9adf2e7dd142ec3b8797a0ff846aec5c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">gcd</a> (IntTypeA a, IntTypeB b)</td></tr>
+<tr class="memdesc:a9adf2e7dd142ec3b8797a0ff846aec5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the greatest common divisor of two integers using the Euclidean algorithm.  <a href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">More...</a><br /></td></tr>
+<tr class="separator:a9adf2e7dd142ec3b8797a0ff846aec5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75f4c3e3b26b6b18c5747b7320839e75"><td class="memTemplParams" colspan="2">template&lt;typename IntTypeA , typename IntTypeB &gt; </td></tr>
+<tr class="memitem:a75f4c3e3b26b6b18c5747b7320839e75"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">lcm</a> (IntTypeA a, IntTypeB b)</td></tr>
+<tr class="memdesc:a75f4c3e3b26b6b18c5747b7320839e75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the least common multiple of two integers.  <a href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">More...</a><br /></td></tr>
+<tr class="separator:a75f4c3e3b26b6b18c5747b7320839e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ad9d1a1cee23214a61491bfc8171595"><td class="memTemplParams" colspan="2">template&lt;typename IteratorT , typename  = std::enable_if_t&lt;detail::IsHexDumpIterator&lt;IteratorT&gt;::value&gt;&gt; </td></tr>
 <tr class="memitem:a2ad9d1a1cee23214a61491bfc8171595"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegul14.html#a2ad9d1a1cee23214a61491bfc8171595">hexdump</a> (IteratorT begin, IteratorT end, <a class="el" href="namespacegul14.html#a6ebb24dac7ab090d9145ff49abab9013">string_view</a> prompt=&quot;&quot;)</td></tr>
 <tr class="memdesc:a2ad9d1a1cee23214a61491bfc8171595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a hexdump of a data range and return it as a string.  <a href="namespacegul14.html#a2ad9d1a1cee23214a61491bfc8171595">More...</a><br /></td></tr>
@@ -379,6 +387,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a25afcbd157fb5ea3b532097d4226cfab"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegul14.html#a25afcbd157fb5ea3b532097d4226cfab">hex_string</a> (const Container &amp;container, <a class="el" href="namespacegul14.html#a6ebb24dac7ab090d9145ff49abab9013">string_view</a> separator=&quot;&quot;)</td></tr>
 <tr class="memdesc:a25afcbd157fb5ea3b532097d4226cfab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the hexadecimal ASCII representation of a container with integer values.  <a href="namespacegul14.html#a25afcbd157fb5ea3b532097d4226cfab">More...</a><br /></td></tr>
 <tr class="separator:a25afcbd157fb5ea3b532097d4226cfab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadeb4703880f1b68a77a35fd5bf8fb6b"><td class="memItemLeft" align="right" valign="top">GUL_EXPORT std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegul14.html#aadeb4703880f1b68a77a35fd5bf8fb6b">repeat</a> (<a class="el" href="namespacegul14.html#a6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str, std::size_t n)</td></tr>
+<tr class="memdesc:aadeb4703880f1b68a77a35fd5bf8fb6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repeat a string N times.  <a href="namespacegul14.html#aadeb4703880f1b68a77a35fd5bf8fb6b">More...</a><br /></td></tr>
+<tr class="separator:aadeb4703880f1b68a77a35fd5bf8fb6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af05731d015fe2827d95fffd6432ba74d"><td class="memItemLeft" align="right" valign="top">GUL_EXPORT std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">safe_string</a> (const char *char_ptr, std::size_t length)</td></tr>
 <tr class="memdesc:af05731d015fe2827d95fffd6432ba74d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safely construct a std::string from a char pointer and a length.  <a href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">More...</a><br /></td></tr>
 <tr class="separator:af05731d015fe2827d95fffd6432ba74d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -430,7 +441,7 @@ Functions</h2></td></tr>
 <tr class="separator:a093e46ff24705fce82ca32121620a54e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0abe7bf6452e6882c0e0b0d05897adc"><td class="memTemplParams" colspan="2">template&lt;class Rep , class Period &gt; </td></tr>
 <tr class="memitem:aa0abe7bf6452e6882c0e0b0d05897adc"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc">sleep</a> (const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const <a class="el" href="classgul14_1_1Trigger.html">Trigger</a> &amp;trg)</td></tr>
-<tr class="memdesc:aa0abe7bf6452e6882c0e0b0d05897adc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for a given time span, with the option of being woken up from another thread.  <a href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc">More...</a><br /></td></tr>
+<tr class="memdesc:aa0abe7bf6452e6882c0e0b0d05897adc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for at least the given time span, with the option of being woken up from another thread.  <a href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc">More...</a><br /></td></tr>
 <tr class="separator:aa0abe7bf6452e6882c0e0b0d05897adc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7b3b3ee304683df1af8c8f921bc9d6b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacegul14.html#aa7b3b3ee304683df1af8c8f921bc9d6b">sleep</a> (double seconds, const <a class="el" href="classgul14_1_1Trigger.html">Trigger</a> &amp;trg)</td></tr>
 <tr class="memdesc:aa7b3b3ee304683df1af8c8f921bc9d6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sleep for a given number of seconds, with the option of being woken up from another thread.  <a href="namespacegul14.html#aa7b3b3ee304683df1af8c8f921bc9d6b">More...</a><br /></td></tr>
@@ -665,7 +676,7 @@ template&lt;typename ValueT &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the absolute value of n. </dd></dl>
 
-<p class="reference">Referenced by <a class="el" href="namespacegul14.html#acfd9a11052c0ce4d3715cb4a405026d3">remove_outliers()</a>, <a class="el" href="namespacegul14.html#a3a06029dccf60523519d5a22a71ac361">within_abs()</a>, <a class="el" href="namespacegul14.html#ac147ccba8179827a34b584d6a7d11ac9">within_orders()</a>, and <a class="el" href="namespacegul14.html#a6c7886cf179298ea422806b253f0bb0c">within_ulp()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">gcd()</a>, <a class="el" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">lcm()</a>, <a class="el" href="namespacegul14.html#acfd9a11052c0ce4d3715cb4a405026d3">remove_outliers()</a>, <a class="el" href="namespacegul14.html#a3a06029dccf60523519d5a22a71ac361">within_abs()</a>, <a class="el" href="namespacegul14.html#ac147ccba8179827a34b584d6a7d11ac9">within_orders()</a>, and <a class="el" href="namespacegul14.html#a6c7886cf179298ea422806b253f0bb0c">within_ulp()</a>.</p>
 
 </div>
 </div>
@@ -2019,6 +2030,61 @@ template&lt;typename F &gt; </div>
 
 </div>
 </div>
+<a id="a9adf2e7dd142ec3b8797a0ff846aec5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9adf2e7dd142ec3b8797a0ff846aec5c">&#9670;&nbsp;</a></span>gcd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename IntTypeA , typename IntTypeB &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto gul14::gcd </td>
+          <td>(</td>
+          <td class="paramtype">IntTypeA&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IntTypeB&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the greatest common divisor of two integers using the Euclidean algorithm. </p>
+<p>If both numbers are zero, the function returns zero. Otherwise, the result is a positive integer.</p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> greatest_common_divisor = <a class="code" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">gcd</a>(10, 15); <span class="comment">// returns 5</span></div>
+</div><!-- fragment --><dl class="section return"><dt>Returns</dt><dd>the least common multiple of the two numbers, represented as an integer type (<code>std::common_type_t&lt;IntTypeA, IntTypeB&gt;</code>) that both inputs can implicitly be converted to. If either a, b, or the result can not be represented by that type, the result is undefined.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Unlike <code><a class="el" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c" title="Calculate the greatest common divisor of two integers using the Euclidean algorithm.">std::gcd()</a></code> from C++17, the GUL14 version cannot be used with integers of different signedness. This avoids undefined behavior when mixing unsigned integers with negative signed values: <div class="fragment"><div class="line"><span class="comment">// C++17 gcd(): Undefined behavior - the common type is `unsigned int` and -5 has no</span></div>
+<div class="line"><span class="comment">// representation in that type</span></div>
+<div class="line"><span class="keyword">auto</span> bad_result = <a class="code" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">std::gcd</a>(10u, -5);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// GUL14 gcd(): Does not compile</span></div>
+<div class="line"><span class="keyword">auto</span> static_assertion_failure = <a class="code" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">gul14::gcd</a>(10u, -5);</div>
+</div><!-- fragment --></dd></dl>
+<dl class="section since"><dt>Since</dt><dd>GUL 2.7 </dd></dl>
+
+<p class="reference">References <a class="el" href="namespacegul14.html#a02e71867d1a27d723ee0c2a3bcd7761c">abs()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">lcm()</a>.</p>
+
+</div>
+</div>
 <a id="aa73c01eba4544c9744ed896594c12370"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa73c01eba4544c9744ed896594c12370">&#9670;&nbsp;</a></span>get()</h2>
 
@@ -2647,6 +2713,58 @@ template&lt;typename Iterator &gt; </div>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>join(StringContainer, string_view) is a convenience overload for joining entire containers, <a class="el" href="namespacegul14.html#a0e6eed5ed768613f3680866905ca82b9" title="Separate a string at all occurrences of a delimiter, returning the strings between the delimiters in ...">split()</a> and associated functions can be used to <a class="el" href="namespacegul14.html#a0e6eed5ed768613f3680866905ca82b9" title="Separate a string at all occurrences of a delimiter, returning the strings between the delimiters in ...">split</a> a string into a vector of substrings.</dd></dl>
 <dl class="section since"><dt>Since</dt><dd>GUL version 2.3 </dd></dl>
+
+</div>
+</div>
+<a id="a75f4c3e3b26b6b18c5747b7320839e75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75f4c3e3b26b6b18c5747b7320839e75">&#9670;&nbsp;</a></span>lcm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename IntTypeA , typename IntTypeB &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto gul14::lcm </td>
+          <td>(</td>
+          <td class="paramtype">IntTypeA&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IntTypeB&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the least common multiple of two integers. </p>
+<p>If both numbers are zero, the function returns zero. Otherwise, the result is a positive integer. </p><div class="fragment"><div class="line"><span class="keywordtype">int</span> least_common_multiple = <a class="code" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">lcm</a>(10, 15); <span class="comment">// returns 30</span></div>
+</div><!-- fragment --><dl class="section return"><dt>Returns</dt><dd>the least common multiple of the two numbers, represented as an integer type (<code>std::common_type_t&lt;IntTypeA, IntTypeB&gt;</code>) that both inputs can implicitly be converted to. If either a, b, or the result can not be represented by that type, the result is undefined.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Unlike <code><a class="el" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75" title="Calculate the least common multiple of two integers.">std::lcm()</a></code> from C++17, the GUL14 version cannot be used with integers of different signedness. This avoids undefined behavior when mixing unsigned integers with negative signed values: <div class="fragment"><div class="line"><span class="comment">// C++17 lcm(): Undefined behavior - the common type is `unsigned int` and -5 has no</span></div>
+<div class="line"><span class="comment">// representation in that type</span></div>
+<div class="line"><span class="keyword">auto</span> bad_result = <a class="code" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">std::lcm</a>(10u, -5);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// GUL14 lcm(): Does not compile</span></div>
+<div class="line"><span class="keyword">auto</span> static_assertion_failure = <a class="code" href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">gul14::lcm</a>(10u, -5);</div>
+</div><!-- fragment --></dd></dl>
+<dl class="section since"><dt>Since</dt><dd>GUL 2.7 </dd></dl>
+
+<p class="reference">References <a class="el" href="namespacegul14.html#a02e71867d1a27d723ee0c2a3bcd7761c">abs()</a>, and <a class="el" href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">gcd()</a>.</p>
 
 </div>
 </div>
@@ -3440,6 +3558,46 @@ template&lt;typename IteratorT , typename ElementT  = std::decay_t&lt;decltype(*
 
 </div>
 </div>
+<a id="aadeb4703880f1b68a77a35fd5bf8fb6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aadeb4703880f1b68a77a35fd5bf8fb6b">&#9670;&nbsp;</a></span>repeat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string gul14::repeat </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacegul14.html#a6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a>&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Repeat a string N times. </p>
+<div class="fragment"><div class="line">std::string str = <a class="code" href="namespacegul14.html#aadeb4703880f1b68a77a35fd5bf8fb6b">repeat</a>(<span class="stringliteral">&quot;du&quot;</span>, 3); <span class="comment">// str == &quot;dududu&quot;</span></div>
+</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>String to be repeated </td></tr>
+    <tr><td class="paramname">n</td><td>Number of repetitions</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the N-fold concatenation of the input string.</dd></dl>
+<dl class="section since"><dt>Since</dt><dd>GUL version 2.7 </dd></dl>
+
+</div>
+</div>
 <a id="a9801de6999c42b6e2987a55532057a4c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9801de6999c42b6e2987a55532057a4c">&#9670;&nbsp;</a></span>replace()</h2>
 
@@ -3705,7 +3863,7 @@ template&lt;class Rep , class Period &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true to signalize that the entire requested sleep duration has passed. This is for symmetry with the interruptible version of <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc" title="Sleep for a given time span, with the option of being woken up from another thread.">sleep()</a> only. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true to signalize that the entire requested sleep duration has passed. This is for symmetry with the interruptible version of <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc" title="Sleep for at least the given time span, with the option of being woken up from another thread.">sleep()</a> only. </dd></dl>
 
 </div>
 </div>
@@ -3737,8 +3895,10 @@ template&lt;class Rep , class Period &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Sleep for a given time span, with the option of being woken up from another thread. </p>
-<p>The sleep can be interrupted from another thread via a shared <a class="el" href="classgul14_1_1Trigger.html">Trigger</a> object. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Sleep for at least the given time span, with the option of being woken up from another thread. </p>
+<p>The sleep can be interrupted from another thread via a shared <a class="el" href="classgul14_1_1Trigger.html">Trigger</a> object.</p>
+<p>Calling <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc" title="Sleep for at least the given time span, with the option of being woken up from another thread.">sleep()</a> may lead to a context switch of the operation system. Under heavy load or resource contention, this can produce a delay that is longer than expected.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">duration</td><td>Time span to wait, as a std::chrono::duration type. </td></tr>
     <tr><td class="paramname">trg</td><td>Reference to a SleepInterrupt object that can be used to interrupt the delay. If such an interruption occurs, false is returned. </td></tr>
@@ -3787,7 +3947,7 @@ template&lt;class Rep , class Period &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true to signalize that the entire requested sleep duration has passed. This is for symmetry with the interruptible version of <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc" title="Sleep for a given time span, with the option of being woken up from another thread.">sleep()</a> only. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true to signalize that the entire requested sleep duration has passed. This is for symmetry with the interruptible version of <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc" title="Sleep for at least the given time span, with the option of being woken up from another thread.">sleep()</a> only. </dd></dl>
 
 <p class="reference">References <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc">sleep()</a>.</p>
 
@@ -3828,7 +3988,9 @@ template&lt;class Rep , class Period &gt; </div>
 </div><div class="memdoc">
 
 <p>Sleep for a given number of seconds, with the option of being woken up from another thread. </p>
-<p>The sleep can be interrupted from another thread via a shared <a class="el" href="classgul14_1_1Trigger.html">Trigger</a> object. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>The sleep can be interrupted from another thread via a shared <a class="el" href="classgul14_1_1Trigger.html">Trigger</a> object.</p>
+<p>Calling <a class="el" href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc" title="Sleep for at least the given time span, with the option of being woken up from another thread.">sleep()</a> may lead to a context switch of the operation system. Under heavy load or resource contention, this can produce a delay that is longer than expected.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">seconds</td><td>Seconds to wait. </td></tr>
     <tr><td class="paramname">trg</td><td>Reference to a SleepInterrupt object that can be used to interrupt the delay. If such an interruption occurs, false is returned. </td></tr>
@@ -5447,8 +5609,10 @@ template&lt;typename NumT , typename  = std::enable_if_t&lt;std::is_floating_poi
 </div>
 </div><!-- contents -->
 <div class="ttc" id="anamespacegul14_html_ad3b2d42f1a3c17d56d8b4fa8dfddbf9b"><div class="ttname"><a href="namespacegul14.html#ad3b2d42f1a3c17d56d8b4fa8dfddbf9b">gul14::hexdump_stream</a></div><div class="ttdeci">HexdumpParameterForward&lt; const IteratorT &gt; hexdump_stream(const IteratorT &amp;begin, const IteratorT &amp;end, std::string prompt=&quot;&quot;)</div><div class="ttdoc">Generate a hexdump of a data range that can be efficiently written to a stream using operator&lt;&lt;.</div><div class="ttdef"><b>Definition:</b> hexdump.h:416</div></div>
+<div class="ttc" id="anamespacegul14_html_a9adf2e7dd142ec3b8797a0ff846aec5c"><div class="ttname"><a href="namespacegul14.html#a9adf2e7dd142ec3b8797a0ff846aec5c">gul14::gcd</a></div><div class="ttdeci">constexpr auto gcd(IntTypeA a, IntTypeB b)</div><div class="ttdoc">Calculate the greatest common divisor of two integers using the Euclidean algorithm.</div><div class="ttdef"><b>Definition:</b> gcd_lcm.h:64</div></div>
+<div class="ttc" id="anamespacegul14_html_a75f4c3e3b26b6b18c5747b7320839e75"><div class="ttname"><a href="namespacegul14.html#a75f4c3e3b26b6b18c5747b7320839e75">gul14::lcm</a></div><div class="ttdeci">constexpr auto lcm(IntTypeA a, IntTypeB b)</div><div class="ttdoc">Calculate the least common multiple of two integers.</div><div class="ttdef"><b>Definition:</b> gcd_lcm.h:118</div></div>
 <div class="ttc" id="anamespacegul14_html_a8d4755d57b125523fefbadf2b4f6773e"><div class="ttname"><a href="namespacegul14.html#a8d4755d57b125523fefbadf2b4f6773e">gul14::trim_sv</a></div><div class="ttdeci">GUL_EXPORT string_view trim_sv(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim leading and trailing whitespace (or a custom set of characters) from a string,...</div><div class="ttdef"><b>Definition:</b> trim.cc:34</div></div>
-<div class="ttc" id="anamespacegul14_html_a093e46ff24705fce82ca32121620a54e"><div class="ttname"><a href="namespacegul14.html#a093e46ff24705fce82ca32121620a54e">gul14::toc</a></div><div class="ttdeci">auto toc(std::chrono::steady_clock::time_point t0)</div><div class="ttdoc">Return the elapsed time in seconds (or a different unit) since the given time point.</div><div class="ttdef"><b>Definition:</b> time_util.h:86</div></div>
+<div class="ttc" id="anamespacegul14_html_a093e46ff24705fce82ca32121620a54e"><div class="ttname"><a href="namespacegul14.html#a093e46ff24705fce82ca32121620a54e">gul14::toc</a></div><div class="ttdeci">auto toc(std::chrono::steady_clock::time_point t0)</div><div class="ttdoc">Return the elapsed time in seconds (or a different unit) since the given time point.</div><div class="ttdef"><b>Definition:</b> time_util.h:87</div></div>
 <div class="ttc" id="anamespacegul14_html_ac1b5967a0b377c9d4b3791db8e2e20a3"><div class="ttname"><a href="namespacegul14.html#ac1b5967a0b377c9d4b3791db8e2e20a3">gul14::clamp</a></div><div class="ttdeci">constexpr const NumT &amp; clamp(const NumT &amp;v, const NumT &amp;lo, const NumT &amp;hi)</div><div class="ttdoc">Coerce a value to be within a given range.</div><div class="ttdef"><b>Definition:</b> num_util.h:191</div></div>
 <div class="ttc" id="anamespacegul14_html_a0e6eed5ed768613f3680866905ca82b9"><div class="ttname"><a href="namespacegul14.html#a0e6eed5ed768613f3680866905ca82b9">gul14::split</a></div><div class="ttdeci">StringContainer split(string_view text, string_view delimiter, ContainerInsertFct insert_fct=detail::emplace_back&lt; StringContainer &gt;)</div><div class="ttdoc">Separate a string at all occurrences of a delimiter, returning the strings between the delimiters in ...</div><div class="ttdef"><b>Definition:</b> join_split.h:117</div></div>
 <div class="ttc" id="anamespacegul14_html_af75ce67592c33fda6f431085747b21cb"><div class="ttname"><a href="namespacegul14.html#af75ce67592c33fda6f431085747b21cb">gul14::trim_right</a></div><div class="ttdeci">GUL_EXPORT std::string trim_right(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim trailing whitespace (or a custom set of characters) from a string, returning a new std::string.</div><div class="ttdef"><b>Definition:</b> trim.cc:61</div></div>
@@ -5458,15 +5622,16 @@ template&lt;typename NumT , typename  = std::enable_if_t&lt;std::is_floating_poi
 <div class="ttc" id="anamespacegul14_html_aa8e8600a02fd663c746353934b0e224c"><div class="ttname"><a href="namespacegul14.html#aa8e8600a02fd663c746353934b0e224c">gul14::tokenize</a></div><div class="ttdeci">StringContainer tokenize(string_view str, string_view delimiters=default_whitespace_characters, ContainerInsertFct insert_fct=detail::emplace_back&lt; StringContainer &gt;)</div><div class="ttdoc">Split the given string into a vector of substrings (tokens) delimited by any of the characters in the...</div><div class="ttdef"><b>Definition:</b> tokenize.h:110</div></div>
 <div class="ttc" id="anamespacegul14_html_a2ad9d1a1cee23214a61491bfc8171595"><div class="ttname"><a href="namespacegul14.html#a2ad9d1a1cee23214a61491bfc8171595">gul14::hexdump</a></div><div class="ttdeci">std::string hexdump(IteratorT begin, IteratorT end, string_view prompt=&quot;&quot;)</div><div class="ttdoc">Generate a hexdump of a data range and return it as a string.</div><div class="ttdef"><b>Definition:</b> hexdump.h:213</div></div>
 <div class="ttc" id="anamespacegul14_html_ad64e01233c1c469a698c36c9e2f89079"><div class="ttname"><a href="namespacegul14.html#ad64e01233c1c469a698c36c9e2f89079">gul14::cat</a></div><div class="ttdeci">std::string cat()</div><div class="ttdoc">Efficiently concatenate an arbitrary number of strings and numbers.</div><div class="ttdef"><b>Definition:</b> cat.h:90</div></div>
-<div class="ttc" id="anamespacegul14_html_af05731d015fe2827d95fffd6432ba74d"><div class="ttname"><a href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">gul14::safe_string</a></div><div class="ttdeci">GUL_EXPORT std::string safe_string(const char *char_ptr, std::size_t length)</div><div class="ttdoc">Safely construct a std::string from a char pointer and a length.</div><div class="ttdef"><b>Definition:</b> string_util.cc:32</div></div>
+<div class="ttc" id="anamespacegul14_html_af05731d015fe2827d95fffd6432ba74d"><div class="ttname"><a href="namespacegul14.html#af05731d015fe2827d95fffd6432ba74d">gul14::safe_string</a></div><div class="ttdeci">GUL_EXPORT std::string safe_string(const char *char_ptr, std::size_t length)</div><div class="ttdoc">Safely construct a std::string from a char pointer and a length.</div><div class="ttdef"><b>Definition:</b> string_util.cc:43</div></div>
 <div class="ttc" id="aclassgul14_1_1optional_html"><div class="ttname"><a href="classgul14_1_1optional.html">gul14::optional</a></div><div class="ttdoc">A class template that can either contain a value of a certain type or not.</div><div class="ttdef"><b>Definition:</b> optional.h:272</div></div>
 <div class="ttc" id="anamespacegul14_html_a06b75f0d2f5432534ce5016f4f6133e2"><div class="ttname"><a href="namespacegul14.html#a06b75f0d2f5432534ce5016f4f6133e2">gul14::mean</a></div><div class="ttdeci">auto mean(ContainerT const &amp;container, Accessor accessor=ElementAccessor&lt; ElementT &gt;()) -&gt; ResultT</div><div class="ttdoc">Calculate the arithmetic mean value of all elements in a container.</div><div class="ttdef"><b>Definition:</b> statistics.h:161</div></div>
 <div class="ttc" id="anamespacegul14_html_a71226668835d574ccad136939940191f"><div class="ttname"><a href="namespacegul14.html#a71226668835d574ccad136939940191f">gul14::split_sv</a></div><div class="ttdeci">StringContainer split_sv(string_view text, string_view delimiter, ContainerInsertFct insert_fct=detail::emplace_back&lt; StringContainer &gt;)</div><div class="ttdoc">Separate a string at all occurrences of a delimiter, returning the strings between the delimiters in ...</div><div class="ttdef"><b>Definition:</b> join_split.h:221</div></div>
 <div class="ttc" id="anamespacegul14_html_a3cba61a104b118243c81a51eb72309a1"><div class="ttname"><a href="namespacegul14.html#a3cba61a104b118243c81a51eb72309a1">gul14::trim_right_sv</a></div><div class="ttdeci">GUL_EXPORT string_view trim_right_sv(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim trailing whitespace (or a custom set of characters) from a string, returning a view into the ori...</div><div class="ttdef"><b>Definition:</b> trim.cc:66</div></div>
 <div class="ttc" id="anamespacegul14_html_adbaca240c1cd99e9a477f8c2eb8b8880"><div class="ttname"><a href="namespacegul14.html#adbaca240c1cd99e9a477f8c2eb8b8880">gul14::hex_string</a></div><div class="ttdeci">std::string hex_string(Integer v)</div><div class="ttdoc">Return the hexadecimal ASCII representation of an integer value.</div><div class="ttdef"><b>Definition:</b> string_util.h:106</div></div>
+<div class="ttc" id="anamespacegul14_html_aadeb4703880f1b68a77a35fd5bf8fb6b"><div class="ttname"><a href="namespacegul14.html#aadeb4703880f1b68a77a35fd5bf8fb6b">gul14::repeat</a></div><div class="ttdeci">GUL_EXPORT std::string repeat(gul14::string_view str, std::size_t n)</div><div class="ttdoc">Repeat a string N times.</div><div class="ttdef"><b>Definition:</b> string_util.cc:32</div></div>
 <div class="ttc" id="anamespacegul14_html_a56bfa0fde0d5eb6c3367f1d55f2504b1"><div class="ttname"><a href="namespacegul14.html#a56bfa0fde0d5eb6c3367f1d55f2504b1">gul14::standard_deviation</a></div><div class="ttdeci">auto standard_deviation(ContainerT const &amp;container, Accessor accessor=ElementAccessor&lt; ElementT &gt;()) -&gt; StandardDeviationMean&lt; ResultT &gt;</div><div class="ttdoc">Calculate the standard deviation of all elements in a container.</div><div class="ttdef"><b>Definition:</b> statistics.h:546</div></div>
-<div class="ttc" id="anamespacegul14_html_af863dc04f4588482947e31f758762b89"><div class="ttname"><a href="namespacegul14.html#af863dc04f4588482947e31f758762b89">gul14::tic</a></div><div class="ttdeci">std::chrono::steady_clock::time_point tic()</div><div class="ttdoc">Return the current time as a std::chrono time_point.</div><div class="ttdef"><b>Definition:</b> time_util.h:48</div></div>
-<div class="ttc" id="anamespacegul14_html_aa0abe7bf6452e6882c0e0b0d05897adc"><div class="ttname"><a href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc">gul14::sleep</a></div><div class="ttdeci">bool sleep(const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const Trigger &amp;trg)</div><div class="ttdoc">Sleep for a given time span, with the option of being woken up from another thread.</div><div class="ttdef"><b>Definition:</b> time_util.h:103</div></div>
+<div class="ttc" id="anamespacegul14_html_af863dc04f4588482947e31f758762b89"><div class="ttname"><a href="namespacegul14.html#af863dc04f4588482947e31f758762b89">gul14::tic</a></div><div class="ttdeci">std::chrono::steady_clock::time_point tic()</div><div class="ttdoc">Return the current time as a std::chrono time_point.</div><div class="ttdef"><b>Definition:</b> time_util.h:49</div></div>
+<div class="ttc" id="anamespacegul14_html_aa0abe7bf6452e6882c0e0b0d05897adc"><div class="ttname"><a href="namespacegul14.html#aa0abe7bf6452e6882c0e0b0d05897adc">gul14::sleep</a></div><div class="ttdeci">bool sleep(const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const Trigger &amp;trg)</div><div class="ttdoc">Sleep for at least the given time span, with the option of being woken up from another thread.</div><div class="ttdef"><b>Definition:</b> time_util.h:109</div></div>
 <div class="ttc" id="anamespacegul14_html_a0af285e7ea3b0a077734c00e2059f330"><div class="ttname"><a href="namespacegul14.html#a0af285e7ea3b0a077734c00e2059f330">gul14::trim</a></div><div class="ttdeci">GUL_EXPORT std::string trim(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim leading and trailing whitespace (or a custom set of characters) from a string,...</div><div class="ttdef"><b>Definition:</b> trim.cc:29</div></div>
 <div class="ttc" id="anamespacegul14_html_afaa3db5afdef851e15185589aaacb16b"><div class="ttname"><a href="namespacegul14.html#afaa3db5afdef851e15185589aaacb16b">gul14::trim_left_sv</a></div><div class="ttdeci">GUL_EXPORT string_view trim_left_sv(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim leading whitespace (or a custom set of characters) from a string, returning a view into the orig...</div><div class="ttdef"><b>Definition:</b> trim.cc:51</div></div>
 <div class="ttc" id="anamespacegul14_html_a881f0f6e3e283fb7558eaa336020cfdf"><div class="ttname"><a href="namespacegul14.html#a881f0f6e3e283fb7558eaa336020cfdf">gul14::escape</a></div><div class="ttdeci">GUL_EXPORT std::string escape(string_view in)</div><div class="ttdoc">Create a new string that looks like an ASCII-only C string literal of the input string.</div></div>
