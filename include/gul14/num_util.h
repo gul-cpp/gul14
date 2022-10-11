@@ -71,16 +71,17 @@ constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<V
  * orders equals digits does not hold so strict anymore.
  *
  * Remember that any nonzero number has infinite different significant digits compared
- * with 0.00000000. So if either a or b is 0.0 the result must be false.
+ * with 0.00000000. So if one operand is 0.0 while the other is not 0.0 the result must be false.
  *
  * \param a       The first number to compare
- * \param b       The second number to compare (same type as a)
+ * \param b       The second number to compare (same type as \c a)
  * \param orders  The number of digits to take for comparison (any numeric type)
  *
- * \returns true if the difference between a and b is orders of magnitude lower than the
- *          value of a or b.
+ * \returns true if \c a and \c b are equal or the difference between \c a and \c b is
+ *          \c orders orders of magnitude lower than the value of \c a or \c b
  *
  * \since GUL version 1.4 parameter type \b NumT can be an integral type (had to be floating point before)
+ * \since GUL version 2.7.1 return true if a == b == 0.0
  */
 template<typename NumT, typename OrderT,
     typename = std::enable_if_t<
@@ -89,8 +90,12 @@ template<typename NumT, typename OrderT,
     >>
 bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(false) {
     // std::pow() is not noexcept, which might or might not be true
-    return gul14::abs(a - b)
-        < (std::max(gul14::abs(a), gul14::abs(b)) / std::pow(static_cast<std::decay_t<NumT>>(10.0), orders));
+    auto difference = gul14::abs(a - b);
+    if (difference == NumT{ 0 })
+        return true;
+    auto maximum = std::max(gul14::abs(a), gul14::abs(b));
+    auto limit = maximum / std::pow(static_cast<std::decay_t<NumT>>(10.0), orders);
+    return difference < limit;
 }
 
 /**
