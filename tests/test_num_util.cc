@@ -146,6 +146,11 @@ TEST_CASE("test within_orders()", "[num_util]")
     REQUIRE(gul14::within_orders(1.0, 0.0, 1) == false);
     REQUIRE(gul14::within_orders(1.0, 0.0, 0) == false);
 
+    // Compare zero with zero
+    double a = 0.0;
+    REQUIRE(gul14::within_orders<double>(a, a, 5) == true);
+    REQUIRE(gul14::within_orders(static_cast<float>(a), 0.0f, 5) == true);
+
     // From the Doxygen example with integers
     REQUIRE(gul14::within_orders(23736384, 23736228, 5) == true);
     REQUIRE(gul14::within_orders(23736384, 23735384, 5) == false);
