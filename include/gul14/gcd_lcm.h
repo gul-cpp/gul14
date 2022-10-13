@@ -57,7 +57,7 @@ namespace gul14 {
  * auto static_assertion_failure = gul14::gcd(10u, -5);
  * \endcode
  *
- * \since GUL 2.7
+ * \since GUL version 2.7
  */
 template <typename IntTypeA, typename IntTypeB>
 constexpr inline auto
@@ -111,7 +111,7 @@ gcd(IntTypeA a, IntTypeB b)
  * auto static_assertion_failure = gul14::lcm(10u, -5);
  * \endcode
  *
- * \since GUL 2.7
+ * \since GUL version 2.7
  */
 template <typename IntTypeA, typename IntTypeB>
 constexpr inline auto
