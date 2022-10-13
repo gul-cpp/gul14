@@ -25,7 +25,7 @@
 #
 
 Name:           libgul14
-Version:        2.6
+Version:        2.7
 Release:        1%{?dist}
 Summary:        General Utility Library
 
@@ -99,5 +99,8 @@ Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 %{_libdir}/%{name}.a
 
 %changelog
+* Thu Oct 13 2022 Soeren Grunewald <soeren.grunewald@desy.de> - 2.7-1
+- New upstream release
+
 * Thu Aug 19 2021 Soeren Grunewald <soeren.grunewald@desy.de> - 2.6-1
 - Initial release
