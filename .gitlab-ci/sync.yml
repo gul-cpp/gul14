@@ -1,0 +1,23 @@
+variables:
+        http_proxy: http://xfelproxy:3128/
+        https_proxy: http://xfelproxy:3128/
+
+Github sync:
+        # Add an access token via Settings -> Access Tokens
+        # with role: Maintainer and write_repository rights
+        # Copy the token into your clipboard or similar
+        #
+        # Store the access token via Settings -> CI/CD -> Variables -> Add
+        # Key: GITLAB_ACCESS_TOKEN
+        # Value: Access token from above
+        # Set Protect variable and Mask variable
+        image: ubuntu:20.04
+        tags:
+                - ubuntu20
+        script:
+                - apt update
+                - apt install -y git-core ca-certificates
+                - rm -rf SYNC
+                - git clone --mirror https://github.com/gul-cpp/gul14.git SYNC
+                - cd SYNC
+                - git push --force --mirror "https://:${GITLAB_ACCESS_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" -o ci.skip
