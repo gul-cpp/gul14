@@ -1,0 +1,302 @@
+stages:
+        - initial_build
+        - build
+        - test
+        - deploy
+
+variables:
+        GIT_DEPTH: 0
+        GIT_FETCH_EXTRA_FLAGS: --tags --prune --prune-tags
+
+########
+# Focal (Ubuntu 20.04)
+Focal build:
+        stage: initial_build
+        extends:
+                - .setup_focal
+                - .meson_build
+        after_script:
+                # For debugging
+                - echo $CI_DEFAULT_BRANCH
+                - echo $CI_JOB_TRIGGERED
+                - echo $CI_PIPELINE_SOURCE
+                - echo $CI_COMMIT_REF_NAME
+                - echo $CI_COMMIT_SHA
+                - echo $CI_BUILD_REF
+                - echo $CI_COMMIT_BRANCH
+                - echo $CI_COMMIT_TAG
+
+Focal test:
+        stage: test
+        extends: .setup_focal
+        needs:
+                - job: Focal build
+                  artifacts: true
+        script:
+                - build.release/tests/libgul-test -r junit | tee test.xml
+                - meson --buildtype=debugoptimized -Db_sanitize=address build.asan
+                - ninja -C build.asan test
+                - meson --buildtype=debugoptimized -Db_sanitize=undefined build.ubsan
+                - ninja -C build.ubsan test
+        artifacts:
+                when: always
+                reports:
+                        junit: test.xml
+
+Focal install:
+        stage: deploy
+        extends:
+                - .setup_focal
+                - .deploy_debian
+        needs:
+                - job: Focal test
+                  artifacts: false
+                - job: Focal build
+                  artifacts: true
+        variables:
+                PLATFORM: focal
+
+########
+# Xenial (Ubuntu 16.04)
+Xenial build:
+        stage: build
+        extends:
+                - .setup_xenial
+                - .meson_build
+        needs:
+                - job: Focal build
+                  artifacts: false
+
+Xenial test:
+        stage: test
+        extends: .setup_xenial
+        needs:
+                - job: Xenial build
+                  artifacts: true
+        script:
+                - build.release/tests/libgul-test -r junit | tee test.xml
+        artifacts:
+                when: always
+                reports:
+                        junit: test.xml
+
+Xenial install:
+        stage: deploy
+        extends:
+                - .setup_xenial
+                - .deploy_debian
+        needs:
+                - job: Xenial build
+                  artifacts: true
+                - job: Xenial test
+                  artifacts: false
+        variables:
+                PLATFORM: xenial
+
+########
+# Darwin
+Darwin build:
+        stage: build
+        extends: .setup_darwin
+        needs:
+                - job: Focal build
+                  artifacts: false
+        script:
+                - export PATH=/usr/local/bin:${PATH}
+                - meson
+                  --buildtype=debugoptimized
+                  --prefix=/local
+                  --libdir=lib
+                  --includedir=lib/include
+                  -D 'cpp_args= -arch x86_64'
+                  -D 'cpp_link_args= -arch x86_64'
+                  macos-build
+                - ninja -C macos-build
+        artifacts:
+                paths:
+                        - macos-build
+                expire_in: 1 week
+
+Darwin test:
+        stage: test
+        extends: .setup_darwin
+        needs:
+                - job: Darwin build
+                  artifacts: true
+        script:
+                - export PATH=/usr/local/bin:${PATH}
+                - macos-build/tests/libgul-test -r junit '~[time_util]' '~[Trigger]' | tee test.xml
+        artifacts:
+                when: always
+                reports:
+                        junit: test.xml
+
+Darwin install:
+        stage: deploy
+        extends:
+                - .setup_darwin
+                - .deploy_generic
+        needs:
+                - job: Darwin test
+                  artifacts: false
+                - job: Darwin build
+                  artifacts: true
+        script:
+                - eval $DEPLOY_ALLOWED || exit 0
+                - export PATH=/usr/local/bin:${PATH}
+                - DESTDIR=${CI_PROJECT_DIR}/macos_install ninja -C macos-build install
+        artifacts:
+                paths:
+                        - macos_install
+                expire_in: 1 week
+
+########
+# Windows
+Windows build:
+        stage: build
+        extends: .setup_windows
+        needs:
+                - job: Focal build
+                  artifacts: false
+        allow_failure: true
+        script:
+                - tools\make_vs.bat mrproper
+                - tools\make_vs.bat debug x64
+        artifacts:
+                paths:
+                        - build
+                expire_in: 1 day
+
+Windows test:
+        stage: test
+        extends: .setup_windows
+        needs:
+                - job: Windows build
+                  artifacts: true
+        allow_failure: true
+        script:
+                - cd build\x64-windows\debug\src
+                - ..\tests\libgul-test.exe -r junit | tee ..\tests\test.xml
+        artifacts:
+                when: always
+                reports:
+                        junit: build\x64-windows\debug\tests\test.xml
+
+########
+# Helper Templates following
+
+# Template to set up the meson 'release' build on linuxes
+.meson_build:
+        script:
+                - meson
+                  --buildtype=debugoptimized
+                  --prefix=/export/doocs
+                  --libdir=lib
+                  --includedir=lib/include
+                  -D deb-vers-tag='DOOCSVERSION_'
+                  -D deb-vers-pack=true
+                  -D deb-name=doocs-@0@
+                  -D deb-dev-name=dev-doocs-@0@
+                  build.release
+                - ninja -C build.release
+        artifacts:
+                paths:
+                        - build.release
+                expire_in: 1 week
+
+# Template to put debian packages in the gitlab package repo
+.deploy_debian:
+        extends: .deploy_generic
+        script:
+                - eval $DEPLOY_ALLOWED || exit 0
+                - (export http_proxy="http://xfelproxy:3128/"; export https_proxy="http://xfelproxy:3128/";
+                    DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends build-essential debhelper devscripts curl)
+                - (cd build.release; debuild -i -us -uc -b)
+                - export VERS=`basename doocs*.deb | sed 's/\([^_]*\).*/\1/'`
+                - export FILES="{`ls -1 *doocs*.deb *doocs*.ddeb | tr '\n' ',' | sed 's/,$//'`}"
+                - echo "Uploding version ${VERS} with files ${FILES}"
+                - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file "${FILES}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PLATFORM}/${VERS}/"'
+                - mkdir deb_packages
+                - mv `eval echo ${FILES}` deb_packages
+        artifacts:
+                paths:
+                        - deb_packages
+                expire_in: 1 week
+
+# Template to set up the individual target machines
+.setup_xenial:
+        image: ubuntu:16.04
+        tags:
+                - ubuntu16
+        before_script:
+                # Install build dependencies
+                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   apt update && apt install -y wget gnupg)
+                # Add DOOCS repo with key
+                - echo "Installing MCS DOOCS package repository with key ..."
+                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
+                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
+                # Add backports for ninja
+                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
+                   git build-essential binutils autotools-dev g++ fakeroot debhelper cmake
+                   ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1 pkg-config)
+
+.setup_focal:
+        image: ubuntu:20.04
+        tags:
+                - ubuntu20
+        before_script:
+                # Update APT cache
+                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   apt update)
+                # Install part of the packages required to compile and link DOOCS core libraries on a focal system
+                - (export http_proxy="http://xfelproxy:3128/";
+                   export https_proxy="http://xfelproxy:3128/";
+                   DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
+                   git build-essential binutils autotools-dev g++ dh-exec dh-autoreconf cmake
+                   meson pkg-config)
+                - export DOOCSARCH=Ubuntu-20.04-x86_64
+
+.setup_darwin:
+        tags:
+                - macOS-x86_64
+
+.setup_windows:
+        tags:
+                - windows10
+
+# Template to allow deployment only on master branch related push/tag
+# Note: Apart from the rules this templates adds, one needs to eval the
+# variable in the actual job like
+#    eval $DEPLOY_ALLOWED || exit 0
+# We need this because yaml merging does not provide a way to combine
+# multiple script arrays
+.deploy_generic:
+        rules:
+                - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Never when creating a MR
+                  when: never
+                - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH # Merge request merged (or direct push)
+                - if: $CI_COMMIT_TAG =~ /^DOOCSVERSION_[0-9]+_[0-9]+_[0-9]+$/ # Some tag pushed that is DOOCSVERSION_23_13_5 or equivalent
+
+        variables:
+                DEPLOY_ALLOWED: >
+                                if [ -n '$CI_COMMIT_TAG'  -a '$CI_COMMIT_REF_NAME' != '$CI_DEFAULT_BRANCH' ]; then
+                                      echo '===> Searching for ${CI_COMMIT_SHA} in ${CI_DEFAULT_BRANCH} branch:';
+                                      export COMMIT_ON_MASTER=`git log --pretty=oneline --decorate=short origin/${CI_DEFAULT_BRANCH} | grep -c "^${CI_COMMIT_SHA} "`;
+                                      if [ "$$COMMIT_ON_MASTER" -lt 1 ]; then echo '===> Tag pipeline not for ${CI_DEFAULT_BRANCH} branch - abort job'; false;
+                                      else echo '===> Success, continuing deploy job for tag commit...'; fi;
+                                fi
