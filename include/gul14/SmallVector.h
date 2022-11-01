@@ -803,6 +803,8 @@ public:
     Iterator insert(ConstIterator pos, SizeType num_elements, const ValueType& value)
     {
         const auto idx = static_cast<SizeType>(pos - begin());
+        if (num_elements < 1)
+            return begin() + idx;
 
         const SizeType num_assignable = make_space_at_idx_for_n_elements(idx, num_elements);
         Iterator insert_pos = begin() + idx;
@@ -843,6 +845,8 @@ public:
     {
         const auto idx = static_cast<SizeType>(pos - begin());
         const auto num_elements = static_cast<SizeType>(std::distance(first, last));
+        if (num_elements < 1)
+            return begin() + idx;
 
         const SizeType num_assignable = make_space_at_idx_for_n_elements(idx, num_elements);
         Iterator insert_pos = begin() + idx;
