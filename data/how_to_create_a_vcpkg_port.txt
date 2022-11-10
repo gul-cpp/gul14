@@ -1,0 +1,36 @@
+These are some notes on how to create a new vcpkg port for GUL14, e.g. after the
+release of an update. This assumes that a fork of https://github.com/microsoft/vcpkg.git
+is checked out.
+
+1.  Edit ports/gul14/portfile.cmake
+    Change REF to new version tag or git hash
+    Change SHA512 to 0
+2.  Edit ports/gul14/vcpkg.json
+    Change version number
+3.  Run vcpkg remove --outdated
+    This should remove the outdated GUL14 version (if any)
+4.  Run vcpkg install gul14
+    It should fail and show you the new SHA512 hash
+5.  Edit ports/gul14/portfile.cmake
+    Change SHA512 to new hash
+6.  Add port to vcpkg repository
+    git add ports/gul14
+    git commit -m "[gul14] Update to version 2.7.1"
+
+Automatic alternative:
+7.-9. Update files in "versions" directory
+    vcpkg x-add-version gul14
+
+Manual alternative:
+7.  Get tree identifier for the portfile directory
+    git rev-parse HEAD:ports/gul14
+8.  Edit versions/g-/gul14.json
+    Add new port entry at top of "versions" list,
+    using git-tree identifier from last step
+9.  Edit versions/baseline.json
+    Change baseline to new version
+    Maybe adjust port-version
+
+10. Commit versions directory
+    git add versions
+    git commit --amend --no-edit
