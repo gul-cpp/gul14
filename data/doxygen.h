@@ -145,7 +145,7 @@ namespace gul14 {
  *
  * \subsection v2_7_1 Version 2.7.1
  *
- * - *Released with DOOCS 22.10.0*
+ * - *Released with DOOCS 22.10.0-22.11.0*
  * - within_orders(0.0, 0.0, 10) results now in true
  *
  * \subsection v2_7 Version 2.7
