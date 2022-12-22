@@ -7,7 +7,7 @@
  * \copyright
  * Copyright Marshall Clow 2012-2015
  * Copyright Beman Dawes 2015
- * Copyright \ref contributors 2018-2020 (modifications for GUL)
+ * Copyright \ref contributors 2018-2022 (modifications for GUL)
  *
  * Distributed under the Boost Software License, Version 1.0. (See \ref license_boost_1_0
  * or http://www.boost.org/LICENSE_1_0.txt)
@@ -192,11 +192,6 @@ public:
     template<typename Allocator>
     explicit operator std::basic_string<charT, typename traits::base_traits, Allocator>() const {
         return std::basic_string<charT, typename traits::base_traits, Allocator>(begin(), end());
-    }
-
-    template<typename Allocator = std::allocator<charT> >
-    std::basic_string<charT, typename traits::base_traits, Allocator> to_string(const Allocator& a = Allocator()) const {
-        return std::basic_string<charT, typename traits::base_traits, Allocator>(begin(), end(), a);
     }
 
     size_type copy(charT* s, size_type n, size_type pos=0) const {
