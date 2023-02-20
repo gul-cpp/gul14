@@ -41,9 +41,8 @@ namespace gul14 {
 constexpr char lowercase_ascii(char c) noexcept
 {
     if (c >= 'A' && c <= 'Z')
-        return c - 'A' + 'a';
-    else
-        return c;
+        c = static_cast<char>(c + ('a' - 'A'));
+    return c;
 }
 
 /**
@@ -81,9 +80,8 @@ std::string &lowercase_ascii_inplace(std::string &str) noexcept;
 constexpr char uppercase_ascii(char c) noexcept
 {
     if (c >= 'a' && c <= 'z')
-        return c - 'a' + 'A';
-    else
-        return c;
+        c = static_cast<char>(c - ('a' - 'A'));
+    return c;
 }
 
 /**
