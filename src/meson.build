@@ -92,6 +92,9 @@ add_cpp_args = [
 if meson.get_compiler('cpp').has_argument('-Wshadow') # msvc doesnt have
     add_cpp_args += [ '-Wshadow' ]
 endif
+if meson.get_compiler('cpp').has_argument('-Wconversion') # msvc doesnt have
+    add_cpp_args += [ '-Wconversion' ]
+endif
 
 libgul = both_libraries(
     meson.project_name(), libgul_src + [ version_cc ],
