@@ -76,7 +76,7 @@ using BitFunctionReturnType =
 template <typename T = unsigned, typename ReturnT = BitFunctionReturnType<T>>
 auto constexpr inline bit_set(unsigned bit) noexcept -> ReturnT {
     assert(bit < sizeof(T) * 8);
-    return (std::make_unsigned_t<T>{1} << bit);
+    return static_cast<ReturnT>(std::make_unsigned_t<T>{1u} << bit);
 }
 
 /**
@@ -126,7 +126,7 @@ auto constexpr inline bit_set(T previous, unsigned bit) noexcept -> ReturnT {
  */
 template <typename T, typename ReturnT = BitFunctionReturnType<T>>
 auto constexpr inline bit_reset(T previous, unsigned bit) noexcept -> ReturnT {
-    return previous & ~bit_set<T>(bit);
+    return static_cast<ReturnT>(previous & ~bit_set<T>(bit));
 }
 
 /**
