@@ -4,7 +4,7 @@
  * \date   Created on July 26, 2019
  * \brief  Unit tests for optional<>.
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -31,7 +31,7 @@ TEMPLATE_TEST_CASE("optional: Basics for numeric types", "[optional]",
 {
     optional<TestType> opt;
     REQUIRE(opt.has_value() == false);
-    REQUIRE(opt.value_or(42) == 42);
+    REQUIRE(opt.value_or(static_cast<TestType>(42)) == static_cast<TestType>(42));
     REQUIRE_THROWS_AS(opt.value(), gul14::bad_optional_access);
 }
 
