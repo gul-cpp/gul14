@@ -151,12 +151,18 @@ bool within_ulp(NumT a, NumT b, unsigned int ulp)
         return true;
     auto diff = std::abs(a - b);
     auto maxval = std::max(std::abs(a), std::abs(b));
+
     // NORMAL cases
     if (std::isnormal(maxval))
-        return diff <= std::numeric_limits<NumT>::epsilon() * (ulp * maxval);
+    {
+        return diff <= std::numeric_limits<NumT>::epsilon()
+                       * static_cast<NumT>(ulp) * maxval;
+    }
+
     // SUBNORMAL cases
     if (std::isfinite(maxval))
-        return diff <= std::numeric_limits<NumT>::denorm_min() * ulp;
+        return diff <= std::numeric_limits<NumT>::denorm_min() * static_cast<NumT>(ulp);
+
     // NAN and INF cases: Two NANs or (a xor b is (-)INF) or (INF, -INF pair)
     return false;
 }
