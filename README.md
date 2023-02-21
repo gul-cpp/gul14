@@ -47,12 +47,13 @@ Use meson to configure the build you want to have. A list of the
 what you want. If you use directories starting with 'build' they will be ignored by git.
 Examples:
 
-        meson build
-        meson -D tests=false build_without_tests
-        meson --prefix=/usr -D buildtype=release build_rel
-        meson -D buildtype=release -D unity=on build_rel_unity
-        meson -D buildtype=release -D docs=false build_nodocs_rel
-        CXX=clang++ meson build_clang
+        meson setup build
+        meson setup -D tests=false build_without_tests
+        meson setup --prefix=/usr --buildtype=release build_rel
+        meson setup --buildtype=release -D unity=on build_rel_unity
+        meson setup --buildtype=release -D docs=false build_nodocs_rel
+        meson setup -Dcpp_args='-Wconversion -Wshadow' --buildtype=debug builddir
+        CXX=clang++ meson setup build_clang
 
 Typical build configurations can be easily summoned as detailed in
 [Default configurations](#Default-configurations) below.
