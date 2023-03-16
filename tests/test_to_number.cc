@@ -215,7 +215,7 @@ TEMPLATE_TEST_CASE("to_number(): min and subnormal floating point", "[to_number]
     ss << std::setprecision(std::numeric_limits<TestType>::max_digits10);
 
     for (auto i = 1; i <= max_divisor; ++i) {
-        auto const num = min / i; // Generate a number that is smaller than min (aka subnormal)
+        auto const num = min / static_cast<TestType>(i); // Generate a number that is smaller than min (aka subnormal)
         ss.str("");
         ss << num;
         CAPTURE(ss.str());

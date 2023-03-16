@@ -196,8 +196,8 @@ constexpr inline gul14::optional<NumberType> to_normalized_float(gul14::string_v
             return nullopt;
         accu += (*f1 * i2_magnitude);
     }
-    return NumberType(accu) / (magnitude / 10); // NOLINT(bugprone-integer-division): Precision loss is not possible with normalized accu
 
+    return static_cast<NumberType>(accu) / static_cast<NumberType>(magnitude / 10); // NOLINT(bugprone-integer-division): Precision loss is not possible with normalized accu
 }
 
 template <typename NumberType>
@@ -409,9 +409,9 @@ inline optional<NumberType> strtold_wrapper(gul14::string_view str) noexcept
  * if (result)
  *     std::cout << "The answer is " << *result << ".\n";
  * \endcode
- * 
+ *
  * <h4>Design Goals</h4>
- * 
+ *
  * to_number() shares many characteristics with std::atoi(), std::stod() and the like, but
  * follows its own set of design goals:
  * - Its input type is string_view: No null-termination and no temporary std::string are
@@ -500,7 +500,7 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
         else if (*result > max_abs_negative_value)
             return nullopt;
 
-        return -static_cast<NumberType>(*result);
+        return static_cast<NumberType>(-static_cast<NumberType>(*result));
     }
 
     return detail::to_unsigned_integer<NumberType>(str);
