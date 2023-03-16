@@ -164,7 +164,7 @@ auto mean(ContainerT const& container, Accessor accessor = ElementAccessor<Eleme
             container.cbegin(), container.cend(),
             ResultT{ },
             [accessor] (ResultT const& accu, ElementT const& el) {
-                return static_cast<ResultT>(accu + accessor(el)); } );
+                return accu + static_cast<ResultT>(accessor(el)); } );
     return sum / static_cast<ResultT>(container.size());
 }
 
@@ -203,7 +203,7 @@ auto rms(ContainerT const& container, Accessor accessor = ElementAccessor<Elemen
             ResultT{ },
             [accessor] (ResultT const& accu, ElementT const& el) {
                 return accu + std::pow(static_cast<ResultT>(accessor(el)), 2); } );
-    return std::sqrt(sum / container.size());
+    return std::sqrt(sum / static_cast<ResultT>(container.size()));
 }
 
 /**
@@ -560,7 +560,7 @@ auto standard_deviation(ContainerT const& container, Accessor accessor = Element
         [mean_val, accessor] (ResultT const& accu, ElementT const& el)
         { return accu + std::pow(accessor(el) - mean_val, 2); });
 
-    sum /= container.size() - 1;
+    sum /= static_cast<ResultT>(container.size() - 1);
 
     return { std::sqrt(sum), mean_val };
 }

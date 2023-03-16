@@ -473,9 +473,9 @@ TEMPLATE_TEST_CASE("general accumulate()", "[statistics]",
         v.push_back(&c);
         v.push_back(&d);
         REQUIRE(std::accumulate(v.cbegin(), v.cend(), TestType{ },
-                [](TestType a, TestType* el) { return a + *el; }) == 14);
+                [](TestType accu, TestType* el) { return accu + *el; }) == 14);
         REQUIRE(gul14::accumulate<TestType>(v,
-                [](TestType a, TestType* el) { return a + *el; }) == 14);
+                [](TestType accu, TestType* el) { return accu + *el; }) == 14);
     }
     SECTION("user type accumulate") {
         struct UserType {
@@ -490,9 +490,9 @@ TEMPLATE_TEST_CASE("general accumulate()", "[statistics]",
         v.emplace_back(TestType{ 3 }, true);
         v.emplace_back(TestType{ 7 }, true);
         REQUIRE(std::accumulate(v.cbegin(), v.cend(), TestType{ },
-                [](TestType a, UserType const& el) { return a + el.e; }) == 19);
+                [](TestType accu, UserType const& el) { return accu + el.e; }) == 19);
         REQUIRE(gul14::accumulate<TestType>(v,
-                [](TestType a, UserType const& el) { return a + el.e; }) == 19);
+                [](TestType accu, UserType const& el) { return accu + el.e; }) == 19);
     }
 }
 
