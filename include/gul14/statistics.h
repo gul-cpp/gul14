@@ -558,7 +558,7 @@ auto standard_deviation(ContainerT const& container, Accessor accessor = Element
     auto sum = std::accumulate(container.cbegin(), container.cend(),
         ResultT{ },
         [mean_val, accessor] (ResultT const& accu, ElementT const& el)
-        { return accu + std::pow(accessor(el) - mean_val, 2); });
+        { return accu + std::pow(static_cast<ResultT>(accessor(el)) - mean_val, 2); });
 
     sum /= static_cast<ResultT>(container.size() - 1);
 
