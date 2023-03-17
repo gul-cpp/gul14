@@ -1191,7 +1191,8 @@ TEST_CASE("SmallVector: insert(ConstIterator, SizeType, const ValueType &)", "[S
     for (int n = 0; n != 50; ++n)
     {
         int num_elements = dist(gen) % 10;
-        int insert_idx = (vec.size() == 0) ? 0 : (dist(gen) % vec.size());
+        int insert_idx =
+            (vec.size() == 0) ? 0 : (dist(gen) % static_cast<int>(vec.size()));
         int value = dist(gen) % 100;
 
         vec.insert(vec.begin() + insert_idx, num_elements, value);
@@ -1245,7 +1246,8 @@ TEST_CASE("SmallVector: insert(ConstIterator, InputIterator, InputIterator)", "[
     for (int n = 0; n != 50; ++n)
     {
         int num_elements = dist(gen) % 10;
-        int insert_idx = (vec.size() == 0) ? 0 : (dist(gen) % vec.size());
+        int insert_idx =
+            (vec.size() == 0) ? 0 : (dist(gen) % static_cast<int>(vec.size()));
 
         std::vector<int> new_elements(num_elements);
         std::generate(new_elements.begin(), new_elements.end(), [&]() { return dist(gen) % 100; });
