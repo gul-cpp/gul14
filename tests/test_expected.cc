@@ -32,11 +32,32 @@ using namespace std::literals;
 // test suite. The tests are just to make sure that the backport works roughly as
 // expected (no pun intended).
 
+namespace {
+
+gul14::expected<int, std::string> unexpected_if_negative(int value)
+{
+    if (value < 0)
+        return gul14::unexpected<std::string>("error");
+
+    return value;
+}
+
+} // namespace
+
 TEMPLATE_TEST_CASE("expected: Default constructor", "[expected]", int, std::string,
     std::unique_ptr<int>)
 {
     gul14::expected<TestType, std::string> ex;
     REQUIRE(ex.value() == TestType{});
+}
+
+TEST_CASE("expected: and_then()", "[expected]")
+{
+    auto ex = unexpected_if_negative(42).and_then(unexpected_if_negative);
+    REQUIRE(ex == 42);
+
+    auto ex2 = unexpected_if_negative(-42).and_then(unexpected_if_negative);
+    REQUIRE(ex2.has_value() == false);
 }
 
 TEST_CASE("expected: has_value()", "[expected]")
