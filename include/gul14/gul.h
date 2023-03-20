@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
  *
- * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -29,6 +29,7 @@
 // #include "gul14/catch.h" not included because it is only useful for unit tests
 // #include "gul14/date.h" not included by default to reduce compile times
 #include "gul14/escape.h"
+#include "gul14/expected.h"
 #include "gul14/finalizer.h"
 #include "gul14/gcd_lcm.h"
 #include "gul14/hexdump.h"
