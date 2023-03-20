@@ -20,6 +20,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <memory>
 #include <string>
 
 #include "gul14/catch.h"
@@ -31,7 +32,14 @@ using namespace std::literals;
 // test suite. The tests are just to make sure that the backport works roughly as
 // expected (no pun intended).
 
-TEST_CASE("expected", "[expected]")
+TEMPLATE_TEST_CASE("expected: Default constructor", "[expected]", int, std::string,
+    std::unique_ptr<int>)
+{
+    gul14::expected<TestType, std::string> ex;
+    REQUIRE(ex.value() == TestType{});
+}
+
+TEST_CASE("expected: has_value()", "[expected]")
 {
     gul14::expected<int, std::string> ex;
 
@@ -45,4 +53,15 @@ TEST_CASE("expected", "[expected]")
     ex = 42;
     REQUIRE(ex.has_value() == true);
     REQUIRE(*ex == 42);
+}
+
+TEST_CASE("value()", "[expected]")
+{
+    gul14::expected<int, std::string> ex{ 42 };
+
+    REQUIRE(ex.value() == 42);
+
+    ex = gul14::unexpected<std::string>("error");
+    REQUIRE_THROWS_AS(ex.value(), gul14::bad_expected_access<void>); // base class
+    REQUIRE_THROWS_AS(ex.value(), gul14::bad_expected_access<std::string>); // derived class
 }

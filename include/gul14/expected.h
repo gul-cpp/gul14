@@ -1096,13 +1096,33 @@ template <class T, class E> struct expected_default_ctor_base<T, E, false> {
 };
 } // namespace detail
 
-template <class E> class bad_expected_access : public std::exception {
-public:
-  explicit bad_expected_access(E e) : m_val(std::move(e)) {}
+/// \endcond
 
+/// The exception thrown by gul14::expected if value() is called, but no value is present.
+template <typename E>
+class bad_expected_access;
+
+template <> class bad_expected_access<void> : public std::exception
+{
+public:
   virtual const char *what() const noexcept override {
     return "Bad expected access";
   }
+
+protected:
+  bad_expected_access() noexcept {}
+  bad_expected_access(const bad_expected_access&) = default;
+  bad_expected_access(bad_expected_access&&) = default;
+  bad_expected_access& operator=(const bad_expected_access&) = default;
+  bad_expected_access& operator=(bad_expected_access&&) = default;
+  ~bad_expected_access() = default;
+};
+
+template <class E>
+class bad_expected_access : public bad_expected_access<void>
+{
+public:
+  explicit bad_expected_access(E e) : m_val(std::move(e)) {}
 
   const E &error() const & { return m_val; }
   E &error() & { return m_val; }
@@ -1112,8 +1132,6 @@ public:
 private:
   E m_val;
 };
-
-/// \endcond
 
 /**
  * An `expected<T, E>` is an object that contains the storage for and manages the lifetime
