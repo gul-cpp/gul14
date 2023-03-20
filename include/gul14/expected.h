@@ -22,6 +22,8 @@
 #ifndef GUL14_EXPECTED_H_
 #define GUL14_EXPECTED_H_
 
+/// \cond HIDE_SYMBOLS
+
 #include <cassert>
 #include <exception>
 #include <functional>
@@ -1111,13 +1113,23 @@ private:
   E m_val;
 };
 
-/// An `expected<T, E>` object is an object that contains the storage for
-/// another object and manages the lifetime of this contained object `T`.
-/// Alternatively it could contain the storage for another unexpected object
-/// `E`. The contained object may not be initialized after the expected object
-/// has been initialized, and may not be destroyed before the expected object
-/// has been destroyed. The initialization state of the contained object is
-/// tracked by the expected object.
+/// \endcond
+
+/**
+ * An `expected<T, E>` is an object that contains the storage for and manages the lifetime
+ * of a contained object `T`. Alternatively it can contain another, unexpected object `E`.
+ * The contained object may not be initialized after the expected object has been
+ * initialized, and may not be destroyed before the expected object has been destroyed.
+ * The initialization state of the contained object is tracked by the expected object.
+ *
+ * \note
+ * The GUL14 version is an adaptation of Sy Brand's implementation (see \ref expected.h)
+ * and should behave like
+ * [std::expected](https://en.cppreference.com/w/cpp/utility/expected) from C++23 for
+ * most use cases.
+ *
+ * \since GUL version 2.8.0
+ */
 template <class T, class E>
 class expected : private detail::expected_move_assign_base<T, E>,
                  private detail::expected_delete_ctor_base<T, E>,
@@ -1912,6 +1924,8 @@ constexpr auto and_then_impl(Exp &&exp, F &&f) {
              : Ret(unexpect, std::forward<Exp>(exp).error());
 }
 
+/// \cond HIDE_SYMBOLS
+
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
           class Ret = decltype(detail::invoke(std::declval<F>()))>
@@ -2185,6 +2199,8 @@ void swap(expected<T, E> &lhs,
           expected<T, E> &rhs) noexcept(noexcept(lhs.swap(rhs))) {
   lhs.swap(rhs);
 }
+
+/// \endcond
 
 } // namespace gul14
 
