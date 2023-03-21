@@ -8,7 +8,7 @@ project('gul14', 'cpp',
         'cpp_std=c++14',
         'warning_level=3',
     ],
-    version : '2.7',
+    version : '2.8',
     meson_version : '>=0.48')
 
 # Enforce that the version number is according to specs
