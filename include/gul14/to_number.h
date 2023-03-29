@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 19 July 2019
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -24,8 +24,9 @@
 #define GUL14_TO_NUMBER_H_
 
 #include <array>
-#include <cstdlib>
 #include <cmath>
+#include <cstdint>
+#include <cstdlib>
 #include <exception>
 #include <limits>
 #include <type_traits>
@@ -142,12 +143,12 @@ constexpr optional<int> parse_exponent(string_view str) noexcept
 template <typename NumberType>
 using FloatConversionIntType =
     typename std::conditional<
-        (std::numeric_limits<uint64_t>::digits10 >= std::numeric_limits<NumberType>::digits10),
-        uint64_t,
+        (std::numeric_limits<std::uint64_t>::digits10 >= std::numeric_limits<NumberType>::digits10),
+        std::uint64_t,
         #ifdef __SIZEOF_INT128__ // GCC, clang, intel
             __uint128_t
         #else
-            uint64_t
+            std::uint64_t
         #endif
     >::type;
 
