@@ -22,13 +22,73 @@
 #ifndef GUL14_EXPECTED_H_
 #define GUL14_EXPECTED_H_
 
-/// \cond HIDE_SYMBOLS
-
 #include <cassert>
 #include <exception>
 #include <functional>
 #include <type_traits>
 #include <utility>
+
+namespace gul14 {
+
+/**
+ * The exception thrown by gul14::expected if value() is called, but no value is present.
+ *
+ * This exception contains the "unexpected" or "error" value that was stored in the
+ * object instead of the "expected" one. It can be accessed via the error() member
+ * function.
+ *
+ * \since GUL version 2.8.0
+ */
+template <typename E>
+class bad_expected_access;
+
+/**
+ * An `expected<T, E>` is an object that normally contains an "expected" object of type T,
+ * but it can alternatively contain another, "unexpected" or "error" object of type E.
+ *
+ * The main use case of `expected` is as a function return value. It is a more expressive
+ * alternative to the common idiom of returning a `bool` to indicate success or failure,
+ * and using an output parameter to return the result:
+ *
+ * \code
+ * std::expected<double, std::string> square_root(double v)
+ * {
+ *     if (v < 0.0)
+ *         return std::unexpected<std::string>("negative value");
+ *     else
+ *         return std::sqrt(v);
+ * }
+ *
+ * for (double v = -2.0; v <= 2.0; v += 0.5)
+ * {
+ *     auto result = square_root(v);
+ *     if (result)
+ *         std::cout << result.value() << "\n";
+ *     else
+ *         std::cout << result.error() << "\n";
+ * }
+ * \endcode
+ *
+ * \note
+ * The GUL14 version is an adaptation of Sy Brand's implementation (see \ref expected.h)
+ * and should behave like
+ * [std::expected](https://en.cppreference.com/w/cpp/utility/expected) from C++23 for
+ * most use cases.
+ *
+ * \since GUL version 2.8.0
+ */
+template <typename T, typename E>
+class expected;
+
+/**
+ * Class template for constructing the unexpected value of an expected object.
+ *
+ * \since GUL version 2.8.0
+ */
+template <typename E>
+class unexpected;
+
+/// \cond HIDE_SYMBOLS
 
 #if defined(__EXCEPTIONS) || defined(_CPPUNWIND)
 #define GUL14_EXPECTED_EXCEPTIONS_ENABLED
@@ -45,7 +105,6 @@
 #if (defined(__GNUC__) && __GNUC__ < 8 && !defined(__clang__))
 #ifndef GUL14_GCC_LESS_8_TRIVIALLY_COPY_CONSTRUCTIBLE_MUTEX
 #define GUL14_GCC_LESS_8_TRIVIALLY_COPY_CONSTRUCTIBLE_MUTEX
-namespace gul14 {
 namespace detail {
 template <class T>
 struct is_trivially_copy_constructible
@@ -55,7 +114,6 @@ template <class T, class A>
 struct is_trivially_copy_constructible<std::vector<T, A>> : std::false_type {};
 #endif
 } // namespace detail
-} // namespace gul14
 #endif
 
 #define GUL14_EXPECTED_IS_TRIVIALLY_COPY_CONSTRUCTIBLE(T)                         \
@@ -73,20 +131,19 @@ struct is_trivially_copy_constructible<std::vector<T, A>> : std::false_type {};
   std::is_trivially_destructible<T>
 #endif
 
-namespace gul14 {
 template <class T, class E> class expected;
 
-#ifndef GUL14_MONOSTATE_INPLACE_MUTEX
-#define GUL14_MONOSTATE_INPLACE_MUTEX
 class monostate {};
 
 struct in_place_t {
   explicit in_place_t() = default;
 };
-static constexpr in_place_t in_place{};
-#endif
 
-template <class E> class unexpected {
+static constexpr in_place_t in_place{};
+
+template <class E>
+class unexpected
+{
 public:
   static_assert(!std::is_same<E, void>::value, "E must not be void");
 
@@ -1096,9 +1153,6 @@ template <class T, class E> struct expected_default_ctor_base<T, E, false> {
 };
 } // namespace detail
 
-/// \endcond
-
-/// The exception thrown by gul14::expected if value() is called, but no value is present.
 template <typename E>
 class bad_expected_access;
 
@@ -1133,21 +1187,6 @@ private:
   E m_val;
 };
 
-/**
- * An `expected<T, E>` is an object that contains the storage for and manages the lifetime
- * of a contained object `T`. Alternatively it can contain another, unexpected object `E`.
- * The contained object may not be initialized after the expected object has been
- * initialized, and may not be destroyed before the expected object has been destroyed.
- * The initialization state of the contained object is tracked by the expected object.
- *
- * \note
- * The GUL14 version is an adaptation of Sy Brand's implementation (see \ref expected.h)
- * and should behave like
- * [std::expected](https://en.cppreference.com/w/cpp/utility/expected) from C++23 for
- * most use cases.
- *
- * \since GUL version 2.8.0
- */
 template <class T, class E>
 class expected : private detail::expected_move_assign_base<T, E>,
                  private detail::expected_delete_ctor_base<T, E>,
@@ -1941,8 +1980,6 @@ constexpr auto and_then_impl(Exp &&exp, F &&f) {
              ? detail::invoke(std::forward<F>(f), *std::forward<Exp>(exp))
              : Ret(unexpect, std::forward<Exp>(exp).error());
 }
-
-/// \cond HIDE_SYMBOLS
 
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
