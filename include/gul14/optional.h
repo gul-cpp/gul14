@@ -34,7 +34,9 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+
 #include "gul14/internal.h"
+#include "gul14/utility.h"
 
 /// \cond HIDE_SYMBOLS
 #define GUL_OPTIONAL_REQUIRES(...) typename std::enable_if<__VA_ARGS__::value, bool>::type = false
@@ -131,12 +133,6 @@ void adl_swap(T& t, T& u) noexcept(noexcept(swap(t, u))) {
 
 constexpr struct trivial_init_t {
 } trivial_init{};
-
-
-// 20.5.6, In-place construction
-
-constexpr struct in_place_t {
-} in_place{};
 
 
 // 20.5.7, Disengaged state indicator
