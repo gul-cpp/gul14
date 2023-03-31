@@ -8,6 +8,9 @@
  * Written in 2017 by Sy Brand (tartanllama@gmail.com, @TartanLlama)
  * Modifications for GUL14 in 2023 by Lars Fröhlich
  *
+ * This file is based on version 1.1.0 of Sy Brand's expected.h header from
+ * https://github.com/TartanLlama/expected
+ *
  * Documentation available at http://tl.tartanllama.xyz/
  *
  * To the extent possible under law, the author(s) have dedicated all
