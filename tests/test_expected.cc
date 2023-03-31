@@ -25,6 +25,7 @@
 
 #include "gul14/catch.h"
 #include "gul14/expected.h"
+#include "gul14/optional.h" // to check if there are clashing declarations, e.g. in_place_t
 
 using namespace std::literals;
 
