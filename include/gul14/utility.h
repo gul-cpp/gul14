@@ -23,9 +23,14 @@
 #ifndef GUL14_UTILITY_H_
 #define GUL14_UTILITY_H_
 
+#include <cstddef>
+
 namespace gul14 {
 
-/// A type for constructor disambiguation, used by gul14::expected and gul14::optional.
+/**
+ * A type for constructor disambiguation, used by gul14::expected, gul14::optional, and
+ * gul14::variant.
+ */
 struct in_place_t
 {
     explicit in_place_t() = default;
@@ -36,6 +41,24 @@ struct in_place_t
  * to request in-place construction.
  */
 static constexpr in_place_t in_place{};
+
+/// A type for constructor disambiguation.
+template <typename T>
+struct in_place_type_t {
+    explicit in_place_type_t() = default;
+};
+
+/// A tag that can be passed to constructors to request in-place construction.
+template <typename T>
+static constexpr in_place_type_t<T> in_place_type{};
+
+/// A type for constructor disambiguation.
+template <std::size_t I>
+struct in_place_index_t { explicit in_place_index_t() = default; };
+
+/// A tag that can be passed to constructors to request in-place construction.
+template <std::size_t I>
+static constexpr in_place_index_t<I> in_place_index{};
 
 } // namespace gul14
 
