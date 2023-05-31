@@ -5,7 +5,7 @@
  *
  * \copyright
  * Copyright Tristan Brindle 2018.
- * Copyright Deutsches Elektronen-Synchrotron (DESY), Hamburg 2019-2020 (modifications for
+ * Copyright Deutsches Elektronen-Synchrotron (DESY), Hamburg 2019-2023 (modifications for
  * GUL, \ref contributors).
  *
  * Distributed under the Boost Software License, Version 1.0. (See \ref license_boost_1_0
@@ -26,6 +26,8 @@
 #include <cstdio>
 #include <stdexcept>
 #include <type_traits>
+
+#include "gul14/traits.h"
 
 namespace gul14 {
 
@@ -103,9 +105,6 @@ constexpr const E* data(std::initializer_list<E> il) noexcept
 {
     return il.begin();
 }
-
-template <typename...>
-using void_t = void;
 
 template <typename T>
 using uncvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
@@ -498,7 +497,7 @@ constexpr bool operator>=(span<T, X> lhs, span<U, Y> rhs)
 
 /**
  * Return a constant view to the byte representation of the elements of a given span.
- * 
+ *
  * This is a backport from the C++20 standard library, see:
  * https://en.cppreference.com/w/cpp/container/span/as_bytes
  *

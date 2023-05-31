@@ -29,6 +29,7 @@
 #include <utility>
 
 #include "gul14/internal.h"
+#include "gul14/traits.h"
 #include "gul14/utility.h"
 
 namespace gul14 {
@@ -114,12 +115,6 @@ struct identity { using type = T; };
 template <bool... Bs>
 using all = std::is_same<std::integer_sequence<bool, true, Bs...>,
                          std::integer_sequence<bool, Bs..., true>>;
-
-template <typename...>
-struct voider : identity<void> {};
-
-template <typename... Ts>
-using void_t = typename voider<Ts...>::type;
 
 template <typename T>
 struct is_reference_wrapper : std::false_type {};
