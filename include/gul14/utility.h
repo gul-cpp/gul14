@@ -1,7 +1,8 @@
 /**
  * \file    utility.h
  * \authors \ref contributors
- * \brief   Declaration of the in_place_t type and of the in_place constant.
+ * \brief   Declaration of the in_place_t family of types and constants and of the
+ *          monostate type.
  * \date    Created on March 31, 2023
  *
  * \copyright Copyright 2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
@@ -23,7 +24,7 @@
 #ifndef GUL14_UTILITY_H_
 #define GUL14_UTILITY_H_
 
-#include <cstddef>
+#include <functional>
 
 namespace gul14 {
 
@@ -60,6 +61,32 @@ struct in_place_index_t { explicit in_place_index_t() = default; };
 template <std::size_t I>
 static constexpr in_place_index_t<I> in_place_index{};
 
+/// A well-behaved empty type for use with gul14::variant and gul14::expected.
+struct monostate {};
+inline constexpr bool operator<(monostate, monostate) noexcept { return false; }
+inline constexpr bool operator>(monostate, monostate) noexcept { return false; }
+inline constexpr bool operator<=(monostate, monostate) noexcept { return true; }
+inline constexpr bool operator>=(monostate, monostate) noexcept { return true; }
+inline constexpr bool operator==(monostate, monostate) noexcept { return true; }
+inline constexpr bool operator!=(monostate, monostate) noexcept { return false; }
+
 } // namespace gul14
+
+namespace std {
+
+/// Specialization of std::hash for gul14::monostate.
+template <>
+struct hash<gul14::monostate>
+{
+    using argument_type = gul14::monostate;
+    using result_type = std::size_t;
+
+    inline result_type operator()(const argument_type&) const noexcept
+    {
+        return 66740831; // random value (as proposed in https://github.com/mpark/variant)
+    }
+};
+
+} // namespace std
 
 #endif
