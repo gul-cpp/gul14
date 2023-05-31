@@ -45,6 +45,7 @@ tests = [
     'test_Trigger.cc',
     'test_trim.cc',
     'test_type_name.cc',
+    'test_variant.cc',
 ]
 
 test('all',
