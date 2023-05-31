@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 20 August 2021
  *
- * \copyright Copyright 2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2021-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -24,9 +24,11 @@
 #define GUL14_TRAITS_H_
 
 #include <type_traits>
+
 #include "gul14/internal.h"
 
 namespace gul14 {
+
 /**
  * Helper type trait object to determine if a type is a container.
  *
@@ -53,6 +55,17 @@ struct IsContainerLike <T,
             0)
     >>
     : std::true_type { };
+
+/**
+ * A type mapping an arbitrary list of types to void (for SFINAE).
+ *
+ * This is a helper metafunction to substitute C++17's
+ * [std::void_t](https://en.cppreference.com/w/cpp/types/void_t).
+ *
+ * \since GUL version 2.9
+ */
+template <typename...>
+using void_t = void;
 
 } // namespace gul14
 
