@@ -31,6 +31,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "gul14/traits.h"
 #include "gul14/utility.h"
 
 namespace gul14 {
@@ -137,8 +138,6 @@ struct is_trivially_copy_constructible<std::vector<T, A>> : std::false_type {};
 #endif
 
 template <class T, class E> class expected;
-
-class monostate {};
 
 template <class E>
 class unexpected
