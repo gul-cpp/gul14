@@ -30,7 +30,7 @@
 
 #include "gul14/internal.h"
 #include "gul14/traits.h"
-#include "gul14/utility.h"
+#include "gul14/utility.h" // in_place*, monostate
 
 namespace gul14 {
 
@@ -1886,32 +1886,6 @@ public:
     return variant::visit_value_at(lhs.index(), greater_equal{}, lhs, rhs);
   }
 
-  struct monostate {};
-
-  inline constexpr bool operator<(monostate, monostate) noexcept {
-    return false;
-  }
-
-  inline constexpr bool operator>(monostate, monostate) noexcept {
-    return false;
-  }
-
-  inline constexpr bool operator<=(monostate, monostate) noexcept {
-    return true;
-  }
-
-  inline constexpr bool operator>=(monostate, monostate) noexcept {
-    return true;
-  }
-
-  inline constexpr bool operator==(monostate, monostate) noexcept {
-    return true;
-  }
-
-  inline constexpr bool operator!=(monostate, monostate) noexcept {
-    return false;
-  }
-
   namespace detail_variant {
 
     inline constexpr bool any(std::initializer_list<bool> bs) {
@@ -2003,16 +1977,6 @@ namespace std {
     private:
     static std::size_t hash_combine(std::size_t lhs, std::size_t rhs) {
       return lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
-    }
-  };
-
-  template <>
-  struct hash<gul14::monostate> {
-    using argument_type = gul14::monostate;
-    using result_type = std::size_t;
-
-    inline result_type operator()(const argument_type &) const noexcept {
-      return 66740831;  // return a fundamentally attractive random value.
     }
   };
 
