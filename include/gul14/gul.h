@@ -51,6 +51,7 @@
 #include "gul14/Trigger.h"
 #include "gul14/trim.h"
 #include "gul14/type_name.h"
+#include "gul14/variant.h"
 #include "gul14/version.h"
 
 #endif
