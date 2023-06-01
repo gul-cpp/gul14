@@ -34,6 +34,38 @@
 
 namespace gul14 {
 
+/**
+ * The exception thrown if the wrong type is accessed on a gul14::variant.
+ *
+ * \since GUL version 2.9.0
+ */
+class bad_variant_access : public std::exception
+{
+public:
+    virtual const char* what() const noexcept override
+    {
+        return "bad_variant_access";
+    }
+};
+
+/**
+ * A "type-safe union".
+ *
+ * Like a plain union, a variant can hold a value of one of a specified set of types.
+ * Unlike a union, it can be queried for the type it is currently holding and ensures that
+ * only the stored type is accessed. The implementation in the library is a backport from
+ * C++17 and should behave like
+ * [std::variant](https://en.cppreference.com/w/cpp/utility/variant).
+ */
+template <typename... Ts>
+class variant;
+
+} // namespace gul14
+
+/// \cond HIDE_SYMBOLS
+
+namespace gul14 {
+
 #ifndef __has_attribute
 #define __has_attribute(x) 0
 #endif
@@ -285,17 +317,9 @@ using is_nothrow_swappable =
 #define AUTO_REFREF_RETURN(...) { return __VA_ARGS__; }
 #define DECLTYPE_AUTO_RETURN(...) { return __VA_ARGS__; }
 
-class bad_variant_access : public std::exception {
-public:
-    virtual const char* what() const noexcept override { return "bad_variant_access"; }
-};
-
 [[noreturn]] inline void throw_bad_variant_access() {
     throw bad_variant_access{};
 }
-
-  template <typename... Ts>
-  class variant;
 
   template <typename T>
   struct variant_size;
@@ -1934,48 +1958,50 @@ public:
                std::is_move_assignable<H>::value;
       }
 
-    }  // namespace hash
+    } // namespace hash
 
-  }  // namespace detail_variant
+  } // namespace detail_variant
 
 #undef AUTO_REFREF_RETURN
 #undef DECLTYPE_AUTO_RETURN
 #undef GUL14_RETURN
 
-}  // namespace gul14
+} // namespace gul14
 
 namespace std {
 
-  template <typename... Ts>
-  struct hash<gul14::detail_variant::enabled_type<
-      gul14::variant<Ts...>,
-      std::enable_if_t<gul14::detail_variant::all<gul14::detail_variant::hash::is_enabled<
-          std::remove_const_t<Ts>>()...>::value>>> {
-    using argument_type = gul14::variant<Ts...>;
-    using result_type = std::size_t;
+template <typename... Ts>
+struct hash<gul14::detail_variant::enabled_type<
+    gul14::variant<Ts...>,
+    std::enable_if_t<gul14::detail_variant::all<gul14::detail_variant::hash::is_enabled<
+        std::remove_const_t<Ts>>()...>::value>>> {
+  using argument_type = gul14::variant<Ts...>;
+  using result_type = std::size_t;
 
-    inline result_type operator()(const argument_type &v) const {
-      using gul14::detail_variant::visitation::variant;
-      std::size_t result =
-          v.valueless_by_exception()
-              ? 299792458  // Random value chosen by the universe upon creation
-              : variant::visit_alt(
-                    [](const auto &alt) {
-                      using alt_type = std::decay_t<decltype(alt)>;
-                      using value_type = std::remove_const_t<
-                          typename alt_type::value_type>;
-                      return hash<value_type>{}(alt.value);
-                    },
-                    v);
-      return hash_combine(result, hash<std::size_t>{}(v.index()));
-    }
+  inline result_type operator()(const argument_type &v) const {
+    using gul14::detail_variant::visitation::variant;
+    std::size_t result =
+        v.valueless_by_exception()
+            ? 299792458  // Random value chosen by the universe upon creation
+            : variant::visit_alt(
+                  [](const auto &alt) {
+                    using alt_type = std::decay_t<decltype(alt)>;
+                    using value_type = std::remove_const_t<
+                        typename alt_type::value_type>;
+                    return hash<value_type>{}(alt.value);
+                  },
+                  v);
+    return hash_combine(result, hash<std::size_t>{}(v.index()));
+  }
 
-    private:
-    static std::size_t hash_combine(std::size_t lhs, std::size_t rhs) {
-      return lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
-    }
-  };
+  private:
+  static std::size_t hash_combine(std::size_t lhs, std::size_t rhs) {
+    return lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
+  }
+};
 
-}  // namespace std
+} // namespace std
+
+/// \endcond
 
 #endif
