@@ -57,6 +57,30 @@ struct IsContainerLike <T,
     : std::true_type { };
 
 /**
+ * A template metafunction that removes const, volatile, and reference qualifiers from a
+ * type. The stripped type is available in the member typedef \c type.
+ *
+ * This is a substitute for C++20's
+ * [std::remove_cvref](https://en.cppreference.com/w/cpp/types/remove_cvref).
+ *
+ * \since GUL version 2.9
+ */
+template <typename T>
+using remove_cvref = typename std::remove_cv<std::remove_reference_t<T>>;
+
+/**
+ * A template metafunction that removes const, volatile, and reference qualifiers from a
+ * type.
+ *
+ * This is a substitute for C++20's
+ * [std::remove_cvref_t](https://en.cppreference.com/w/cpp/types/remove_cvref_t).
+ *
+ * \since GUL version 2.9
+ */
+template <typename T>
+using remove_cvref_t = typename remove_cvref<T>::type;
+
+/**
  * A type mapping an arbitrary list of types to void (for SFINAE).
  *
  * This is a helper metafunction to substitute C++17's
