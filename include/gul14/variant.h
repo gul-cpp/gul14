@@ -106,10 +106,6 @@ struct dependent_type : T {};
 #endif
 
 template <typename T>
-using remove_cvref_t =
-    typename std::remove_cv<std::remove_reference_t<T>>::type;
-
-template <typename T>
 struct identity { using type = T; };
 
 template <bool... Bs>
@@ -1463,8 +1459,8 @@ public:
 #if defined(__clang__) || !defined(__GNUC__) || __GNUC__ >= 5
         ,
         std::enable_if_t<
-            std::is_same<detail_variant::remove_cvref_t<T>, bool>::value
-                ? std::is_same<detail_variant::remove_cvref_t<Arg>, bool>::value
+            std::is_same<remove_cvref_t<T>, bool>::value
+                ? std::is_same<remove_cvref_t<Arg>, bool>::value
                 : is_non_narrowing_convertible<Arg, T>::value>
 #endif
         > {
