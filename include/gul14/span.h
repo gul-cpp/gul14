@@ -106,9 +106,6 @@ constexpr const E* data(std::initializer_list<E> il) noexcept
     return il.begin();
 }
 
-template <typename T>
-using uncvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-
 template <typename>
 struct is_span : std::false_type {};
 
@@ -129,7 +126,7 @@ struct has_size_and_data<T, void_t<decltype(detail::size(std::declval<T>())),
                                    decltype(detail::data(std::declval<T>()))>>
     : std::true_type {};
 
-template <typename C, typename U = uncvref_t<C>>
+template <typename C, typename U = remove_cvref_t<C>>
 struct is_container {
     static constexpr bool value =
         !is_span<U>::value && !is_std_array<U>::value &&
