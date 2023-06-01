@@ -143,6 +143,12 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_9_0 Version 2.9.0
+ *
+ * - Add gul14::variant, a backport of std::variant from C++17
+ * - Add gul14::remove_cvref and gul14::void_t, backports of metaprogramming functions
+ *   from C++20 and C++17, respectively.
+ *
  * \subsection v2_8_0 Version 2.8.0
  *
  * - Add gul14::expected, a backport of std::expected from C++23
@@ -326,6 +332,11 @@ namespace gul14 {
  * <dd>Copyright 2012-2015 Marshall Clow, copyright 2015 Beman Dawes.
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     \ref license_boost_1_0 and \ref string_view.h for details).</dd>
+ *
+ * <dt>\ref variant.h</dt>
+ * <dd>Copyright 2015-2017 Michael Park.
+ *     Distributed under the Boost Software License, Version 1.0 (see
+ *     \ref license_boost_1_0 and \ref variant.h for details).</dd>
  * </dl>
  */
 
@@ -568,11 +579,21 @@ namespace gul14 {
 /**
  * \page type_traits Type Traits
  *
- * The General Utility Library provides type traits that can be useful to express restraints
- * or properties of types.
+ * The library provides a few type traits that can be useful for template metaprogramming.
  *
  * \ref gul14::IsContainerLike "IsContainerLike":
  *     A type trait to determine if a type behaves like a standard container.
+ *
+ * \ref gul14::remove_cvref "remove_cvref":
+ *     A metafunction to remove const, volatile, and reference qualifiers from a type.
+ *     This is a backport of
+ *     [std::remove_cvref](https://en.cppreference.com/w/cpp/types/remove_cvref) from
+ *     C++20.
+ *
+ * \ref gul14::void_t "void_t":
+ *     A template typedef that maps an arbitrary list of types to void. This is primarily
+ *     useful to detect ill-formed types for SFINAE. This is a backport of
+ *     [std::void_t](https://en.cppreference.com/w/cpp/types/void_t) from C++17.
  */
 
 /**
@@ -593,6 +614,12 @@ namespace gul14 {
  *     [std::optional](https://en.cppreference.com/w/cpp/utility/optional)
  *     from C++17 for almost all use cases.
  *
+ * \ref gul14::remove_cvref "remove_cvref":
+ *     A metafunction to remove const, volatile, and reference qualifiers from a type.
+ *     This is a backport of
+ *     [std::remove_cvref](https://en.cppreference.com/w/cpp/types/remove_cvref) from
+ *     C++20.
+ *
  * \ref gul14::span "span":
  *     A view to a contiguous sequence of objects. It should behave like
  *     [std::span](https://en.cppreference.com/w/cpp/container/span) from C++20 for almost
@@ -602,6 +629,18 @@ namespace gul14 {
  *     A view to a contiguous sequence of chars. It should behave like
  *     [std::string_view](https://en.cppreference.com/w/cpp/string/basic_string_view)
  *     from C++17 for almost all use cases.
+ *
+ * \ref gul14::variant "variant":
+ *     Sometimes called a "type-safe union", a variant can hold a value of one of a
+ *     specified set of types. Unlike a union, it can be queried for the type it is
+ *     currently holding and ensures that only the stored type is accessed. The
+ *     implementation should behave like
+ *     [std::variant](https://en.cppreference.com/w/cpp/utility/variant) from C++17.
+ *
+ * \ref gul14::void_t "void_t":
+ *     A template typedef that maps an arbitrary list of types to void. This is primarily
+ *     useful to detect ill-formed types for SFINAE. This is a backport of
+ *     [std::void_t](https://en.cppreference.com/w/cpp/types/void_t) from C++17.
  */
 
 /**
@@ -668,7 +707,10 @@ namespace gul14 {
 /**
  * \page container_utilities Containers
  *
- * The General Utility Library provides the following containers:
+ * The General Utility Library provides several classes that can contain elements of other
+ * types.
+ *
+ * <h3>Multi-Element Containers</h3>
  *
  * SlidingBuffer:
  *     A circular data buffer of (semi-)fixed capacity to which elements can be added at
@@ -681,6 +723,27 @@ namespace gul14 {
  * SmallVector:
  *     A resizable container with contiguous storage that can hold a specified number of
  *     elements without allocating memory on the heap.
+ *
+ * <h3>Single-Element and Special-Purpose Containers</h3>
+ *
+ * \ref gul14::expected "expected":
+ *     A class template that can either contain a value of a certain (expected) type or an
+ *     error value. It should behave like
+ *     [std::expected](https://en.cppreference.com/w/cpp/utility/expected)
+ *     from C++23 for almost all use cases.
+ *
+ * \ref gul14::optional "optional":
+ *     A class template that can either contain a value of a certain type or not. It
+ *     should behave like
+ *     [std::optional](https://en.cppreference.com/w/cpp/utility/optional) from C++17 for
+ *     almost all use cases.
+ *
+ * \ref gul14::variant "variant":
+ *     Sometimes called a "type-safe union", a variant can hold a value of one of a
+ *     specified set of types. Unlike a union, it can be queried for the type it is
+ *     currently holding and ensures that only the stored type is accessed. The
+ *     implementation should behave like
+ *     [std::variant](https://en.cppreference.com/w/cpp/utility/variant) from C++17.
  */
 
 /**
