@@ -24,6 +24,7 @@
 #define GUL14_ESCAPE_H_
 
 #include <string>
+
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 

@@ -31,6 +31,7 @@
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
+
 #include "gul14/internal.h"
 #include "gul14/cat.h"
 

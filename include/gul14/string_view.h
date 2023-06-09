@@ -31,6 +31,7 @@
 #include <string>
 #include <cstring>
 #include <iosfwd>
+
 #include "gul14/internal.h"
 
 namespace gul14 {

@@ -25,6 +25,7 @@
 
 #include <type_traits>
 #include <utility>
+
 #include "gul14/internal.h"
 
 namespace gul14 {

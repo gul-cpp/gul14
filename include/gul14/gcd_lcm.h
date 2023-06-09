@@ -24,6 +24,7 @@
 #define GUL14_GCD_LCM_H_
 
 #include <type_traits>
+
 #include "gul14/internal.h"
 #include "gul14/num_util.h"
 

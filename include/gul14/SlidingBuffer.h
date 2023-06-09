@@ -27,6 +27,7 @@
 #include <array>
 #include <ostream>
 #include <vector>
+
 #include "gul14/cat.h"
 #include "gul14/internal.h"
 
