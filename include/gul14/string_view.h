@@ -7,7 +7,7 @@
  * \copyright
  * Copyright Marshall Clow 2012-2015
  * Copyright Beman Dawes 2015
- * Copyright \ref contributors 2018-2022 (modifications for GUL)
+ * Copyright \ref contributors 2018-2023 (modifications for GUL)
  *
  * Distributed under the Boost Software License, Version 1.0. (See \ref license_boost_1_0
  * or http://www.boost.org/LICENSE_1_0.txt)
@@ -35,6 +35,12 @@
 #include "gul14/internal.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup string_view_h gul14/string_view.h
+ * \brief Backport of std::string_view from C++17.
+ * @{
+ */
 
 namespace detail {
 
@@ -669,6 +675,7 @@ inline std::string operator+(string_view a, std::string b)
 }
 
 /// \endcond
+/// @}
 
 } // namespace gul14
 

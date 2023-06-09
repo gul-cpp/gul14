@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 5 August 2022
  *
- * \copyright Copyright 2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2022-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -29,6 +29,12 @@
 #include "gul14/num_util.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup gcd_lcm_h gul14/gcd_lcm.h
+ * \brief Greatest common divisor and least common multiple.
+ * @{
+ */
 
 /**
  * Calculate the greatest common divisor of two integers using the Euclidean algorithm.
@@ -131,6 +137,8 @@ lcm(IntTypeA a, IntTypeB b)
 
     return static_cast<CommonType>(gul14::abs((a / gcd(a, b)) * b));
 }
+
+/// @}
 
 } // namespace gul14
 

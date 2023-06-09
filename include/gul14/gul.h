@@ -23,6 +23,21 @@
 #ifndef GUL14_GUL_H_
 #define GUL14_GUL_H_
 
+/**
+ * \defgroup gul_h gul14/gul.h
+ * \brief All-in-one include file for GUL14.
+ * \details
+ * This file includes almost all other headers provided by the library. Two specific files
+ * are excluded, however:
+ * <ul>
+ * <li>`gul14/catch.h`: The header file for the Catch2 unit test framework</li>
+ * <li>`gul14/date.h`: Howard Hinnant's header for calendar date functionality</li>
+ * </ul>
+ * While the unit test framework is simply not useful for inclusion into regular code,
+ * `date.h` is excluded chiefly because of its negative impact on compile times. Just
+ * include it directly where needed.
+ */
+
 #include "gul14/bit_manip.h"
 #include "gul14/case_ascii.h"
 #include "gul14/cat.h"

@@ -1,10 +1,10 @@
 /**
  * \file    num_util.h
- * \brief   Declarations of numerics utility functions for the General Utility Library.
+ * \brief   Declaration of numerical utility functions.
  * \authors \ref contributors
  * \date    Created on 7 Feb 2019
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -31,6 +31,12 @@
 #include "gul14/internal.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup num_util_h gul14/num_util.h
+ * \brief Numerical utility functions.
+ * @{
+ */
 
 /**
  * Compute the absolute value of a number.
@@ -233,6 +239,8 @@ constexpr const NumT& clamp(const NumT& v, const NumT& lo, const NumT& hi, Compa
         return hi;
     return v;
 }
+
+/// @}
 
 } // namespace gul14
 

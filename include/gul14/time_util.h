@@ -4,7 +4,7 @@
  * \date    Created on September 7, 2018
  * \brief   Declaration of time related functions for the General Utility Library.
  *
- * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -31,6 +31,11 @@
 
 namespace gul14 {
 
+/**
+ * \addtogroup time_util_h gul14/time_util.h
+ * \brief Time-related functions.
+ * @{
+ */
 
 /**
  * Return the current time as a std::chrono time_point.
@@ -178,6 +183,8 @@ inline bool sleep(double seconds)
 {
     return sleep(std::chrono::duration<double>{ seconds });
 }
+
+/// @}
 
 } // namespace gul14
 

@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -29,6 +29,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup escape_h gul14/escape.h
+ * \brief Escaping and unescaping special characters in strings.
+ * @{
+ */
 
 /**
  * Create a new string that looks like an ASCII-only C string literal of the input string.
@@ -81,6 +87,8 @@ std::string escape(string_view in);
  */
 GUL_EXPORT
 std::string unescape(string_view in);
+
+/// @}
 
 } // namespace gul14
 

@@ -1,10 +1,10 @@
 /**
  * \file    string_util.h
- * \brief   Declarations of string utility functions for the General Utility Library.
+ * \brief   Declaration of string utility functions.
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -32,6 +32,12 @@
 #include "gul14/traits.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup string_util_h gul14/string_util.h
+ * \brief Various string utility functions.
+ * @{
+ */
 
 /// \cond HIDE_SYMBOLS
 namespace detail {
@@ -256,6 +262,8 @@ std::string repeat(gul14::string_view str, std::size_t n);
  */
 GUL_EXPORT
 std::string safe_string(const char* char_ptr, std::size_t length);
+
+/// @}
 
 } // namespace gul14
 

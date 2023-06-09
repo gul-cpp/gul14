@@ -5,7 +5,7 @@
  * \authors \ref contributors
  * \date    Created on 28 May 2019
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -25,10 +25,17 @@
 #define GUL14_CASE_ASCII_H_
 
 #include <string>
+
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup case_ascii_h gul14/case_ascii.h
+ * \brief Converting ASCII characters to lowercase or uppercase.
+ * @{
+ */
 
 /**
  * Return the ASCII lowercase equivalent of the given character (or the unchanged
@@ -67,7 +74,7 @@ std::string lowercase_ascii(gul14::string_view str);
  *      uppercase_ascii_inplace(std::string &)
  */
 GUL_EXPORT
-std::string &lowercase_ascii_inplace(std::string &str) noexcept;
+std::string& lowercase_ascii_inplace(std::string& str) noexcept;
 
 /**
  * Return the ASCII uppercase equivalent of the given character (or the unchanged
@@ -106,7 +113,9 @@ std::string uppercase_ascii(gul14::string_view str);
  *      lowercase_ascii_inplace(std::string &)
  */
 GUL_EXPORT
-std::string &uppercase_ascii_inplace(std::string &str) noexcept;
+std::string& uppercase_ascii_inplace(std::string& str) noexcept;
+
+/// @}
 
 } // namespace gul14
 

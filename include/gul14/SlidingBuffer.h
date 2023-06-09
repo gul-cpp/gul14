@@ -4,7 +4,7 @@
  * \date    Created on Feb 7, 2019
  * \brief   Declaration of the SlidingBuffer class for the General Utility Library.
  *
- * \copyright Copyright 2019-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -32,6 +32,12 @@
 #include "gul14/internal.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup SlidingBuffer_h gul14/SlidingBuffer.h
+ * \brief A ring buffer.
+ * @{
+ */
 
 /**
  * Determine how a SlidingBuffer handles decreases of its size.
@@ -1308,6 +1314,8 @@ public:
         resize(size, shrink_behavior);
     }
 };
+
+/// @}
 
 } // namespace gul14
 

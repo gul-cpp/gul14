@@ -4,7 +4,7 @@
  * \date   Created on April 11, 2019
  * \brief  Definition of type_name()
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -30,6 +30,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup type_name_h gul14/type_name.h
+ * \brief Generating human-readable descriptions for types.
+ * @{
+ */
 
 /**
  * A helper class to debug types.
@@ -114,6 +120,8 @@ constexpr string_view type_name()
     return "";
 #endif
 }
+
+/// @}
 
 } // namespace gul14
 

@@ -5,7 +5,7 @@
  * \brief  Declaration of the overload set for cat() and of the associated class
  *         ConvertingStringView.
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -31,6 +31,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup cat_h gul14/cat.h
+ * \brief Concatenation of strings and other types.
+ * @{
+ */
 
 /**
  * A string view that can automatically convert numbers into strings.
@@ -112,6 +118,8 @@ inline std::string cat(const Args&... args)
 {
     return cat({ args... }); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay): Impossible to remove that warning
 }
+
+/// @}
 
 } // namespace gul14
 

@@ -947,4 +947,16 @@ namespace gul14 {
  * On other platforms and compilers, the macro is meaningless.
  */
 
+/**
+ * \defgroup catch_h gul14/catch.h
+ * \brief The [Catch2 unit testing framework](https://github.com/catchorg/Catch2).
+ * \see \ref unit_tests
+ */
+
+/**
+ * \defgroup date_h gul14/date.h
+ * \brief Calendar date library by Howard Hinnant.
+ * \see https://github.com/HowardHinnant/date
+ */
+
 } // namespace gul14

@@ -4,7 +4,7 @@
  * \date    Created on September 3, 2018
  * \brief   Implementation of tokenize(), tokenize_sv().
  *
- * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -31,6 +31,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup tokenize_h gul14/tokenize.h
+ * \brief Split a string into substrings.
+ * @{
+ */
 
 /**
  * Split the given string into a vector of substrings (tokens) delimited by any of the
@@ -167,6 +173,8 @@ tokenize_sv(string_view str, string_view delimiters = default_whitespace_charact
 {
     return tokenize<StringContainer>(str, delimiters, insert_fct);
 }
+
+/// @}
 
 } // namespace gul14
 
