@@ -608,6 +608,13 @@ namespace gul14 {
  *     [std::expected](https://en.cppreference.com/w/cpp/utility/expected)
  *     from C++23 for almost all use cases.
  *
+ * \ref gul14::in_place_t "in_place_t" etc.:
+ *     A small family of types and tags that can be used in the constuctors of
+ *     \ref gul14::expected "expected", \ref gul14::optional "optional", and
+ *     \ref gul14::variant "variant" to request in-place construction. See
+ *     [std::in_place](https://en.cppreference.com/w/cpp/utility/in_place) for
+ *     documentation on the corresponding C++17 entities.
+ *
  * \ref gul14::optional "optional":
  *     A class template that can either contain a value of a certain type or not.
  *     It should behave like
