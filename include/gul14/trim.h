@@ -5,7 +5,7 @@
  * \brief  Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(),
  *         and trim_right_sv().
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -30,6 +30,11 @@
 
 namespace gul14 {
 
+/**
+ * \addtogroup trim_h gul14/trim.h
+ * \brief Trimming whitespace from strings.
+ * @{
+ */
 
 /**
  * Trim leading and trailing whitespace (or a custom set of characters) from a string,
@@ -151,9 +156,9 @@ std::string trim_right(string_view str, string_view ws_chars = default_whitespac
 GUL_EXPORT
 string_view trim_right_sv(string_view str, string_view ws_chars = default_whitespace_characters);
 
-
 // TODO: Add trim_*_inplace
 
+/// @}
 
 } // namespace gul14
 

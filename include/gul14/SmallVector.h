@@ -4,7 +4,7 @@
  * \date    Created on August 17, 2020
  * \brief   Definition of the SmallVector class template.
  *
- * \copyright Copyright 2020-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2020-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -36,6 +36,12 @@
 #include "gul14/cat.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup SmallVector_h gul14/SmallVector.h
+ * \brief A vector with small-buffer optimization.
+ * @{
+ */
 
 /**
  * A resizable container with contiguous storage that can hold a specified number of
@@ -1651,6 +1657,8 @@ void swap(SmallVector<ElementT,in_capacity>& a, SmallVector<ElementT, in_capacit
 {
     a.swap(b);
 }
+
+/// @}
 
 } // namespace gul14
 

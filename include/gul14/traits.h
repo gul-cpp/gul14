@@ -30,6 +30,12 @@
 namespace gul14 {
 
 /**
+ * \addtogroup traits_h gul14/traits.h
+ * \brief Type traits and helpers for metaprogramming.
+ * @{
+ */
+
+/**
  * Helper type trait object to determine if a type is a container.
  *
  * A container is identified by the presense of the ``cbegin()`` and ``cend()``
@@ -90,6 +96,8 @@ using remove_cvref_t = typename remove_cvref<T>::type;
  */
 template <typename...>
 using void_t = void;
+
+/// @}
 
 } // namespace gul14
 

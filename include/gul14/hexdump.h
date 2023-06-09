@@ -2,9 +2,9 @@
  * \file   hexdump.h
  * \author \ref contributors
  * \date   Created on September 25, 2018
- * \brief  Declarations of hexdump()
+ * \brief  Declaration of the hexdump() functions and associated types.
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -47,6 +47,12 @@
 //////
 
 namespace gul14 {
+
+/**
+ * \addtogroup hexdump_h gul14/hexdump.h
+ * \brief Hexadecimal dump of data.
+ * @{
+ */
 
 namespace detail {
 
@@ -455,6 +461,8 @@ hexdump_stream(ContainerT&& cont, std::string prompt = "")
     return { cont.cbegin(), cont.cbegin(), std::move(prompt),
              std::forward<ContainerT>(cont) };
 }
+
+/// @}
 
 } // namespace gul14
 

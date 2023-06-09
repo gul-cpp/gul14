@@ -1,11 +1,10 @@
 /**
  * \file    statistics.h
- * \brief   Declaration of statistical utility functions and classes for the General
- *          Utility Library.
+ * \brief   Declaration of statistical utility functions and classes.
  * \authors \ref contributors
  * \date    Created on 7 February 2019
  *
- * \copyright Copyright 2019-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -35,6 +34,12 @@
 #include "gul14/traits.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup statistics_h gul14/statistics.h
+ * \brief Statistical utility functions and classes.
+ * @{
+ */
 
 using statistics_result_type = double; ///< Type used to return statistic properties
 

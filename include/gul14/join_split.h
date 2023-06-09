@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2021 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -34,6 +34,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup join_split_h gul14/join_split.h
+ * \brief Joining and splitting strings.
+ * @{
+ */
 
 /**
  * Separate a string at all occurrences of a delimiter, returning the strings between the
@@ -316,6 +322,7 @@ join(Iterator begin, Iterator end, string_view glue)
     return result;
 }
 
+/// @}
 
 } // namespace gul14
 

@@ -4,7 +4,7 @@
  * \date    Created on September 21, 2018
  * \brief   Declaration of the Trigger class for the General Utility Library.
  *
- * \copyright Copyright 2018-2022 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -31,6 +31,11 @@
 
 namespace gul14 {
 
+/**
+ * \addtogroup Trigger_h gul14/Trigger.h
+ * \brief A cross-thread trigger.
+ * @{
+ */
 
 /**
  * A class that allows sending triggers and waiting for them across different threads.
@@ -215,6 +220,8 @@ private:
     mutable std::condition_variable cv_;
     bool triggered_ = false;
 };
+
+/// @}
 
 } // namespace gul14
 

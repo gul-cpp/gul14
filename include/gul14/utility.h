@@ -29,6 +29,12 @@
 namespace gul14 {
 
 /**
+ * \addtogroup utility_h gul14/utility.h
+ * \brief Utility types and tags like in_place_t and monostate.
+ * @{
+ */
+
+/**
  * A type for constructor disambiguation, used by gul14::expected, gul14::optional, and
  * gul14::variant.
  */
@@ -70,11 +76,16 @@ inline constexpr bool operator>=(monostate, monostate) noexcept { return true; }
 inline constexpr bool operator==(monostate, monostate) noexcept { return true; }
 inline constexpr bool operator!=(monostate, monostate) noexcept { return false; }
 
+/// @}
+
 } // namespace gul14
 
 namespace std {
 
-/// Specialization of std::hash for gul14::monostate.
+/**
+ * Specialization of std::hash for gul14::monostate.
+ * \ingroup utility_h
+ */
 template <>
 struct hash<gul14::monostate>
 {

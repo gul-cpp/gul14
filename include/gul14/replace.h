@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 31 August 2018
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -29,6 +29,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup replace_h gul14/replace.h
+ * \brief Replacing all occurrences of a string within another string.
+ * @{
+ */
 
 /**
  * Replace all occurrences of a string within another string, returning the result
@@ -57,6 +63,8 @@ std::string replace(string_view haystack, string_view needle, string_view hammer
  */
 GUL_EXPORT
 std::string& replace_inplace(std::string& haystack, string_view needle, string_view hammer);
+
+/// @}
 
 } // namespace gul14
 

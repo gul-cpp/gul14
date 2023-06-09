@@ -31,6 +31,12 @@
 
 namespace gul14 {
 
+/**
+ * \addtogroup span_h gul14/span.h
+ * \brief Backport of std::span from C++20.
+ * @{
+ */
+
 /// \cond HIDE_SYMBOLS
 
 // Feature test macro for defaulted constexpr assignment operator
@@ -539,6 +545,8 @@ constexpr auto get(span<E, S> s) -> decltype(s[N])
 {
     return s[N];
 }
+
+/// @}
 
 } // namespace gul14
 

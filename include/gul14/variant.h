@@ -35,6 +35,12 @@
 namespace gul14 {
 
 /**
+ * \addtogroup variant_h gul14/variant.h
+ * \brief Backport of std::variant from C++17.
+ * @{
+ */
+
+/**
  * The exception thrown if the wrong type is accessed on a gul14::variant.
  *
  * \since GUL version 2.9.0
@@ -1999,6 +2005,8 @@ struct hash<gul14::detail_variant::enabled_type<
     return lhs ^= rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2);
   }
 };
+
+/// @}
 
 } // namespace std
 

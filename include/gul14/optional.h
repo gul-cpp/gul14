@@ -21,7 +21,7 @@
  * http://www.boost.org/LICENSE_1_0.txt)
  * The idea and interface is based on Boost.Optional library
  * authored by Fernando Luis Cacciola Carballal.
- * Modified July, August 2019 for GUL (Lars Froehlich).
+ * Modified July, August 2019, June 2023 for GUL (Lars Froehlich).
  */
 
 #ifndef GUL14_OPTIONAL_H_
@@ -43,6 +43,12 @@
 /// \endcond
 
 namespace gul14 {
+
+/**
+ * \addtogroup optional_h gul14/optional.h
+ * \brief Backport of std::optional from C++17.
+ * @{
+ */
 
 /// \cond HIDE_SYMBOLS
 
@@ -878,6 +884,7 @@ constexpr optional<X&> make_optional(std::reference_wrapper<X> v) {
 
 /// \endcond
 
+/// @}
 
 } // namespace gul14
 

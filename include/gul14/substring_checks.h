@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 26 November 2018
  *
- * \copyright Copyright 2018-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -28,6 +28,12 @@
 #include "gul14/string_view.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup substring_checks_h gul14/substring_checks.h
+ * \brief Checking whether a string contains, ends with, or starts with another string.
+ * @{
+ */
 
 /**
  * Determine whether a string contains another string.
@@ -334,6 +340,8 @@ constexpr inline bool starts_with_nocase(string_view str, char c) noexcept
 {
     return !str.empty() && lowercase_ascii(str.front()) == lowercase_ascii(c);
 }
+
+/// @}
 
 } // namespace gul14
 

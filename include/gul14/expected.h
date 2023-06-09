@@ -37,6 +37,12 @@
 namespace gul14 {
 
 /**
+ * \addtogroup expected_h gul14/expected.h
+ * \brief Backport of std::expected from C++23.
+ * @{
+ */
+
+/**
  * The exception thrown by gul14::expected if value() is called, but no value is present.
  *
  * This exception contains the "unexpected" or "error" value that was stored in the
@@ -2254,6 +2260,8 @@ void swap(expected<T, E> &lhs,
 }
 
 /// \endcond
+
+/// @}
 
 } // namespace gul14
 

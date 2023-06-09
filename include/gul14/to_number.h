@@ -38,6 +38,12 @@
 
 namespace gul14 {
 
+/**
+ * \addtogroup to_number_h gul14/to_number.h
+ * \brief Converting strings to numbers.
+ * @{
+ */
+
 /// \cond HIDE_SYMBOLS
 namespace detail {
 
@@ -547,6 +553,8 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 
     return detail::to_unsigned_float<NumberType>(str);
 }
+
+/// @}
 
 } // namespace gul14
 

@@ -5,7 +5,7 @@
  * \authors \ref contributors
  * \date    Created on 17 October 2019
  *
- * \copyright Copyright 2019-2020 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -30,6 +30,12 @@
 #include "gul14/internal.h"
 
 namespace gul14 {
+
+/**
+ * \addtogroup bit_manip_h gul14/bit_manip.h
+ * \brief Bit manipulation.
+ * @{
+ */
 
 /**
  * Return type of the bit manipulation functions.
@@ -180,6 +186,8 @@ template <typename T>
 bool constexpr inline bit_test(T bits, unsigned bit) noexcept {
     return bits & bit_set<T>(bit);
 }
+
+/// @}
 
 } // namespace gul14
 
