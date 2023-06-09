@@ -26,6 +26,7 @@
 #include <array>
 #include <iterator>
 #include <string>
+
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 #include "gul14/traits.h"

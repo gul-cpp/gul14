@@ -27,6 +27,7 @@
 #include <sstream>
 #include <type_traits>
 #include <utility>
+
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 

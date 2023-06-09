@@ -25,6 +25,7 @@
 
 #include <string>
 #include <vector>
+
 #include "gul14/internal.h"
 #include "gul14/string_util.h"
 #include "gul14/string_view.h"

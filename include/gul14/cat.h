@@ -26,6 +26,7 @@
 
 #include <string>
 #include <type_traits>
+
 #include "gul14/internal.h"
 #include "gul14/string_view.h"
 

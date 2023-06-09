@@ -30,6 +30,7 @@
 #include <numeric>
 #include <type_traits>
 #include <vector>
+
 #include "gul14/internal.h"
 #include "gul14/traits.h"
 
