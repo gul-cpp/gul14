@@ -110,4 +110,30 @@ TEST_CASE("variant: holds_alternative()", "[variant]")
     v = std::make_unique<double>(3.14);
     REQUIRE(gul14::holds_alternative<std::unique_ptr<double>>(v) == true);
     REQUIRE(gul14::holds_alternative<float>(v) == false);
+
+    // Thank the committee we are safe here...
+    auto v2 = gul14::variant<bool, std::string>{ "test" };
+    REQUIRE(gul14::holds_alternative<std::string>(v2));
+}
+
+TEST_CASE("variant: hash", "[variant]")
+{
+    auto v1 = gul14::variant<int, int>{ };
+    auto v2 = decltype(v1){ };
+    v1.emplace<0>(1);
+    v2.emplace<1>(1);
+    // Values equal but hashes not (because different slots filled)
+    REQUIRE(gul14::get<0>(v1) == gul14::get<1>(v2));
+    REQUIRE(std::hash<decltype(v1)>{ }(v1) != std::hash<decltype(v2)>{ }(v2));
+
+    v1.emplace<0>(0);
+    auto v3 = gul14::variant<gul14::monostate, int>{ };
+    // monostate can be differentiated from zero
+    REQUIRE(std::hash<decltype(v1)>{ }(v1) != std::hash<decltype(v3)>{ }(v3));
+}
+
+TEST_CASE("variant: variant_size", "[variant]")
+{
+    auto v = gul14::variant<float, double, long double>{ };
+    REQUIRE(gul14::variant_size<decltype(v)>() == 3);
 }
