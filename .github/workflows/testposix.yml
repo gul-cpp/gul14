@@ -1,0 +1,75 @@
+name: Test on Linux/MacOS
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'include'
+      - 'src'
+      - 'tests'
+      - 'tools'
+  workflow_dispatch:
+
+jobs:
+  build-and-asan:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest, macos-latest ]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Intro
+        run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Install Ninja
+        shell: bash
+        run: |
+          if [[ "${{ matrix.platform }}" == ubuntu-latest ]]; then
+            sudo apt-get install ninja-build
+          elif [[ "${{ matrix.platform }}" == macos-latest ]]; then
+            brew install ninja
+          else
+            echo Do not know how to install Ninja on platform ${{ inputs.platform }}
+            false
+          fi
+
+      - name: Retrieve Meson from cache
+        id: cache-meson
+        uses: actions/cache@v3
+        with:
+          path: meson-0.63.0
+          key: meson-0.63.0
+
+      - name: Download Meson
+        if: steps.cache-meson.outputs.cache-hit != 'true'
+        run: |
+          wget -q https://github.com/mesonbuild/meson/releases/download/0.63.0/meson-0.63.0.tar.gz
+          tar -xzf meson-0.63.0.tar.gz
+          rm meson-0.63.0.tar.gz
+
+      - name: Create symbolic link for Meson
+        run: |
+          ln -s meson-0.63.0/meson.py .
+          ls -la
+
+      - name: Configure build directories
+        run: |
+          ./meson.py --buildtype=release build.release
+          ./meson.py --buildtype=debug build.asan -Db_sanitize=address
+
+      - name: Build and run ASAN tests
+        run: ./meson.py test -C build.asan
+
+      - name: Build and run release tests
+        run: ./meson.py test -C build.release
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: build-dirs-${{ matrix.platform }}
+          path: |
+            build.release/
+            build.asan/
