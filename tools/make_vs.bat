@@ -87,7 +87,7 @@ IF NOT EXIST "%REPO_ROOT%%FOLDER%" md "%REPO_ROOT%%FOLDER%"
 @set FOLDER=%FOLDER%\%BUILDTYPE%
 
 @IF EXIST %FOLDER% GOTO after_meson
-%MESON% --buildtype=%BUILDTYPE% "%REPO_ROOT%%FOLDER%" "%REPO_ROOT:~0,-1%"
+%MESON% setup --buildtype=%BUILDTYPE% "%REPO_ROOT%%FOLDER%" "%REPO_ROOT:~0,-1%"
 :after_meson
 
 :ninja
