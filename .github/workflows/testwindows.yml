@@ -56,3 +56,4 @@ jobs:
           name: build-dirs
           path: |
             build.asan/
+            build/x64-windows/debug/
