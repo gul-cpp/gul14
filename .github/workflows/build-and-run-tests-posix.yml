@@ -1,27 +1,34 @@
-name: Build and run tests on Linux and MacOS platforms
+name: Test on Linux/MacOS
 
 on:
-  workflow_call:
-    inputs:
-      platform:
-        required: true
-        type: string
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'include'
+      - 'src'
+      - 'tests'
+      - 'tools'
+  workflow_dispatch:
 
 jobs:
-  build-and-run-tests-posix:
-    runs-on: ${{ inputs.platform }}
+  build-and-asan:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest, macos-latest ]
+
+    runs-on: ${{ matrix.platform }}
     steps:
-    - run: echo "Job triggered by ${{ github.event_name }} event, running on ${{ runner.os }}."
-    - run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
+    - name: Intro
+      run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
 
     - name: Check out repository code
       uses: actions/checkout@v3
 
     - name: Install Ninja
       run: |
-        if [[ "${{ inputs.platform }}" == ubuntu-latest ]]; then
+        if [[ "${{ matrix.platform }}" == ubuntu-latest ]]; then
           sudo apt-get install ninja-build
-        elif [[ "${{ inputs.platform }}" == macos-latest ]]; then
+        elif [[ "${{ matrix.platform }}" == macos-latest ]]; then
           brew install ninja
         else
           echo Do not know how to install Ninja on platform ${{ inputs.platform }}
