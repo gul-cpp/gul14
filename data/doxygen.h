@@ -143,8 +143,13 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_9_1 Version 2.9.1
+ *
+ * - Fix compilation errors in gul14::variant when compiled with C++17 or MSVC
+ *
  * \subsection v2_9_0 Version 2.9.0
  *
+ * - *Released with DOOCS 23.6.0*
  * - Add gul14::variant, a backport of std::variant from C++17
  * - Add gul14::remove_cvref and gul14::void_t, backports of metaprogramming functions
  *   from C++20 and C++17, respectively.
