@@ -106,12 +106,21 @@ ninja -C "%REPO_ROOT%%FOLDER%" %TARGET%
     @IF DEFINED VCVARS_x86 IF DEFINED VCVARS_x64 exit /B 0
 
     @REM Trying to find the newest Visual Studio at the default install path
-    @set VC_PREFIX=C:\Program Files (x86)\Microsoft Visual Studio\
-    @IF EXIST "%VC_PREFIX%2019" (
-        set VC_YEAR=2019\
-    ) ELSE IF EXIST "%VC_PREFIX%2017" (
-        set VC_YEAR=2017\
-    ) ELSE exit /B 1
+    @set VC_PREFIX=C:\Program Files\Microsoft Visual Studio\
+    @IF EXIST "%VC_PREFIX%2022" (
+        set VC_YEAR=2022\
+    ) ELSE (
+        echo "Can not find '%VC_PREFIX%2022'"
+        @set VC_PREFIX=C:\Program Files (x86^^^)\Microsoft Visual Studio\
+        IF EXIST "%VC_PREFIX%2019" (
+            set VC_YEAR=2019\
+        ) ELSE IF EXIST "%VC_PREFIX%2017" (
+            set VC_YEAR=2017\
+        ) ELSE (
+            echo "Can not find '%VC_PREFIX%2017' or '2019'"
+            exit /B 1
+        )
+    )
 
     @IF EXIST "%VC_PREFIX%%VC_YEAR%Enterprise" (
         set VC_VERSION=Enterprise\
@@ -119,7 +128,11 @@ ninja -C "%REPO_ROOT%%FOLDER%" %TARGET%
         set VC_VERSION=Professional\
     ) ELSE IF EXIST "%VC_PREFIX%%VC_YEAR%Community" (
         set VC_VERSION=Community\
-    ) ELSE exit /B 2
+    ) ELSE (
+        echo "Can not find '%VC_PREFIX%%VC_YEAR%..'"
+        exit /B 2
+    )
+    echo "Found %VC_PREFIX%%VC_YEAR%%VC_VERSION%"
 
     @IF NOT DEFINED VCVARS_x86 set VCVARS_x86="%VC_PREFIX%%VC_YEAR%%VC_VERSION%VC\Auxiliary\Build\vcvars32.bat"
     @IF NOT DEFINED VCVARS_x64 set VCVARS_x64="%VC_PREFIX%%VC_YEAR%%VC_VERSION%VC\Auxiliary\Build\vcvars64.bat"
