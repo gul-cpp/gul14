@@ -114,6 +114,17 @@ struct array {
 template <typename T, bool>
 struct dependent_type : T {};
 
+template <typename Is, std::size_t J>
+struct push_back;
+
+template <typename Is, std::size_t J>
+using push_back_t = typename push_back<Is, J>::type;
+
+template <std::size_t... Is, std::size_t J>
+struct push_back<std::index_sequence<Is...>, J> {
+    using type = std::index_sequence<Is..., J>;
+};
+
 #if __has_builtin(__type_pack_element) && !(defined(__ICC))
     template <std::size_t I, typename... Ts>
     using type_pack_element_t = __type_pack_element<I, Ts...>;
@@ -730,7 +741,7 @@ using is_nothrow_swappable =
         }
 
         template <typename T, std::size_t N, typename... Is>
-        inline static constexpr const lib::remove_all_extents_t<T> &at(
+        inline static constexpr const std::remove_all_extents_t<T> &at(
             const detail_variant::array<T, N> &elems, std::size_t i, Is... is) noexcept {
           return at(elems[i], is...);
         }
@@ -765,7 +776,7 @@ using is_nothrow_swappable =
           inline static constexpr auto impl(Is,
                                             std::index_sequence<Js...>,
                                             Ls... ls) {
-            return make_farray(impl(lib::push_back_t<Is, Js>{}, ls...)...);
+            return make_farray(impl(detail_variant::push_back_t<Is, Js>{}, ls...)...);
           }
         };
 
@@ -773,7 +784,7 @@ using is_nothrow_swappable =
         inline static constexpr auto make_fmatrix() {
           return make_fmatrix_impl<F, Vs...>::impl(
               std::index_sequence<>{},
-              lib::make_index_sequence<std::decay_t<Vs>::size()>{}...);
+              std::make_index_sequence<std::decay_t<Vs>::size()>{}...);
         }
 
         template <typename F, typename... Vs>
@@ -799,12 +810,12 @@ using is_nothrow_swappable =
         template <typename F, typename V, typename... Vs>
         inline static constexpr auto make_fdiagonal()
             -> decltype(make_fdiagonal_impl<F, V, Vs...>::impl(
-                lib::make_index_sequence<std::decay_t<V>::size()>{})) {
+                std::make_index_sequence<std::decay_t<V>::size()>{})) {
           static_assert(detail_variant::all<(std::decay_t<V>::size() ==
                                   std::decay_t<Vs>::size())...>::value,
                         "all of the variants must be the same size.");
           return make_fdiagonal_impl<F, V, Vs...>::impl(
-              lib::make_index_sequence<std::decay_t<V>::size()>{});
+              std::make_index_sequence<std::decay_t<V>::size()>{});
         }
 #endif
       };
