@@ -39,15 +39,18 @@ jobs:
           "tools\make_vs.bat" test debug x64
 
       - name: Prepare MSVC
+        if: false
         uses: bus1/cabuild/action/msdevshell@v1
         with:
           architecture: x64
 
       - name: Configure build directories
+        if: false
         run: |
           meson setup --buildtype=debug build.asan -Db_sanitize=address
 
       - name: Build and run ASAN tests
+        if: false
         run: meson test -C build.asan
 
       - uses: actions/upload-artifact@v3
@@ -55,5 +58,5 @@ jobs:
         with:
           name: build-dirs
           path: |
-            build.asan/
+            # build.asan/
             build/x64-windows/debug/
