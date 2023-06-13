@@ -1,18 +1,23 @@
-name: Build and run tests on Windows
+name: Test on Windows
 
 on:
-  workflow_call:
-    inputs:
-      platform:
-        required: true
-        type: string
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'include'
+      - 'src'
+      - 'tests'
+      - 'tools'
+  workflow_dispatch:
 
 jobs:
-  build-and-run-tests-windows:
-    runs-on: ${{ inputs.platform }}
+  build-and-asan:
+    name: Test on Windows
+    runs-on: windows-latest
+
     steps:
-    - run: echo "Job triggered by ${{ github.event_name }} event, running on ${{ runner.os }}."
-    - run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
+    - name: Intro
+      run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
 
     - name: Check out repository code
       uses: actions/checkout@v3
@@ -22,8 +27,16 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install Python Dependencies
+    - name: Install Python dependencies
       run: pip install meson ninja
+
+    - name: Call build and test script
+      shell: cmd
+      # test ^<buildtype^> ^<platform^> - Run the unit tests for the specified build type and platform
+      # ^<buildtype^> is one of "release" or "debug"
+      # ^<platform^> is one of "x86" or "x64"
+      run: |
+        "tools\make_vs.bat" test debug x64
 
     - name: Prepare MSVC
       uses: bus1/cabuild/action/msdevshell@v1
@@ -32,19 +45,14 @@ jobs:
 
     - name: Configure build directories
       run: |
-        meson setup --buildtype=release build.release
         meson setup --buildtype=debug build.asan -Db_sanitize=address
 
     - name: Build and run ASAN tests
       run: meson test -C build.asan
-
-    - name: Build and run release tests
-      run: meson test -C build.release
 
     - uses: actions/upload-artifact@v3
       if: ${{ always() }}
       with:
         name: build-dirs-${{ inputs.platform }}
         path: |
-          build.release/
           build.asan/
