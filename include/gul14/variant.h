@@ -158,6 +158,18 @@ struct is_reference_wrapper<std::reference_wrapper<T>>
     : std::true_type {};
 
 
+// invoke, invoke_result, invoke_result_t, is_invocable, is_invocable_r
+
+#if __cplusplus >= 201703L
+
+using std::invoke;
+using std::invoke_result;
+using std::invoke_result_t;
+using std::is_invocable;
+using std::is_invocable_r;
+
+#else
+
 namespace detail_invoke {
 
 template <bool, int>
@@ -234,6 +246,7 @@ template <typename F, typename... Args>
 inline constexpr auto invoke(F &&f, Args &&... args)
 GUL14_RETURN(detail_invoke::invoke(std::forward<F>(f), std::forward<Args>(args)...))
 
+
 namespace detail_invoke_result {
 
 template <typename Void, typename, typename...>
@@ -254,6 +267,7 @@ using invoke_result = detail_invoke_result::invoke_result<void, F, Args...>;
 
 template <typename F, typename... Args>
 using invoke_result_t = typename invoke_result<F, Args...>::type;
+
 
 namespace detail_invocable {
 
@@ -281,6 +295,9 @@ using is_invocable = detail_invocable::is_invocable<void, F, Args...>;
 
 template <typename R, typename F, typename... Args>
 using is_invocable_r = detail_invocable::is_invocable_r<void, R, F, Args...>;
+
+#endif // __cplusplus < 201703L
+
 
 namespace detail_swappable {
 
