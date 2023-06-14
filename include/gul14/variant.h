@@ -349,7 +349,6 @@ using is_nothrow_swappable =
 } // namespace detail_variant
 
 #define AUTO_REFREF_RETURN(...) { return __VA_ARGS__; }
-#define DECLTYPE_AUTO_RETURN(...) { return __VA_ARGS__; }
 
 [[noreturn]] inline void throw_bad_variant_access() {
     throw bad_variant_access{};
@@ -852,26 +851,31 @@ using is_nothrow_swappable =
         inline static constexpr decltype(auto) visit_alt(Visitor &&visitor,
                                                         Vs &&... vs)
 #ifdef GUL14_VARIANT_SWITCH_VISIT
-          DECLTYPE_AUTO_RETURN(
-              base::dispatcher<
+        {
+          return base::dispatcher<
                   true,
                   base::dispatch_result_t<Visitor,
                                           decltype(as_base(
                                               std::forward<Vs>(vs)))...>>::
                   template dispatch<0>(std::forward<Visitor>(visitor),
-                                       as_base(std::forward<Vs>(vs))...))
+                                       as_base(std::forward<Vs>(vs))...);
+        }
 #elif !defined(_MSC_VER) || _MSC_VER >= 1910
-          DECLTYPE_AUTO_RETURN(base::at(
+        {
+          return base::at(
               fmatrix<Visitor &&,
                       decltype(as_base(std::forward<Vs>(vs)))...>::value,
               vs.index()...)(std::forward<Visitor>(visitor),
-                             as_base(std::forward<Vs>(vs))...))
+                             as_base(std::forward<Vs>(vs))...);
+        }
 #else
-          DECLTYPE_AUTO_RETURN(base::at(
+        {
+          return base::at(
               base::make_fmatrix<Visitor &&,
                       decltype(as_base(std::forward<Vs>(vs)))...>(),
               vs.index()...)(std::forward<Visitor>(visitor),
-                             as_base(std::forward<Vs>(vs))...))
+                             as_base(std::forward<Vs>(vs))...);
+        }
 #endif
 
         template <typename Visitor, typename... Vs>
@@ -879,27 +883,32 @@ using is_nothrow_swappable =
                                                            Visitor &&visitor,
                                                            Vs &&... vs)
 #ifdef GUL14_VARIANT_SWITCH_VISIT
-          DECLTYPE_AUTO_RETURN(
-              base::dispatcher<
+          {
+            return base::dispatcher<
                   true,
                   base::dispatch_result_t<Visitor,
                                           decltype(as_base(
                                               std::forward<Vs>(vs)))...>>::
                   template dispatch_at<0>(index,
                                           std::forward<Visitor>(visitor),
-                                          as_base(std::forward<Vs>(vs))...))
+                                          as_base(std::forward<Vs>(vs))...);
+          }
 #elif !defined(_MSC_VER) || _MSC_VER >= 1910
-          DECLTYPE_AUTO_RETURN(base::at(
+          {
+            return base::at(
               fdiagonal<Visitor &&,
                         decltype(as_base(std::forward<Vs>(vs)))...>::value,
               index)(std::forward<Visitor>(visitor),
-                     as_base(std::forward<Vs>(vs))...))
+                     as_base(std::forward<Vs>(vs))...);
+          }
 #else
-          DECLTYPE_AUTO_RETURN(base::at(
+          {
+            return base::at(
               base::make_fdiagonal<Visitor &&,
                         decltype(as_base(std::forward<Vs>(vs)))...>(),
               index)(std::forward<Visitor>(visitor),
-                     as_base(std::forward<Vs>(vs))...))
+                     as_base(std::forward<Vs>(vs))...);
+          }
 #endif
       };
 
@@ -918,10 +927,12 @@ using is_nothrow_swappable =
           static_assert(visitor<Visitor>::template does_not_handle<Values...>(),
                         "`visit` requires the visitor to be exhaustive.");
 
-          inline static constexpr decltype(auto) invoke(Visitor &&visitor,
-                                                       Values &&... values)
-            DECLTYPE_AUTO_RETURN(invoke(std::forward<Visitor>(visitor),
-                                             std::forward<Values>(values)...))
+          inline static constexpr decltype(auto)
+          invoke(Visitor &&visitor, Values &&... values)
+          {
+            return invoke(std::forward<Visitor>(visitor),
+                          std::forward<Values>(values)...);
+          }
         };
 
         template <typename Visitor>
@@ -930,12 +941,13 @@ using is_nothrow_swappable =
 
           template <typename... Alts>
           inline constexpr decltype(auto) operator()(Alts &&... alts) const
-            DECLTYPE_AUTO_RETURN(
-                visit_exhaustiveness_check<
+          {
+            return visit_exhaustiveness_check<
                     Visitor,
                     decltype((std::forward<Alts>(alts).value))...>::
                     invoke(std::forward<Visitor>(visitor_),
-                           std::forward<Alts>(alts).value...))
+                           std::forward<Alts>(alts).value...);
+          }
         };
 
         template <typename Visitor>
@@ -945,35 +957,37 @@ using is_nothrow_swappable =
 
         public:
         template <typename Visitor, typename... Vs>
-        inline static constexpr decltype(auto) visit_alt(Visitor &&visitor,
-                                                        Vs &&... vs)
-          DECLTYPE_AUTO_RETURN(alt::visit_alt(std::forward<Visitor>(visitor),
-                                              std::forward<Vs>(vs).impl_...))
+        inline static constexpr decltype(auto) visit_alt(Visitor &&visitor, Vs &&... vs)
+        {
+          return alt::visit_alt(std::forward<Visitor>(visitor),
+                                std::forward<Vs>(vs).impl_...);
+        }
 
         template <typename Visitor, typename... Vs>
         inline static constexpr decltype(auto) visit_alt_at(std::size_t index,
                                                            Visitor &&visitor,
                                                            Vs &&... vs)
-          DECLTYPE_AUTO_RETURN(
-              alt::visit_alt_at(index,
-                                std::forward<Visitor>(visitor),
-                                std::forward<Vs>(vs).impl_...))
+        {
+          return alt::visit_alt_at(index, std::forward<Visitor>(visitor),
+                                   std::forward<Vs>(vs).impl_...);
+        }
 
         template <typename Visitor, typename... Vs>
         inline static constexpr decltype(auto) visit_value(Visitor &&visitor,
-                                                          Vs &&... vs)
-          DECLTYPE_AUTO_RETURN(
-              visit_alt(make_value_visitor(std::forward<Visitor>(visitor)),
-                        std::forward<Vs>(vs)...))
+                                                           Vs &&... vs)
+        {
+          return visit_alt(make_value_visitor(std::forward<Visitor>(visitor)),
+                           std::forward<Vs>(vs)...);
+        }
 
         template <typename Visitor, typename... Vs>
         inline static constexpr decltype(auto) visit_value_at(std::size_t index,
                                                              Visitor &&visitor,
                                                              Vs &&... vs)
-          DECLTYPE_AUTO_RETURN(
-              visit_alt_at(index,
-                           make_value_visitor(std::forward<Visitor>(visitor)),
-                           std::forward<Vs>(vs)...))
+        {
+          return visit_alt_at(index, make_value_visitor(std::forward<Visitor>(visitor)),
+                              std::forward<Vs>(vs)...);
+        }
       };
 
     }  // namespace visitation
@@ -1997,7 +2011,6 @@ using is_nothrow_swappable =
   } // namespace detail_variant
 
 #undef AUTO_REFREF_RETURN
-#undef DECLTYPE_AUTO_RETURN
 #undef GUL14_RETURN
 
 } // namespace gul14
