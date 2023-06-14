@@ -57,8 +57,8 @@ jobs:
 
       - name: Configure build directories
         run: |
-          ./meson.py --buildtype=release build.release
-          ./meson.py --buildtype=debug build.asan -Db_sanitize=address
+          ./meson.py setup --buildtype=release build.release
+          ./meson.py setup --buildtype=debug build.asan -Db_sanitize=address
 
       - name: Build and run ASAN tests
         run: ./meson.py test -C build.asan
