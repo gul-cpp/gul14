@@ -930,8 +930,8 @@ using is_nothrow_swappable =
           inline static constexpr decltype(auto)
           invoke(Visitor &&visitor, Values &&... values)
           {
-            return invoke(std::forward<Visitor>(visitor),
-                          std::forward<Values>(values)...);
+            return detail_variant::invoke(std::forward<Visitor>(visitor),
+                                          std::forward<Values>(values)...);
           }
         };
 
