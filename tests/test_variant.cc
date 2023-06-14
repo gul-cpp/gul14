@@ -137,3 +137,31 @@ TEST_CASE("variant: variant_size", "[variant]")
     auto v = gul14::variant<float, double, long double>{ };
     REQUIRE(gul14::variant_size<decltype(v)>() == 3);
 }
+
+TEST_CASE("variant: visit()", "[variant]")
+{
+    auto v = gul14::variant<float, double, long>{ };
+
+    auto get_type_name =
+        [](auto&& arg) -> std::string
+        {
+            using T = std::decay_t<decltype(arg)>;
+            if (std::is_same<T, float>::value)
+                return "float";
+            else if (std::is_same<T, double>::value)
+                return "double";
+            else if (std::is_same<T, long>::value)
+                return "long";
+            else
+                return "FAIL";
+        };
+
+    v = 1.5f;
+    REQUIRE(gul14::visit(get_type_name, v) == "float");
+
+    v = 2.4;
+    REQUIRE(gul14::visit(get_type_name, v) == "double");
+
+    v = 42L;
+    REQUIRE(gul14::visit(get_type_name, v) == "long");
+}
