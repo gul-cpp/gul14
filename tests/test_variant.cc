@@ -165,3 +165,26 @@ TEST_CASE("variant: visit()", "[variant]")
     v = 42L;
     REQUIRE(gul14::visit(get_type_name, v) == "long");
 }
+
+TEST_CASE("make_overload_set()", "[variant]")
+{
+    auto v = gul14::variant<float, double, long, std::string>{ };
+
+    auto get_type_name = gul14::make_overload_set(
+        [](auto&&) -> std::string { return "SOMETHING ELSE"; },
+        [](float) -> std::string { return "float"; },
+        [](double) -> std::string { return "double"; },
+        [](long) -> std::string { return "long"; });
+
+    v = 1.5f;
+    REQUIRE(gul14::visit(get_type_name, v) == "float");
+
+    v = 2.4;
+    REQUIRE(gul14::visit(get_type_name, v) == "double");
+
+    v = 42L;
+    REQUIRE(gul14::visit(get_type_name, v) == "long");
+
+    v = "Test";
+    REQUIRE(gul14::visit(get_type_name, v) == "SOMETHING ELSE");
+}
