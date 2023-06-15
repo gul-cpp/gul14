@@ -44,7 +44,7 @@ namespace gul14 {
  *  - \ref numeric_utilities
  *  - \ref container_utilities
  *  - \ref GSL_utilities
- *  - \ref type_traits
+ *  - \ref metaprogramming
  *  - \ref standard_library_backports
  *  - \ref unit_tests
  *
@@ -587,12 +587,16 @@ namespace gul14 {
  */
 
 /**
- * \page type_traits Type Traits
+ * \page metaprogramming Metaprogramming Utilities and Type Traits
  *
- * The library provides a few type traits that can be useful for template metaprogramming.
+ * The library provides some utilities for template metaprogramming:
  *
  * \ref gul14::IsContainerLike "IsContainerLike":
  *     A type trait to determine if a type behaves like a standard container.
+ *
+ * \ref gul14::OverloadSet "OverloadSet" and \ref gul14::make_overload_set "make_overload_set()":
+ *     A function object type that works like an overload set of functions, and a helper
+ *     function to create such an object from a bunch of lambdas.
  *
  * \ref gul14::remove_cvref "remove_cvref":
  *     A metafunction to remove const, volatile, and reference qualifiers from a type.
