@@ -37,7 +37,8 @@ changelg_run = run_command(
     changelogger,
     get_option('deb-vers-pack') ? '-tp' : '-t',
     get_option('deb-vers-tag') + '*',
-    changelog_gen
+    changelog_gen,
+    check: true,
 )
 
 if changelg_run.returncode() != 0

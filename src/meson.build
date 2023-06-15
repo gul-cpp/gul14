@@ -18,7 +18,8 @@ if git_exe.found()
     # Get full description based on git tag API version ('v0.2-22-g3d8867c-dirty')
     git_f_api = run_command(
         git_exe, '-C', meson.current_source_dir(),
-            'describe', '--tags', '--always', '--dirty', '--match', 'v*'
+            'describe', '--tags', '--always', '--dirty', '--match', 'v*',
+        check: false
     )
     if git_f_api.returncode() != 0
         git_full_api_version = 'unknown'
@@ -33,7 +34,8 @@ if git_exe.found()
     git_vers = run_command(
         git_exe, '-C', meson.current_source_dir(),
             'describe', '--tags', '--always', '--abbrev=0', '--match',
-            get_option('deb-vers-tag') + '*'
+            get_option('deb-vers-tag') + '*',
+        check: false
     )
     if git_vers.returncode() != 0
         git_version = 'unknown'
@@ -53,7 +55,8 @@ if git_exe.found()
     # Get the number of commits since the relevant version tag
     git_pat = run_command(
         git_exe, '-C', meson.current_source_dir(),
-            'rev-list', '--count', git_version + '..'
+            'rev-list', '--count', git_version + '..',
+        check: false
     )
     if git_pat.returncode() == 0
         # Ignore patchlevel if it is zero
