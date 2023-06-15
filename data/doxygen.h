@@ -143,6 +143,11 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_9_2 Version 2.9.2
+ *
+ * - Add OverloadSet and make_overload_set()
+ * - Fix compilation errors in gul14::visit()
+ *
  * \subsection v2_9_1 Version 2.9.1
  *
  * - Fix compilation errors in gul14::variant when compiled with C++17 or MSVC

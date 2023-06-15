@@ -1,6 +1,6 @@
 /**
  * \file    variant.h
- * \brief   Definition of the variant class template and associated functions.
+ * \brief   Definition of the variant class template and associated functions and types.
  * \authors Michael Park, (modifications for GUL14) Lars Froehlich
  *
  * \details
@@ -62,9 +62,83 @@ public:
  * only the stored type is accessed. The implementation in the library is a backport from
  * C++17 and should behave like
  * [std::variant](https://en.cppreference.com/w/cpp/utility/variant).
+ *
+ * \since GUL version 2.9.0
+ *
+ * \see visit(), make_overload_set()
  */
 template <typename... Ts>
 class variant;
+
+/**
+ * Call a visitor function with the actual objects stored in the given variants.
+ *
+ * This function works like [std::visit](https://en.cppreference.com/w/cpp/utility/variant/visit)
+ * from the C++17 standard library. It is often convenient to use it with
+ * \ref gul14::make_overload_set "make_overload_set()":
+ * \code{.cpp}
+ * gul14::variant<int, double> v = 1.0;
+ * gul14::visit(gul14::make_overload_set(
+ *     [](int) { std::cout << "int\n"; },
+ *     [](double) { std::cout << "double\n"; }
+ * ), v);
+ * \endcode
+ *
+ * \since GUL version 2.9.0
+ */
+template <typename Visitor, typename... Variants>
+inline constexpr decltype(auto) visit(Visitor&& visitor_fct, Variants&&... variants);
+
+/**
+ * A function object that works like an overload set of functions.
+ *
+ * This variadic class template inherits from an arbitrary number of function objects
+ * (typically lambdas) and imports their definitions of `operator()` into an overload set
+ * for its own `operator()`. This is primarily helpful for use with \ref gul14::visit
+ * "visit()". Constructing an OverloadSet object manually can be cumbersome. The function
+ * \ref gul14::make_overload_set "make_overload_set()" can help with that.
+ *
+ * \since GUL version 2.9.2
+ */
+template <typename Fct1, typename... Fcts>
+struct OverloadSet : Fct1, OverloadSet<Fcts...>
+{
+    using Fct1::operator();
+    using OverloadSet<Fcts...>::operator();
+
+    OverloadSet(Fct1 f1, Fcts... fs)
+        : Fct1(f1), OverloadSet<Fcts...>(fs...)
+    {}
+};
+
+/// OverloadSet for a single function object.
+template <typename Fct1>
+struct OverloadSet<Fct1> : Fct1
+{
+    using Fct1::operator();
+    OverloadSet(Fct1 f1) : Fct1(f1) {}
+};
+
+/**
+ * Create an OverloadSet from an arbitrary number of function objects.
+ *
+ * This function creates an OverloadSet from the function objects given to it. This is
+ * particularly helpful for using multiple lambdas with \ref gul14::visit "visit()":
+ * \code{.cpp}
+ * gul14::variant<int, double> v = 1.0;
+ * gul14::visit(gul14::make_overload_set(
+ *     [](int) { std::cout << "int\n"; },
+ *     [](double) { std::cout << "double\n"; }
+ * ), v);
+ * \endcode
+ *
+ * \since GUL version 2.9.2
+ */
+template <typename... Fct>
+auto make_overload_set(Fct... f)
+{
+    return OverloadSet<Fct...>(f...);
+}
 
 } // namespace gul14
 
