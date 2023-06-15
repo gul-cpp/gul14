@@ -237,41 +237,6 @@ split_sv(string_view text, string_view delimiter,
  * This algorithm iterates twice over the range in order to pre-allocate a string of the
  * correct size.
  *
- * This is the inverse function of split(). It is guaranteed that
- * `join(split(text, del), del) == text` (unless del is a std::regex object).
- *
- * \param parts  A container holding strings or string views that are to be concatenated
- * \param glue   String that is put between each element of parts
- *
- * \returns all strings glued together with the delimiter glue.
- *
- * \tparam StringContainer  A container type that holds strings, e.g.
- *                          std::vector<std::string> or std::list<gul14::string_view>.
- *                          The container must provide an STL-like forward iterator
- *                          interface. The string type must support concatenation with
- *                          std::string using operator+=.
- *
- * \see
- * join(Iterator, Iterator, string_view) has a two-iterator interface,
- * split() and associated functions can be used to split a string into a vector of
- * substrings.
- *
- * \since GUL version 2.3, join() accepts arbitrary containers or iterators (it was
- *        limited to std::vector before).
- */
-template <typename StringContainer>
-inline std::string
-join(const StringContainer& parts, string_view glue)
-{
-    return join(parts.begin(), parts.end(), glue);
-}
-
-/**
- * Concatenate all strings in a range, placing a delimiter between them.
- *
- * This algorithm iterates twice over the range in order to pre-allocate a string of the
- * correct size.
- *
  * \param begin  Iterator pointing to the first string
  * \param end    Iterator pointing past the last string
  * \param glue   String that is put between each element of parts
@@ -320,6 +285,41 @@ join(Iterator begin, Iterator end, string_view glue)
     }
 
     return result;
+}
+
+/**
+ * Concatenate all strings in a range, placing a delimiter between them.
+ *
+ * This algorithm iterates twice over the range in order to pre-allocate a string of the
+ * correct size.
+ *
+ * This is the inverse function of split(). It is guaranteed that
+ * `join(split(text, del), del) == text` (unless del is a std::regex object).
+ *
+ * \param parts  A container holding strings or string views that are to be concatenated
+ * \param glue   String that is put between each element of parts
+ *
+ * \returns all strings glued together with the delimiter glue.
+ *
+ * \tparam StringContainer  A container type that holds strings, e.g.
+ *                          std::vector<std::string> or std::list<gul14::string_view>.
+ *                          The container must provide an STL-like forward iterator
+ *                          interface. The string type must support concatenation with
+ *                          std::string using operator+=.
+ *
+ * \see
+ * join(Iterator, Iterator, string_view) has a two-iterator interface,
+ * split() and associated functions can be used to split a string into a vector of
+ * substrings.
+ *
+ * \since GUL version 2.3, join() accepts arbitrary containers or iterators (it was
+ *        limited to std::vector before).
+ */
+template <typename StringContainer>
+inline std::string
+join(const StringContainer& parts, string_view glue)
+{
+    return join(parts.begin(), parts.end(), glue);
 }
 
 /// @}
