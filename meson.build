@@ -11,12 +11,6 @@ project('gul14', 'cpp',
     version : '2.9',
     meson_version : '>=0.48')
 
-# Enable additional warnings by default
-if host_machine.system() != 'windows'
-    # Both GCC and clang know how to handle these options
-    add_global_arguments('-Wshadow', '-Wconversion', language: [ 'cpp' ])
-endif
-
 # Enforce that the version number is according to specs
 version_parts = meson.project_version().split('.')
 libgul_api_version = '@0@.@1@'.format(version_parts[0], version_parts[1])
