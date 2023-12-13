@@ -1,6 +1,6 @@
-# General Utility Library
+# General Utility Library for C++14
 
-The General Utility Library (GUL) for C++14 contains often-used utility functions and
+The General Utility Library for C++14 (GUL14) contains often-used utility functions and
 types that form the foundation for other libraries and programs. The main fields covered
 by the library are:
 
@@ -14,7 +14,7 @@ by the library are:
   * Core guideline support library (GSL) excerpts
   * Backports from new standard library extensions
 
-To get started, have a look at the [documentation website](https://gul-cpp.github.io/gul14/)
+To get started, have a look at the [documentation website](https://gul14.info/)
 
 Here you find more detailed information on:
 
