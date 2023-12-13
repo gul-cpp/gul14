@@ -106,20 +106,24 @@ ninja -C "%REPO_ROOT%%FOLDER%" %TARGET%
     @IF DEFINED VCVARS_x86 IF DEFINED VCVARS_x64 exit /B 0
 
     @REM Trying to find the newest Visual Studio at the default install path
-    @set VC_PREFIX=C:\Program Files\Microsoft Visual Studio\
+    @IF EXIST "C:\Program Files\Microsoft Visual Studio\" (
+        @set VC_PREFIX=C:\Program Files\Microsoft Visual Studio\
+    ) ELSE IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\" (
+        @set VC_PREFIX=C:\Program Files (x86^)\Microsoft Visual Studio\
+    ) ELSE (
+        echo "Visual Studio base directory not found"
+        exit /B 1
+    )
+
     @IF EXIST "%VC_PREFIX%2022" (
         set VC_YEAR=2022\
+    ) ELSE IF EXIST "%VC_PREFIX%2019" (
+        set VC_YEAR=2019\
+    ) ELSE IF EXIST "%VC_PREFIX%2017" (
+        set VC_YEAR=2017\
     ) ELSE (
-        echo "Can not find '%VC_PREFIX%2022'"
-        @set VC_PREFIX=C:\Program Files (x86^^^)\Microsoft Visual Studio\
-        IF EXIST "%VC_PREFIX%2019" (
-            set VC_YEAR=2019\
-        ) ELSE IF EXIST "%VC_PREFIX%2017" (
-            set VC_YEAR=2017\
-        ) ELSE (
-            echo "Can not find '%VC_PREFIX%2017' or '2019'"
-            exit /B 1
-        )
+        echo "Can not find '%VC_PREFIX%2022', '2019', or '2017'"
+        exit /B 1
     )
 
     @IF EXIST "%VC_PREFIX%%VC_YEAR%Enterprise" (
