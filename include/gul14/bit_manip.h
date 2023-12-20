@@ -33,7 +33,7 @@ namespace gul14 {
 
 /**
  * \addtogroup bit_manip_h gul14/bit_manip.h
- * \brief Bit manipulation.
+ * \brief Bit manipulation and testing, endianness.
  * @{
  */
 
@@ -56,6 +56,44 @@ using BitFunctionReturnType =
             and not std::is_same<std::decay_t<T>, bool>::value,
         std::decay_t<T>
     >;
+
+/**
+ * An enum to determine the endianness of multi-byte scalars on the current platform.
+ *
+ * In big-endian (Motorola) order, the most significant byte is stored first, followed by
+ * the other bytes in order of decreasing significance. Little-endian platforms (e.g.
+ * Intel) store the bytes in the opposite order. There are also (historical) platforms
+ * which do not conform to either of these conventions.
+ *
+ * \code{.cpp}
+ *  if constexpr (gul14::endian::native == gul14::endian::big)
+ *      std::cout << "This is a big-endian machine!\n";
+ * \endcode
+ *
+ * This is a backport of [std::endian](https://en.cppreference.com/w/cpp/types/endian)
+ * from C++20.
+ *
+ * \see is_big_endian(), is_little_endian()
+ * \since GUL version 2.10
+ */
+enum class endian
+{
+#if defined(__BYTE_ORDER__)
+    little = __ORDER_LITTLE_ENDIAN__,
+    big    = __ORDER_BIG_ENDIAN__,
+    native = __BYTE_ORDER__
+#elif defined(_MSC_VER) && !defined(__clang__)
+    little = 0,
+    big    = 1,
+    native = little
+#else
+    #error "Don't know how to determine machine endianness on this compiler"
+    // Just for Doxygen:
+    little, ///< Little-endian (e.g. Intel)
+    big,    ///< Big-endian (e.g. Motorola)
+    native  ///< Native endianness
+#endif
+};
 
 /**
  * Set a bit in an integral type.
@@ -185,6 +223,36 @@ auto constexpr inline bit_flip(T previous, unsigned bit) noexcept -> ReturnT {
 template <typename T>
 bool constexpr inline bit_test(T bits, unsigned bit) noexcept {
     return bits & bit_set<T>(bit);
+}
+
+/**
+ * Determine whether this platform uses big-endian (Motorola) order for storing multi-byte
+ * quantities in memory.
+ *
+ * In big-endian order, the most significant byte is stored first, followed by the other
+ * bytes in order of decreasing significance.
+ *
+ * \see is_little_endian(), gul14::endian
+ * \since GUL version 2.10
+ */
+constexpr bool is_big_endian()
+{
+    return endian::native == endian::big;
+}
+
+/**
+ * Determine whether this platform uses little-endian (Intel) order for storing multi-byte
+ * quantities in memory.
+ *
+ * In little-endian order, the least significant byte is stored first, followed by the
+ * other bytes in order of increasing significance.
+ *
+ * \see is_big_endian(), gul14::endian
+ * \since GUL version 2.10
+ */
+constexpr bool is_little_endian()
+{
+    return endian::native == endian::little;
 }
 
 /// @}

@@ -4,7 +4,7 @@
  * \date   Created on 17 Oct 2019
  * \brief  Unit tests for bit_set(), bit_reset(), bit_flip(), bit_test().
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -74,6 +74,11 @@ TEMPLATE_TEST_CASE("Access MSB", "[bit_manip]",
 
     REQUIRE(gul14::bit_test(x, msb) == true);
     REQUIRE(gul14::bit_test(x, msb - 1) == false);
+}
+
+TEST_CASE("is_little_endian(), is_big_endian()", "[bit_manip]")
+{
+    REQUIRE(gul14::is_little_endian() != gul14::is_big_endian());
 }
 
 // vi:ts=4:sw=4:sts=4:et
