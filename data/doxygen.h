@@ -42,6 +42,7 @@ namespace gul14 {
  *  - \ref statistics_utilities
  *  - \ref debugging_utilities
  *  - \ref numeric_utilities
+ *  - \ref bit_manipulation
  *  - \ref container_utilities
  *  - \ref GSL_utilities
  *  - \ref metaprogramming
@@ -142,6 +143,11 @@ namespace gul14 {
  * \page release_notes Release Notes
  *
  * \section changelog_2_x 2.x Versions
+ *
+ * \subsection v2_10_0 Version 2.10.0
+ *
+ * - Add gul14::endian, a backport of std::endian from C++20
+ * - Add gul14::is_little_endian() and gul14::is_big_endian()
  *
  * \subsection v2_9_2 Version 2.9.2
  *
@@ -537,8 +543,6 @@ namespace gul14 {
 /**
  * \page numeric_utilities Numeric Utilities
  *
- * The General Utility Library provides several functions dealing with numbers.
- *
  * <h4>Modifying Values</h4>
  *
  * abs():
@@ -570,6 +574,10 @@ namespace gul14 {
  * within_ulp():
  *     Determine if two numbers are almost equal, allowing for a difference of a given
  *     number of units-in-the-last-place (ULPs).
+ */
+
+/**
+ * \page bit_manipulation Bit Manipulation and Testing
  *
  * <h4>Working With Bits in Integral Values</h4>
  *
@@ -584,6 +592,19 @@ namespace gul14 {
  *
  * bit_test():
  *     Test a bit in an integral value.
+ *
+ * <h4>Endianness</h4>
+ *
+ * \ref gul14::endian "endian":
+ *     An enum to determine the endianness of multi-byte scalars on the current platform,
+ *     behaving like [std::endian](https://en.cppreference.com/w/cpp/types/endian) from
+ *     C++20.
+ *
+ * is_big_endian():
+ *     Determine if the current platform uses big-endian byte order.
+ *
+ * is_little_endian():
+ *     Determine if the current platform uses little-endian byte order.
  */
 
 /**
@@ -615,6 +636,11 @@ namespace gul14 {
  *
  * The General Utility Library provides a few classes from the C++ standard library that
  * are not yet available to users of older compilers.
+ *
+ * \ref gul14::endian "endian":
+ *     An enum to determine the endianness of multi-byte scalars on the current platform,
+ *     behaving like [std::endian](https://en.cppreference.com/w/cpp/types/endian) from
+ *     C++20.
  *
  * \ref gul14::expected "expected":
  *     A class template that can either contain a value of a certain (expected) type or an
