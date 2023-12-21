@@ -79,6 +79,24 @@ TEMPLATE_TEST_CASE("Access MSB", "[bit_manip]",
 TEST_CASE("is_little_endian(), is_big_endian()", "[bit_manip]")
 {
     REQUIRE(gul14::is_little_endian() != gul14::is_big_endian());
+
+    const std::uint32_t val = 0x01'02'03'04;
+    const char* chars = reinterpret_cast<const char*>(&val);
+
+    if (gul14::is_little_endian())
+    {
+        REQUIRE(chars[0] == 4);
+        REQUIRE(chars[1] == 3);
+        REQUIRE(chars[2] == 2);
+        REQUIRE(chars[3] == 1);
+    }
+    else if (gul14::is_big_endian())
+    {
+        REQUIRE(chars[0] == 1);
+        REQUIRE(chars[1] == 2);
+        REQUIRE(chars[2] == 3);
+        REQUIRE(chars[3] == 4);
+    }
 }
 
 // vi:ts=4:sw=4:sts=4:et
