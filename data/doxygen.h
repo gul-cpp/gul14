@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Doxygen input file for the General Utility Library.
  *
- * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -146,6 +146,7 @@ namespace gul14 {
  *
  * \subsection v2_11_0 Version 2.11.0
  *
+ * - Add ThreadPool
  * - Add backports of std::invoke, std::invoke_result, std::invoke_result_t,
  *   std::is_invocable, and std::is_invocable_r from C++17
  *
@@ -474,6 +475,10 @@ namespace gul14 {
  * (threads, locks, and so on) easier.
  *
  * <h3>Classes</h3>
+ *
+ * \ref gul14::ThreadPool "ThreadPool":
+ *     A thread pool and task queue that allows executing tasks on a fixed number of
+ *     worker threads.
  *
  * \ref gul14::Trigger "Trigger":
  *     A class that allows sending triggers and waiting for them across different threads,

@@ -18,6 +18,7 @@ standalone_headers = [
     'statistics.h',
     'string_util.h',
     'substring_checks.h',
+    'ThreadPool.h',
     'time_util.h',
     'to_number.h',
     'tokenize.h',

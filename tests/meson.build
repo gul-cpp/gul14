@@ -17,8 +17,6 @@ endif
 catch_main = 'test_main.cc'
 test_time = 10 # Default timeout
 
-thread_dep = dependency('threads')
-
 tests = [
     'test_backports.cc',
     'test_bit_manip.cc',
@@ -39,6 +37,7 @@ tests = [
     'test_statistics.cc',
     'test_string_util.cc',
     'test_substring_checks.cc',
+    'test_ThreadPool.cc',
     'test_time_util.cc',
     'test_to_number.cc',
     'test_tokenize.cc',
@@ -52,7 +51,7 @@ test('all',
     executable('libgul-test',
         tests + [ catch_main ],
         cpp_args : test_cpp_args,
-        dependencies : [ thread_dep, libgul_dep ],
+        dependencies : [ libgul_static_dep ],
     ),
     timeout : test_time
 )
