@@ -6,6 +6,7 @@ libgul_src = files([
     'escape.cc',
     'replace.cc',
     'string_util.cc',
+    'ThreadPool.cc',
     'to_number.cc',
     'Trigger.cc',
     'trim.cc',
@@ -100,19 +101,24 @@ if meson.get_compiler('cpp').has_argument('-Wconversion') # msvc doesnt have
     add_cpp_args += [ '-Wconversion' ]
 endif
 
+deps = dependency('threads')
+
 libgul = both_libraries(
     meson.project_name(), libgul_src + [ version_cc ],
     soversion : so_version,
     cpp_args : add_cpp_args,
+    dependencies : deps,
     include_directories : inc,
     gnu_symbol_visibility : 'hidden',
     install : true
 )
 libgul_dep = declare_dependency(
+    dependencies : deps,
     include_directories : inc,
     link_with : libgul.get_shared_lib(),
 )
 libgul_static_dep = declare_dependency(
+    dependencies : deps,
     include_directories : inc,
     link_with : libgul.get_static_lib(),
 )

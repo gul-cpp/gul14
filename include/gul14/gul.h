@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Main include file for the General Utility Library.
  *
- * \copyright Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -59,6 +59,7 @@
 #include "gul14/string_util.h"
 #include "gul14/string_view.h"
 #include "gul14/substring_checks.h"
+#include "gul14/ThreadPool.h"
 #include "gul14/time_util.h"
 #include "gul14/to_number.h"
 #include "gul14/tokenize.h"
