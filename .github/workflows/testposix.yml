@@ -23,7 +23,7 @@ jobs:
         run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
 
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Ninja
         shell: bash
@@ -39,7 +39,7 @@ jobs:
 
       - name: Retrieve Meson from cache
         id: cache-meson
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: meson-0.63.0
           key: meson-0.63.0
@@ -67,7 +67,7 @@ jobs:
       - name: Build and run release tests
         run: ./meson.py test -C build.release
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: build-dirs-${{ matrix.platform }}

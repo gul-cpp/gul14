@@ -21,7 +21,7 @@ jobs:
         run: echo "Branch ${{ github.ref }} on repository ${{ github.repository }}"
 
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -54,7 +54,7 @@ jobs:
         if: false
         run: meson test -C build.asan
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: build-dirs
