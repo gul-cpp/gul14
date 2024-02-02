@@ -41,19 +41,19 @@ jobs:
         id: cache-meson
         uses: actions/cache@v4
         with:
-          path: meson-0.63.0
-          key: meson-0.63.0
+          path: meson-1.3.1
+          key: meson-1.3.1
 
       - name: Download Meson
         if: steps.cache-meson.outputs.cache-hit != 'true'
         run: |
-          wget -q https://github.com/mesonbuild/meson/releases/download/0.63.0/meson-0.63.0.tar.gz
-          tar -xzf meson-0.63.0.tar.gz
-          rm meson-0.63.0.tar.gz
+          wget -q https://github.com/mesonbuild/meson/releases/download/1.3.1/meson-1.3.1.tar.gz
+          tar -xzf meson-1.3.1.tar.gz
+          rm meson-1.3.1.tar.gz
 
       - name: Create symbolic link for Meson
         run: |
-          ln -s meson-0.63.0/meson.py .
+          ln -s meson-1.3.1/meson.py .
           ls -la
 
       - name: Configure build directories
