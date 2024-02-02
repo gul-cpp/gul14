@@ -92,7 +92,6 @@ so_version = (git_version != 'unknown') ? git_version_num : libgul_api_version
 
 add_cpp_args = [
     '-DLIBGUL_API_VERSION=@0@'.format(libgul_api_version),
-    '-DGUL_COMPILING_SHARED_LIB',
 ]
 if meson.get_compiler('cpp').has_argument('-Wshadow') # msvc doesnt have
     add_cpp_args += [ '-Wshadow' ]
@@ -103,24 +102,32 @@ endif
 
 deps = dependency('threads')
 
-libgul = both_libraries(
+libgul = shared_library(
     meson.project_name(), libgul_src + [ version_cc ],
     soversion : so_version,
-    cpp_args : add_cpp_args,
+    cpp_args : add_cpp_args + [ '-DGUL_COMPILING_SHARED_LIB' ],
     dependencies : deps,
     include_directories : inc,
     gnu_symbol_visibility : 'hidden',
     install : true
 )
+libgul_static = static_library(
+    meson.project_name(), libgul_src + [ version_cc ],
+    cpp_args : add_cpp_args + [ '-DGUL_USING_STATIC_LIB_OR_OBJECTS' ],
+    dependencies : deps,
+    include_directories : inc,
+    install : true
+)
 libgul_dep = declare_dependency(
     dependencies : deps,
     include_directories : inc,
-    link_with : libgul.get_shared_lib(),
+    link_with : libgul,
 )
 libgul_static_dep = declare_dependency(
     dependencies : deps,
     include_directories : inc,
-    link_with : libgul.get_static_lib(),
+    link_with : libgul_static,
+    compile_args : [ '-DGUL_USING_STATIC_LIB_OR_OBJECTS' ],
 )
 
 pkg = import('pkgconfig')
