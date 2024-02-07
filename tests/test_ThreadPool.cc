@@ -23,7 +23,6 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <atomic>
-#include <iostream>
 
 #include "gul14/catch.h"
 #include "gul14/ThreadPool.h"
@@ -31,6 +30,116 @@
 
 using namespace gul14;
 using namespace std::literals;
+
+//
+// TaskHandle class
+//
+
+TEST_CASE("TaskHandle: cancel()", "[ThreadPool]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    std::atomic<bool> stop{ false };
+
+    auto task1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    while (not task1.is_running())
+        gul14::sleep(1ms);
+
+    REQUIRE(task1.is_pending() == false);
+    REQUIRE(task2.is_pending());
+    REQUIRE(task3.is_pending());
+
+    REQUIRE(task1.cancel() == false);
+    REQUIRE(task2.cancel() == true);
+
+    REQUIRE(task2.is_pending() == false);
+    REQUIRE(task3.is_pending());
+
+    stop = true;
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
+TEST_CASE("TaskHandle: is_complete()", "[ThreadPool][TaskHandle]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    std::atomic<bool> stop{ false };
+
+    auto task1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    REQUIRE(task1.is_complete() == false);
+    REQUIRE(task2.is_complete() == false);
+    REQUIRE(task3.is_complete() == false);
+
+    stop = true;
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
+TEST_CASE("TaskHandle: is_pending()", "[ThreadPool][TaskHandle]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    std::atomic<bool> stop{ false };
+
+    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    // id1 might have been assigned to the work thread already, but in any case the other
+    // two must still be pending.
+    REQUIRE(task2.is_pending());
+    REQUIRE(task3.is_pending());
+
+    stop = true;
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
+TEST_CASE("TaskHandle: is_running()", "[ThreadPool][TaskHandle]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    std::atomic<bool> stop{ false };
+
+    auto task = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    auto t0 = gul14::tic();
+    while (not task.is_running())
+    {
+        if (gul14::toc(t0) > 1.0)
+            FAIL("Timeout waiting for work item to start");
+        gul14::sleep(1ms);
+    }
+
+    stop = true;
+
+    t0 = gul14::tic();
+    while (task.is_running())
+    {
+        if (gul14::toc(t0) > 1.0)
+            FAIL("Timeout waiting for work item to stop");
+        gul14::sleep(1ms);
+    }
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
+
+
+//
+// ThreadPool class
+//
 
 TEST_CASE("ThreadPool: Constructor", "[ThreadPool]")
 {
@@ -58,21 +167,16 @@ TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);
 
-    // Invalid invocation
-    REQUIRE_THROWS_AS(pool->add_task(std::function<void()>{}), std::invalid_argument);
-    REQUIRE_THROWS_AS(pool->add_task(std::function<void(ThreadPool&)>{}),
-        std::invalid_argument);
-
     // Without start times
     std::atomic<bool> start{ false };
     std::atomic<bool> done{ false };
 
-    pool->add_task([&start](ThreadPool&) { while (!start) gul14::sleep(10us); });
-    auto id2 = pool->add_task([&done](ThreadPool&) { done = true; }, "Task 2");
+    pool->add_task([&start](ThreadPoolEngine&) { while (!start) gul14::sleep(10us); });
+    auto handle = pool->add_task([&done](ThreadPoolEngine&) { done = true; }, "Task 2");
 
     REQUIRE(pool->count_pending() >= 1);
     REQUIRE(pool->count_pending() <= 2);
-    REQUIRE(pool->is_pending(id2));
+    REQUIRE(handle.is_pending());
 
     start = true;
 
@@ -84,9 +188,9 @@ TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
     // With start time as time point
     std::atomic<int> last_job{ 0 };
 
-    pool->add_task([&last_job](ThreadPool&) { last_job = 1; },
+    pool->add_task([&last_job](ThreadPoolEngine&) { last_job = 1; },
         std::chrono::system_clock::now() + 2ms);
-    pool->add_task([&last_job](ThreadPool&) { last_job = 2; });
+    pool->add_task([&last_job](ThreadPoolEngine&) { last_job = 2; });
 
     while (last_job == 0)
         gul14::sleep(50us);
@@ -152,30 +256,6 @@ TEST_CASE("ThreadPool: count_threads()", "[ThreadPool]")
     }
 }
 
-TEST_CASE("ThreadPool: get_running_task_ids()", "[ThreadPool]")
-{
-    auto pool = std::make_unique<ThreadPool>(1);
-
-    REQUIRE(pool->get_running_task_ids().empty());
-
-    std::atomic<bool> stop{ false };
-
-    auto id1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    while (pool->count_pending() == 2)
-        gul14::sleep(1ms);
-
-    auto running_ids = pool->get_running_task_ids();
-    REQUIRE(running_ids.size() == 1);
-    REQUIRE(running_ids[0] == id1);
-
-    stop = true;
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
 TEST_CASE("ThreadPool: get_running_task_names()", "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);
@@ -226,122 +306,22 @@ TEST_CASE("ThreadPool: is_idle()", "[ThreadPool]")
     REQUIRE(pool.is_idle());
 }
 
-TEST_CASE("ThreadPool: is_pending()", "[ThreadPool]")
-{
-    auto pool = std::make_unique<ThreadPool>(1);
-
-    std::atomic<bool> stop{ false };
-
-    auto id1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }); (void)id1;
-    auto id2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    // id1 might have been assigned to the work thread already, but in any case the other
-    // two must still be pending.
-    REQUIRE(pool->is_pending(id2));
-    REQUIRE(pool->is_pending(id3));
-
-    stop = true;
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
-TEST_CASE("ThreadPool: is_pending_or_running()", "[ThreadPool]")
-{
-    auto pool = std::make_unique<ThreadPool>(1);
-
-    std::atomic<bool> stop{ false };
-
-    auto id1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    REQUIRE(pool->is_pending_or_running(id1));
-    REQUIRE(pool->is_pending_or_running(id2));
-    REQUIRE(pool->is_pending_or_running(id3));
-
-    stop = true;
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
-TEST_CASE("ThreadPool: is_running()", "[ThreadPool]")
-{
-    auto pool = std::make_unique<ThreadPool>(1);
-
-    std::atomic<bool> stop{ false };
-
-    auto id = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    auto t0 = gul14::tic();
-    while (not pool->is_running(id))
-    {
-        if (gul14::toc(t0) > 1.0)
-            FAIL("Timeout waiting for work item to start");
-        gul14::sleep(1ms);
-    }
-
-    stop = true;
-
-    t0 = gul14::tic();
-    while (pool->is_running(id))
-    {
-        if (gul14::toc(t0) > 1.0)
-            FAIL("Timeout waiting for work item to stop");
-        gul14::sleep(1ms);
-    }
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
-TEST_CASE("ThreadPool: remove_pending_task()", "[ThreadPool]")
-{
-    auto pool = std::make_unique<ThreadPool>(1);
-
-    std::atomic<bool> stop{ false };
-
-    auto id1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    while (!pool->is_running(id1))
-        gul14::sleep(1ms);
-
-    REQUIRE(pool->is_pending(id1) == false);
-    REQUIRE(pool->is_pending(id2));
-    REQUIRE(pool->is_pending(id3));
-
-    REQUIRE(pool->remove_pending_task(id1) == false);
-    REQUIRE(pool->remove_pending_task(id2) == true);
-
-    REQUIRE(pool->is_pending(id2) == false);
-    REQUIRE(pool->is_pending(id3));
-
-    stop = true;
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
 TEST_CASE("ThreadPool: remove_pending_tasks()", "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);
 
     std::atomic<bool> stop{ false };
 
-    auto id1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto id3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
 
-    while (!pool->is_running(id1))
+    while (not task1.is_running())
         gul14::sleep(1ms);
 
-    REQUIRE(pool->is_pending(id1) == false);
-    REQUIRE(pool->is_pending(id2));
-    REQUIRE(pool->is_pending(id3));
+    REQUIRE(task1.is_pending() == false);
+    REQUIRE(task2.is_pending());
+    REQUIRE(task3.is_pending());
 
     REQUIRE(pool->remove_pending_tasks() == 2);
     REQUIRE(pool->count_pending() == 0);

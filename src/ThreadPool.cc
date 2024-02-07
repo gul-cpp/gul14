@@ -21,7 +21,6 @@
  */
 
 #include <algorithm>
-#include <iostream>
 
 #include <gul14/cat.h>
 #include <gul14/ThreadPool.h>
@@ -31,7 +30,39 @@
 
 namespace gul14 {
 
-ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
+namespace detail {
+
+bool cancel_task(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
+{
+    auto shared_ptr = pool.lock();
+    if (!shared_ptr)
+        throw std::logic_error("Associated thread pool does not exist anymore");
+
+    return shared_ptr->remove_pending_task(id);
+}
+
+bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
+{
+    auto shared_ptr = pool.lock();
+    if (!shared_ptr)
+        throw std::logic_error("Associated thread pool does not exist anymore");
+
+    return shared_ptr->is_pending(id);
+}
+
+bool is_running(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
+{
+    auto shared_ptr = pool.lock();
+    if (!shared_ptr)
+        throw std::logic_error("Associated thread pool does not exist anymore");
+
+    return shared_ptr->is_running(id);
+}
+
+} // namespace detail
+
+
+ThreadPoolEngine::ThreadPoolEngine(std::size_t num_threads, std::size_t capacity)
     : capacity_(capacity)
 {
     if (num_threads == 0 || num_threads > max_threads)
@@ -48,10 +79,10 @@ ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
         threads_.emplace_back([this]() { perform_work(); });
 }
 
-ThreadPool::~ThreadPool()
+ThreadPoolEngine::~ThreadPoolEngine()
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    cancel_requested_ = true;
+    shutdown_requested_ = true;
     lock.unlock();
     cv_.notify_all();
 
@@ -62,146 +93,65 @@ ThreadPool::~ThreadPool()
     }
 }
 
-ThreadPool::TaskId ThreadPool::add_task(
-    std::function<void(ThreadPool&)> fct, TimePoint start_time, std::string name)
-{
-    if (!fct)
-        throw std::invalid_argument("ThreadPool does not accept null functions");
-
-    auto task_id = [this, &fct, start_time, &name]()
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-
-            if (is_full_i())
-            {
-                throw std::runtime_error(
-                    cat("Cannot add task: Pending queue has reached capacity (",
-                        pending_tasks_.size(), ")"));
-            }
-
-            const auto id = next_task_id_;
-            pending_tasks_.emplace_back(id, std::move(fct), std::move(name), start_time);
-
-            ++next_task_id_;
-
-            return id;
-        }();
-
-    cv_.notify_one();
-
-    return task_id;
-}
-
-ThreadPool::TaskId ThreadPool::add_task(
-    std::function<void()> fct, TimePoint start_time, std::string name)
-{
-    if (!fct)
-        throw std::invalid_argument("ThreadPool does not accept null functions");
-
-    return add_task(
-        [f = std::move(fct)](ThreadPool&) { f(); }, start_time, std::move(name));
-}
-
-ThreadPool::TaskId ThreadPool::add_task(std::function<void(ThreadPool&)> fct,
-    ThreadPool::Duration delay_before_start, std::string name)
-{
-    return add_task(std::move(fct),
-        std::chrono::system_clock::now() + delay_before_start, std::move(name));
-}
-
-ThreadPool::TaskId ThreadPool::add_task(std::function<void()> fct,
-    ThreadPool::Duration delay_before_start, std::string name)
-{
-    return add_task(std::move(fct),
-        std::chrono::system_clock::now() + delay_before_start, std::move(name));
-}
-
-ThreadPool::TaskId ThreadPool::add_task(
-    std::function<void(ThreadPool&)> fct, std::string name)
-{
-    return add_task(std::move(fct), TimePoint{}, std::move(name));
-}
-
-ThreadPool::TaskId ThreadPool::add_task(std::function<void()> fct, std::string name)
-{
-    return add_task(std::move(fct), TimePoint{}, std::move(name));
-}
-
-std::size_t ThreadPool::count_pending() const
+std::size_t ThreadPoolEngine::count_pending() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return pending_tasks_.size();
 }
 
-std::size_t ThreadPool::count_threads() const noexcept
+std::size_t ThreadPoolEngine::count_threads() const noexcept
 {
     return threads_.size();
 }
 
-/// Return a vector with the IDs of the jobs that are currently running.
-std::vector<ThreadPool::TaskId> ThreadPool::get_running_task_ids() const
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    return running_task_ids_;
-}
-
 /// Return a vector with the names of the jobs that are currently running.
-std::vector<std::string> ThreadPool::get_running_task_names() const
+std::vector<std::string> ThreadPoolEngine::get_running_task_names() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return running_task_names_;
 }
 
-bool ThreadPool::is_full() const noexcept
+bool ThreadPoolEngine::is_full() const noexcept
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return is_full_i();
 }
 
-bool ThreadPool::is_full_i() const noexcept
+bool ThreadPoolEngine::is_full_i() const noexcept
 {
     return pending_tasks_.size() >= capacity_;
 }
 
-bool ThreadPool::is_idle() const
+bool ThreadPoolEngine::is_idle() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return pending_tasks_.empty() && running_task_ids_.empty();
 }
 
-bool ThreadPool::is_pending(const ThreadPool::TaskId task_id) const
+bool ThreadPoolEngine::is_pending(const TaskId task_id) const
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    return is_pending_i(task_id);
-}
 
-bool ThreadPool::is_pending_i(const ThreadPool::TaskId task_id) const
-{
     const auto it = std::find_if(pending_tasks_.begin(), pending_tasks_.end(),
         [task_id](const Task& t) { return t.id_ == task_id; });
 
     return it != pending_tasks_.end();
 }
 
-bool ThreadPool::is_pending_or_running(const ThreadPool::TaskId task_id) const
+bool ThreadPoolEngine::is_running(const TaskId task_id) const
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    return is_pending_i(task_id) || is_running_i(task_id);
-}
-
-bool ThreadPool::is_running(const ThreadPool::TaskId task_id) const
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    return is_running_i(task_id);
-}
-
-bool ThreadPool::is_running_i(const ThreadPool::TaskId task_id) const
-{
     auto it = std::find(running_task_ids_.begin(), running_task_ids_.end(), task_id);
     return it != running_task_ids_.end();
 }
 
-void ThreadPool::perform_work()
+bool ThreadPoolEngine::is_shutdown_requested() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return shutdown_requested_;
+}
+
+void ThreadPoolEngine::perform_work()
 {
 #if defined(__APPLE__) || defined(__GNUC__)
     // On unixoid systems, we block a number of signals in the worker threads because we
@@ -224,7 +174,7 @@ void ThreadPool::perform_work()
 
     std::unique_lock<std::mutex> lock(mutex_);
 
-    while (!cancel_requested_)
+    while (!shutdown_requested_)
     {
         // mutex is locked
         if (pending_tasks_.empty())
@@ -246,9 +196,9 @@ void ThreadPool::perform_work()
             continue;
         }
 
-        auto fct = std::move(task_it->fct_);
+        auto named_task_ptr = std::move(task_it->named_task_);
         auto id = task_it->id_;
-        auto name = std::move(task_it->name_);
+        auto name = std::move(named_task_ptr->name_);
         pending_tasks_.erase(task_it);
 
         running_task_ids_.push_back(id);
@@ -258,15 +208,13 @@ void ThreadPool::perform_work()
 
         try
         {
-            fct(*this);
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Exception in task \"" << name << "\": " << e.what() << std::endl;
+            (*named_task_ptr)(*this);
         }
         catch (...)
         {
-            std::cerr << "Unknown exception in task \"" << name << "\"" << std::endl;
+            // This should not happen because the packaged_task should catch all
+            // exceptions itself. But in case of something unexpected, we'll try
+            // to continue...
         }
 
         lock.lock();
@@ -281,7 +229,7 @@ void ThreadPool::perform_work()
     }
 }
 
-bool ThreadPool::remove_pending_task(const ThreadPool::TaskId task_id)
+bool ThreadPoolEngine::remove_pending_task(const TaskId task_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -296,7 +244,7 @@ bool ThreadPool::remove_pending_task(const ThreadPool::TaskId task_id)
     return false;
 }
 
-std::size_t ThreadPool::remove_pending_tasks()
+std::size_t ThreadPoolEngine::remove_pending_tasks()
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
