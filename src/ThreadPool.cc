@@ -263,9 +263,9 @@ void ThreadPoolEngine::perform_work()
         auto it = std::find(running_task_ids_.begin(), running_task_ids_.end(), id);
         if (it != running_task_ids_.end())
         {
+            const auto idx = it - running_task_ids_.begin();
             running_task_ids_.erase(it);
-            running_task_names_.erase(
-                running_task_names_.begin() + (it - running_task_ids_.begin()));
+            running_task_names_.erase(running_task_names_.begin() + idx);
         }
     }
 }
