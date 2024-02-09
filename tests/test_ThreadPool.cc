@@ -204,33 +204,49 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPoolEngine&",
     // With start time as time point
     std::atomic<int> last_job{ 0 };
 
+    const auto now = std::chrono::system_clock::now();
+    auto task1 = pool->add_task(
+        [&last_job]() { last_job = 1; }, now + 120s);
     pool->add_task(
-        [&last_job]() { last_job = 1; },
-        std::chrono::system_clock::now() + 3ms);
+        [&last_job]() { last_job = 2; }, now + 2ms,
+        "task 2 (usually runs second)");
     pool->add_task(
-        [&last_job]() { last_job = 2; },
-        std::chrono::system_clock::now(), "task 2 (runs first)");
+        [&last_job]() { last_job = 3; }, now,
+        "task 3 (usually runs first)");
 
     while (last_job == 0)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 2);
+        gul14::sleep(1ms);
+    REQUIRE(last_job >= 2);
+    REQUIRE(last_job <= 3);
 
-    while (last_job == 2)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 1);
+    while (pool->count_pending() > 1)
+        gul14::sleep(1ms);
+
+    REQUIRE(task1.is_pending());
+    task1.cancel();
+    REQUIRE(pool->count_pending() == 0);
 
     // With start time as duration
     last_job = 0;
-    pool->add_task([&last_job]() { last_job = 1; }, 3ms);
-    pool->add_task([&last_job]() { last_job = 2; }, 0ms, "task 2 (runs first)");
+    task1 = pool->add_task([&last_job]() { last_job = 1; }, 120s);
+    pool->add_task(
+        [&last_job]() { last_job = 2; }, 2ms,
+        "task 2 (usually runs second)");
+    pool->add_task(
+        [&last_job]() { last_job = 3; }, 0ms,
+        "task 3 (usually runs first)");
 
     while (last_job == 0)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 2);
+        gul14::sleep(1ms);
+    REQUIRE(last_job >= 2);
+    REQUIRE(last_job <= 3);
 
-    while (last_job == 2)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 1);
+    while (pool->count_pending() > 1)
+        gul14::sleep(1ms);
+
+    REQUIRE(task1.is_pending());
+    task1.cancel();
+    REQUIRE(pool->count_pending() == 0);
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
@@ -263,35 +279,50 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
     // With start time as time point
     std::atomic<int> last_job{ 0 };
 
+    const auto now = std::chrono::system_clock::now();
+    auto task1 = pool->add_task(
+        [&last_job](ThreadPoolEngine&) { last_job = 1; }, now + 120s);
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 1; },
-        std::chrono::system_clock::now() + 3ms);
+        [&last_job](ThreadPoolEngine&) { last_job = 2; }, now + 2ms,
+        "task 2 (usually runs second)");
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 2; },
-        std::chrono::system_clock::now(), "task 2 (runs first)");
+        [&last_job](ThreadPoolEngine&) { last_job = 3; }, now,
+        "task 3 (usually runs first)");
 
     while (last_job == 0)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 2);
+        gul14::sleep(1ms);
+    REQUIRE(last_job >= 2);
+    REQUIRE(last_job <= 3);
 
-    while (last_job == 2)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 1);
+    while (pool->count_pending() > 1)
+        gul14::sleep(1ms);
+
+    REQUIRE(task1.is_pending());
+    task1.cancel();
+    REQUIRE(pool->count_pending() == 0);
 
     // With start time as duration
     last_job = 0;
+    task1 = pool->add_task(
+        [&last_job](ThreadPoolEngine&) { last_job = 1; }, 120s);
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 1; }, 3ms);
+        [&last_job](ThreadPoolEngine&) { last_job = 2; }, 2ms,
+        "task 2 (usually runs second)");
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 2; }, 0ms, "task 2 (runs first)");
+        [&last_job](ThreadPoolEngine&) { last_job = 3; }, 0ms,
+        "task 3 (usually runs first)");
 
     while (last_job == 0)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 2);
+        gul14::sleep(1ms);
+    REQUIRE(last_job >= 2);
+    REQUIRE(last_job <= 3);
 
-    while (last_job == 2)
-        gul14::sleep(50us);
-    REQUIRE(last_job == 1);
+    while (pool->count_pending() > 1)
+        gul14::sleep(1ms);
+
+    REQUIRE(task1.is_pending());
+    task1.cancel();
+    REQUIRE(pool->count_pending() == 0);
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
@@ -419,13 +450,21 @@ TEST_CASE("ThreadPool: is_full()", "[ThreadPool]")
 
     std::atomic<bool> stop{ false };
 
-    for (std::size_t i = 1; i <= pool->capacity() + 1; ++i)
+    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    // Wait until the first task is running
+    while (pool->count_pending() > 0)
+        gul14::sleep(1ms);
+
+    // Enqueue tasks up to the capacity of the pool
+    for (std::size_t i = 1; i <= pool->capacity(); ++i)
     {
         REQUIRE(pool->is_full() == false);
         pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
     }
 
-    REQUIRE(pool->is_full()); // One work item is currently executing, the queue is full
+    // One work item is currently executing, the queue is full
+    REQUIRE(pool->is_full());
 
     stop = true;
 
