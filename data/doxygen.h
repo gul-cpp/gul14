@@ -144,6 +144,11 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_11_0 Version 2.11.0
+ *
+ * - Add backports of std::invoke, std::invoke_result, std::invoke_result_t,
+ *   std::is_invocable, and std::is_invocable_r from C++17
+ *
  * \subsection v2_10_0 Version 2.10.0
  *
  * - Add gul14::endian, a backport of std::endian from C++20
@@ -296,7 +301,7 @@ namespace gul14 {
  *
  * \section copyright_notice Copyright Notice
  *
- * Copyright 2018-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * Copyright 2018-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -348,6 +353,13 @@ namespace gul14 {
  * <dd>Copyright 2012-2015 Marshall Clow, copyright 2015 Beman Dawes.
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     \ref license_boost_1_0 and \ref string_view.h for details).</dd>
+ *
+ * <dt>\ref traits.h</dt>
+ * <dd>Copyright 2015-2017 Michael Park (implementations of invoke, invoke_result,
+ *     invoke_result_t, is_invocable, is_invocable_r), copyright 2021-2024 Deutsches
+ *     Elektronen-Synchrotron (DESY), Hamburg (other implementations and modifications).
+ *     Distributed under the Boost Software License, Version 1.0 (see
+ *     \ref license_boost_1_0 and \ref traits.h for details).</dd>
  *
  * <dt>\ref variant.h</dt>
  * <dd>Copyright 2015-2017 Michael Park.
@@ -611,6 +623,24 @@ namespace gul14 {
  * \page metaprogramming Metaprogramming Utilities and Type Traits
  *
  * The library provides some utilities for template metaprogramming:
+ *
+ * \ref gul14::invoke "invoke":
+ *     A function template that calls a callable object with a given set of arguments.
+ *     This is a backport of
+ *     [std::invoke](https://en.cppreference.com/w/cpp/utility/functional/invoke) from
+ *     C++17.
+ *
+ * \ref gul14::invoke_result "invoke_result", \ref gul14::invoke_result_t "invoke_result_t":
+ *     A metafunction that computes the result of invoking a callable object with the
+ *     given arguments. This is a backport of
+ *     [std::invoke_result](https://en.cppreference.com/w/cpp/types/result_of) from
+ *     C++17.
+ *
+ * \ref gul14::is_invocable "is_invocable", \ref gul14::is_invocable_r "is_invocable_r":
+ *     A type trait that checks whether a callable object can be invoked with a given set
+ *     of arguments. This is a backport of
+ *     [std::is_invocable](https://en.cppreference.com/w/cpp/types/is_invocable) from
+ *     C++17.
  *
  * \ref gul14::IsContainerLike "IsContainerLike":
  *     A type trait to determine if a type behaves like a standard container.

@@ -170,9 +170,6 @@ namespace gul14 {
 #define GUL14_BUILTIN_UNREACHABLE
 #endif
 
-#define GUL14_RETURN(...) \
-  noexcept(noexcept(__VA_ARGS__)) -> decltype(__VA_ARGS__) { return __VA_ARGS__; }
-
 
 namespace detail_variant {
 
@@ -228,160 +225,9 @@ struct push_back<std::index_sequence<Is...>, J> {
     using type_pack_element_t = typename type_pack_element<I, Ts...>::type;
 #endif
 
-template <typename T>
-struct identity { using type = T; };
-
 template <bool... Bs>
 using all = std::is_same<std::integer_sequence<bool, true, Bs...>,
                          std::integer_sequence<bool, Bs..., true>>;
-
-template <typename T>
-struct is_reference_wrapper : std::false_type {};
-
-template <typename T>
-struct is_reference_wrapper<std::reference_wrapper<T>>
-    : std::true_type {};
-
-
-// invoke, invoke_result, invoke_result_t, is_invocable, is_invocable_r
-
-#if __cplusplus >= 201703L
-
-using std::invoke;
-using std::invoke_result;
-using std::invoke_result_t;
-using std::is_invocable;
-using std::is_invocable_r;
-
-#else
-
-namespace detail_invoke {
-
-template <bool, int>
-struct Invoke;
-
-template <>
-struct Invoke<true /* pmf */, 0 /* is_base_of */> {
-    template <typename R, typename T, typename Arg, typename... Args>
-    inline static constexpr auto invoke(R T::*pmf, Arg &&arg, Args &&... args)
-    GUL14_RETURN((std::forward<Arg>(arg).*pmf)(std::forward<Args>(args)...))
-};
-
-template <>
-struct Invoke<true /* pmf */, 1 /* is_reference_wrapper */> {
-    template <typename R, typename T, typename Arg, typename... Args>
-    inline static constexpr auto invoke(R T::*pmf, Arg &&arg, Args &&... args)
-    GUL14_RETURN((std::forward<Arg>(arg).get().*pmf)(std::forward<Args>(args)...))
-};
-
-template <>
-struct Invoke<true /* pmf */, 2 /* otherwise */> {
-    template <typename R, typename T, typename Arg, typename... Args>
-    inline static constexpr auto invoke(R T::*pmf, Arg &&arg, Args &&... args)
-    GUL14_RETURN(((*std::forward<Arg>(arg)).*pmf)(std::forward<Args>(args)...))
-};
-
-template <>
-struct Invoke<false /* pmo */, 0 /* is_base_of */> {
-    template <typename R, typename T, typename Arg>
-    inline static constexpr auto invoke(R T::*pmo, Arg &&arg)
-    GUL14_RETURN(std::forward<Arg>(arg).*pmo)
-};
-
-template <>
-struct Invoke<false /* pmo */, 1 /* is_reference_wrapper */> {
-    template <typename R, typename T, typename Arg>
-    inline static constexpr auto invoke(R T::*pmo, Arg &&arg)
-    GUL14_RETURN(std::forward<Arg>(arg).get().*pmo)
-};
-
-template <>
-struct Invoke<false /* pmo */, 2 /* otherwise */> {
-    template <typename R, typename T, typename Arg>
-    inline static constexpr auto invoke(R T::*pmo, Arg &&arg)
-        GUL14_RETURN((*std::forward<Arg>(arg)).*pmo)
-};
-
-template <typename R, typename T, typename Arg, typename... Args>
-inline constexpr auto invoke(R T::*f, Arg &&arg, Args &&... args)
-    GUL14_RETURN(
-        Invoke<std::is_function<R>::value,
-                (std::is_base_of<T, std::decay_t<Arg>>::value
-                    ? 0
-                    : is_reference_wrapper<std::decay_t<Arg>>::value
-                        ? 1
-                        : 2)>::invoke(f,
-                                        std::forward<Arg>(arg),
-                                        std::forward<Args>(args)...))
-
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4100)
-#endif
-template <typename F, typename... Args>
-inline constexpr auto invoke(F &&f, Args &&... args)
-    GUL14_RETURN(std::forward<F>(f)(std::forward<Args>(args)...))
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-} // namespace detail_invoke
-
-template <typename F, typename... Args>
-inline constexpr auto invoke(F &&f, Args &&... args)
-GUL14_RETURN(detail_invoke::invoke(std::forward<F>(f), std::forward<Args>(args)...))
-
-
-namespace detail_invoke_result {
-
-template <typename Void, typename, typename...>
-struct invoke_result {};
-
-template <typename F, typename... Args>
-struct invoke_result<void_t<decltype(invoke(
-                            std::declval<F>(), std::declval<Args>()...))>,
-                        F,
-                        Args...>
-    : identity<decltype(
-            invoke(std::declval<F>(), std::declval<Args>()...))> {};
-
-} // namespace detail_invoke_result
-
-template <typename F, typename... Args>
-using invoke_result = detail_invoke_result::invoke_result<void, F, Args...>;
-
-template <typename F, typename... Args>
-using invoke_result_t = typename invoke_result<F, Args...>::type;
-
-
-namespace detail_invocable {
-
-template <typename Void, typename, typename...>
-struct is_invocable : std::false_type {};
-
-template <typename F, typename... Args>
-struct is_invocable<void_t<invoke_result_t<F, Args...>>, F, Args...>
-    : std::true_type {};
-
-template <typename Void, typename, typename, typename...>
-struct is_invocable_r : std::false_type {};
-
-template <typename R, typename F, typename... Args>
-struct is_invocable_r<void_t<invoke_result_t<F, Args...>>,
-                        R,
-                        F,
-                        Args...>
-    : std::is_convertible<invoke_result_t<F, Args...>, R> {};
-
-} // namespace detail_invocable
-
-template <typename F, typename... Args>
-using is_invocable = detail_invocable::is_invocable<void, F, Args...>;
-
-template <typename R, typename F, typename... Args>
-using is_invocable_r = detail_invocable::is_invocable_r<void, R, F, Args...>;
-
-#endif // __cplusplus < 201703L
 
 
 namespace detail_swappable {
@@ -633,7 +479,7 @@ using is_nothrow_swappable =
           inline static constexpr decltype(auto)
           invoke(Visitor &&visitor, Alts &&... alts)
           {
-              return ::gul14::detail_variant::invoke(
+              return ::gul14::invoke(
                   std::forward<Visitor>(visitor), std::forward<Alts>(alts)...);
           }
         };
@@ -992,7 +838,7 @@ using is_nothrow_swappable =
         struct visitor {
           template <typename... Values>
           inline static constexpr bool does_not_handle() {
-            return detail_variant::is_invocable<Visitor, Values...>::value;
+            return is_invocable<Visitor, Values...>::value;
           }
         };
 
@@ -1004,8 +850,8 @@ using is_nothrow_swappable =
           inline static constexpr decltype(auto)
           invoke(Visitor &&visitor, Values &&... values)
           {
-            return detail_variant::invoke(std::forward<Visitor>(visitor),
-                                          std::forward<Values>(values)...);
+            return ::gul14::invoke(std::forward<Visitor>(visitor),
+                                   std::forward<Values>(values)...);
           }
         };
 
@@ -2068,7 +1914,7 @@ using is_nothrow_swappable =
       constexpr bool meets_requirements() noexcept {
         return std::is_copy_constructible<H>::value &&
                std::is_move_constructible<H>::value &&
-               detail_variant::is_invocable_r<std::size_t, H, const K &>::value;
+               is_invocable_r<std::size_t, H, const K &>::value;
       }
 
       template <typename K>
@@ -2085,7 +1931,6 @@ using is_nothrow_swappable =
   } // namespace detail_variant
 
 #undef AUTO_REFREF_RETURN
-#undef GUL14_RETURN
 
 } // namespace gul14
 
