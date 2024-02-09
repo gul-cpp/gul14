@@ -297,7 +297,7 @@ public:
             return npos;
         const_iterator iter = std::find_first_of
                 (this->cbegin () + pos, this->cend (), s.cbegin (), s.cend (), traits::eq);
-        return iter == this->cend () ? npos : std::distance ( this->cbegin (), iter );
+        return iter == this->cend () ? npos : static_cast< size_type >(std::distance ( this->cbegin (), iter ));
     }
     constexpr size_type find_first_of(charT c, size_type pos = 0) const noexcept
     { return find_first_of(basic_string_view(&c, 1), pos); }
@@ -316,7 +316,7 @@ public:
             pos = len_ - (pos+1);
         const_reverse_iterator iter = std::find_first_of
                 ( this->crbegin () + pos, this->crend (), s.cbegin (), s.cend (), traits::eq );
-        return iter == this->crend () ? npos : reverse_distance ( this->crbegin (), iter);
+        return iter == this->crend () ? npos : ( len_ - 1 - static_cast< size_type >(std::distance( this->crbegin (), iter )) );
     }
     constexpr size_type find_last_of(charT c, size_type pos = npos) const noexcept
     { return find_last_of(basic_string_view(&c, 1), pos); }
@@ -332,7 +332,7 @@ public:
         if (s.len_ == 0)
             return pos;
         const_iterator iter = find_not_of ( this->cbegin () + pos, this->cend (), s );
-        return iter == this->cend () ? npos : std::distance ( this->cbegin (), iter );
+        return iter == this->cend () ? npos : static_cast< size_type >(std::distance ( this->cbegin (), iter ));
     }
     constexpr size_type find_first_not_of(charT c, size_type pos = 0) const noexcept
     { return find_first_not_of(basic_string_view(&c, 1), pos); }
@@ -348,8 +348,8 @@ public:
         if (s.len_ == 0u)
             return pos;
         pos = len_ - (pos+1);
-        const_reverse_iterator iter = find_not_of ( this->crbegin () + pos, this->crend (), s );
-        return iter == this->crend () ? npos : reverse_distance ( this->crbegin (), iter );
+        const_reverse_iterator iter = find_not_of ( this->crbegin () + static_cast< difference_type >(pos), this->crend (), s );
+        return iter == this->crend () ? npos : ( len_ - 1 - static_cast< size_type >(std::distance( this->crbegin (), iter )) );
     }
     constexpr size_type find_last_not_of(charT c, size_type pos = npos) const noexcept
     { return find_last_not_of(basic_string_view(&c, 1), pos); }
@@ -359,12 +359,6 @@ public:
     { return find_last_not_of(basic_string_view(s), pos); }
 
 private:
-    template <typename r_iter>
-    size_type reverse_distance(r_iter first, r_iter last) const noexcept {
-        // Portability note here: std::distance is not NOEXCEPT, but calling it with a string_view::reverse_iterator will not throw.
-        return len_ - 1 - std::distance ( first, last );
-    }
-
     template <typename Iterator>
     Iterator find_not_of(Iterator first, Iterator last, basic_string_view s) const noexcept {
         for (; first != last ; ++first)
