@@ -109,8 +109,13 @@ public:
     /// Return the ID of the task.
     TaskId get_id() const noexcept { return id_; }
 
-    /// Block until the task has finished and return its result.
-    T get_result() const { return future_.get(); }
+    /**
+     * Block until the task has finished and return its result.
+     *
+     * If the task finished by throwing an exception, get_result() rethrows this
+     * exception.
+     */
+    T get_result() { return future_.get(); }
 
     /// Determine whether the task has finished.
     bool is_complete() const { return future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready; }
