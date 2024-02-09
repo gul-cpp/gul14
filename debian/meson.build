@@ -63,7 +63,7 @@ deb_conf.set('NAME-DEV', deb_dev_name)
 deb_conf.set('CONFLICTS', '')
 deb_conf.set('CONFLICTS-DEV', '')
 deb_conf.set('VERSION', debian_package_version)
-deb_conf.set('CONFIG_CHECKER', meson.build_root() + '/@0@'.format(config_checker))
+deb_conf.set('CONFIG_CHECKER', config_checker_path)
 deb_conf.set('NINJA-ARGS', get_variable('deb_ninja_args', ''))
 
 # Mark a conflict, if we generate a non standard debian package
