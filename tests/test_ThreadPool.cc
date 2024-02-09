@@ -306,7 +306,7 @@ TEST_CASE("ThreadPool: is_idle()", "[ThreadPool]")
     REQUIRE(pool.is_idle());
 }
 
-TEST_CASE("ThreadPool: remove_pending_tasks()", "[ThreadPool]")
+TEST_CASE("ThreadPool: cancel_pending_tasks()", "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);
 
@@ -323,9 +323,9 @@ TEST_CASE("ThreadPool: remove_pending_tasks()", "[ThreadPool]")
     REQUIRE(task2.is_pending());
     REQUIRE(task3.is_pending());
 
-    REQUIRE(pool->remove_pending_tasks() == 2);
+    REQUIRE(pool->cancel_pending_tasks() == 2);
     REQUIRE(pool->count_pending() == 0);
-    REQUIRE(pool->remove_pending_tasks() == 0);
+    REQUIRE(pool->cancel_pending_tasks() == 0);
 
     stop = true;
 
