@@ -326,6 +326,9 @@ public:
     /// Return the number of threads in the pool.
     std::size_t count_threads() const noexcept;
 
+    /// Return a vector with the names of the tasks that are waiting to be executed.
+    std::vector<std::string> get_pending_task_names() const;
+
     /// Return a vector with the names of the tasks that are currently running.
     std::vector<std::string> get_running_task_names() const;
 
@@ -537,6 +540,12 @@ public:
 
     /// Return the number of threads in the pool.
     std::size_t count_threads() const noexcept { return engine_->count_threads(); }
+
+    /// Return a vector with the names of the tasks that are waiting to be executed.
+    std::vector<std::string> get_pending_task_names() const
+    {
+        return engine_->get_pending_task_names();
+    }
 
     /// Return a vector with the names of the tasks that are currently running.
     std::vector<std::string> get_running_task_names() const

@@ -256,6 +256,32 @@ TEST_CASE("ThreadPool: count_threads()", "[ThreadPool]")
     }
 }
 
+TEST_CASE("ThreadPool: get_pending_task_names()", "[ThreadPool]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    REQUIRE(pool->get_pending_task_names().empty());
+
+    std::atomic<bool> stop{ false };
+
+    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "1");
+    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "2");
+    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "3");
+
+    while (pool->count_pending() == 3)
+        gul14::sleep(1ms);
+
+    auto pending_names = pool->get_pending_task_names();
+    REQUIRE(pending_names.size() == 2);
+    REQUIRE(pending_names[0] == "2");
+    REQUIRE(pending_names[1] == "3");
+
+    stop = true;
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
 TEST_CASE("ThreadPool: get_running_task_names()", "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);

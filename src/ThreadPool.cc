@@ -129,7 +129,19 @@ std::size_t ThreadPoolEngine::count_threads() const noexcept
     return threads_.size();
 }
 
-/// Return a vector with the names of the jobs that are currently running.
+std::vector<std::string> ThreadPoolEngine::get_pending_task_names() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    std::vector<std::string> names;
+    names.resize(pending_tasks_.size());
+
+    std::transform(pending_tasks_.begin(), pending_tasks_.end(), names.begin(),
+        [](const Task& t) { return t.named_task_->name_; });
+
+    return names;
+}
+
 std::vector<std::string> ThreadPoolEngine::get_running_task_names() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
