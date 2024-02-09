@@ -23,6 +23,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <atomic>
+#include <stdexcept>
 
 #include "gul14/catch.h"
 #include "gul14/ThreadPool.h"
@@ -62,6 +63,19 @@ TEST_CASE("TaskHandle: cancel()", "[ThreadPool]")
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
+}
+
+TEST_CASE("TaskHandle: get_result()", "[ThreadPool]")
+{
+    ThreadPool pool(1);
+
+    auto task1 = pool.add_task([]() { return 42; });
+    auto task2 = pool.add_task([]() { return "Hello"s; });
+    auto task3 = pool.add_task([]() { throw std::runtime_error("Boom"); });
+
+    REQUIRE(task1.get_result() == 42);
+    REQUIRE(task2.get_result() == "Hello");
+    REQUIRE_THROWS_AS(task3.get_result(), std::runtime_error);
 }
 
 TEST_CASE("TaskHandle: is_complete()", "[ThreadPool][TaskHandle]")
@@ -136,7 +150,6 @@ TEST_CASE("TaskHandle: is_running()", "[ThreadPool][TaskHandle]")
 }
 
 
-
 //
 // ThreadPool class
 //
@@ -163,7 +176,8 @@ TEST_CASE("ThreadPool: Constructor", "[ThreadPool]")
     }
 }
 
-TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
+TEST_CASE("ThreadPool: add_task() for functions without ThreadPoolEngine&",
+    "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);
 
@@ -171,8 +185,10 @@ TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
     std::atomic<bool> start{ false };
     std::atomic<bool> done{ false };
 
-    pool->add_task([&start](ThreadPoolEngine&) { while (!start) gul14::sleep(10us); });
-    auto handle = pool->add_task([&done](ThreadPoolEngine&) { done = true; }, "Task 2");
+    pool->add_task(
+        [&start]() { while (!start) gul14::sleep(10us); });
+    auto handle = pool->add_task(
+        [&done]() { done = true; }, "Task 2");
 
     REQUIRE(pool->count_pending() >= 1);
     REQUIRE(pool->count_pending() <= 2);
@@ -188,9 +204,12 @@ TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
     // With start time as time point
     std::atomic<int> last_job{ 0 };
 
-    pool->add_task([&last_job](ThreadPoolEngine&) { last_job = 1; },
-        std::chrono::system_clock::now() + 2ms);
-    pool->add_task([&last_job](ThreadPoolEngine&) { last_job = 2; });
+    pool->add_task(
+        [&last_job]() { last_job = 1; },
+        std::chrono::system_clock::now() + 3ms);
+    pool->add_task(
+        [&last_job]() { last_job = 2; },
+        std::chrono::system_clock::now(), "task 2 (runs first)");
 
     while (last_job == 0)
         gul14::sleep(50us);
@@ -202,8 +221,8 @@ TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
 
     // With start time as duration
     last_job = 0;
-    pool->add_task([&last_job]() { last_job = 1; }, 2ms);
-    pool->add_task([&last_job]() { last_job = 2; });
+    pool->add_task([&last_job]() { last_job = 1; }, 3ms);
+    pool->add_task([&last_job]() { last_job = 2; }, 0ms, "task 2 (runs first)");
 
     while (last_job == 0)
         gul14::sleep(50us);
@@ -212,6 +231,94 @@ TEST_CASE("ThreadPool: add_task()", "[ThreadPool]")
     while (last_job == 2)
         gul14::sleep(50us);
     REQUIRE(last_job == 1);
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
+TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    // Without start times
+    std::atomic<bool> start{ false };
+    std::atomic<bool> done{ false };
+
+    pool->add_task(
+        [&start](ThreadPoolEngine&) { while (!start) gul14::sleep(10us); });
+    auto handle = pool->add_task(
+        [&done](ThreadPoolEngine&) { done = true; }, "Task 2");
+
+    REQUIRE(pool->count_pending() >= 1);
+    REQUIRE(pool->count_pending() <= 2);
+    REQUIRE(handle.is_pending());
+
+    start = true;
+
+    while (not pool->is_idle())
+        gul14::sleep(1ms);
+
+    REQUIRE(done);
+
+    // With start time as time point
+    std::atomic<int> last_job{ 0 };
+
+    pool->add_task(
+        [&last_job](ThreadPoolEngine&) { last_job = 1; },
+        std::chrono::system_clock::now() + 3ms);
+    pool->add_task(
+        [&last_job](ThreadPoolEngine&) { last_job = 2; },
+        std::chrono::system_clock::now(), "task 2 (runs first)");
+
+    while (last_job == 0)
+        gul14::sleep(50us);
+    REQUIRE(last_job == 2);
+
+    while (last_job == 2)
+        gul14::sleep(50us);
+    REQUIRE(last_job == 1);
+
+    // With start time as duration
+    last_job = 0;
+    pool->add_task(
+        [&last_job](ThreadPoolEngine&) { last_job = 1; }, 3ms);
+    pool->add_task(
+        [&last_job](ThreadPoolEngine&) { last_job = 2; }, 0ms, "task 2 (runs first)");
+
+    while (last_job == 0)
+        gul14::sleep(50us);
+    REQUIRE(last_job == 2);
+
+    while (last_job == 2)
+        gul14::sleep(50us);
+    REQUIRE(last_job == 1);
+
+    // Make sure the pool is removed before any of the atomic variables go out of scope
+    pool.reset();
+}
+
+TEST_CASE("ThreadPool: cancel_pending_tasks()", "[ThreadPool]")
+{
+    auto pool = std::make_unique<ThreadPool>(1);
+
+    std::atomic<bool> stop{ false };
+
+    auto task1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    while (not task1.is_running())
+        gul14::sleep(1ms);
+
+    REQUIRE(task1.is_pending() == false);
+    REQUIRE(task2.is_pending());
+    REQUIRE(task3.is_pending());
+
+    REQUIRE(pool->cancel_pending_tasks() == 2);
+    REQUIRE(pool->count_pending() == 0);
+    REQUIRE(pool->cancel_pending_tasks() == 0);
+
+    stop = true;
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
@@ -332,33 +439,6 @@ TEST_CASE("ThreadPool: is_idle()", "[ThreadPool]")
     REQUIRE(pool.is_idle());
 }
 
-TEST_CASE("ThreadPool: cancel_pending_tasks()", "[ThreadPool]")
-{
-    auto pool = std::make_unique<ThreadPool>(1);
-
-    std::atomic<bool> stop{ false };
-
-    auto task1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    while (not task1.is_running())
-        gul14::sleep(1ms);
-
-    REQUIRE(task1.is_pending() == false);
-    REQUIRE(task2.is_pending());
-    REQUIRE(task3.is_pending());
-
-    REQUIRE(pool->cancel_pending_tasks() == 2);
-    REQUIRE(pool->count_pending() == 0);
-    REQUIRE(pool->cancel_pending_tasks() == 0);
-
-    stop = true;
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
 TEST_CASE("ThreadPool: Run 100 functions on a single thread, check order", "[ThreadPool]")
 {
     auto pool = std::make_unique<ThreadPool>(1);
@@ -476,6 +556,52 @@ TEST_CASE("ThreadPool: Capacity limit", "[ThreadPool]")
     }
 
     REQUIRE_NOTHROW(pool->add_task([]() {}));
+
+    // Make sure the pool is removed before any captured variable goes out of scope
+    pool.reset();
+}
+
+TEST_CASE("ThreadPool: Tasks scheduling their own continuation", "[ThreadPool]")
+{
+    auto pool = std::make_unique<ThreadPool>(2);
+
+    std::mutex mutex;
+    std::string str;
+
+    pool->add_task(
+        [&mutex, &str](ThreadPoolEngine& pool)
+        {
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+                str += '1';
+            }
+
+            pool.add_task(
+                [&mutex, &str]()
+                {
+                    {
+                        std::lock_guard<std::mutex> lock(mutex);
+                        str += '2';
+                    }
+                });
+
+            pool.add_task(
+                [&mutex, &str]()
+                {
+                    {
+                        std::lock_guard<std::mutex> lock(mutex);
+                        str += '3';
+                    }
+                }, 3ms);
+        });
+
+    while (not pool->is_idle())
+        gul14::sleep(1ms);
+
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        REQUIRE(str == "123");
+    }
 
     // Make sure the pool is removed before any captured variable goes out of scope
     pool.reset();
