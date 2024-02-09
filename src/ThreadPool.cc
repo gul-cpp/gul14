@@ -229,7 +229,11 @@ void ThreadPoolEngine::perform_work()
             task_it = std::min_element(pending_tasks_.begin(), pending_tasks_.end(),
                 [](const Task& a, const Task& b) { return a.start_time_ < b.start_time_; });
 
-            cv_.wait_until(lock, task_it->start_time_); // acquires the lock when done
+            // Note: We may not pass task_it->start_time_ directly to wait_until() because
+            // it may get invalidated when the mutex is unlocked.
+            const auto start_time = task_it->start_time_;
+
+            cv_.wait_until(lock, start_time); // acquires the lock when done
             continue;
         }
 
