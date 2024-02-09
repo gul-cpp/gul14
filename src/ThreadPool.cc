@@ -38,7 +38,7 @@ bool cancel_task(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
     if (!shared_ptr)
         throw std::logic_error("Associated thread pool does not exist anymore");
 
-    return shared_ptr->remove_pending_task(id);
+    return shared_ptr->cancel_pending_task(id);
 }
 
 bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
@@ -91,6 +91,31 @@ ThreadPoolEngine::~ThreadPoolEngine()
         if (t.joinable())
             t.join();
     }
+}
+
+bool ThreadPoolEngine::cancel_pending_task(const TaskId task_id)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    auto it = std::find_if(pending_tasks_.begin(), pending_tasks_.end(),
+        [task_id](const Task& t) { return t.id_ == task_id; });
+    if (it != pending_tasks_.end())
+    {
+        pending_tasks_.erase(it);
+        return true;
+    }
+
+    return false;
+}
+
+std::size_t ThreadPoolEngine::cancel_pending_tasks()
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    std::size_t num_removed = pending_tasks_.size();
+    pending_tasks_.clear();
+
+    return num_removed;
 }
 
 std::size_t ThreadPoolEngine::count_pending() const
@@ -227,31 +252,6 @@ void ThreadPoolEngine::perform_work()
                 running_task_names_.begin() + (it - running_task_ids_.begin()));
         }
     }
-}
-
-bool ThreadPoolEngine::remove_pending_task(const TaskId task_id)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-
-    auto it = std::find_if(pending_tasks_.begin(), pending_tasks_.end(),
-        [task_id](const Task& t) { return t.id_ == task_id; });
-    if (it != pending_tasks_.end())
-    {
-        pending_tasks_.erase(it);
-        return true;
-    }
-
-    return false;
-}
-
-std::size_t ThreadPoolEngine::remove_pending_tasks()
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-
-    std::size_t num_removed = pending_tasks_.size();
-    pending_tasks_.clear();
-
-    return num_removed;
 }
 
 } // namespace gul14

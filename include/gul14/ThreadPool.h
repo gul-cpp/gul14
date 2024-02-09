@@ -293,6 +293,30 @@ public:
         return add_task(std::move(fct), TimePoint{}, std::move(name));
     }
 
+    /**
+     * Remove the pending task associated with the specified ID.
+     *
+     * This call looks for a pending task with the given ID. If one is found, it is
+     * immediately removed and true is returned. If none is found, false is returned.
+     * This function has no impact on tasks that are currently being executed.
+     *
+     * \param task_id  Unique ID for the task to be removed
+     *
+     * \returns true if a task was removed, false if no pending task with the given ID was
+     *          found.
+     */
+    bool cancel_pending_task(TaskId task_id);
+
+    /**
+     * Remove all pending tasks from the queue.
+     *
+     * This call removes all tasks that have not yet been started from the queue. It has
+     * no impact on tasks that are currently being executed.
+     *
+     * \returns the number of tasks that were removed.
+     */
+    std::size_t cancel_pending_tasks();
+
     /// Return the maximum number of pending tasks that can be queued.
     std::size_t capacity() const noexcept { return capacity_; }
 
@@ -322,30 +346,6 @@ public:
 
     /// Determine whether the thread pool has been requested to shut down.
     bool is_shutdown_requested() const;
-
-    /**
-     * Remove the pending task associated with the specified ID.
-     *
-     * This call looks for a pending task with the given ID. If one is found, it is
-     * immediately removed and true is returned. If none is found, false is returned.
-     * This function has no impact on tasks that are currently being executed.
-     *
-     * \param task_id  Unique ID for the task to be removed
-     *
-     * \returns true if a task was removed, false if no pending task with the given ID was
-     *          found.
-     */
-    bool remove_pending_task(TaskId task_id);
-
-    /**
-     * Remove all pending tasks from the queue.
-     *
-     * This call removes all tasks that have not yet been started from the queue. It has
-     * no impact on tasks that are currently being executed.
-     *
-     * \returns the number of tasks that were removed.
-     */
-    std::size_t remove_pending_tasks();
 
 private:
     struct NamedTask
@@ -519,6 +519,16 @@ public:
         return engine_->add_task(std::forward<Function>(fct), std::forward<Args>(args)...);
     }
 
+    /**
+     * Remove all pending tasks from the queue.
+     *
+     * This call removes all tasks that have not yet been started from the queue. It has
+     * no impact on tasks that are currently being executed.
+     *
+     * \returns the number of tasks that were removed.
+     */
+    std::size_t cancel_pending_tasks() { return engine_->cancel_pending_tasks(); }
+
     /// Return the maximum number of pending tasks that can be queued.
     std::size_t capacity() const noexcept { return engine_->capacity(); }
 
@@ -542,16 +552,6 @@ public:
      * being executed.
      */
     bool is_idle() const { return engine_->is_idle(); }
-
-    /**
-     * Remove all pending tasks from the queue.
-     *
-     * This call removes all tasks that have not yet been started from the queue. It has
-     * no impact on tasks that are currently being executed.
-     *
-     * \returns the number of tasks that were removed.
-     */
-    std::size_t remove_pending_tasks() { return engine_->remove_pending_tasks(); }
 
 private:
     std::shared_ptr<ThreadPoolEngine> engine_;
