@@ -6,7 +6,7 @@
  *
  * \copyright
  * Written in 2017 by Sy Brand (tartanllama@gmail.com, @TartanLlama)
- * Modifications for GUL14 in 2023 by Lars Fröhlich
+ * Modifications for GUL14 in 2023-2024 by Lars Fröhlich
  *
  * This file is based on version 1.1.0 of Sy Brand's expected.h header from
  * https://github.com/TartanLlama/expected
@@ -248,43 +248,6 @@ template <class B> struct conjunction<B> : B {};
 template <class B, class... Bs>
 struct conjunction<B, Bs...>
     : std::conditional<bool(B::value), conjunction<Bs...>, B>::type {};
-
-// std::invoke from C++17
-// https://stackoverflow.com/questions/38288042/c11-14-invoke-workaround
-template <
-    typename Fn, typename... Args,
-    typename = enable_if_t<std::is_member_pointer<decay_t<Fn>>::value>, int = 0>
-constexpr auto invoke(Fn &&f, Args &&...args) noexcept(
-    noexcept(std::mem_fn(f)(std::forward<Args>(args)...)))
-    -> decltype(std::mem_fn(f)(std::forward<Args>(args)...)) {
-  return std::mem_fn(f)(std::forward<Args>(args)...);
-}
-
-template <typename Fn, typename... Args,
-          typename = enable_if_t<!std::is_member_pointer<decay_t<Fn>>::value>>
-constexpr auto invoke(Fn &&f, Args &&...args) noexcept(
-    noexcept(std::forward<Fn>(f)(std::forward<Args>(args)...)))
-    -> decltype(std::forward<Fn>(f)(std::forward<Args>(args)...)) {
-  return std::forward<Fn>(f)(std::forward<Args>(args)...);
-}
-
-// std::invoke_result from C++17
-template <class F, class, class... Us> struct invoke_result_impl;
-
-template <class F, class... Us>
-struct invoke_result_impl<
-    F,
-    decltype(detail::invoke(std::declval<F>(), std::declval<Us>()...), void()),
-    Us...> {
-  using type =
-      decltype(detail::invoke(std::declval<F>(), std::declval<Us>()...));
-};
-
-template <class F, class... Us>
-using invoke_result = invoke_result_impl<F, void, Us...>;
-
-template <class F, class... Us>
-using invoke_result_t = typename invoke_result<F, Us...>::type;
 
 // https://stackoverflow.com/questions/26744589/what-is-a-proper-way-to-implement-is-swappable-to-test-for-the-swappable-concept
 namespace swap_adl_tests {
@@ -1975,47 +1938,47 @@ template <class Exp, class Ret> using ret_t = expected<Ret, err_t<Exp>>;
 
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
-                                              *std::declval<Exp>()))>
+          class Ret = decltype(invoke(std::declval<F>(),
+                                      *std::declval<Exp>()))>
 constexpr auto and_then_impl(Exp &&exp, F &&f) {
   static_assert(detail::is_expected<Ret>::value, "F must return an expected");
 
   return exp.has_value()
-             ? detail::invoke(std::forward<F>(f), *std::forward<Exp>(exp))
+             ? invoke(std::forward<F>(f), *std::forward<Exp>(exp))
              : Ret(unexpect, std::forward<Exp>(exp).error());
 }
 
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>()))>
+          class Ret = decltype(invoke(std::declval<F>()))>
 constexpr auto and_then_impl(Exp &&exp, F &&f) {
   static_assert(detail::is_expected<Ret>::value, "F must return an expected");
 
-  return exp.has_value() ? detail::invoke(std::forward<F>(f))
+  return exp.has_value() ? invoke(std::forward<F>(f))
                          : Ret(unexpect, std::forward<Exp>(exp).error());
 }
 
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               *std::declval<Exp>())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto expected_map_impl(Exp &&exp, F &&f) {
   using result = ret_t<Exp, detail::decay_t<Ret>>;
-  return exp.has_value() ? result(detail::invoke(std::forward<F>(f),
+  return exp.has_value() ? result(invoke(std::forward<F>(f),
                                                  *std::forward<Exp>(exp)))
                          : result(unexpect, std::forward<Exp>(exp).error());
 }
 
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               *std::declval<Exp>())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 auto expected_map_impl(Exp &&exp, F &&f) {
   using result = expected<void, err_t<Exp>>;
   if (exp.has_value()) {
-    detail::invoke(std::forward<F>(f), *std::forward<Exp>(exp));
+    invoke(std::forward<F>(f), *std::forward<Exp>(exp));
     return result();
   }
 
@@ -2024,22 +1987,22 @@ auto expected_map_impl(Exp &&exp, F &&f) {
 
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>())),
+          class Ret = decltype(invoke(std::declval<F>())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto expected_map_impl(Exp &&exp, F &&f) {
   using result = ret_t<Exp, detail::decay_t<Ret>>;
-  return exp.has_value() ? result(detail::invoke(std::forward<F>(f)))
+  return exp.has_value() ? result(invoke(std::forward<F>(f)))
                          : result(unexpect, std::forward<Exp>(exp).error());
 }
 
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>())),
+          class Ret = decltype(invoke(std::declval<F>())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 auto expected_map_impl(Exp &&exp, F &&f) {
   using result = expected<void, err_t<Exp>>;
   if (exp.has_value()) {
-    detail::invoke(std::forward<F>(f));
+    invoke(std::forward<F>(f));
     return result();
   }
 
@@ -2049,19 +2012,19 @@ auto expected_map_impl(Exp &&exp, F &&f) {
 #if !defined(GUL14_EXPECTED_GCC54) && !defined(GUL14_EXPECTED_GCC55)
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto map_error_impl(Exp &&exp, F &&f) {
   using result = expected<exp_t<Exp>, detail::decay_t<Ret>>;
   return exp.has_value()
              ? result(*std::forward<Exp>(exp))
-             : result(unexpect, detail::invoke(std::forward<F>(f),
+             : result(unexpect, invoke(std::forward<F>(f),
                                                std::forward<Exp>(exp).error()));
 }
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 auto map_error_impl(Exp &&exp, F &&f) {
@@ -2070,24 +2033,24 @@ auto map_error_impl(Exp &&exp, F &&f) {
     return result(*std::forward<Exp>(exp));
   }
 
-  detail::invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
+  invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
   return result(unexpect, monostate{});
 }
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto map_error_impl(Exp &&exp, F &&f) {
   using result = expected<exp_t<Exp>, detail::decay_t<Ret>>;
   return exp.has_value()
              ? result()
-             : result(unexpect, detail::invoke(std::forward<F>(f),
+             : result(unexpect, invoke(std::forward<F>(f),
                                                std::forward<Exp>(exp).error()));
 }
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 auto map_error_impl(Exp &&exp, F &&f) {
@@ -2096,13 +2059,13 @@ auto map_error_impl(Exp &&exp, F &&f) {
     return result();
   }
 
-  detail::invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
+  invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
   return result(unexpect, monostate{});
 }
 #else
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto map_error_impl(Exp &&exp, F &&f)
@@ -2111,13 +2074,13 @@ constexpr auto map_error_impl(Exp &&exp, F &&f)
 
   return exp.has_value()
              ? result(*std::forward<Exp>(exp))
-             : result(unexpect, detail::invoke(std::forward<F>(f),
+             : result(unexpect, invoke(std::forward<F>(f),
                                                std::forward<Exp>(exp).error()));
 }
 
 template <class Exp, class F,
           detail::enable_if_t<!std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 auto map_error_impl(Exp &&exp, F &&f) -> expected<exp_t<Exp>, monostate> {
@@ -2126,13 +2089,13 @@ auto map_error_impl(Exp &&exp, F &&f) -> expected<exp_t<Exp>, monostate> {
     return result(*std::forward<Exp>(exp));
   }
 
-  detail::invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
+  invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
   return result(unexpect, monostate{});
 }
 
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto map_error_impl(Exp &&exp, F &&f)
@@ -2141,13 +2104,12 @@ constexpr auto map_error_impl(Exp &&exp, F &&f)
 
   return exp.has_value()
              ? result()
-             : result(unexpect, detail::invoke(std::forward<F>(f),
-                                               std::forward<Exp>(exp).error()));
+             : result(unexpect, invoke(std::forward<F>(f), std::forward<Exp>(exp).error()));
 }
 
 template <class Exp, class F,
           detail::enable_if_t<std::is_void<exp_t<Exp>>::value> * = nullptr,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 auto map_error_impl(Exp &&exp, F &&f) -> expected<exp_t<Exp>, monostate> {
@@ -2156,30 +2118,28 @@ auto map_error_impl(Exp &&exp, F &&f) -> expected<exp_t<Exp>, monostate> {
     return result();
   }
 
-  detail::invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
+  invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
   return result(unexpect, monostate{});
 }
 #endif
 
 template <class Exp, class F,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<!std::is_void<Ret>::value> * = nullptr>
 constexpr auto or_else_impl(Exp &&exp, F &&f) {
   static_assert(detail::is_expected<Ret>::value, "F must return an expected");
   return exp.has_value() ? std::forward<Exp>(exp)
-                         : detail::invoke(std::forward<F>(f),
-                                          std::forward<Exp>(exp).error());
+                         : invoke(std::forward<F>(f), std::forward<Exp>(exp).error());
 }
 
 template <class Exp, class F,
-          class Ret = decltype(detail::invoke(std::declval<F>(),
+          class Ret = decltype(invoke(std::declval<F>(),
                                               std::declval<Exp>().error())),
           detail::enable_if_t<std::is_void<Ret>::value> * = nullptr>
 detail::decay_t<Exp> or_else_impl(Exp &&exp, F &&f) {
   return exp.has_value() ? std::forward<Exp>(exp)
-                         : (detail::invoke(std::forward<F>(f),
-                                           std::forward<Exp>(exp).error()),
+                         : (invoke(std::forward<F>(f), std::forward<Exp>(exp).error()),
                             std::forward<Exp>(exp));
 }
 
