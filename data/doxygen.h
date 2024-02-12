@@ -362,7 +362,8 @@ namespace gul14 {
  *     \ref license_boost_1_0 and \ref traits.h for details).</dd>
  *
  * <dt>\ref variant.h</dt>
- * <dd>Copyright 2015-2017 Michael Park.
+ * <dd>Copyright 2015-2017 Michael Park, copyright 2023-2024 Deutsches
+ *     Elektronen-Synchrotron (DESY), Hamburg.
  *     Distributed under the Boost Software License, Version 1.0 (see
  *     \ref license_boost_1_0 and \ref variant.h for details).</dd>
  * </dl>

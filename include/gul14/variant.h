@@ -12,7 +12,8 @@
  * been removed because GUL14 does not support pre-C++14 compilers.
  *
  * \copyright
- * Copyright 2015-2017 Michael Park; 2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * Copyright 2015-2017 Michael Park;
+ * 2023-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  * Distributed under the Boost Software License, Version 1.0.
  * (See \ref license_boost_1_0 or http://boost.org/LICENSE_1_0.txt)
  */
