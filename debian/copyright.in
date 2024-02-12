@@ -1,34 +1,54 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 Files: *
-Copyright: 2018-2023 libgul contributors
-           2018-2023 DESY
+Copyright: 2018-2024 libgul contributors
+           2018-2024 DESY
 License: LGPL-2.1+
+
+Files: include/gul14/catch.h
+Copyright: 2019 Two Blue Cubes Ltd.
+License: BSL-1.0
+
+Files: include/gul14/date.h
+Copyright: 2015-2017 Howard Hinnant
+           2016 Adrian Colomitchi
+           2017 Florian Dang
+           2017 Paul Thompson
+           2018-2019 Tomasz Kamiński
+           2019 Jiangang Zhuang
+           2022 libgul contributors (L. Fröhlich)
+License: Expat
+
+Files: include/gul14/expected.h
+Copyright: 2017 Sy Brand
+           2023-2024 libgul contributors (L. Fröhlich)
+License: CC0
+
+Files: include/gul14/optional.h
+Copyright: 2011-2012 Andrzej Krzemienski
+           2019 libgul contributors (L. Fröhlich)
+License: BSL-1.0
+
+Files: include/gul14/span.h
+Copyright: 2018 Tristan Brindle
+           2019 libgul contributors (L. Fröhlich)
+License: BSL-1.0
 
 Files: include/gul14/string_view.h
 Copyright: 2012-2015 Marshall Clow
            2015 Beman Dawes
-           2018 libgul contributors (L. Froehlich)
-License: BOOST-1
+           2018 libgul contributors (L. Fröhlich)
+License: BSL-1.0
 
-Files: include/gul14/catch.h
-Copyright: 2019 Two Blue Cubes Ltd.
-License: BOOST-1
+Files: include/gul14/traits.h
+Copyright: 2015-2017 Michael Park
+           2021-2024 libgul contributors (L. Fröhlich, U.F. Jastrow)
+License: BSL-1.0
 
-Files: include/gul14/optional.h
-Copyright: 2011-2012 Andrzej Krzemienski
-           2019 libgul contributors (L. Froehlich)
-License: BOOST-1
-
-Files: include/gul14/span.h
-Copyright: 2018 Tristan Brindle
-           2019 libgul contributors (L. Froehlich)
-License: BOOST-1
-
-Files: include/gul14/expected.h
-Copyright: 2017 Sy Brand
-           2023 libgul contributors (L. Froehlich)
-License: CC0
+Files: include/gul14/variant.h
+Copyright: 2015-2017 Michael Park
+           2023-2024 libgul contributors (L. Fröhlich)
+License: BSL-1.0
 
 License: LGPL-2.1+
  This package is free software; you can redistribute it and/or
@@ -45,7 +65,7 @@ License: LGPL-2.1+
  License along with this package; if not, write to the Free Software
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
-License: BOOST-1
+License: BSL-1.0
  Boost Software License - Version 1.0 - August 17th, 2003
  .
  Permission is hereby granted, free of charge, to any person or organization
@@ -69,6 +89,26 @@ License: BOOST-1
  FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  DEALINGS IN THE SOFTWARE.
+
+License: Expat
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 License: CC0
  Creative Commons Legal Code – CC0 1.0 Universal
