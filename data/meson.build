@@ -17,12 +17,12 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
         configuration : docs_data,
     )
 
-    docs_outdir = join_paths(meson.current_build_dir(), 'doxygenerated')
+    docs_outdir = meson.current_build_dir() / 'doxygenerated'
 
     docs_gen = custom_target('doxy_generate', # This is not the ninja target name
         command : [
             doxy_run, # "Usage: doxywrap source_root output_root config_file [doxygen parameters]"
-            join_paths(meson.current_source_dir(), '..'),
+            meson.current_source_dir() / '..',
             docs_outdir,
             '@INPUT@',
         ],
@@ -34,17 +34,14 @@ if get_option('docs') and doxygen.found() and graphviz.found() and doxy_run.foun
         )
 
     if rsync.found()
-        docdir = join_paths(
-            get_option('prefix'),
-            get_option('datadir'),
-            meson.project_name())
+        docdir = get_option('prefix') / get_option('datadir') / meson.project_name()
 
         custom_target('copy_doxygenerated',
             command : [
                 rsync,
                 '-rt',
                 '--chmod=Da=rx,ug+w,Fa=r,ug+w',
-                join_paths(docs_outdir, 'html'),
+                docs_outdir / 'html',
                 docdir,
             ],
             input : docs_gen,
