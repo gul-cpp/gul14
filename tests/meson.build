@@ -70,7 +70,7 @@ foreach header_to_check : standalone_headers
         header_name = header_to_check.split('.h')[0]
 
         header_conf = configuration_data()
-        header_conf.set('HEADER_TO_INCLUDE', meson.project_name() + '/' + header_to_check)
+        header_conf.set('HEADER_TO_INCLUDE', meson.project_name() / header_to_check)
         header_conf.set('DUMMY_FUNCTION_NAME', 'a@0@'.format(loop_number))
 
         header_check = configure_file(

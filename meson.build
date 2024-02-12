@@ -9,7 +9,7 @@ project('gul14', 'cpp',
         'warning_level=3',
     ],
     version : '2.10',
-    meson_version : '>=0.48')
+    meson_version : '>=0.49')
 
 # Enforce that the version number is according to specs
 version_parts = meson.project_version().split('.')

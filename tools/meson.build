@@ -26,6 +26,6 @@ config_checker = configure_file(
     output : 'config_checker',
     configuration : check_conf,
 )
-config_checker_path = meson.current_build_dir() + '/config_checker'
+config_checker_path = meson.current_build_dir() / '/config_checker'
 
 # vi:ts=4:sw=4:sts=4:et:syn=conf

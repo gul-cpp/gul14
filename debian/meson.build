@@ -32,7 +32,7 @@ if not changelogger.found()
     error('Debian changelog generator not found')
 endif
 
-changelog_gen = join_paths(meson.current_build_dir(), 'changelog.gen')
+changelog_gen = meson.current_build_dir() / 'changelog.gen'
 changelg_run = run_command(
     changelogger,
     get_option('deb-vers-pack') ? '-tp' : '-t',
