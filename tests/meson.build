@@ -44,6 +44,7 @@ tests = [
     'test_tokenize.cc',
     'test_Trigger.cc',
     'test_trim.cc',
+    'test_traits.cc',
     'test_type_name.cc',
     'test_variant.cc',
 ]
