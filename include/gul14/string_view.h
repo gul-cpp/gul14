@@ -168,7 +168,7 @@ public:
     // element access
     constexpr const_reference operator[](size_type pos) const noexcept { return ptr_[pos]; }
 
-    constexpr const_reference at(size_t pos) const {
+    constexpr const_reference at(size_type pos) const {
         return pos >= len_ ?  throw std::out_of_range("gul14::string_view::at") : ptr_[pos];
     }
 
@@ -368,7 +368,7 @@ private:
     }
 
     const charT *ptr_;
-    std::size_t len_;
+    size_type len_;
 };
 
 /// \cond HIDE_SYMBOLS
