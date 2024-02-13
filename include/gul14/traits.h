@@ -15,6 +15,7 @@
 #ifndef GUL14_TRAITS_H_
 #define GUL14_TRAITS_H_
 
+#include <functional> // for std::invoke on C++17 compilers
 #include <type_traits>
 #include <utility>
 
