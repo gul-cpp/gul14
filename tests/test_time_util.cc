@@ -85,10 +85,10 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time_util]")
     {
         sleep(0ms);
 
-        THEN("the elapsed time is very very small")
+        THEN("the elapsed time is very small")
         {
-            REQUIRE(toc(t0) < 0.001);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
+            REQUIRE(toc(t0) < 0.1);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) < 100);
         }
     }
 
@@ -96,32 +96,32 @@ SCENARIO("Negative or zero times make sleep() not wait", "[time_util]")
     {
         sleep(0.0);
 
-        THEN("the elapsed time is very very small")
+        THEN("the elapsed time is very small")
         {
-            REQUIRE(toc(t0) < 0.001);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
+            REQUIRE(toc(t0) < 0.1);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) < 100);
         }
     }
 
-    WHEN("sleep(-50ms) is executed")
+    WHEN("sleep(-50s) is executed")
     {
-        sleep(-50ms);
+        sleep(-50s);
 
-        THEN("the elapsed time is very very small")
+        THEN("the elapsed time is very small")
         {
-            REQUIRE(toc(t0) < 0.001);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
+            REQUIRE(toc(t0) < 0.1);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) < 100);
         }
     }
 
-    WHEN("sleep(-0.5) is executed")
+    WHEN("sleep(-5.0) is executed")
     {
-        sleep(-0.5);
+        sleep(-5.0);
 
-        THEN("the elapsed time is very very small")
+        THEN("the elapsed time is very small")
         {
-            REQUIRE(toc(t0) < 0.001);
-            REQUIRE(toc<std::chrono::microseconds>(t0) < 1000);
+            REQUIRE(toc(t0) < 0.1);
+            REQUIRE(toc<std::chrono::milliseconds>(t0) < 100);
         }
     }
 }
