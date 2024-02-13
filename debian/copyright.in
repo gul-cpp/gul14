@@ -17,12 +17,12 @@ Copyright: 2015-2017 Howard Hinnant
            2018-2019 Tomasz Kamiński
            2019 Jiangang Zhuang
            2022 libgul contributors (L. Fröhlich)
-License: Expat
+License: MIT
 
 Files: include/gul14/expected.h
 Copyright: 2017 Sy Brand
            2023-2024 libgul contributors (L. Fröhlich)
-License: CC0
+License: CC0-1.0
 
 Files: include/gul14/optional.h
 Copyright: 2011-2012 Andrzej Krzemienski
@@ -90,7 +90,7 @@ License: BSL-1.0
  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  DEALINGS IN THE SOFTWARE.
 
-License: Expat
+License: MIT
  Permission is hereby granted, free of charge, to any person obtaining
  a copy of this software and associated documentation files (the
  "Software"), to deal in the Software without restriction, including
@@ -110,7 +110,7 @@ License: Expat
  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-License: CC0
+License: CC0-1.0
  Creative Commons Legal Code – CC0 1.0 Universal
  .
  CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
