@@ -281,6 +281,21 @@ template <typename F, typename... Args>
 using is_invocable = detail_invocable::is_invocable<void, F, Args...>;
 
 /**
+ * Helper variable template for is_invocable<>::value.
+ *
+ * This is a backport of C++17's
+ * [std::is_invocable_v](https://en.cppreference.com/w/cpp/types/is_invocable).
+ *
+ * Inline variables are not possible in C++14 so this might produce more
+ * symbols than needed.
+ *
+ * \since GUL version 2.11
+ */
+template <typename F, typename... Args>
+constexpr bool is_invocable_v =
+    gul14::is_invocable<F, Args...>::value;
+
+/**
  * A type trait that checks whether a callable object of type F can be invoked with the
  * given arguments and returns a result convertible to R. The boolean result is available
  * in the member \c value.
@@ -292,6 +307,21 @@ using is_invocable = detail_invocable::is_invocable<void, F, Args...>;
  */
 template <typename R, typename F, typename... Args>
 using is_invocable_r = detail_invocable::is_invocable_r<void, R, F, Args...>;
+
+/**
+ * Helper variable template for is_invocable_r<>::value.
+ *
+ * This is a backport of C++17's
+ * [std::is_invocable_r_v](https://en.cppreference.com/w/cpp/types/is_invocable).
+ *
+ * Inline variables are not possible in C++14 so this might produce more
+ * symbols than needed.
+ *
+ * \since GUL version 2.11
+ */
+template <typename R, typename F, typename... Args>
+constexpr bool is_invocable_r_v =
+    gul14::is_invocable_r<R, F, Args...>::value;
 
 #endif // __cplusplus < 201703L
 

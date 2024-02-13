@@ -36,4 +36,10 @@ TEST_CASE("is_invocable()", "[traits]")
     REQUIRE(gul14::is_invocable_r<void, decltype(z), int>::value == false);
     REQUIRE(gul14::is_invocable_r<float, decltype(z), double>::value == true);
     REQUIRE(gul14::is_invocable_r<std::string, decltype(z), double>::value == false);
+
+    REQUIRE(gul14::is_invocable_v<decltype(y)> == true);
+    REQUIRE(gul14::is_invocable_v<decltype(y)> == true);
+    REQUIRE(gul14::is_invocable_v<void(*)()> == true);
+    REQUIRE(gul14::is_invocable_r_v<int, bool(*)(double), float> == true);
+    REQUIRE(gul14::is_invocable_r_v<float, std::string(*)(double), double> == false);
 }
