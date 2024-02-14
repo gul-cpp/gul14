@@ -15,7 +15,11 @@
 #ifndef GUL14_TRAITS_H_
 #define GUL14_TRAITS_H_
 
+#if __cplusplus >= 201703L
+#define GUL14_USE_CPP17_FEATURES
 #include <functional> // for std::invoke on C++17 compilers
+#endif
+
 #include <type_traits>
 #include <utility>
 
@@ -95,13 +99,15 @@ using void_t = void;
 //
 // invoke & friends
 //
-#if __cplusplus >= 201703L
+#ifdef GUL14_USE_CPP17_FEATURES
 
 using std::invoke;
 using std::invoke_result;
 using std::invoke_result_t;
 using std::is_invocable;
 using std::is_invocable_r;
+
+#undef GUL14_USE_CPP17_FEATURES
 
 #else
 
