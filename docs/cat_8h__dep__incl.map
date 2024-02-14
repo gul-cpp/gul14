@@ -1,7 +1,7 @@
 <map id="cat.h" name="cat.h">
-<area shape="rect" id="node1" title="Declaration of the overload set for cat() and of the associated class ConvertingStringView." alt="" coords="114,5,165,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="50,155,101,181"/>
-<area shape="rect" id="node3" href="$SlidingBuffer_8h.html" title="Declaration of the SlidingBuffer class for the General Utility Library." alt="" coords="22,80,129,107"/>
-<area shape="rect" id="node4" href="$SmallVector_8h.html" title="Definition of the SmallVector class template." alt="" coords="154,80,256,107"/>
-<area shape="rect" id="node5" href="$cat_8cc.html" title="Implementation of cat() for two or more parameters." alt="" coords="281,80,340,107"/>
+<area shape="rect" id="node1" title="Declaration of the overload set for cat() and of the associated class ConvertingStringView." alt="" coords="122,5,176,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="54,155,108,181"/>
+<area shape="rect" id="node3" href="$SlidingBuffer_8h.html" title="Declaration of the SlidingBuffer class for the General Utility Library." alt="" coords="23,80,139,107"/>
+<area shape="rect" id="node4" href="$SmallVector_8h.html" title="Definition of the SmallVector class template." alt="" coords="163,80,274,107"/>
+<area shape="rect" id="node5" href="$cat_8cc.html" title="Implementation of cat() for two or more parameters." alt="" coords="298,80,358,107"/>
 </map>

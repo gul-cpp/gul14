@@ -1,7 +1,7 @@
 <map id="case_ascii.h" name="case_ascii.h">
-<area shape="rect" id="node1" title="Declarations of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(), and uppercase_ascii_..." alt="" coords="48,5,143,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="16,229,66,256"/>
-<area shape="rect" id="node3" href="$substring__checks_8h.html" title="Definition of contains(), ends_with(), and starts_with()." alt="" coords="28,80,163,107"/>
-<area shape="rect" id="node5" href="$case__ascii_8cc.html" title="Implementation of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),..." alt="" coords="187,80,290,107"/>
-<area shape="rect" id="node4" href="$to__number_8h.html" title="Declaration of to_number()." alt="" coords="78,155,172,181"/>
+<area shape="rect" id="node1" title="Declarations of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(), and uppercase_ascii_..." alt="" coords="51,5,152,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="14,229,69,256"/>
+<area shape="rect" id="node3" href="$substring__checks_8h.html" title="Definition of contains(), ends_with(), and starts_with()." alt="" coords="28,80,175,107"/>
+<area shape="rect" id="node5" href="$case__ascii_8cc.html" title="Implementation of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),..." alt="" coords="199,80,305,107"/>
+<area shape="rect" id="node4" href="$to__number_8h.html" title="Declaration of to_number()." alt="" coords="79,155,182,181"/>
 </map>

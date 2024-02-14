@@ -1,0 +1,4 @@
+<map id="expected.h" name="expected.h">
+<area shape="rect" id="node1" title="Provides a gul14::expected that implements the main functionality of C++23&#39;s std::expected." alt="" coords="5,5,100,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="25,80,80,107"/>
+</map>

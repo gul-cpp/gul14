@@ -1,12 +1,12 @@
 <map id="type_name.h" name="type_name.h">
-<area shape="rect" id="node1" title="Definition of type_name()" alt="" coords="167,5,264,32"/>
-<area shape="rect" id="node2" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="5,155,116,181"/>
-<area shape="rect" id="node3" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="304,80,436,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="140,155,205,181"/>
-<area shape="rect" id="node5" title=" " alt="" coords="229,155,308,181"/>
-<area shape="rect" id="node6" title=" " alt="" coords="333,155,407,181"/>
-<area shape="rect" id="node7" title=" " alt="" coords="432,155,495,181"/>
-<area shape="rect" id="node8" title=" " alt="" coords="519,155,573,181"/>
-<area shape="rect" id="node9" title=" " alt="" coords="598,155,659,181"/>
-<area shape="rect" id="node10" title=" " alt="" coords="684,155,744,181"/>
+<area shape="rect" id="node1" title="Definition of type_name()" alt="" coords="182,5,289,32"/>
+<area shape="rect" id="node2" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="5,155,129,181"/>
+<area shape="rect" id="node3" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="328,80,476,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="153,155,224,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="248,155,335,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="359,155,445,181"/>
+<area shape="rect" id="node7" title=" " alt="" coords="469,155,540,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="565,155,623,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="647,155,714,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="738,155,802,181"/>
 </map>

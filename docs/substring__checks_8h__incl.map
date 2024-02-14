@@ -1,13 +1,13 @@
 <map id="substring_checks.h" name="substring_checks.h">
-<area shape="rect" id="node1" title="Definition of contains(), ends_with(), and starts_with()." alt="" coords="175,5,309,32"/>
-<area shape="rect" id="node2" href="$case__ascii_8h.html" title="Declarations of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(), and uppercase_ascii_..." alt="" coords="74,80,205,107"/>
-<area shape="rect" id="node4" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="84,229,195,256"/>
-<area shape="rect" id="node5" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="280,155,412,181"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,229,60,256"/>
-<area shape="rect" id="node6" title=" " alt="" coords="219,229,284,256"/>
-<area shape="rect" id="node7" title=" " alt="" coords="308,229,387,256"/>
-<area shape="rect" id="node8" title=" " alt="" coords="411,229,486,256"/>
-<area shape="rect" id="node9" title=" " alt="" coords="511,229,573,256"/>
-<area shape="rect" id="node10" title=" " alt="" coords="598,229,659,256"/>
-<area shape="rect" id="node11" title=" " alt="" coords="684,229,744,256"/>
+<area shape="rect" id="node1" title="Definition of contains(), ends_with(), and starts_with()." alt="" coords="185,5,332,32"/>
+<area shape="rect" id="node2" href="$case__ascii_8h.html" title="Declarations of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(), and uppercase_ascii_..." alt="" coords="80,80,221,107"/>
+<area shape="rect" id="node4" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="89,229,213,256"/>
+<area shape="rect" id="node5" href="$string__view_8h.html" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="298,155,446,181"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,229,64,256"/>
+<area shape="rect" id="node6" title=" " alt="" coords="237,229,307,256"/>
+<area shape="rect" id="node7" title=" " alt="" coords="331,229,418,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="443,229,528,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="553,229,623,256"/>
+<area shape="rect" id="node10" title=" " alt="" coords="648,229,715,256"/>
+<area shape="rect" id="node11" title=" " alt="" coords="739,229,803,256"/>
 </map>

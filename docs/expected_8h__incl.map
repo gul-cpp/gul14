@@ -1,0 +1,11 @@
+<map id="expected.h" name="expected.h">
+<area shape="rect" id="node1" title="Provides a gul14::expected that implements the main functionality of C++23&#39;s std::expected." alt="" coords="311,5,406,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,75,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="99,80,186,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="237,155,323,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="347,155,439,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="611,155,671,181"/>
+<area shape="rect" id="node7" href="$traits_8h.html" title="Some metaprogramming traits for the General Utility Library." alt="" coords="447,80,555,107"/>
+<area shape="rect" id="node9" href="$utility_8h.html" title="Declaration of the in_place_t family of types and constants and of the monostate type." alt="" coords="210,80,321,107"/>
+<area shape="rect" id="node8" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="463,155,587,181"/>
+</map>

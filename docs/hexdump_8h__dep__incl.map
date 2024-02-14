@@ -1,4 +1,4 @@
 <map id="hexdump.h" name="hexdump.h">
-<area shape="rect" id="node1" title="Declarations of hexdump()" alt="" coords="5,5,92,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="23,80,74,107"/>
+<area shape="rect" id="node1" title="Declaration of the hexdump() functions and associated types." alt="" coords="5,5,100,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="25,80,80,107"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="trim.h" name="trim.h">
-<area shape="rect" id="node1" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="43,5,98,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="5,80,56,107"/>
-<area shape="rect" id="node3" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="81,80,143,107"/>
+<area shape="rect" id="node1" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="45,5,106,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="5,80,60,107"/>
+<area shape="rect" id="node3" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="85,80,151,107"/>
 </map>

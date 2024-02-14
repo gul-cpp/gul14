@@ -1,11 +1,11 @@
 <map id="string_view.h" name="string_view.h">
-<area shape="rect" id="node1" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="321,5,419,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,80,71,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="95,80,173,107"/>
-<area shape="rect" id="node4" title=" " alt="" coords="198,80,273,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="297,80,360,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="384,80,439,107"/>
-<area shape="rect" id="node7" title=" " alt="" coords="463,80,525,107"/>
-<area shape="rect" id="node8" title=" " alt="" coords="549,80,609,107"/>
-<area shape="rect" id="node9" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="633,80,744,107"/>
+<area shape="rect" id="node1" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="347,5,455,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,76,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="100,80,187,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="211,80,297,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="321,80,392,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="417,80,475,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="499,80,566,107"/>
+<area shape="rect" id="node8" title=" " alt="" coords="590,80,654,107"/>
+<area shape="rect" id="node9" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="679,80,803,107"/>
 </map>

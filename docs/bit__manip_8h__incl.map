@@ -1,6 +1,6 @@
 <map id="bit_manip.h" name="bit_manip.h">
-<area shape="rect" id="node1" title="Declaration of bit manipulation utility functions for the General Utility Library." alt="" coords="92,5,181,32"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,80,71,107"/>
-<area shape="rect" id="node3" title=" " alt="" coords="95,80,178,107"/>
-<area shape="rect" id="node4" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="203,80,313,107"/>
+<area shape="rect" id="node1" title="Declaration of bit manipulation utility functions for the General Utility Library." alt="" coords="96,5,195,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,75,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="99,80,191,107"/>
+<area shape="rect" id="node4" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="215,80,339,107"/>
 </map>

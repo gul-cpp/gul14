@@ -1,12 +1,15 @@
 <map id="traits.h" name="traits.h">
-<area shape="rect" id="node1" title="Some metaprogramming traits for the General Utility Library." alt="" coords="33,5,96,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="99,229,150,256"/>
-<area shape="rect" id="node3" href="$statistics_8h.html" title="Declaration of statistical utility functions and classes for the General Utility Library." alt="" coords="21,80,108,107"/>
-<area shape="rect" id="node4" href="$string__util_8h.html" title="Declarations of string utility functions for the General Utility Library." alt="" coords="228,80,317,107"/>
-<area shape="rect" id="node5" href="$join__split_8h.html" title="Implementation of join(), split(), and split_sv()." alt="" coords="122,155,206,181"/>
-<area shape="rect" id="node6" href="$tokenize_8h.html" title="Implementation of tokenize(), tokenize_sv()." alt="" coords="231,155,314,181"/>
-<area shape="rect" id="node7" href="$trim_8h.html" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="338,155,393,181"/>
-<area shape="rect" id="node9" href="$escape_8cc.html" title="Implementation of escape(), unescape()." alt="" coords="418,155,500,181"/>
-<area shape="rect" id="node10" href="$string__util_8cc.html" title="Implementation of string utilities for the General Utility Library." alt="" coords="524,155,620,181"/>
-<area shape="rect" id="node8" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="334,229,397,256"/>
+<area shape="rect" id="node1" title="Some metaprogramming traits for the General Utility Library." alt="" coords="235,5,303,32"/>
+<area shape="rect" id="node2" href="$expected_8h.html" title="Provides a gul14::expected that implements the main functionality of C++23&#39;s std::expected." alt="" coords="278,80,373,107"/>
+<area shape="rect" id="node3" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="274,229,329,256"/>
+<area shape="rect" id="node4" href="$span_8h.html" title="Provides a gul14::span that mimicks C++20&#39;s std::span as closely as possible." alt="" coords="397,80,462,107"/>
+<area shape="rect" id="node5" href="$statistics_8h.html" title="Declaration of statistical utility functions and classes." alt="" coords="5,80,99,107"/>
+<area shape="rect" id="node6" href="$string__util_8h.html" title="Declaration of string utility functions." alt="" coords="567,80,665,107"/>
+<area shape="rect" id="node13" href="$variant_8h.html" title="Definition of the variant class template and associated functions and types." alt="" coords="173,80,253,107"/>
+<area shape="rect" id="node7" href="$join__split_8h.html" title="Implementation of join(), split(), and split_sv()." alt="" coords="744,155,837,181"/>
+<area shape="rect" id="node8" href="$tokenize_8h.html" title="Implementation of tokenize(), tokenize_sv()." alt="" coords="339,155,429,181"/>
+<area shape="rect" id="node9" href="$trim_8h.html" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="861,155,923,181"/>
+<area shape="rect" id="node11" href="$escape_8cc.html" title="Implementation of escape(), unescape()." alt="" coords="453,155,539,181"/>
+<area shape="rect" id="node12" href="$string__util_8cc.html" title="Implementation of string utilities for the General Utility Library." alt="" coords="563,155,669,181"/>
+<area shape="rect" id="node10" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="859,229,925,256"/>
 </map>

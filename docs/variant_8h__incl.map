@@ -1,0 +1,14 @@
+<map id="variant.h" name="variant.h">
+<area shape="rect" id="node1" title="Definition of the variant class template and associated functions and types." alt="" coords="462,5,542,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,76,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="100,80,187,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="272,155,359,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="683,80,793,107"/>
+<area shape="rect" id="node6" title=" " alt="" coords="818,80,877,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="901,80,951,107"/>
+<area shape="rect" id="node8" title=" " alt="" coords="383,155,475,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="499,155,559,181"/>
+<area shape="rect" id="node10" href="$internal_8h.html" title="Definition of macros used internally by GUL." alt="" coords="583,155,707,181"/>
+<area shape="rect" id="node11" href="$traits_8h.html" title="Some metaprogramming traits for the General Utility Library." alt="" coords="448,80,556,107"/>
+<area shape="rect" id="node12" href="$utility_8h.html" title="Declaration of the in_place_t family of types and constants and of the monostate type." alt="" coords="211,80,321,107"/>
+</map>
