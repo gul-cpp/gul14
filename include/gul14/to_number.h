@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 19 July 2019
  *
- * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -267,6 +267,20 @@ constexpr inline ParseInfNanResult<NumberType> parse_inf_nan(gul14::string_view 
 }
 
 /**
+ * Calculate 10 to the power of an integer exponent.
+ *
+ * This is used to calculate values for strings of the form "1.0En"
+ * and solves the "En" part (where n is an integer number).
+ *
+ * The result is a long double. This is faster than pow(10.0L, exponent)
+ * and even more accurate with some standard clibs.
+ *
+ * \param exponent  The exponent
+ */
+GUL_EXPORT
+long double pow10(int exponent);
+
+/**
  * Convert a string_view into a floating point number.
  * No sign is allowed at the beginning of the number (thus unsigned float).
  *
@@ -356,7 +370,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul14::string_view str) 
     if (not norm_val.has_value())
         return nullopt;
 
-    return NumberType(std::pow(CalcType(10), CalcType(exponent)) * *norm_val);
+    return detail::pow10(exponent) * *norm_val;
 }
 
 /**
@@ -522,11 +536,6 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
         return nullopt;
 
     if (
-#ifdef __APPLE__
-        // Apple clang 8.0.0 has a bug with std::pow and long double types,
-        // where the result is off by a huge amount. Use std::strtold() here.
-        (sizeof(NumberType) > sizeof(double)) ||
-#endif
 #ifdef _MSC_VER
 #    pragma warning( push )
 #    pragma warning( disable: 4127 ) // conditional expression is constant
