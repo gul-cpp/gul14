@@ -6,6 +6,7 @@ libgul_src = files([
     'escape.cc',
     'replace.cc',
     'string_util.cc',
+    'to_number.cc',
     'Trigger.cc',
     'trim.cc',
 ])
