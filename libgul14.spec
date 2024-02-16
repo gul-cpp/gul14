@@ -25,12 +25,12 @@
 #
 
 Name:           libgul14
-Version:        2.7
+Version:        v2.10
 Release:        1%{?dist}
 Summary:        General Utility Library
 
-License:        GPLv2
-URL:            https://winweb.desy.de/mcs/docs/gul/
+License:        LGPL-2.1+
+URL:            https://github.com/gul-cpp/gul14
 Source0:        gul14-%{version}.tar.xz
 
 %if 0%{?rhel} < 8
@@ -99,6 +99,9 @@ Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 %{_libdir}/%{name}.a
 
 %changelog
+* Fri Feb 16 2024 Soeren Grunewald <soeren.grunewald@desy.de> - 2.10-1
+- New upstream release
+
 * Thu Oct 13 2022 Soeren Grunewald <soeren.grunewald@desy.de> - 2.7-1
 - New upstream release
 
