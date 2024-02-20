@@ -1,8 +1,9 @@
 <map id="utility.h" name="utility.h">
-<area shape="rect" id="node1" title="Declaration of the in_place_t family of types and constants and of the monostate type." alt="" coords="120,5,191,32"/>
+<area shape="rect" id="node1" title="Declaration of the in_place_t family of types and constants and of the monostate type." alt="" coords="100,5,171,32"/>
 <area shape="rect" id="node2" href="$expected_8h.html" title="Provides a gul14::expected that implements the main functionality of C++23&#39;s std::expected." alt="" coords="5,155,100,181"/>
-<area shape="rect" id="node4" href="$optional_8h.html" title="Implementation of gul14::optional." alt="" coords="112,80,199,107"/>
-<area shape="rect" id="node6" href="$variant_8h.html" title="Definition of the variant class template and associated functions and types." alt="" coords="258,80,338,107"/>
-<area shape="rect" id="node3" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="155,229,209,256"/>
-<area shape="rect" id="node5" href="$to__number_8h.html" title="Declaration of to_number()." alt="" coords="176,155,279,181"/>
+<area shape="rect" id="node4" href="$optional_8h.html" title="Implementation of gul14::optional." alt="" coords="200,80,287,107"/>
+<area shape="rect" id="node7" href="$variant_8h.html" title="Definition of the variant class template and associated functions and types." alt="" coords="95,80,175,107"/>
+<area shape="rect" id="node3" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="128,229,183,256"/>
+<area shape="rect" id="node5" href="$to__number_8h.html" title="Declaration of to_number()." alt="" coords="227,155,329,181"/>
+<area shape="rect" id="node6" href="$to__number_8cc.html" title="Implementation of pow10()." alt="" coords="223,229,333,256"/>
 </map>

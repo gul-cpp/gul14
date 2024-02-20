@@ -1,4 +1,5 @@
 <map id="to_number.h" name="to_number.h">
-<area shape="rect" id="node1" title="Declaration of to_number()." alt="" coords="5,5,108,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="29,80,84,107"/>
+<area shape="rect" id="node1" title="Declaration of to_number()." alt="" coords="35,5,137,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="5,80,60,107"/>
+<area shape="rect" id="node3" href="$to__number_8cc.html" title="Implementation of pow10()." alt="" coords="85,80,194,107"/>
 </map>
