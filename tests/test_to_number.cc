@@ -416,8 +416,7 @@ TEMPLATE_TEST_CASE("to_number(): Convert floating-point values with many leading
     REQUIRE(gul14::within_ulp(test5.value(), TestType(1.0e-49l), lenience + 1) == true);
 }
 
-/* Disabled because doocsdev16's gcc has insufficient constexpr support (but works on
-   doocsdev18)
+/* Disabled because Apple clang 15.0.0 has insufficient constexpr support
 TEMPLATE_TEST_CASE("to_number(): Convert \"42\" to integer types, constexpr", "[to_number]",
                    char, unsigned char, short,
                    unsigned short, int, unsigned int, long, unsigned long, long long,
