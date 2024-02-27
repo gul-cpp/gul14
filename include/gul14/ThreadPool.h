@@ -209,7 +209,8 @@ public:
      * \param start_time  Earliest time point at which the task is to be started
      * \param name  Optional name for the task (mainly for debugging)
      *
-     * \returns a unique ID to identify this task.
+     * \returns a TaskHandle that can be used for inquiries about the state of the task
+     *          and to retrieve its return value.
      * \exception std::runtime_error is thrown if the queue is full.
      */
     template <typename Function>
