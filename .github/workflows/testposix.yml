@@ -64,6 +64,9 @@ jobs:
       - name: Build and run ASAN tests
         run: ./meson.py test -C build.asan
 
+      - name: Build exampes
+        run: ninja -C build.asan examples/thread_pool_example examples/trim_example
+
       - name: Build and run release tests
         run: ./meson.py test -C build.release
 

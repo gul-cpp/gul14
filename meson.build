@@ -25,6 +25,7 @@ subdir('tests')
 
 message('Install prefix: ' + get_option('prefix'))
 subdir('debian')
+subdir('examples')
 
 message('LIBGUL_API_VERSION       @0@'.format(libgul_api_version))
 message('GIT FULL API VERSION    @0@'.format(git_full_api_version))
