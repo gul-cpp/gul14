@@ -415,7 +415,10 @@ private:
     TaskId next_task_id_ = 0;
     bool shutdown_requested_{ false };
 
-    /// Non-locking internal versions of the public functions
+    /**
+     * Determine whether the queue for pending tasks is full (internal non-locking
+     * version).
+     */
     bool is_full_i() const noexcept;
 
     /**
