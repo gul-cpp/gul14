@@ -64,7 +64,7 @@ bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId task_id);
  * can be used to query the status of the task or to remove it from the queue via
  * cancel(). Tasks that are already running cannot be canceled.
  *
- * Tasks can be scheduled to start at a specific time point or after a certain delay. Each
+ * Tasks can be scheduled to start after a specific time point or after a certain delay. Each
  * task can also be given a name, which is mainly useful for debugging.
  *
  * \ref thread_pool.cpp "thread_pool.cpp".
