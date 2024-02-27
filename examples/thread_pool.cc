@@ -30,6 +30,8 @@ using gul14::ThreadPool;
 using gul14::ThreadPoolEngine;
 using std::cout;
 
+using namespace std::literals;
+
 int main()
 {
 //! [Using the ThreadPool class]
