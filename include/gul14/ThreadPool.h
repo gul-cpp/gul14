@@ -106,9 +106,6 @@ public:
      */
     bool cancel() const { return detail::cancel_task(pool_, id_); }
 
-    /// Return the ID of the task.
-    TaskId get_id() const noexcept { return id_; }
-
     /**
      * Block until the task has finished and return its result.
      *
@@ -147,7 +144,6 @@ private:
     , id_{ id }
     , pool_{ pool }
     {}
-
 };
 
 /**
