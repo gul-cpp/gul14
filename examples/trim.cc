@@ -4,7 +4,7 @@
  * \date   Created on November 22, 2018
  * \brief  Example for the trim() family of functions from the General Utility Library.
  *
- * \copyright Copyright 2018-2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2019, 2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,14 +21,15 @@
  */
 
 #include <iostream>
-#include <gul14/gul.h>
+#include <gul14/trim.h>
 
-using std::cout;
-using gul14::trim;
-using gul14::trim_left;
-using gul14::trim_right;
 using gul14::trim_left_sv;
+using gul14::trim_left;
 using gul14::trim_right_sv;
+using gul14::trim_right;
+using gul14::trim_sv;
+using gul14::trim;
+using std::cout;
 
 int main()
 {
