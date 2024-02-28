@@ -104,42 +104,37 @@ TEST_CASE("TaskHandle: get_state()", "[ThreadPool][TaskHandle]")
 
     std::atomic<bool> stop{ false };
 
-    SECTION("pending")
+    auto task1 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+    auto t0 = gul14::tic();
+    while (task1.get_state() != TaskState::running)
     {
-        pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-        auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-        auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-        // id1 might have been assigned to the work thread already, but in any case the other
-        // two must still be pending.
-        REQUIRE(task2.get_state() == TaskState::pending);
-        REQUIRE(task3.get_state() == TaskState::pending);
-
-        stop = true;
+        if (gul14::toc(t0) > 1.0)
+            FAIL("Timeout waiting for work item to start");
+        gul14::sleep(1ms);
     }
 
-    SECTION("running")
+    // id1 might have been assigned to the work thread already, but in any case the other
+    // two must still be pending.
+    REQUIRE(task2.get_state() == TaskState::pending);
+    REQUIRE(task3.get_state() == TaskState::pending);
+
+    task3.cancel();
+    REQUIRE(task3.get_state() == TaskState::canceled);
+
+    stop = true;
+
+    t0 = gul14::tic();
+    while (task1.get_state() == TaskState::running)
     {
-        auto task = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-        auto t0 = gul14::tic();
-        while (task.get_state() != TaskState::running)
-        {
-            if (gul14::toc(t0) > 1.0)
-                FAIL("Timeout waiting for work item to start");
-            gul14::sleep(1ms);
-        }
-
-        stop = true;
-
-        t0 = gul14::tic();
-        while (task.get_state() == TaskState::running)
-        {
-            if (gul14::toc(t0) > 1.0)
-                FAIL("Timeout waiting for work item to stop");
-            gul14::sleep(1ms);
-        }
+        if (gul14::toc(t0) > 1.0)
+            FAIL("Timeout waiting for work item to stop");
+        gul14::sleep(1ms);
     }
+
+    REQUIRE(task1.get_state() == TaskState::complete);
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
