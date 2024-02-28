@@ -32,7 +32,7 @@ namespace gul14 {
 
 namespace detail {
 
-bool cancel_task(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
+bool cancel_task(std::weak_ptr<ThreadPool> pool, TaskId id)
 {
     auto shared_ptr = pool.lock();
     if (!shared_ptr)
@@ -41,7 +41,7 @@ bool cancel_task(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
     return shared_ptr->cancel_pending_task(id);
 }
 
-bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
+bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId id)
 {
     auto shared_ptr = pool.lock();
     if (!shared_ptr)
@@ -50,7 +50,7 @@ bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
     return shared_ptr->is_pending(id);
 }
 
-bool is_running(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
+bool is_running(std::weak_ptr<ThreadPool> pool, TaskId id)
 {
     auto shared_ptr = pool.lock();
     if (!shared_ptr)
@@ -62,7 +62,11 @@ bool is_running(std::weak_ptr<ThreadPoolEngine> pool, TaskId id)
 } // namespace detail
 
 
-ThreadPoolEngine::ThreadPoolEngine(std::size_t num_threads, std::size_t capacity)
+//
+// ThreadPool
+//
+
+ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
     : capacity_(capacity)
 {
     if (num_threads == 0 || num_threads > max_threads)
@@ -79,7 +83,7 @@ ThreadPoolEngine::ThreadPoolEngine(std::size_t num_threads, std::size_t capacity
         threads_.emplace_back([this]() { perform_work(); });
 }
 
-ThreadPoolEngine::~ThreadPoolEngine()
+ThreadPool::~ThreadPool()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     shutdown_requested_ = true;
@@ -93,7 +97,7 @@ ThreadPoolEngine::~ThreadPoolEngine()
     }
 }
 
-bool ThreadPoolEngine::cancel_pending_task(const TaskId task_id)
+bool ThreadPool::cancel_pending_task(const TaskId task_id)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -108,7 +112,7 @@ bool ThreadPoolEngine::cancel_pending_task(const TaskId task_id)
     return false;
 }
 
-std::size_t ThreadPoolEngine::cancel_pending_tasks()
+std::size_t ThreadPool::cancel_pending_tasks()
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -118,18 +122,18 @@ std::size_t ThreadPoolEngine::cancel_pending_tasks()
     return num_removed;
 }
 
-std::size_t ThreadPoolEngine::count_pending() const
+std::size_t ThreadPool::count_pending() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return pending_tasks_.size();
 }
 
-std::size_t ThreadPoolEngine::count_threads() const noexcept
+std::size_t ThreadPool::count_threads() const noexcept
 {
     return threads_.size();
 }
 
-std::vector<std::string> ThreadPoolEngine::get_pending_task_names() const
+std::vector<std::string> ThreadPool::get_pending_task_names() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -142,30 +146,30 @@ std::vector<std::string> ThreadPoolEngine::get_pending_task_names() const
     return names;
 }
 
-std::vector<std::string> ThreadPoolEngine::get_running_task_names() const
+std::vector<std::string> ThreadPool::get_running_task_names() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return running_task_names_;
 }
 
-bool ThreadPoolEngine::is_full() const noexcept
+bool ThreadPool::is_full() const noexcept
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return is_full_i();
 }
 
-bool ThreadPoolEngine::is_full_i() const noexcept
+bool ThreadPool::is_full_i() const noexcept
 {
     return pending_tasks_.size() >= capacity_;
 }
 
-bool ThreadPoolEngine::is_idle() const
+bool ThreadPool::is_idle() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return pending_tasks_.empty() && running_task_ids_.empty();
 }
 
-bool ThreadPoolEngine::is_pending(const TaskId task_id) const
+bool ThreadPool::is_pending(const TaskId task_id) const
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -175,20 +179,27 @@ bool ThreadPoolEngine::is_pending(const TaskId task_id) const
     return it != pending_tasks_.end();
 }
 
-bool ThreadPoolEngine::is_running(const TaskId task_id) const
+bool ThreadPool::is_running(const TaskId task_id) const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = std::find(running_task_ids_.begin(), running_task_ids_.end(), task_id);
     return it != running_task_ids_.end();
 }
 
-bool ThreadPoolEngine::is_shutdown_requested() const
+bool ThreadPool::is_shutdown_requested() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return shutdown_requested_;
 }
 
-void ThreadPoolEngine::perform_work()
+std::shared_ptr<ThreadPool> ThreadPool::make_shared(
+    std::size_t num_threads, std::size_t capacity)
+{
+    // We cannot use std::make_shared() because the constructor is private.
+    return std::shared_ptr<ThreadPool>(new ThreadPool(num_threads, capacity));
+}
+
+void ThreadPool::perform_work()
 {
 #if defined(__APPLE__) || defined(__GNUC__)
     // On unixoid systems, we block a number of signals in the worker threads because we
