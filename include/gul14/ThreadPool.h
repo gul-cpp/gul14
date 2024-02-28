@@ -42,8 +42,6 @@ namespace gul14 {
 
 class ThreadPool;
 
-using TaskId = std::uint64_t;
-
 namespace detail {
 
 std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
@@ -53,6 +51,28 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
 /**
  * \addtogroup ThreadPool_h gul14/ThreadPool.h
  * \brief A thread pool and task queue.
+ * @{
+ */
+
+/**
+ * \example thread_pool.cc
+ * An example on how to use the ThreadPool class to schedule tasks.
+ */
+
+/// A unique identifier for a task.
+using TaskId = std::uint64_t;
+
+/// An enum describing the state of an individual task.
+enum class TaskState
+{
+    pending,  ///< The task is waiting to be started.
+    running,  ///< The task is currently being executed.
+    complete, ///< The task has finished (successfully or by throwing an exception).
+    canceled  ///< The task was removed from the queue before it was started.
+};
+
+/**
+ * A pool of worker threads with a task queue.
  *
  * A thread pool is created with make_thread_pool(). It immediately starts the desired
  * number of worker threads and keeps them running until the object gets destroyed. Work
@@ -62,52 +82,29 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
  *
  * Each task is associated with a TaskHandle. This handle is returned by add_task() and
  * can be used to query the status of the task or to remove it from the queue via
- * cancel(). Tasks that are already running cannot be canceled.
+ * \ref gul14::ThreadPool::TaskHandle::cancel() "cancel()". Tasks that are already running
+ * cannot be canceled.
  *
- * Tasks can be scheduled to start after a specific time point or after a certain delay.
- * Each task can also be given a name, which is mainly useful for debugging.
+ * \code{.cpp}
+ * auto pool = make_thread_pool(1);
+ * auto task = pool->add_task([]() { return 42; });
+ * while (not task.is_complete())
+ * {
+ *     std::cout << "Waiting for task to complete...\n";
+ *     sleep(0.1);
+ * }
+ * std::cout << "Task result: " << task.get_result() << "\n";
+ * \endcode
  *
- * \ref thread_pool.cpp "thread_pool.cpp".
- *
- * \example thread_pool.cc
- * An example on how to use the ThreadPool class to schedule tasks.
- *
- * @{
- */
-
-/// An enum describing the state of an individual task.
-enum class TaskState
-{
-    pending,  ///< The task is waiting to be started
-    running,  ///< The task is currently being executed
-    complete, ///< The task has finished (successfully or by throwing an exception)
-    canceled  ///< The task was removed from the queue before it was started
-};
-
-
-/**
- * A pool of worker threads with a task queue.
- *
- * A ThreadPool creates the desired number of worker threads when it is constructed and
- * keeps them running until the object gets destroyed. Work is given to the pool with the
- * add_task() function in the form of a function object or function pointer. Tasks are
- * stored in a queue and executed in the order they were added. This makes a ThreadPool
- * with a single thread effectively a serial task queue.
- *
- * Each task is associated with a TaskHandle. This handle is returned by add_task() and
- * can be used to query the status of the task or to remove it from the queue via
- * cancel(). Tasks that are already running cannot be canceled.
- *
- * Tasks can be scheduled to start at a specific time point or after a certain delay. Each
- * task can also be given a name, which is mainly useful for debugging.
+ * Tasks can also be scheduled to start after a specific time point or after a certain
+ * delay. Each task can also be given a name, which is mainly useful for debugging. See
+ * the \ref thread_pool.cc "example" for an introduction.
  *
  * All public member functions are thread-safe.
  *
  * On Linux, threads in the pool explicitly block the signals SIGALRM, SIGINT, SIGPIPE,
  * SIGTERM, SIGURG, SIGUSR1, and SIGUSR2. This is done to prevent the threads from
  * terminating the whole process if one of these signals is received.
- *
- * \ref thread_pool.cpp "thread_pool.cpp".
  *
  * \since GUL version 2.11
  */
@@ -120,8 +117,8 @@ public:
      * A TaskHandle can be used to query the status of a task and to retrieve its result.
      *
      * \code{.cpp}
-     * ThreadPool pool(1);
-     * auto task = pool.add_task([]() { return 42; });
+     * auto pool = make_thread_pool(1);
+     * auto task = pool->add_task([]() { return 42; });
      * while (not task.is_complete())
      * {
      *     std::cout << "Waiting for task to complete...\n";
