@@ -46,14 +46,6 @@ using TaskId = std::uint64_t;
 
 namespace detail {
 
-// Enum describing the state of an individual task as returned by the ThreadPool.
-enum class TaskState
-{
-    pending, // The task is waiting to be started
-    running, // The task is currently being executed
-    unknown  // The thread pool has no knowledge about this task
-};
-
 std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
 
 } // namespace detail
@@ -86,14 +78,10 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
 /// An enum describing the state of an individual task.
 enum class TaskState
 {
-    /// The task is waiting to be started
-    pending = static_cast<int>(detail::TaskState::pending),
-    /// The task is currently being executed
-    running = static_cast<int>(detail::TaskState::running),
-    /// The task has finished (successfully or by throwing an exception)
-    complete,
-    /// The task was removed from the queue before it was started
-    canceled
+    pending,  ///< The task is waiting to be started
+    running,  ///< The task is currently being executed
+    complete, ///< The task has finished (successfully or by throwing an exception)
+    canceled  ///< The task was removed from the queue before it was started
 };
 
 
@@ -215,21 +203,22 @@ public:
         }
 
         /**
-         * Return true if the task is still waiting to be started.
+         * Determine if the task is running, waiting to be started, completed, or has been
+         * canceled.
          *
          * \exception std::logic_error is thrown if the associated thread pool does not
          *            exist anymore.
          *
          * \note
-         * If you just need to find out if a task has finished running, prefer is_complete()
-         * over this function. It does not need to interact with the ThreadPool and is
-         * therefore slightly more performant.
+         * If you just need to find out if a task has finished running, prefer
+         * is_complete() over this function. It does not need to interact with the
+         * ThreadPool and is therefore slightly more performant.
          */
         TaskState get_state() const
         {
             const auto state = detail::lock_pool_or_throw(pool_)->get_task_state(id_);
 
-            if (state == detail::TaskState::unknown)
+            if (state == InternalTaskState::unknown)
             {
                 if (is_complete())
                     return TaskState::complete;
@@ -389,20 +378,6 @@ public:
     }
 
     /**
-     * Remove the pending task associated with the specified ID.
-     *
-     * This call looks for a pending task with the given ID. If one is found, it is
-     * immediately removed and true is returned. If none is found, false is returned.
-     * This function has no impact on tasks that are currently being executed.
-     *
-     * \param task_id  Unique ID for the task to be removed
-     *
-     * \returns true if a task was removed, false if no pending task with the given ID was
-     *          found.
-     */
-    bool cancel_pending_task(TaskId task_id);
-
-    /**
      * Remove all pending tasks from the queue.
      *
      * This call removes all tasks that have not yet been started from the queue. It has
@@ -452,6 +427,23 @@ public:
         std::size_t num_threads, std::size_t capacity = default_capacity);
 
 private:
+    /**
+     * An enum describing the internal state of a task on the ThreadPool.
+     *
+     * This enum just describes if the task is pending, running, or neither. The pool has
+     * no further knowledge about the task, but a TaskHandle can additionally determine if
+     * a task has completed or been canceled.
+     */
+    enum class InternalTaskState
+    {
+        /// The task is waiting to be started
+        pending = static_cast<int>(TaskState::pending),
+        /// The task is currently being executed
+        running = static_cast<int>(TaskState::running),
+        /// The thread pool has no knowledge about this task
+        unknown
+    };
+
     struct NamedTask
     {
         NamedTask(std::string name)
@@ -535,15 +527,29 @@ private:
     ThreadPool(std::size_t num_threads, std::size_t capacity);
 
     /**
+     * Remove the pending task associated with the specified ID.
+     *
+     * This call looks for a pending task with the given ID. If one is found, it is
+     * immediately removed and true is returned. If none is found, false is returned.
+     * This function has no impact on tasks that are currently being executed.
+     *
+     * \param task_id  Unique ID for the task to be removed
+     *
+     * \returns true if a task was removed, false if no pending task with the given ID was
+     *          found.
+     */
+    bool cancel_pending_task(TaskId task_id);
+
+    /**
      * Determine the state of the task with the specified ID.
      *
      * \param task_id  Unique ID of the task
      *
-     * \returns TaskState::pending if the task is still waiting to be started,
-     *     TaskState::running if the task is currently being executed, or
-     *     TaskState::unknown if the thread pool has no knowledge of this task ID.
+     * \returns InternalTaskState::pending if the task is still waiting to be started,
+     *     InternalTaskState::running if the task is currently being executed, or
+     *     InternalTaskState::unknown if the thread pool has no knowledge of this task ID.
      */
-    detail::TaskState get_task_state(TaskId task_id) const;
+    InternalTaskState get_task_state(TaskId task_id) const;
 
     /**
      * Determine whether the queue for pending tasks is full (internal non-locking
