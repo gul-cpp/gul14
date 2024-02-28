@@ -151,22 +151,22 @@ bool ThreadPool::is_idle() const
     return pending_tasks_.empty() && running_task_ids_.empty();
 }
 
-detail::TaskState ThreadPool::get_task_state(const TaskId task_id) const
+ThreadPool::InternalTaskState ThreadPool::get_task_state(const TaskId task_id) const
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
     const auto itr = std::find(
         running_task_ids_.begin(), running_task_ids_.end(), task_id);
     if (itr != running_task_ids_.end())
-        return detail::TaskState::running;
+        return InternalTaskState::running;
 
     const auto itp = std::find_if(
         pending_tasks_.begin(), pending_tasks_.end(),
         [task_id](const Task& t) { return t.id_ == task_id; });
     if (itp != pending_tasks_.end())
-        return detail::TaskState::pending;
+        return InternalTaskState::pending;
 
-    return detail::TaskState::unknown;
+    return InternalTaskState::unknown;
 }
 
 bool ThreadPool::is_shutdown_requested() const
