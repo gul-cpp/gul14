@@ -46,18 +46,18 @@ TEST_CASE("TaskHandle: cancel()", "[ThreadPool]")
     auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
     auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
 
-    while (not task1.is_running())
+    while (task1.get_state() == TaskState::pending)
         gul14::sleep(1ms);
 
-    REQUIRE(task1.is_pending() == false);
-    REQUIRE(task2.is_pending());
-    REQUIRE(task3.is_pending());
+    REQUIRE(task1.get_state() == TaskState::running);
+    REQUIRE(task2.get_state() == TaskState::pending);
+    REQUIRE(task3.get_state() == TaskState::pending);
 
     REQUIRE(task1.cancel() == false);
     REQUIRE(task2.cancel() == true);
 
-    REQUIRE(task2.is_pending() == false);
-    REQUIRE(task3.is_pending());
+    REQUIRE(task2.get_state() == TaskState::canceled);
+    REQUIRE(task3.get_state() == TaskState::pending);
 
     stop = true;
 
@@ -98,51 +98,47 @@ TEST_CASE("TaskHandle: is_complete()", "[ThreadPool][TaskHandle]")
     pool.reset();
 }
 
-TEST_CASE("TaskHandle: is_pending()", "[ThreadPool][TaskHandle]")
+TEST_CASE("TaskHandle: get_state()", "[ThreadPool][TaskHandle]")
 {
     auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
-    pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-    auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    // id1 might have been assigned to the work thread already, but in any case the other
-    // two must still be pending.
-    REQUIRE(task2.is_pending());
-    REQUIRE(task3.is_pending());
-
-    stop = true;
-
-    // Make sure the pool is removed before any of the atomic variables go out of scope
-    pool.reset();
-}
-
-TEST_CASE("TaskHandle: is_running()", "[ThreadPool][TaskHandle]")
-{
-    auto pool = make_thread_pool(1);
-
-    std::atomic<bool> stop{ false };
-
-    auto task = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
-
-    auto t0 = gul14::tic();
-    while (not task.is_running())
+    SECTION("pending")
     {
-        if (gul14::toc(t0) > 1.0)
-            FAIL("Timeout waiting for work item to start");
-        gul14::sleep(1ms);
+        pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+        auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+        auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+        // id1 might have been assigned to the work thread already, but in any case the other
+        // two must still be pending.
+        REQUIRE(task2.get_state() == TaskState::pending);
+        REQUIRE(task3.get_state() == TaskState::pending);
+
+        stop = true;
     }
 
-    stop = true;
-
-    t0 = gul14::tic();
-    while (task.is_running())
+    SECTION("running")
     {
-        if (gul14::toc(t0) > 1.0)
-            FAIL("Timeout waiting for work item to stop");
-        gul14::sleep(1ms);
+        auto task = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
+
+        auto t0 = gul14::tic();
+        while (task.get_state() != TaskState::running)
+        {
+            if (gul14::toc(t0) > 1.0)
+                FAIL("Timeout waiting for work item to start");
+            gul14::sleep(1ms);
+        }
+
+        stop = true;
+
+        t0 = gul14::tic();
+        while (task.get_state() == TaskState::running)
+        {
+            if (gul14::toc(t0) > 1.0)
+                FAIL("Timeout waiting for work item to stop");
+            gul14::sleep(1ms);
+        }
     }
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
@@ -192,7 +188,7 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
 
     REQUIRE(pool->count_pending() >= 1);
     REQUIRE(pool->count_pending() <= 2);
-    REQUIRE(handle.is_pending());
+    REQUIRE(handle.get_state() == TaskState::pending);
 
     start = true;
 
@@ -222,7 +218,7 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
     while (pool->count_pending() > 1)
         gul14::sleep(1ms);
 
-    REQUIRE(task1.is_pending());
+    REQUIRE(task1.get_state() == TaskState::pending);
     task1.cancel();
     REQUIRE(pool->count_pending() == 0);
 
@@ -244,7 +240,7 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
     while (pool->count_pending() > 1)
         gul14::sleep(1ms);
 
-    REQUIRE(task1.is_pending());
+    REQUIRE(task1.get_state() == TaskState::pending);
     task1.cancel();
     REQUIRE(pool->count_pending() == 0);
 
@@ -267,7 +263,7 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
 
     REQUIRE(pool->count_pending() >= 1);
     REQUIRE(pool->count_pending() <= 2);
-    REQUIRE(handle.is_pending());
+    REQUIRE(handle.get_state() == TaskState::pending);
 
     start = true;
 
@@ -297,7 +293,7 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
     while (pool->count_pending() > 1)
         gul14::sleep(1ms);
 
-    REQUIRE(task1.is_pending());
+    REQUIRE(task1.get_state() == TaskState::pending);
     task1.cancel();
     REQUIRE(pool->count_pending() == 0);
 
@@ -320,7 +316,7 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
     while (pool->count_pending() > 1)
         gul14::sleep(1ms);
 
-    REQUIRE(task1.is_pending());
+    REQUIRE(task1.get_state() == TaskState::pending);
     task1.cancel();
     REQUIRE(pool->count_pending() == 0);
 
@@ -338,12 +334,13 @@ TEST_CASE("ThreadPool: cancel_pending_tasks()", "[ThreadPool]")
     auto task2 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
     auto task3 = pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); });
 
-    while (not task1.is_running())
+    while (task1.get_state() == TaskState::pending)
         gul14::sleep(1ms);
 
-    REQUIRE(task1.is_pending() == false);
-    REQUIRE(task2.is_pending());
-    REQUIRE(task3.is_pending());
+    REQUIRE(task1.get_state() != TaskState::complete);
+    REQUIRE(task1.get_state() != TaskState::canceled);
+    REQUIRE(task2.get_state() == TaskState::pending);
+    REQUIRE(task3.get_state() == TaskState::pending);
 
     REQUIRE(pool->cancel_pending_tasks() == 2);
     REQUIRE(pool->count_pending() == 0);

@@ -45,9 +45,18 @@ class ThreadPool;
 using TaskId = std::uint64_t;
 
 namespace detail {
-bool cancel_task(std::weak_ptr<ThreadPool> pool, TaskId task_id);
-bool is_running(std::weak_ptr<ThreadPool> pool, TaskId task_id);
-bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId task_id);
+
+// Enum describing the state of an individual task as returned by the ThreadPool.
+enum class TaskState
+{
+    pending, // The task is waiting to be started
+    running, // The task is currently being executed
+    unknown  // The thread pool has no knowledge about this task
+};
+
+bool cancel_task_on_pool(std::weak_ptr<ThreadPool> pool, TaskId id);
+TaskState get_task_state_from_pool(std::weak_ptr<ThreadPool> pool, TaskId id);
+
 } // namespace detail
 
 /**
@@ -74,6 +83,19 @@ bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId task_id);
  *
  * @{
  */
+
+/// An enum describing the state of an individual task.
+enum class TaskState
+{
+    /// The task is waiting to be started
+    pending = static_cast<int>(detail::TaskState::pending),
+    /// The task is currently being executed
+    running = static_cast<int>(detail::TaskState::running),
+    /// The task has finished (successfully or by throwing an exception)
+    complete,
+    /// The task was removed from the queue before it was started
+    canceled
+};
 
 /**
  * A handle for a task that has (or had) been enqueued on a ThreadPool.
@@ -106,7 +128,11 @@ public:
      * \exception std::logic_error is thrown if the associated thread pool does not
      *            exist anymore.
      */
-    bool cancel() const { return detail::cancel_task(pool_, id_); }
+    bool cancel()
+    {
+        future_ = {};
+        return detail::cancel_task_on_pool(pool_, id_);
+    }
 
     /**
      * Block until the task has finished and return its result.
@@ -114,10 +140,21 @@ public:
      * If the task finished by throwing an exception, get_result() rethrows this
      * exception.
      */
-    T get_result() { return future_.get(); }
+    T get_result()
+    {
+        if (not future_.valid())
+            throw std::logic_error("Canceled task has no result");
+        return future_.get();
+    }
 
     /// Determine whether the task has finished.
-    bool is_complete() const { return future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready; }
+    bool is_complete() const
+    {
+        if (not future_.valid())
+            return false;
+
+        return future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+    }
 
     /**
      * Return true if the task is still waiting to be started.
@@ -125,14 +162,18 @@ public:
      * \exception std::logic_error is thrown if the associated thread pool does not
      *            exist anymore.
      */
-    bool is_pending() const { return detail::is_pending(pool_, id_); }
-
-    /**
-     * Return true if the task is currently being executed.
-     * \exception std::logic_error is thrown if the associated thread pool does not
-     *            exist anymore.
-     */
-    bool is_running() const { return detail::is_running(pool_, id_); }
+    TaskState get_state() const
+    {
+        const auto state = detail::get_task_state_from_pool(pool_, id_);
+        if (state == detail::TaskState::unknown)
+        {
+            if (is_complete())
+                return TaskState::complete;
+            else
+                return TaskState::canceled;
+        }
+        return static_cast<TaskState>(state);
+    }
 
 private:
     friend class ThreadPool;
@@ -367,12 +408,6 @@ public:
      */
     bool is_idle() const;
 
-    /// Return whether the thread pool has any pending task under the specified ID.
-    bool is_pending(TaskId task_id) const;
-
-    /// Determine whether the thread pool is currently executing the specified task.
-    bool is_running(TaskId task_id) const;
-
     /// Determine whether the thread pool has been requested to shut down.
     bool is_shutdown_requested() const;
 
@@ -451,6 +486,7 @@ private:
     TaskId next_task_id_ = 0;
     bool shutdown_requested_{ false };
 
+    friend detail::TaskState detail::get_task_state_from_pool(std::weak_ptr<ThreadPool>, TaskId);
 
     /**
      * Create a thread pool with the desired number of threads and the specified capacity
@@ -470,6 +506,17 @@ private:
      *            or exceeds max_capacity.
      */
     ThreadPool(std::size_t num_threads, std::size_t capacity);
+
+    /**
+     * Determine the state of the task with the specified ID.
+     *
+     * \param task_id  Unique ID of the task
+     *
+     * \returns TaskState::pending if the task is still waiting to be started,
+     *     TaskState::running if the task is currently being executed, or
+     *     TaskState::unknown if the thread pool has no knowledge of this task ID.
+     */
+    detail::TaskState get_task_state(TaskId task_id) const;
 
     /**
      * Determine whether the queue for pending tasks is full (internal non-locking
