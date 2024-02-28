@@ -32,31 +32,23 @@ namespace gul14 {
 
 namespace detail {
 
-bool cancel_task(std::weak_ptr<ThreadPool> pool, TaskId id)
+std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool)
 {
     auto shared_ptr = pool.lock();
     if (!shared_ptr)
         throw std::logic_error("Associated thread pool does not exist anymore");
 
-    return shared_ptr->cancel_pending_task(id);
+    return shared_ptr;
 }
 
-bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId id)
+bool cancel_task_on_pool(std::weak_ptr<ThreadPool> pool, TaskId id)
 {
-    auto shared_ptr = pool.lock();
-    if (!shared_ptr)
-        throw std::logic_error("Associated thread pool does not exist anymore");
-
-    return shared_ptr->is_pending(id);
+    return lock_pool_or_throw(pool)->cancel_pending_task(id);
 }
 
-bool is_running(std::weak_ptr<ThreadPool> pool, TaskId id)
+detail::TaskState get_task_state_from_pool(std::weak_ptr<ThreadPool> pool, TaskId id)
 {
-    auto shared_ptr = pool.lock();
-    if (!shared_ptr)
-        throw std::logic_error("Associated thread pool does not exist anymore");
-
-    return shared_ptr->is_running(id);
+    return lock_pool_or_throw(pool)->get_task_state(id);
 }
 
 } // namespace detail
@@ -169,21 +161,22 @@ bool ThreadPool::is_idle() const
     return pending_tasks_.empty() && running_task_ids_.empty();
 }
 
-bool ThreadPool::is_pending(const TaskId task_id) const
+detail::TaskState ThreadPool::get_task_state(const TaskId task_id) const
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
-    const auto it = std::find_if(pending_tasks_.begin(), pending_tasks_.end(),
+    const auto itr = std::find(
+        running_task_ids_.begin(), running_task_ids_.end(), task_id);
+    if (itr != running_task_ids_.end())
+        return detail::TaskState::running;
+
+    const auto itp = std::find_if(
+        pending_tasks_.begin(), pending_tasks_.end(),
         [task_id](const Task& t) { return t.id_ == task_id; });
+    if (itp != pending_tasks_.end())
+        return detail::TaskState::pending;
 
-    return it != pending_tasks_.end();
-}
-
-bool ThreadPool::is_running(const TaskId task_id) const
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto it = std::find(running_task_ids_.begin(), running_task_ids_.end(), task_id);
-    return it != running_task_ids_.end();
+    return detail::TaskState::unknown;
 }
 
 bool ThreadPool::is_shutdown_requested() const
