@@ -40,14 +40,14 @@
 
 namespace gul14 {
 
-class ThreadPoolEngine;
+class ThreadPool;
 
 using TaskId = std::uint64_t;
 
 namespace detail {
-bool cancel_task(std::weak_ptr<ThreadPoolEngine> pool, TaskId task_id);
-bool is_running(std::weak_ptr<ThreadPoolEngine> pool, TaskId task_id);
-bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId task_id);
+bool cancel_task(std::weak_ptr<ThreadPool> pool, TaskId task_id);
+bool is_running(std::weak_ptr<ThreadPool> pool, TaskId task_id);
+bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId task_id);
 } // namespace detail
 
 /**
@@ -64,8 +64,8 @@ bool is_pending(std::weak_ptr<ThreadPoolEngine> pool, TaskId task_id);
  * can be used to query the status of the task or to remove it from the queue via
  * cancel(). Tasks that are already running cannot be canceled.
  *
- * Tasks can be scheduled to start after a specific time point or after a certain delay. Each
- * task can also be given a name, which is mainly useful for debugging.
+ * Tasks can be scheduled to start after a specific time point or after a certain delay.
+ * Each task can also be given a name, which is mainly useful for debugging.
  *
  * \ref thread_pool.cpp "thread_pool.cpp".
  *
@@ -133,13 +133,13 @@ public:
     bool is_running() const { return detail::is_running(pool_, id_); }
 
 private:
-    friend class ThreadPoolEngine;
+    friend class ThreadPool;
 
     std::future<T> future_;
     TaskId id_;
-    std::weak_ptr<ThreadPoolEngine> pool_;
+    std::weak_ptr<ThreadPool> pool_;
 
-    TaskHandle(TaskId id, std::future<T> future, std::shared_ptr<ThreadPoolEngine> pool)
+    TaskHandle(TaskId id, std::future<T> future, std::shared_ptr<ThreadPool> pool)
     : future_{ std::move(future) }
     , id_{ id }
     , pool_{ pool }
@@ -147,38 +147,39 @@ private:
 };
 
 /**
- * The engine behind a ThreadPool, sharing most of the same functionality.
+ * A pool of worker threads with a task queue.
  *
- * This class should rarely be used directly, with the notable exception of tasks that
- * intend to interact with the thread pool themselves. These tasks can receive a reference
- * to the ThreadPoolEngine by which they are executed. For instance, tasks could use this
- * to schedule a continuation after a certain delay or to find out if the pool has been
- * requested to shut down:
- * \code{.cpp}
- * ThreadPool pool(2); // Create a pool with 2 threads
+ * A ThreadPool creates the desired number of worker threads when it is constructed and
+ * keeps them running until the object gets destroyed. Work is given to the pool with the
+ * add_task() function in the form of a function object or function pointer. Tasks are
+ * stored in a queue and executed in the order they were added. This makes a ThreadPool
+ * with a single thread effectively a serial task queue.
  *
- * pool.add_task(
- *     [](ThreadPoolEngine& pool)
- *     {
- *         for (int i = 0; i != 1000; ++i)
- *         {
- *             do_some_work();
- *             if (pool.is_shutdown_requested())
- *                 return;
- *         }
- *         pool.add_task([]() { std::cout << "Task 2, a second later\n"; }, 1s);
- *     });
- * \endcode
+ * Each task is associated with a TaskHandle. This handle is returned by add_task() and
+ * can be used to query the status of the task or to remove it from the queue via
+ * cancel(). Tasks that are already running cannot be canceled.
+ *
+ * Tasks can be scheduled to start at a specific time point or after a certain delay. Each
+ * task can also be given a name, which is mainly useful for debugging.
  *
  * All public member functions are thread-safe.
  *
+ * On Linux, threads in the pool explicitly block the signals SIGALRM, SIGINT, SIGPIPE,
+ * SIGTERM, SIGURG, SIGUSR1, and SIGUSR2. This is done to prevent the threads from
+ * terminating the whole process if one of these signals is received.
+ *
+ * \ref thread_pool.cpp "thread_pool.cpp".
+ *
  * \since GUL version 2.11
  */
-class ThreadPoolEngine : public std::enable_shared_from_this<ThreadPoolEngine>
+class ThreadPool : public std::enable_shared_from_this<ThreadPool>
 {
 public:
     using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
     using Duration = TimePoint::duration;
+
+    /// Default capacity for the task queue.
+    constexpr static std::size_t default_capacity{ 200 };
 
     /// Maximum possible capacity for the task queue.
     constexpr static std::size_t max_capacity{ 10'000'000 };
@@ -186,16 +187,14 @@ public:
     /// Maximum possible number of threads
     constexpr static std::size_t max_threads{ 10'000 };
 
-    ThreadPoolEngine(std::size_t num_threads, std::size_t capacity);
-
     /**
-     * Destruct the ThreadPoolEngine and join all threads.
+     * Destruct the ThreadPool and join all threads.
      *
      * This destructor blocks until all threads have terminated. Work that has not yet
      * been started in one of the threads gets canceled, but work that has already been
      * assigned to a thread continues to be executed until it completes.
      */
-    ~ThreadPoolEngine();
+    ~ThreadPool();
 
     /**
      * Enqueue a task.
@@ -212,12 +211,35 @@ public:
      * \returns a TaskHandle that can be used for inquiries about the state of the task
      *          and to retrieve its return value.
      * \exception std::runtime_error is thrown if the queue is full.
+     *
+     * \code{.cpp}
+     * auto pool = make_thread_pool(2); // Create a pool with 2 threads
+     *
+     * // A simple task that does not interact with the pool
+     * pool->add_task([]() { std::cout << "Task 1\n"; });
+     *
+     * // A task that schedules another task to start two seconds later
+     * pool->add_task(
+     *     [](ThreadPoolEngine& pool)
+     *     {
+     *         std::cout << "Task 2\n";
+     *         pool.add_task([]() { std::cout << "Task 3\n"; }, 2s);
+     *     });
+     *
+     * // A task with a name
+     * pool->add_task([]() { std::cout << "Task 4\n"; }, "Task 4");
+     * \endcode
      */
     template <typename Function>
-    TaskHandle<invoke_result_t<Function, ThreadPoolEngine&>>
+    TaskHandle<invoke_result_t<Function, ThreadPool&>>
     add_task(Function fct, TimePoint start_time = {}, std::string name = {})
     {
-        using Result = invoke_result_t<Function, ThreadPoolEngine&>;
+        static_assert(
+            is_invocable<Function, ThreadPool&>::value
+            || is_invocable<Function>::value,
+            "Invalid function signature: Must be T fct() or T fct(ThreadPool&)");
+
+        using Result = invoke_result_t<Function, ThreadPool&>;
 
         TaskHandle<Result> task_handle = [this, &fct, start_time, &name]()
             {
@@ -230,7 +252,7 @@ public:
                         pending_tasks_.size(), ')'));
                 }
 
-                using PackagedTask = std::packaged_task<Result(ThreadPoolEngine&)>;
+                using PackagedTask = std::packaged_task<Result(ThreadPool&)>;
 
                 auto named_task_ptr = std::make_unique<NamedTaskImpl<PackagedTask>>(
                     PackagedTask{ std::move(fct) }, std::move(name));
@@ -257,13 +279,13 @@ public:
     add_task(Function fct, TimePoint start_time = {}, std::string name = {})
     {
         return add_task(
-            [f = std::move(fct)](ThreadPoolEngine&) { return f(); },
+            [f = std::move(fct)](ThreadPool&) { return f(); },
             start_time, std::move(name));
     }
 
     template <typename Function,
-        std::enable_if_t<is_invocable<Function, ThreadPoolEngine&>::value, bool> = true>
-    TaskHandle<invoke_result_t<Function, ThreadPoolEngine&>>
+        std::enable_if_t<is_invocable<Function, ThreadPool&>::value, bool> = true>
+    TaskHandle<invoke_result_t<Function, ThreadPool&>>
     add_task(Function fct, Duration delay_before_start, std::string name = {})
     {
         return add_task(std::move(fct),
@@ -280,8 +302,8 @@ public:
     }
 
     template <typename Function,
-        std::enable_if_t<is_invocable<Function, ThreadPoolEngine&>::value, bool> = true>
-    TaskHandle<invoke_result_t<Function, ThreadPoolEngine&>>
+        std::enable_if_t<is_invocable<Function, ThreadPool&>::value, bool> = true>
+    TaskHandle<invoke_result_t<Function, ThreadPool&>>
     add_task(Function fct, std::string name)
     {
         return add_task(std::move(fct), TimePoint{}, std::move(name));
@@ -352,6 +374,18 @@ public:
     /// Determine whether the thread pool has been requested to shut down.
     bool is_shutdown_requested() const;
 
+    /**
+     * Create a thread pool with the desired number of threads and the specified capacity
+     * for enqueuing tasks.
+     *
+     * The thread pool is allocated in a shared pointer, which is necessary so that task
+     * handles can access the pool safely. A ThreadPool cannot be constructed directly.
+     *
+     * \returns a shared pointer to the created ThreadPool object.
+     */
+    static std::shared_ptr<ThreadPool> make_shared(
+        std::size_t num_threads, std::size_t capacity = default_capacity);
+
 private:
     struct NamedTask
     {
@@ -360,7 +394,7 @@ private:
         {}
 
         virtual ~NamedTask() = default;
-        virtual void operator()(ThreadPoolEngine& pool) = 0;
+        virtual void operator()(ThreadPool& pool) = 0;
 
         std::string name_;
     };
@@ -374,7 +408,7 @@ private:
         , fct_{ std::move(fct) }
         {}
 
-        void operator()(ThreadPoolEngine& pool) override { fct_(pool); }
+        void operator()(ThreadPool& pool) override { fct_(pool); }
 
         FunctionType fct_;
     };
@@ -415,6 +449,26 @@ private:
     TaskId next_task_id_ = 0;
     bool shutdown_requested_{ false };
 
+
+    /**
+     * Create a thread pool with the desired number of threads and the specified capacity
+     * for queuing tasks.
+     *
+     * This constructor may not be used directly. Use make_thread_pool() to allocate a
+     * ThreadPool object in a shared pointer.
+     *
+     * Upon construction, the desired number of threads is launched. The threads are
+     * joined when the ThreadPool object gets destroyed.
+     *
+     * \param num_threads  Desired number of threads
+     * \param capacity     Maximum number of pending tasks that can be queued
+     *
+     * \exception std::invalid_argument is thrown if the desired number of threads is
+     *            zero or greater than max_threads, or if the requested capacity is zero
+     *            or exceeds max_capacity.
+     */
+    ThreadPool(std::size_t num_threads, std::size_t capacity);
+
     /**
      * Determine whether the queue for pending tasks is full (internal non-locking
      * version).
@@ -429,147 +483,19 @@ private:
 };
 
 /**
- * A pool of worker threads with a task queue.
+ * Create a thread pool with the desired number of threads and the specified capacity for
+ * queuing tasks.
  *
- * A ThreadPool creates the desired number of worker threads when it is constructed and
- * keeps them running until the object gets destroyed. Work is given to the pool with the
- * add_task() function in the form of a function object or function pointer. Tasks are
- * stored in a queue and executed in the order they were added. This makes a ThreadPool
- * with a single thread effectively a serial task queue.
+ * The thread pool is allocated in a shared pointer, which is necessary so that task
+ * handles can access the pool safely. A ThreadPool cannot be constructed directly.
  *
- * Each task is associated with a TaskHandle. This handle is returned by add_task() and
- * can be used to query the status of the task or to remove it from the queue via
- * cancel(). Tasks that are already running cannot be canceled.
- *
- * Tasks can be scheduled to start at a specific time point or after a certain delay. Each
- * task can also be given a name, which is mainly useful for debugging.
- *
- * All public member functions are thread-safe.
- *
- * On Linux, threads in the pool explicitly block the signals SIGALRM, SIGINT, SIGPIPE,
- * SIGTERM, SIGURG, SIGUSR1, and SIGUSR2. This is done to prevent the threads from
- * terminating the whole process if one of these signals is received.
- *
- * \ref thread_pool.cpp "thread_pool.cpp".
- *
- * \since GUL version 2.11
+ * \returns a shared pointer to the created ThreadPool object.
  */
-class ThreadPool
+inline std::shared_ptr<ThreadPool> make_thread_pool(
+    std::size_t num_threads, std::size_t capacity = ThreadPool::default_capacity)
 {
-public:
-    using TimePoint = ThreadPoolEngine::TimePoint;
-    using Duration = ThreadPoolEngine::Duration;
-
-    /**
-     * Create a thread pool with the desired number of threads and the specified capacity
-     * for queuing tasks.
-     *
-     * This constructor launches the desired number of threads. The threads are joined
-     * when the ThreadPool object gets destroyed.
-     *
-     * \param num_threads  Desired number of threads
-     * \param capacity     Maximum number of pending tasks that can be queued
-     *
-     * \exception std::invalid_argument is thrown if the desired number of threads is
-     *            zero or greater than max_threads, or if the requested capacity is zero
-     *            or exceeds max_capacity.
-     */
-    ThreadPool(std::size_t num_threads, std::size_t capacity = 200)
-        : engine_{ std::make_shared<ThreadPoolEngine>(num_threads, capacity) }
-    {}
-
-    /**
-     * Enqueue a task.
-     *
-     * There are multiple overloads of this function for variations of the arguments:
-     *
-     * \param fct  The first argument must be a function object or function pointer to be
-     *             executed. This function can have an arbitrary return type and may
-     *             either take no arguments (`T fct()`) or a reference to the
-     *             ThreadPoolEngine by which it gets executed
-     *             (`T fct(ThreadPoolEngine&)`).
-     * \param args Start time and/or task name: As an optional second parameter, either a
-     *             <b>time point</b> or a <b>duration</b> can be given. A time point
-     *             specifies the earliest time at which the task may be started, a
-     *             duration specifies a time point relative to the current time.
-     *             As an optional last parameter, a <b>task name</b> can be specified.
-     *             This is mainly useful for debugging.
-     *
-     * \returns a TaskHandle for this task.
-     * \exception std::runtime_error is thrown if the queue is full.
-     *
-     * \code{.cpp}
-     * ThreadPool pool(2); // Create a pool with 2 threads
-     *
-     * // A simple task that does not interact with the pool
-     * pool.add_task([]() { std::cout << "Task 1\n"; });
-     *
-     * // A task that schedules another task to start two seconds later
-     * pool.add_task(
-     *     [](ThreadPoolEngine& pool)
-     *     {
-     *         std::cout << "Task 2\n";
-     *         pool.add_task([]() { std::cout << "Task 3\n"; }, 2s);
-     *     });
-     *
-     * // A task with a name
-     * pool.add_task([]() { std::cout << "Task 4\n"; }, "Task 4");
-     * \endcode
-     */
-    template <typename Function, typename... Args>
-    auto add_task(Function fct, Args&&... args)
-    {
-        static_assert(
-            is_invocable<Function, ThreadPoolEngine&>::value
-            || is_invocable<Function>::value,
-            "Invalid function signature: Must be T fct() or T fct(ThreadPoolEngine&)");
-
-        return engine_->add_task(std::forward<Function>(fct), std::forward<Args>(args)...);
-    }
-
-    /**
-     * Remove all pending tasks from the queue.
-     *
-     * This call removes all tasks that have not yet been started from the queue. It has
-     * no impact on tasks that are currently being executed.
-     *
-     * \returns the number of tasks that were removed.
-     */
-    std::size_t cancel_pending_tasks() { return engine_->cancel_pending_tasks(); }
-
-    /// Return the maximum number of pending tasks that can be queued.
-    std::size_t capacity() const noexcept { return engine_->capacity(); }
-
-    /// Return the number of pending tasks.
-    std::size_t count_pending() const { return engine_->count_pending(); }
-
-    /// Return the number of threads in the pool.
-    std::size_t count_threads() const noexcept { return engine_->count_threads(); }
-
-    /// Return a vector with the names of the tasks that are waiting to be executed.
-    std::vector<std::string> get_pending_task_names() const
-    {
-        return engine_->get_pending_task_names();
-    }
-
-    /// Return a vector with the names of the tasks that are currently running.
-    std::vector<std::string> get_running_task_names() const
-    {
-        return engine_->get_running_task_names();
-    }
-
-    /// Determine whether the queue for pending tasks is full (at capacity).
-    bool is_full() const noexcept { return engine_->is_full(); }
-
-    /**
-     * Return true if the pool has neither pending tasks nor tasks that are currently
-     * being executed.
-     */
-    bool is_idle() const { return engine_->is_idle(); }
-
-private:
-    std::shared_ptr<ThreadPoolEngine> engine_;
-};
+    return ThreadPool::make_shared(num_threads, capacity);
+}
 
 /// @}
 

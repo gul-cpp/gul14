@@ -25,9 +25,7 @@
 #include <gul14/ThreadPool.h>
 #include <gul14/time_util.h>
 
-using gul14::sleep;
-using gul14::ThreadPool;
-using gul14::ThreadPoolEngine;
+using namespace gul14;
 using std::cout;
 
 using namespace std::literals;
@@ -36,14 +34,14 @@ int main()
 {
 //! [Using the ThreadPool class]
     // Create a pool with 2 threads
-    ThreadPool pool(2);
+    auto pool = make_thread_pool(2);
 
-    pool.add_task([]() { cout << "Task 1\n"; });
-    pool.add_task([]() { sleep(1); std::cout << "Task 2\n"; });
+    pool->add_task([]() { cout << "Task 1\n"; });
+    pool->add_task([]() { sleep(1); std::cout << "Task 2\n"; });
 
     // Tasks can be scheduled to start later:
     // This one should start 2 seconds after enqueueing (if a thread is available)
-    pool.add_task([]() { cout << "Task 3\n"; }, 2s);
+    pool->add_task([]() { cout << "Task 3\n"; }, 2s);
 
     // Probable output:
     // Task 1
@@ -51,7 +49,7 @@ int main()
     // Task 3
 
     // Tasks can return results
-    auto task = pool.add_task([]() { return 42; });
+    auto task = pool->add_task([]() { return 42; });
 
     while (not task.is_complete())
         sleep(0.1);
@@ -60,8 +58,8 @@ int main()
     cout << "Task result: " << task.get_result() << "\n";
 
     // Tasks can also interact with the pool themselves, e.g. to schedule a continuation:
-    pool.add_task(
-        [](ThreadPoolEngine& pool) {
+    pool->add_task(
+        [](ThreadPool& pool) {
             cout << "Task 4\n";
             pool.add_task([]() { cout << "Task 5, a second later\n"; }, 1s);
         });

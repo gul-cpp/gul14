@@ -38,7 +38,7 @@ using namespace std::literals;
 
 TEST_CASE("TaskHandle: cancel()", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -67,11 +67,11 @@ TEST_CASE("TaskHandle: cancel()", "[ThreadPool]")
 
 TEST_CASE("TaskHandle: get_result()", "[ThreadPool]")
 {
-    ThreadPool pool(1);
+    auto pool = make_thread_pool(1);
 
-    auto task1 = pool.add_task([]() { return 42; });
-    auto task2 = pool.add_task([]() { return "Hello"s; });
-    auto task3 = pool.add_task([]() { throw std::runtime_error("Boom"); });
+    auto task1 = pool->add_task([]() { return 42; });
+    auto task2 = pool->add_task([]() { return "Hello"s; });
+    auto task3 = pool->add_task([]() { throw std::runtime_error("Boom"); });
 
     REQUIRE(task1.get_result() == 42);
     REQUIRE(task2.get_result() == "Hello");
@@ -80,7 +80,7 @@ TEST_CASE("TaskHandle: get_result()", "[ThreadPool]")
 
 TEST_CASE("TaskHandle: is_complete()", "[ThreadPool][TaskHandle]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -100,7 +100,7 @@ TEST_CASE("TaskHandle: is_complete()", "[ThreadPool][TaskHandle]")
 
 TEST_CASE("TaskHandle: is_pending()", "[ThreadPool][TaskHandle]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -121,7 +121,7 @@ TEST_CASE("TaskHandle: is_pending()", "[ThreadPool][TaskHandle]")
 
 TEST_CASE("TaskHandle: is_running()", "[ThreadPool][TaskHandle]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -158,28 +158,28 @@ TEST_CASE("ThreadPool: Constructor", "[ThreadPool]")
 {
     SECTION("Create a thread pool with 2 threads, default capacity")
     {
-        ThreadPool pool{ 2 };
-        REQUIRE(pool.count_threads() == 2);
-        REQUIRE(pool.capacity() >= 10); // default capacity
+        auto pool = make_thread_pool(2);
+        REQUIRE(pool->count_threads() == 2);
+        REQUIRE(pool->capacity() >= 10); // default capacity
     }
 
     SECTION("Create a thread pool with 1 thread, capacity 42")
     {
-        ThreadPool pool{ 1, 42 };
-        REQUIRE(pool.count_threads() == 1);
-        REQUIRE(pool.capacity() == 42);
+        auto pool = make_thread_pool(1, 42);
+        REQUIRE(pool->count_threads() == 1);
+        REQUIRE(pool->capacity() == 42);
     }
 
     SECTION("Cannot create an empty thread pool")
     {
-        REQUIRE_THROWS_AS(ThreadPool{ 0 }, std::invalid_argument);
+        REQUIRE_THROWS_AS(make_thread_pool(0), std::invalid_argument);
     }
 }
 
-TEST_CASE("ThreadPool: add_task() for functions without ThreadPoolEngine&",
+TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
     "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     // Without start times
     std::atomic<bool> start{ false };
@@ -254,16 +254,16 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPoolEngine&",
 
 TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     // Without start times
     std::atomic<bool> start{ false };
     std::atomic<bool> done{ false };
 
     pool->add_task(
-        [&start](ThreadPoolEngine&) { while (!start) gul14::sleep(10us); });
+        [&start](ThreadPool&) { while (!start) gul14::sleep(10us); });
     auto handle = pool->add_task(
-        [&done](ThreadPoolEngine&) { done = true; }, "Task 2");
+        [&done](ThreadPool&) { done = true; }, "Task 2");
 
     REQUIRE(pool->count_pending() >= 1);
     REQUIRE(pool->count_pending() <= 2);
@@ -281,12 +281,12 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
 
     const auto now = std::chrono::system_clock::now();
     auto task1 = pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 1; }, now + 120s);
+        [&last_job](ThreadPool&) { last_job = 1; }, now + 120s);
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 2; }, now + 2ms,
+        [&last_job](ThreadPool&) { last_job = 2; }, now + 2ms,
         "task 2 (usually runs second)");
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 3; }, now,
+        [&last_job](ThreadPool&) { last_job = 3; }, now,
         "task 3 (usually runs first)");
 
     while (last_job == 0)
@@ -304,12 +304,12 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
     // With start time as duration
     last_job = 0;
     task1 = pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 1; }, 120s);
+        [&last_job](ThreadPool&) { last_job = 1; }, 120s);
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 2; }, 2ms,
+        [&last_job](ThreadPool&) { last_job = 2; }, 2ms,
         "task 2 (usually runs second)");
     pool->add_task(
-        [&last_job](ThreadPoolEngine&) { last_job = 3; }, 0ms,
+        [&last_job](ThreadPool&) { last_job = 3; }, 0ms,
         "task 3 (usually runs first)");
 
     while (last_job == 0)
@@ -330,7 +330,7 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: cancel_pending_tasks()", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -357,13 +357,13 @@ TEST_CASE("ThreadPool: cancel_pending_tasks()", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: capacity()", "[ThreadPool]")
 {
-    ThreadPool pool{ 1, 128 };
-    REQUIRE(pool.capacity() == 128);
+    auto pool = make_thread_pool(1, 128);
+    REQUIRE(pool->capacity() == 128);
 }
 
 TEST_CASE("ThreadPool: count_pending()", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -389,14 +389,14 @@ TEST_CASE("ThreadPool: count_threads()", "[ThreadPool]")
 {
     for (std::size_t i = 1; i <= 2; ++i)
     {
-        ThreadPool pool{ i };
-        REQUIRE(pool.count_threads() == i);
+        auto pool = make_thread_pool(i);
+        REQUIRE(pool->count_threads() == i);
     }
 }
 
 TEST_CASE("ThreadPool: get_pending_task_names()", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     REQUIRE(pool->get_pending_task_names().empty());
 
@@ -422,7 +422,7 @@ TEST_CASE("ThreadPool: get_pending_task_names()", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: get_running_task_names()", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     REQUIRE(pool->get_running_task_names().empty());
 
@@ -446,7 +446,7 @@ TEST_CASE("ThreadPool: get_running_task_names()", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: is_full()", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::atomic<bool> stop{ false };
 
@@ -474,13 +474,13 @@ TEST_CASE("ThreadPool: is_full()", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: is_idle()", "[ThreadPool]")
 {
-    ThreadPool pool{ 1 };
-    REQUIRE(pool.is_idle());
+    auto pool = make_thread_pool(1);
+    REQUIRE(pool->is_idle());
 }
 
 TEST_CASE("ThreadPool: Run 100 functions on a single thread, check order", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(1);
+    auto pool = make_thread_pool(1);
 
     std::vector<std::function<void()>> functions;
 
@@ -518,7 +518,7 @@ TEST_CASE("ThreadPool: Run 100 functions on a single thread, check order", "[Thr
 
 TEST_CASE("ThreadPool: Run 100 functions on 4 threads", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(4);
+    auto pool = make_thread_pool(4);
 
     std::mutex mutex;
     std::vector<int> output;
@@ -557,7 +557,7 @@ TEST_CASE("ThreadPool: Run 100 functions on 4 threads", "[ThreadPool]")
 TEST_CASE("ThreadPool: Capacity limit", "[ThreadPool]")
 {
     std::size_t max_jobs{ 10 };
-    auto pool = std::make_unique<ThreadPool>(1, max_jobs);
+    auto pool = make_thread_pool(1, max_jobs);
 
     std::atomic<bool> go{ false };
 
@@ -602,13 +602,13 @@ TEST_CASE("ThreadPool: Capacity limit", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: Tasks scheduling their own continuation", "[ThreadPool]")
 {
-    auto pool = std::make_unique<ThreadPool>(2);
+    auto pool = make_thread_pool(2);
 
     std::mutex mutex;
     std::string str;
 
     pool->add_task(
-        [&mutex, &str](ThreadPoolEngine& pool)
+        [&mutex, &str](ThreadPool& pool)
         {
             {
                 std::lock_guard<std::mutex> lock(mutex);
