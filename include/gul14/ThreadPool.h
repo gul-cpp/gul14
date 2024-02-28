@@ -54,11 +54,11 @@ bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId task_id);
  * \addtogroup ThreadPool_h gul14/ThreadPool.h
  * \brief A thread pool and task queue.
  *
- * A ThreadPool creates the desired number of worker threads when it is constructed and
- * keeps them running until the object gets destroyed. Work is given to the pool with the
- * add_task() function in the form of a function object or function pointer. Tasks are
- * stored in a queue and executed in the order they were added. This makes a ThreadPool
- * with a single thread effectively a serial task queue.
+ * A thread pool is created with make_thread_pool(). It immediately starts the desired
+ * number of worker threads and keeps them running until the object gets destroyed. Work
+ * is given to the pool with the add_task() function in the form of a function object or
+ * function pointer. Tasks are stored in a queue and executed in the order they were
+ * added. This makes a ThreadPool with a single thread effectively a serial task queue.
  *
  * Each task is associated with a TaskHandle. This handle is returned by add_task() and
  * can be used to query the status of the task or to remove it from the queue via
@@ -77,6 +77,8 @@ bool is_pending(std::weak_ptr<ThreadPool> pool, TaskId task_id);
 
 /**
  * A handle for a task that has (or had) been enqueued on a ThreadPool.
+ *
+ * A TaskHandle can be used to query the status of a task and to retrieve its result.
  *
  * \code{.cpp}
  * ThreadPool pool(1);
