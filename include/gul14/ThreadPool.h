@@ -118,6 +118,22 @@ class TaskHandle
 {
 public:
     /**
+     * Construct a TaskHandle.
+     *
+     * This constructor is not meant to be used directly. Instead, TaskHandles are
+     * returned by the ThreadPool when a task is enqueued.
+     *
+     * \param id      Unique ID of the task
+     * \param future  A std::future that will eventually contain the result of the task
+     * \param pool    A shared pointer to the ThreadPool that the task is associated with
+     */
+    TaskHandle(TaskId id, std::future<T> future, std::shared_ptr<ThreadPool> pool)
+        : future_{ std::move(future) }
+        , id_{ id }
+        , pool_{ std::move(pool) }
+    {}
+
+    /**
      * Remove the task from the queue if it is still pending.
      *
      * This call has no effect if the task is already running.
@@ -137,8 +153,8 @@ public:
     /**
      * Block until the task has finished and return its result.
      *
-     * If the task finished by throwing an exception, get_result() rethrows this
-     * exception.
+     * If `is_complete() == true`, the result is available immediately. If the task
+     * finished by throwing an exception, get_result() rethrows this exception.
      */
     T get_result()
     {
@@ -147,7 +163,18 @@ public:
         return future_.get();
     }
 
-    /// Determine whether the task has finished.
+    /**
+     * Determine whether the task has completed.
+     *
+     * This function returns true if the task has finished, either successfully or by
+     * throwing an exception. It returns false if the task is still running, waiting to be
+     * started, or has been canceled.
+     *
+     * \note
+     * is_complete() does not need to interact with the ThreadPool to determine the state
+     * of the task. It is therefore slightly more performant than get_state(), but does
+     * not deliver the same fine-grained information.
+     */
     bool is_complete() const
     {
         if (not future_.valid())
@@ -161,6 +188,11 @@ public:
      *
      * \exception std::logic_error is thrown if the associated thread pool does not
      *            exist anymore.
+     *
+     * \note
+     * If you just need to find out if a task has finished running, prefer is_complete()
+     * over this function. It does not need to interact with the ThreadPool and is
+     * therefore slightly more performant.
      */
     TaskState get_state() const
     {
@@ -176,17 +208,9 @@ public:
     }
 
 private:
-    friend class ThreadPool;
-
     std::future<T> future_;
     TaskId id_;
     std::weak_ptr<ThreadPool> pool_;
-
-    TaskHandle(TaskId id, std::future<T> future, std::shared_ptr<ThreadPool> pool)
-    : future_{ std::move(future) }
-    , id_{ id }
-    , pool_{ pool }
-    {}
 };
 
 /**
