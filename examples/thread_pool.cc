@@ -33,7 +33,7 @@ using namespace std::literals;
 int main()
 {
 //! [Using the ThreadPool class]
-    // Create a pool with 2 threads
+    // Create a pool with 2 threads (returns a shared_ptr<ThreadPool>)
     auto pool = make_thread_pool(2);
 
     pool->add_task([]() { cout << "Task 1\n"; });
