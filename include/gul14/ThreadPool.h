@@ -54,8 +54,7 @@ enum class TaskState
     unknown  // The thread pool has no knowledge about this task
 };
 
-bool cancel_task_on_pool(std::weak_ptr<ThreadPool> pool, TaskId id);
-TaskState get_task_state_from_pool(std::weak_ptr<ThreadPool> pool, TaskId id);
+std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
 
 } // namespace detail
 
@@ -97,121 +96,6 @@ enum class TaskState
     canceled
 };
 
-/**
- * A handle for a task that has (or had) been enqueued on a ThreadPool.
- *
- * A TaskHandle can be used to query the status of a task and to retrieve its result.
- *
- * \code{.cpp}
- * ThreadPool pool(1);
- * auto task = pool.add_task([]() { return 42; });
- * while (not task.is_complete())
- * {
- *     std::cout << "Waiting for task to complete...\n";
- *     sleep(0.1);
- * }
- * std::cout << "Task result: " << task.get_result() << "\n";
- * \endcode
- */
-template <typename T>
-class TaskHandle
-{
-public:
-    /**
-     * Construct a TaskHandle.
-     *
-     * This constructor is not meant to be used directly. Instead, TaskHandles are
-     * returned by the ThreadPool when a task is enqueued.
-     *
-     * \param id      Unique ID of the task
-     * \param future  A std::future that will eventually contain the result of the task
-     * \param pool    A shared pointer to the ThreadPool that the task is associated with
-     */
-    TaskHandle(TaskId id, std::future<T> future, std::shared_ptr<ThreadPool> pool)
-        : future_{ std::move(future) }
-        , id_{ id }
-        , pool_{ std::move(pool) }
-    {}
-
-    /**
-     * Remove the task from the queue if it is still pending.
-     *
-     * This call has no effect if the task is already running.
-     *
-     * \returns true if the task was removed from the queue, false if it was not found in
-     *          the queue (e.g. because it is already running).
-     *
-     * \exception std::logic_error is thrown if the associated thread pool does not
-     *            exist anymore.
-     */
-    bool cancel()
-    {
-        future_ = {};
-        return detail::cancel_task_on_pool(pool_, id_);
-    }
-
-    /**
-     * Block until the task has finished and return its result.
-     *
-     * If `is_complete() == true`, the result is available immediately. If the task
-     * finished by throwing an exception, get_result() rethrows this exception.
-     */
-    T get_result()
-    {
-        if (not future_.valid())
-            throw std::logic_error("Canceled task has no result");
-        return future_.get();
-    }
-
-    /**
-     * Determine whether the task has completed.
-     *
-     * This function returns true if the task has finished, either successfully or by
-     * throwing an exception. It returns false if the task is still running, waiting to be
-     * started, or has been canceled.
-     *
-     * \note
-     * is_complete() does not need to interact with the ThreadPool to determine the state
-     * of the task. It is therefore slightly more performant than get_state(), but does
-     * not deliver the same fine-grained information.
-     */
-    bool is_complete() const
-    {
-        if (not future_.valid())
-            return false;
-
-        return future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
-    }
-
-    /**
-     * Return true if the task is still waiting to be started.
-     *
-     * \exception std::logic_error is thrown if the associated thread pool does not
-     *            exist anymore.
-     *
-     * \note
-     * If you just need to find out if a task has finished running, prefer is_complete()
-     * over this function. It does not need to interact with the ThreadPool and is
-     * therefore slightly more performant.
-     */
-    TaskState get_state() const
-    {
-        const auto state = detail::get_task_state_from_pool(pool_, id_);
-        if (state == detail::TaskState::unknown)
-        {
-            if (is_complete())
-                return TaskState::complete;
-            else
-                return TaskState::canceled;
-        }
-        return static_cast<TaskState>(state);
-    }
-
-private:
-    std::future<T> future_;
-    TaskId id_;
-    std::weak_ptr<ThreadPool> pool_;
-};
 
 /**
  * A pool of worker threads with a task queue.
@@ -242,6 +126,126 @@ private:
 class ThreadPool : public std::enable_shared_from_this<ThreadPool>
 {
 public:
+    /**
+     * A handle for a task that has (or had) been enqueued on a ThreadPool.
+     *
+     * A TaskHandle can be used to query the status of a task and to retrieve its result.
+     *
+     * \code{.cpp}
+     * ThreadPool pool(1);
+     * auto task = pool.add_task([]() { return 42; });
+     * while (not task.is_complete())
+     * {
+     *     std::cout << "Waiting for task to complete...\n";
+     *     sleep(0.1);
+     * }
+     * std::cout << "Task result: " << task.get_result() << "\n";
+     * \endcode
+     */
+    template <typename T>
+    class TaskHandle
+    {
+    public:
+        /**
+         * Construct a TaskHandle.
+         *
+         * This constructor is not meant to be used directly. Instead, TaskHandles are
+         * returned by the ThreadPool when a task is enqueued.
+         *
+         * \param id      Unique ID of the task
+         * \param future  A std::future that will eventually contain the result of the
+         *                task
+         * \param pool    A shared pointer to the ThreadPool that the task is associated
+         *                with
+         */
+        TaskHandle(TaskId id, std::future<T> future, std::shared_ptr<ThreadPool> pool)
+            : future_{ std::move(future) }
+            , id_{ id }
+            , pool_{ std::move(pool) }
+        {}
+
+        /**
+         * Remove the task from the queue if it is still pending.
+         *
+         * This call has no effect if the task is already running.
+         *
+         * \returns true if the task was removed from the queue, false if it was not found in
+         *          the queue (e.g. because it is already running).
+         *
+         * \exception std::logic_error is thrown if the associated thread pool does not
+         *            exist anymore.
+         */
+        bool cancel()
+        {
+            future_ = {};
+            return detail::lock_pool_or_throw(pool_)->cancel_pending_task(id_);
+        }
+
+        /**
+         * Block until the task has finished and return its result.
+         *
+         * If `is_complete() == true`, the result is available immediately. If the task
+         * finished by throwing an exception, get_result() rethrows this exception.
+         */
+        T get_result()
+        {
+            if (not future_.valid())
+                throw std::logic_error("Canceled task has no result");
+            return future_.get();
+        }
+
+        /**
+         * Determine whether the task has completed.
+         *
+         * This function returns true if the task has finished, either successfully or by
+         * throwing an exception. It returns false if the task is still running, waiting
+         * to be started, or has been canceled.
+         *
+         * \note
+         * is_complete() does not need to interact with the ThreadPool to determine the
+         * state of the task. It is therefore slightly more performant than get_state(),
+         * but does not deliver the same fine-grained information.
+         */
+        bool is_complete() const
+        {
+            if (not future_.valid())
+                return false;
+
+            return future_.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+        }
+
+        /**
+         * Return true if the task is still waiting to be started.
+         *
+         * \exception std::logic_error is thrown if the associated thread pool does not
+         *            exist anymore.
+         *
+         * \note
+         * If you just need to find out if a task has finished running, prefer is_complete()
+         * over this function. It does not need to interact with the ThreadPool and is
+         * therefore slightly more performant.
+         */
+        TaskState get_state() const
+        {
+            const auto state = detail::lock_pool_or_throw(pool_)->get_task_state(id_);
+
+            if (state == detail::TaskState::unknown)
+            {
+                if (is_complete())
+                    return TaskState::complete;
+                else
+                    return TaskState::canceled;
+            }
+            return static_cast<TaskState>(state);
+        }
+
+    private:
+        std::future<T> future_;
+        TaskId id_;
+        std::weak_ptr<ThreadPool> pool_;
+    };
+
+
     using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
     using Duration = TimePoint::duration;
 
@@ -510,7 +514,6 @@ private:
     TaskId next_task_id_ = 0;
     bool shutdown_requested_{ false };
 
-    friend detail::TaskState detail::get_task_state_from_pool(std::weak_ptr<ThreadPool>, TaskId);
 
     /**
      * Create a thread pool with the desired number of threads and the specified capacity

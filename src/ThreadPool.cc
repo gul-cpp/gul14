@@ -41,16 +41,6 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool)
     return shared_ptr;
 }
 
-bool cancel_task_on_pool(std::weak_ptr<ThreadPool> pool, TaskId id)
-{
-    return lock_pool_or_throw(pool)->cancel_pending_task(id);
-}
-
-detail::TaskState get_task_state_from_pool(std::weak_ptr<ThreadPool> pool, TaskId id)
-{
-    return lock_pool_or_throw(pool)->get_task_state(id);
-}
-
 } // namespace detail
 
 
