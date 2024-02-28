@@ -59,9 +59,6 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
  * An example on how to use the ThreadPool class to schedule tasks.
  */
 
-/// A unique identifier for a task.
-using TaskId = std::uint64_t;
-
 /// An enum describing the state of an individual task.
 enum class TaskState
 {
@@ -111,6 +108,9 @@ enum class TaskState
 class ThreadPool : public std::enable_shared_from_this<ThreadPool>
 {
 public:
+    /// A unique identifier for a task.
+    using TaskId = std::uint64_t;
+
     /**
      * A handle for a task that has (or had) been enqueued on a ThreadPool.
      *
