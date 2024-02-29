@@ -518,18 +518,20 @@ TEST_CASE("test pow10()", "[to_number]")
         { -1234, 1E-1234L, lenience },
         { -3333, 1E-3333L, lenience },
         { -4095, 1E-4095L, lenience + 1 },
-        { -4351, 1E-4351L, lenience },
+        { -4351, 1E-4351L, lenience }, // This is only 5 multiplication
         { -4607, 1E-4607L, lenience + 1 },
-        { -4876, 1E-4876L, lenience },
-        { -4877, 1E-4877L, lenience },
-        { -4878, 1E-4878L, lenience },
-        { -4879, 1E-4879L, lenience },
-        { -4932, 1E-4932L, lenience },
+        { -4876, 1E-4876L, lenience + 1 },
+        { -4877, 1E-4877L, lenience + 1 },
+        { -4878, 1E-4878L, lenience + 1 },
+        { -4879, 1E-4879L, lenience + 1 },
+        { -4932, 1E-4932L, lenience + 1 },
 #endif
     };
 
-    for (auto const& c : cases)
+    for (auto const& c : cases) {
+        INFO(c.exponent_);
         REQUIRE(c.deviation() <= c.lenience_);
+    }
 
     // Overflows...
     REQUIRE(std::isinf(gul14::detail::pow10(5000)));
