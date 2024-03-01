@@ -149,9 +149,11 @@ namespace gul14 {
  * - Add ThreadPool
  * - Add backports of std::invoke, std::invoke_result, std::invoke_result_t,
  *   std::is_invocable, and std::is_invocable_r from C++17
+ * - Improve accuracy of to_number() for certain platforms
  *
  * \subsection v2_10_0 Version 2.10.0
  *
+ * - *Released with DOOCS 24.1.0-24.1.0*
  * - Add gul14::endian, a backport of std::endian from C++20
  * - Add gul14::is_little_endian() and gul14::is_big_endian()
  *
