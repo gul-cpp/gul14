@@ -1,26 +1,28 @@
 <map id="string_view.h" name="string_view.h">
-<area shape="rect" id="node1" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="794,5,902,32"/>
-<area shape="rect" id="node2" href="$case__ascii_8h.html" title="Declarations of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(), and uppercase_ascii_..." alt="" coords="259,80,360,107"/>
-<area shape="rect" id="node3" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="849,304,904,331"/>
-<area shape="rect" id="node4" href="$substring__checks_8h.html" title="Definition of contains(), ends_with(), and starts_with()." alt="" coords="34,155,180,181"/>
-<area shape="rect" id="node5" href="$to__number_8h.html" title="Declaration of to_number()." alt="" coords="38,229,141,256"/>
-<area shape="rect" id="node8" href="$cat_8h.html" title="Declaration of the overload set for cat() and of the associated class ConvertingStringView." alt="" coords="1480,155,1534,181"/>
-<area shape="rect" id="node12" href="$date_8h.html" title="Classes and functions for using calendar dates." alt="" coords="1362,80,1425,107"/>
-<area shape="rect" id="node13" href="$escape_8h.html" title="Declaration of escape(), unescape()." alt="" coords="440,80,520,107"/>
-<area shape="rect" id="node15" href="$hexdump_8h.html" title="Declaration of the hexdump() functions and associated types." alt="" coords="165,229,260,256"/>
-<area shape="rect" id="node16" href="$join__split_8h.html" title="Implementation of join(), split(), and split_sv()." alt="" coords="548,155,642,181"/>
-<area shape="rect" id="node17" href="$replace_8h.html" title="Declarations of replace(), replace_inplace()." alt="" coords="1023,80,1106,107"/>
-<area shape="rect" id="node19" href="$string__util_8h.html" title="Declaration of string utility functions." alt="" coords="756,80,855,107"/>
-<area shape="rect" id="node20" href="$tokenize_8h.html" title="Implementation of tokenize(), tokenize_sv()." alt="" coords="848,155,937,181"/>
-<area shape="rect" id="node21" href="$trim_8h.html" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="962,155,1023,181"/>
-<area shape="rect" id="node24" href="$type__name_8h.html" title="Definition of type_name()" alt="" coords="1130,80,1236,107"/>
-<area shape="rect" id="node7" href="$case__ascii_8cc.html" title="Implementation of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),..." alt="" coords="204,155,311,181"/>
-<area shape="rect" id="node6" href="$to__number_8cc.html" title="Implementation of pow10()." alt="" coords="35,304,144,331"/>
-<area shape="rect" id="node9" href="$SlidingBuffer_8h.html" title="Declaration of the SlidingBuffer class for the General Utility Library." alt="" coords="1312,229,1428,256"/>
-<area shape="rect" id="node10" href="$SmallVector_8h.html" title="Definition of the SmallVector class template." alt="" coords="1452,229,1562,256"/>
-<area shape="rect" id="node11" href="$cat_8cc.html" title="Implementation of cat() for two or more parameters." alt="" coords="1638,229,1698,256"/>
-<area shape="rect" id="node14" href="$escape_8cc.html" title="Implementation of escape(), unescape()." alt="" coords="437,155,524,181"/>
-<area shape="rect" id="node18" href="$replace_8cc.html" title="Implementation of replace(), replace_inplace()." alt="" coords="1047,155,1135,181"/>
-<area shape="rect" id="node23" href="$string__util_8cc.html" title="Implementation of string utilities for the General Utility Library." alt="" coords="666,155,772,181"/>
-<area shape="rect" id="node22" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="914,229,980,256"/>
+<area shape="rect" id="node1" title="Provides a gul14::string_view that is fully compatible with C++17&#39;s std::string_view." alt="" coords="1236,5,1344,32"/>
+<area shape="rect" id="node2" href="$case__ascii_8h.html" title="Declarations of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(), and uppercase_ascii_..." alt="" coords="671,80,773,107"/>
+<area shape="rect" id="node3" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="911,304,965,331"/>
+<area shape="rect" id="node4" href="$substring__checks_8h.html" title="Definition of contains(), ends_with(), and starts_with()." alt="" coords="475,155,622,181"/>
+<area shape="rect" id="node5" href="$to__number_8h.html" title="Declaration of to_number()." alt="" coords="599,229,701,256"/>
+<area shape="rect" id="node8" href="$cat_8h.html" title="Declaration of the overload set for cat() and of the associated class ConvertingStringView." alt="" coords="300,155,355,181"/>
+<area shape="rect" id="node14" href="$date_8h.html" title="Classes and functions for using calendar dates." alt="" coords="1804,80,1867,107"/>
+<area shape="rect" id="node15" href="$escape_8h.html" title="Declaration of escape(), unescape()." alt="" coords="882,80,962,107"/>
+<area shape="rect" id="node17" href="$hexdump_8h.html" title="Declaration of the hexdump() functions and associated types." alt="" coords="1753,229,1848,256"/>
+<area shape="rect" id="node18" href="$join__split_8h.html" title="Implementation of join(), split(), and split_sv()." alt="" coords="990,155,1083,181"/>
+<area shape="rect" id="node19" href="$replace_8h.html" title="Declarations of replace(), replace_inplace()." alt="" coords="1465,80,1547,107"/>
+<area shape="rect" id="node21" href="$string__util_8h.html" title="Declaration of string utility functions." alt="" coords="1198,80,1297,107"/>
+<area shape="rect" id="node22" href="$tokenize_8h.html" title="Implementation of tokenize(), tokenize_sv()." alt="" coords="1289,155,1379,181"/>
+<area shape="rect" id="node23" href="$trim_8h.html" title="Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="1403,155,1465,181"/>
+<area shape="rect" id="node26" href="$type__name_8h.html" title="Definition of type_name()" alt="" coords="1571,80,1678,107"/>
+<area shape="rect" id="node7" href="$case__ascii_8cc.html" title="Implementation of lowercase_ascii(), lowercase_ascii_inplace(), uppercase_ascii(),..." alt="" coords="697,155,803,181"/>
+<area shape="rect" id="node6" href="$to__number_8cc.html" title="Implementation of pow10()." alt="" coords="595,304,705,331"/>
+<area shape="rect" id="node9" href="$SlidingBuffer_8h.html" title="Declaration of the SlidingBuffer class for the General Utility Library." alt="" coords="459,229,575,256"/>
+<area shape="rect" id="node10" href="$SmallVector_8h.html" title="Definition of the SmallVector class template." alt="" coords="272,229,383,256"/>
+<area shape="rect" id="node11" href="$ThreadPool_8h.html" title="Declaration of the ThreadPool class." alt="" coords="141,229,247,256"/>
+<area shape="rect" id="node12" href="$ThreadPool_8cc.html" title="Implementation of the ThreadPool class." alt="" coords="92,304,205,331"/>
+<area shape="rect" id="node13" href="$cat_8cc.html" title="Implementation of cat() for two or more parameters." alt="" coords="5,229,65,256"/>
+<area shape="rect" id="node16" href="$escape_8cc.html" title="Implementation of escape(), unescape()." alt="" coords="879,155,965,181"/>
+<area shape="rect" id="node20" href="$replace_8cc.html" title="Implementation of replace(), replace_inplace()." alt="" coords="1489,155,1577,181"/>
+<area shape="rect" id="node25" href="$string__util_8cc.html" title="Implementation of string utilities for the General Utility Library." alt="" coords="1108,155,1213,181"/>
+<area shape="rect" id="node24" href="$trim_8cc.html" title="Implementation of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv()." alt="" coords="1339,229,1406,256"/>
 </map>

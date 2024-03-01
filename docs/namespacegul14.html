@@ -101,6 +101,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1basic__string__view.html">basic_string_view</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A view to a contiguous sequence of chars or char-like objects.  <a href="classgul14_1_1basic__string__view.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html">ThreadPool</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pool of worker threads with a task queue.  <a href="classgul14_1_1ThreadPool.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structgul14_1_1IsContainerLike.html">IsContainerLike</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper type trait object to determine if a type is a container.  <a href="structgul14_1_1IsContainerLike.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,6 +202,13 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga2a276f44539a7a7e2d88c872486e2ff9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine how a SlidingBuffer handles decreases of its size.  <a href="group__SlidingBuffer__h.html#ga2a276f44539a7a7e2d88c872486e2ff9">More...</a><br /></td></tr>
 <tr class="separator:ga2a276f44539a7a7e2d88c872486e2ff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6ea1dc7329cb2e4f40ae6b268ef9ab55"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ThreadPool__h.html#ga6ea1dc7329cb2e4f40ae6b268ef9ab55">TaskState</a> { <a class="el" href="group__ThreadPool__h.html#gga6ea1dc7329cb2e4f40ae6b268ef9ab55a7c6c2e5d48ab37a007cbf70d3ea25fa4">pending</a>
+, <a class="el" href="group__ThreadPool__h.html#gga6ea1dc7329cb2e4f40ae6b268ef9ab55a75101dcdfc88455bcafc9e53e0b06689">running</a>
+, <a class="el" href="group__ThreadPool__h.html#gga6ea1dc7329cb2e4f40ae6b268ef9ab55ad9a22d7a8178d5b42a8750123cbfe5b1">complete</a>
+, <a class="el" href="group__ThreadPool__h.html#gga6ea1dc7329cb2e4f40ae6b268ef9ab55ad5c39a1d9aced393f835f334a1fb9206">canceled</a>
+ }</td></tr>
+<tr class="memdesc:ga6ea1dc7329cb2e4f40ae6b268ef9ab55"><td class="mdescLeft">&#160;</td><td class="mdescRight">An enum describing the state of an individual task.  <a href="group__ThreadPool__h.html#ga6ea1dc7329cb2e4f40ae6b268ef9ab55">More...</a><br /></td></tr>
+<tr class="separator:ga6ea1dc7329cb2e4f40ae6b268ef9ab55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -505,6 +515,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga1d5572dd02a7d92918dde5f75c18f559"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__substring__checks__h.html#ga1d5572dd02a7d92918dde5f75c18f559">starts_with_nocase</a> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">string_view</a> str, char c) noexcept</td></tr>
 <tr class="memdesc:ga1d5572dd02a7d92918dde5f75c18f559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a string starts with a certain character.  <a href="group__substring__checks__h.html#ga1d5572dd02a7d92918dde5f75c18f559">More...</a><br /></td></tr>
 <tr class="separator:ga1d5572dd02a7d92918dde5f75c18f559"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga166ce288cf81fd766bcd83b148ef0af5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classgul14_1_1ThreadPool.html">ThreadPool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">make_thread_pool</a> (std::size_t num_threads, std::size_t capacity=<a class="el" href="classgul14_1_1ThreadPool.html#a6bf9ef24d3a94de2de0f38d2f4639109">ThreadPool::default_capacity</a>)</td></tr>
+<tr class="memdesc:ga166ce288cf81fd766bcd83b148ef0af5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.  <a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">More...</a><br /></td></tr>
+<tr class="separator:ga166ce288cf81fd766bcd83b148ef0af5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf863dc04f4588482947e31f758762b89"><td class="memItemLeft" align="right" valign="top">std::chrono::steady_clock::time_point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__time__util__h.html#gaf863dc04f4588482947e31f758762b89">tic</a> ()</td></tr>
 <tr class="memdesc:gaf863dc04f4588482947e31f758762b89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current time as a std::chrono time_point.  <a href="group__time__util__h.html#gaf863dc04f4588482947e31f758762b89">More...</a><br /></td></tr>
 <tr class="separator:gaf863dc04f4588482947e31f758762b89"><td class="memSeparator" colspan="2">&#160;</td></tr>

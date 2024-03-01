@@ -1,4 +1,5 @@
 <map id="time_util.h" name="time_util.h">
-<area shape="rect" id="node1" title="Declaration of time related functions for the General Utility Library." alt="" coords="5,5,97,32"/>
-<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="24,80,79,107"/>
+<area shape="rect" id="node1" title="Declaration of time related functions for the General Utility Library." alt="" coords="40,5,132,32"/>
+<area shape="rect" id="node2" href="$gul_8h.html" title="Main include file for the General Utility Library." alt="" coords="5,80,60,107"/>
+<area shape="rect" id="node3" href="$ThreadPool_8cc.html" title="Implementation of the ThreadPool class." alt="" coords="84,80,197,107"/>
 </map>

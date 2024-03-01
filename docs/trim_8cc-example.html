@@ -48,14 +48,15 @@ $(function() {
 <p>A simple example on how to use the <a class="el" href="group__trim__h.html#ga0af285e7ea3b0a077734c00e2059f330" title="Trim leading and trailing whitespace (or a custom set of characters) from a string,...">trim()</a> family of functions for stripping characters from one or both sides of a string.</p>
 <div class="fragment"><div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="gul_8h.html">gul14/gul.h</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="trim_8h.html">gul14/trim.h</a>&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">using</span> std::cout;</div>
-<div class="line"><span class="keyword">using</span> <a name="a0"></a><a class="code" href="group__trim__h.html#ga0af285e7ea3b0a077734c00e2059f330">gul14::trim</a>;</div>
+<div class="line"><span class="keyword">using</span> <a name="a0"></a><a class="code" href="group__trim__h.html#gafaa3db5afdef851e15185589aaacb16b">gul14::trim_left_sv</a>;</div>
 <div class="line"><span class="keyword">using</span> <a name="a1"></a><a class="code" href="group__trim__h.html#ga79cfeb1eb167325b12ba86a65dc04f3e">gul14::trim_left</a>;</div>
-<div class="line"><span class="keyword">using</span> <a name="a2"></a><a class="code" href="group__trim__h.html#gaf75ce67592c33fda6f431085747b21cb">gul14::trim_right</a>;</div>
-<div class="line"><span class="keyword">using</span> <a name="a3"></a><a class="code" href="group__trim__h.html#gafaa3db5afdef851e15185589aaacb16b">gul14::trim_left_sv</a>;</div>
-<div class="line"><span class="keyword">using</span> <a name="a4"></a><a class="code" href="group__trim__h.html#ga3cba61a104b118243c81a51eb72309a1">gul14::trim_right_sv</a>;</div>
+<div class="line"><span class="keyword">using</span> <a name="a2"></a><a class="code" href="group__trim__h.html#ga3cba61a104b118243c81a51eb72309a1">gul14::trim_right_sv</a>;</div>
+<div class="line"><span class="keyword">using</span> <a name="a3"></a><a class="code" href="group__trim__h.html#gaf75ce67592c33fda6f431085747b21cb">gul14::trim_right</a>;</div>
+<div class="line"><span class="keyword">using</span> <a name="a4"></a><a class="code" href="group__trim__h.html#ga8d4755d57b125523fefbadf2b4f6773e">gul14::trim_sv</a>;</div>
+<div class="line"><span class="keyword">using</span> <a name="a5"></a><a class="code" href="group__trim__h.html#ga0af285e7ea3b0a077734c00e2059f330">gul14::trim</a>;</div>
+<div class="line"><span class="keyword">using</span> std::cout;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main()</div>
 <div class="line">{</div>
@@ -78,7 +79,7 @@ $(function() {
 <div class="line">    <span class="comment">// prints &quot;[.:.:.:trim_right_sv, custom whitespace]&quot;</span></div>
 <div class="line"><span class="comment"></span> </div>
 <div class="line">    std::string str = <span class="stringliteral">&quot;  string_view  &quot;</span>;</div>
-<div class="line">    <span class="keyword">auto</span> sv = <a name="a5"></a><a class="code" href="group__trim__h.html#ga8d4755d57b125523fefbadf2b4f6773e">trim_sv</a>(str); <span class="comment">// sv is a string_view that points to the original string</span></div>
+<div class="line">    <span class="keyword">auto</span> sv = <a class="code" href="group__trim__h.html#ga8d4755d57b125523fefbadf2b4f6773e">trim_sv</a>(str); <span class="comment">// sv is a string_view that points to the original string</span></div>
 <div class="line"> </div>
 <div class="line">    cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; sv &lt;&lt; <span class="stringliteral">&quot;]\n&quot;</span>;</div>
 <div class="line">    <span class="comment">// prints &quot;[string_view]&quot;</span></div>
@@ -96,7 +97,7 @@ $(function() {
 <div class="ttc" id="agroup__trim__h_html_ga8d4755d57b125523fefbadf2b4f6773e"><div class="ttname"><a href="group__trim__h.html#ga8d4755d57b125523fefbadf2b4f6773e">gul14::trim_sv</a></div><div class="ttdeci">GUL_EXPORT string_view trim_sv(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim leading and trailing whitespace (or a custom set of characters) from a string,...</div><div class="ttdef"><b>Definition:</b> trim.cc:34</div></div>
 <div class="ttc" id="agroup__trim__h_html_gaf75ce67592c33fda6f431085747b21cb"><div class="ttname"><a href="group__trim__h.html#gaf75ce67592c33fda6f431085747b21cb">gul14::trim_right</a></div><div class="ttdeci">GUL_EXPORT std::string trim_right(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim trailing whitespace (or a custom set of characters) from a string, returning a new std::string.</div><div class="ttdef"><b>Definition:</b> trim.cc:61</div></div>
 <div class="ttc" id="agroup__trim__h_html_gafaa3db5afdef851e15185589aaacb16b"><div class="ttname"><a href="group__trim__h.html#gafaa3db5afdef851e15185589aaacb16b">gul14::trim_left_sv</a></div><div class="ttdeci">GUL_EXPORT string_view trim_left_sv(string_view str, string_view ws_chars=default_whitespace_characters)</div><div class="ttdoc">Trim leading whitespace (or a custom set of characters) from a string, returning a view into the orig...</div><div class="ttdef"><b>Definition:</b> trim.cc:51</div></div>
-<div class="ttc" id="agul_8h_html"><div class="ttname"><a href="gul_8h.html">gul.h</a></div><div class="ttdoc">Main include file for the General Utility Library.</div></div>
+<div class="ttc" id="atrim_8h_html"><div class="ttname"><a href="trim_8h.html">trim.h</a></div><div class="ttdoc">Declarations of trim(), trim_left(), trim_right(), trim_sv(), trim_left_sv(), and trim_right_sv().</div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.17-->
 <!-- start footer part -->
