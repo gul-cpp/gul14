@@ -68,7 +68,7 @@ $(function() {
 <div class="line">    <a class="code" href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">sleep</a>(0.1);</div>
 <div class="line">}</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Task result: &quot;</span> &lt;&lt; task.get_result() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:573</div></div>
+<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:587</div></div>
 <div class="ttc" id="agroup__time__util__h_html_gaa0abe7bf6452e6882c0e0b0d05897adc"><div class="ttname"><a href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">gul14::sleep</a></div><div class="ttdeci">bool sleep(const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const Trigger &amp;trg)</div><div class="ttdoc">Sleep for at least the given time span, with the option of being woken up from another thread.</div><div class="ttdef"><b>Definition:</b> time_util.h:114</div></div>
 </div><!-- fragment --><p>Tasks can also be scheduled to start after a specific time point or after a certain delay. Each task can also be given a name, which is mainly useful for debugging. See the <a class="el" href="thread_pool_8cc-example.html">example</a> for an introduction.</p>
 <p>All public member functions are thread-safe.</p>
@@ -127,45 +127,45 @@ template&lt;typename Function , std::enable_if_t&lt; is_invocable&lt; Function, 
 template&lt;typename Function , std::enable_if_t&lt; is_invocable&lt; Function &gt;::value, bool &gt;  = true&gt; </td></tr>
 <tr class="memitem:ac200f9ce723af471e3e338f8ae70975d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html">TaskHandle</a>&lt; <a class="el" href="group__traits__h.html#ga2fcdc9f0e6e5354faf953ee0f71a6cda">invoke_result_t</a>&lt; Function &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>add_task</b> (Function fct, std::string name)</td></tr>
 <tr class="separator:ac200f9ce723af471e3e338f8ae70975d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2aa91a8df712d9dcfe6c107ff5b8a11d"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a2aa91a8df712d9dcfe6c107ff5b8a11d">cancel_pending_tasks</a> ()</td></tr>
+<tr class="memitem:a2aa91a8df712d9dcfe6c107ff5b8a11d"><td class="memItemLeft" align="right" valign="top">GUL_EXPORT std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a2aa91a8df712d9dcfe6c107ff5b8a11d">cancel_pending_tasks</a> ()</td></tr>
 <tr class="memdesc:a2aa91a8df712d9dcfe6c107ff5b8a11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all pending tasks from the queue.  <a href="classgul14_1_1ThreadPool.html#a2aa91a8df712d9dcfe6c107ff5b8a11d">More...</a><br /></td></tr>
 <tr class="separator:a2aa91a8df712d9dcfe6c107ff5b8a11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52c381785f4190d7360b0a705117546d"><td class="memItemLeft" align="right" valign="top"><a id="a52c381785f4190d7360b0a705117546d"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a52c381785f4190d7360b0a705117546d">capacity</a> () const noexcept</td></tr>
-<tr class="memdesc:a52c381785f4190d7360b0a705117546d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of pending tasks that can be queued. <br /></td></tr>
-<tr class="separator:a52c381785f4190d7360b0a705117546d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56f6628f643725093fe9efc971702fb6"><td class="memItemLeft" align="right" valign="top"><a id="a56f6628f643725093fe9efc971702fb6"></a>
+GUL_EXPORT std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a56f6628f643725093fe9efc971702fb6">capacity</a> () const noexcept</td></tr>
+<tr class="memdesc:a56f6628f643725093fe9efc971702fb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the maximum number of pending tasks that can be queued. <br /></td></tr>
+<tr class="separator:a56f6628f643725093fe9efc971702fb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75ccf190120ef24de4a097dc75c36e4d"><td class="memItemLeft" align="right" valign="top"><a id="a75ccf190120ef24de4a097dc75c36e4d"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a75ccf190120ef24de4a097dc75c36e4d">count_pending</a> () const</td></tr>
+GUL_EXPORT std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a75ccf190120ef24de4a097dc75c36e4d">count_pending</a> () const</td></tr>
 <tr class="memdesc:a75ccf190120ef24de4a097dc75c36e4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of pending tasks. <br /></td></tr>
 <tr class="separator:a75ccf190120ef24de4a097dc75c36e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acceff0c8b0a889bef21208675bd3544e"><td class="memItemLeft" align="right" valign="top"><a id="acceff0c8b0a889bef21208675bd3544e"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#acceff0c8b0a889bef21208675bd3544e">count_threads</a> () const noexcept</td></tr>
+GUL_EXPORT std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#acceff0c8b0a889bef21208675bd3544e">count_threads</a> () const noexcept</td></tr>
 <tr class="memdesc:acceff0c8b0a889bef21208675bd3544e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the number of threads in the pool. <br /></td></tr>
 <tr class="separator:acceff0c8b0a889bef21208675bd3544e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44d145f81568ae8a99cd34b8e3f6a53c"><td class="memItemLeft" align="right" valign="top"><a id="a44d145f81568ae8a99cd34b8e3f6a53c"></a>
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a44d145f81568ae8a99cd34b8e3f6a53c">get_pending_task_names</a> () const</td></tr>
+GUL_EXPORT std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a44d145f81568ae8a99cd34b8e3f6a53c">get_pending_task_names</a> () const</td></tr>
 <tr class="memdesc:a44d145f81568ae8a99cd34b8e3f6a53c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a vector with the names of the tasks that are waiting to be executed. <br /></td></tr>
 <tr class="separator:a44d145f81568ae8a99cd34b8e3f6a53c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42b26eea6d7fa877a8e97aa62afc1df6"><td class="memItemLeft" align="right" valign="top"><a id="a42b26eea6d7fa877a8e97aa62afc1df6"></a>
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a42b26eea6d7fa877a8e97aa62afc1df6">get_running_task_names</a> () const</td></tr>
+GUL_EXPORT std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a42b26eea6d7fa877a8e97aa62afc1df6">get_running_task_names</a> () const</td></tr>
 <tr class="memdesc:a42b26eea6d7fa877a8e97aa62afc1df6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a vector with the names of the tasks that are currently running. <br /></td></tr>
 <tr class="separator:a42b26eea6d7fa877a8e97aa62afc1df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0ef21e4c5825b3dfdea5e70d5a22f2"><td class="memItemLeft" align="right" valign="top"><a id="afc0ef21e4c5825b3dfdea5e70d5a22f2"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#afc0ef21e4c5825b3dfdea5e70d5a22f2">is_full</a> () const noexcept</td></tr>
+GUL_EXPORT bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#afc0ef21e4c5825b3dfdea5e70d5a22f2">is_full</a> () const noexcept</td></tr>
 <tr class="memdesc:afc0ef21e4c5825b3dfdea5e70d5a22f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the queue for pending tasks is full (at capacity). <br /></td></tr>
 <tr class="separator:afc0ef21e4c5825b3dfdea5e70d5a22f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a395b7fe4cdcba7ab3d58a26d1ce4fea1"><td class="memItemLeft" align="right" valign="top"><a id="a395b7fe4cdcba7ab3d58a26d1ce4fea1"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a395b7fe4cdcba7ab3d58a26d1ce4fea1">is_idle</a> () const</td></tr>
+GUL_EXPORT bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a395b7fe4cdcba7ab3d58a26d1ce4fea1">is_idle</a> () const</td></tr>
 <tr class="memdesc:a395b7fe4cdcba7ab3d58a26d1ce4fea1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if the pool has neither pending tasks nor tasks that are currently being executed. <br /></td></tr>
 <tr class="separator:a395b7fe4cdcba7ab3d58a26d1ce4fea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea5c93d328d7c361d712da293835af18"><td class="memItemLeft" align="right" valign="top"><a id="aea5c93d328d7c361d712da293835af18"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#aea5c93d328d7c361d712da293835af18">is_shutdown_requested</a> () const</td></tr>
+GUL_EXPORT bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#aea5c93d328d7c361d712da293835af18">is_shutdown_requested</a> () const</td></tr>
 <tr class="memdesc:aea5c93d328d7c361d712da293835af18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the thread pool has been requested to shut down. <br /></td></tr>
 <tr class="separator:aea5c93d328d7c361d712da293835af18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a27d49e5d8baad0387d6ea06f62d098fe"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classgul14_1_1ThreadPool.html">ThreadPool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a27d49e5d8baad0387d6ea06f62d098fe">make_shared</a> (std::size_t num_threads, std::size_t <a class="el" href="classgul14_1_1ThreadPool.html#a52c381785f4190d7360b0a705117546d">capacity</a>=<a class="el" href="classgul14_1_1ThreadPool.html#a6bf9ef24d3a94de2de0f38d2f4639109">default_capacity</a>)</td></tr>
+<tr class="memitem:a27d49e5d8baad0387d6ea06f62d098fe"><td class="memItemLeft" align="right" valign="top">static GUL_EXPORT std::shared_ptr&lt; <a class="el" href="classgul14_1_1ThreadPool.html">ThreadPool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a27d49e5d8baad0387d6ea06f62d098fe">make_shared</a> (std::size_t num_threads, std::size_t <a class="el" href="classgul14_1_1ThreadPool.html#a56f6628f643725093fe9efc971702fb6">capacity</a>=<a class="el" href="classgul14_1_1ThreadPool.html#a6bf9ef24d3a94de2de0f38d2f4639109">default_capacity</a>)</td></tr>
 <tr class="memdesc:a27d49e5d8baad0387d6ea06f62d098fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a thread pool with the desired number of threads and the specified capacity for enqueuing tasks.  <a href="classgul14_1_1ThreadPool.html#a27d49e5d8baad0387d6ea06f62d098fe">More...</a><br /></td></tr>
 <tr class="separator:a27d49e5d8baad0387d6ea06f62d098fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
