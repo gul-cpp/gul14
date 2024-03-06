@@ -51,7 +51,7 @@ test('all',
     executable('libgul-test',
         tests + [ catch_main ],
         cpp_args : test_cpp_args,
-        dependencies : [ libgul_static_dep ],
+        dependencies : [ libgul_dep ],
     ),
     timeout : test_time
 )
