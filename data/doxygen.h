@@ -144,8 +144,13 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_11_1 Version 2.11.1
+ *
+ * - Fix missing ThreadPool symbols in shared library
+ *
  * \subsection v2_11_0 Version 2.11.0
  *
+ * - *Released with DOOCS 24.3.0*
  * - Add ThreadPool
  * - Add backports of std::invoke, std::invoke_result, std::invoke_result_t,
  *   std::is_invocable, and std::is_invocable_r from C++17
