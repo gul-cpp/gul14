@@ -44,6 +44,7 @@ class ThreadPool;
 
 namespace detail {
 
+GUL_EXPORT
 std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool);
 
 } // namespace detail
@@ -382,33 +383,42 @@ public:
      *
      * \returns the number of tasks that were removed.
      */
+    GUL_EXPORT
     std::size_t cancel_pending_tasks();
 
     /// Return the maximum number of pending tasks that can be queued.
+    GUL_EXPORT
     std::size_t capacity() const noexcept { return capacity_; }
 
     /// Return the number of pending tasks.
+    GUL_EXPORT
     std::size_t count_pending() const;
 
     /// Return the number of threads in the pool.
+    GUL_EXPORT
     std::size_t count_threads() const noexcept;
 
     /// Return a vector with the names of the tasks that are waiting to be executed.
+    GUL_EXPORT
     std::vector<std::string> get_pending_task_names() const;
 
     /// Return a vector with the names of the tasks that are currently running.
+    GUL_EXPORT
     std::vector<std::string> get_running_task_names() const;
 
     /// Determine whether the queue for pending tasks is full (at capacity).
+    GUL_EXPORT
     bool is_full() const noexcept;
 
     /**
      * Return true if the pool has neither pending tasks nor tasks that are currently
      * being executed.
      */
+    GUL_EXPORT
     bool is_idle() const;
 
     /// Determine whether the thread pool has been requested to shut down.
+    GUL_EXPORT
     bool is_shutdown_requested() const;
 
     /**
@@ -420,6 +430,7 @@ public:
      *
      * \returns a shared pointer to the created ThreadPool object.
      */
+    GUL_EXPORT
     static std::shared_ptr<ThreadPool> make_shared(
         std::size_t num_threads, std::size_t capacity = default_capacity);
 
@@ -535,6 +546,7 @@ private:
      * \returns true if a task was removed, false if no pending task with the given ID was
      *          found.
      */
+    GUL_EXPORT
     bool cancel_pending_task(TaskId task_id);
 
     /**
@@ -546,12 +558,14 @@ private:
      *     InternalTaskState::running if the task is currently being executed, or
      *     InternalTaskState::unknown if the thread pool has no knowledge of this task ID.
      */
+    GUL_EXPORT
     InternalTaskState get_task_state(TaskId task_id) const;
 
     /**
      * Determine whether the queue for pending tasks is full (internal non-locking
      * version).
      */
+    GUL_EXPORT
     bool is_full_i() const noexcept;
 
     /**
