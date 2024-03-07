@@ -150,14 +150,14 @@ TEST_CASE("ThreadPool: Constructor", "[ThreadPool]")
     SECTION("Create a thread pool with 2 threads, default capacity")
     {
         auto pool = make_thread_pool(2);
-        REQUIRE(pool->count_threads() == 2);
+        REQUIRE(pool->count_threads() == 0);
         REQUIRE(pool->capacity() >= 10); // default capacity
     }
 
     SECTION("Create a thread pool with 1 thread, capacity 42")
     {
         auto pool = make_thread_pool(1, 42);
-        REQUIRE(pool->count_threads() == 1);
+        REQUIRE(pool->count_threads() == 0);
         REQUIRE(pool->capacity() == 42);
     }
 
@@ -171,6 +171,8 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
     "[ThreadPool]")
 {
     auto pool = make_thread_pool(1);
+
+    REQUIRE(pool->count_threads() == 0);
 
     // Without start times
     std::atomic<bool> start{ false };
@@ -238,6 +240,7 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
     REQUIRE(task1.get_state() == TaskState::pending);
     task1.cancel();
     REQUIRE(pool->count_pending() == 0);
+    REQUIRE(pool->count_threads() == 1);
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
@@ -381,8 +384,16 @@ TEST_CASE("ThreadPool: count_threads()", "[ThreadPool]")
 {
     for (std::size_t i = 1; i <= 2; ++i)
     {
+        std::atomic<bool> stop{ false };
+        // Make sure the pool is removed before the atomic variable go out of scope by defining it after the atomic
         auto pool = make_thread_pool(i);
+        REQUIRE(pool->count_threads() == 0);
+
+        pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "1");
+        pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "2");
+        pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "3");
         REQUIRE(pool->count_threads() == i);
+        stop = true;
     }
 }
 
@@ -534,6 +545,7 @@ TEST_CASE("ThreadPool: Run 100 functions on 4 threads", "[ThreadPool]")
         REQUIRE(pool->count_pending() <= pool->capacity());
         gul14::sleep(1ms);
     }
+    REQUIRE(pool->count_threads() == 4);
 
     REQUIRE(output.size() == 100);
 

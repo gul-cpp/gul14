@@ -72,10 +72,11 @@ enum class TaskState
 /**
  * A pool of worker threads with a task queue.
  *
- * A thread pool is created with make_thread_pool(). It immediately starts the desired
- * number of worker threads and keeps them running until the object gets destroyed. Work
- * is given to the pool with the add_task() function in the form of a function object or
- * function pointer. Tasks are stored in a queue and executed in the order they were
+ * A thread pool is created with make_thread_pool(). It starts worker threads as needed
+ * up to the desired number of threads and keeps them running until the thread pool
+ * gets destroyed.
+ * Work is given to the pool with the add_task() function in the form of a function object
+ * or function pointer. Tasks are stored in a queue and executed in the order they were
  * added. This makes a ThreadPool with a single thread effectively a serial task queue.
  *
  * Each task is associated with a TaskHandle. This handle is returned by add_task() and
@@ -323,6 +324,13 @@ public:
 
                 ++next_task_id_;
 
+                const auto num_threads = threads_.size();
+                const auto needed_threads = running_task_ids_.size() + pending_tasks_.size();
+                if (needed_threads > num_threads and num_threads < max_threads_)
+                {
+                    threads_.emplace_back([this]() { perform_work(); });
+                }
+
                 return handle;
             }();
 
@@ -493,6 +501,7 @@ private:
         {}
     };
 
+    std::size_t max_threads_{ 0 };
     std::size_t capacity_{ 0 };
 
     /**
@@ -572,6 +581,7 @@ private:
      * The main loop run in the thread; picks one task off the queue and executes it, then
      * repeats until asked to quit.
      */
+    GUL_EXPORT
     void perform_work();
 };
 

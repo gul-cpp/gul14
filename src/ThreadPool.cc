@@ -49,7 +49,8 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool)
 //
 
 ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
-    : capacity_(capacity)
+    : max_threads_{ num_threads }
+    , capacity_{ capacity }
 {
     if (num_threads == 0 || num_threads > max_threads)
     {
@@ -61,8 +62,6 @@ ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
         throw std::invalid_argument(cat("Illegal capacity for thread pool: ", capacity));
 
     threads_.reserve(num_threads);
-    while (threads_.size() < num_threads)
-        threads_.emplace_back([this]() { perform_work(); });
 }
 
 ThreadPool::~ThreadPool()
@@ -112,6 +111,7 @@ std::size_t ThreadPool::count_pending() const
 
 std::size_t ThreadPool::count_threads() const noexcept
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return threads_.size();
 }
 
