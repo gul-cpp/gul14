@@ -261,8 +261,8 @@ public:
      *
      * \param fct   A function object or function pointer to be executed. This function
      *              can have an arbitrary return type and may either take no arguments
-     *              (`T fct()`) or a reference to the ThreadPoolEngine by which it gets
-     *              executed (`T fct(ThreadPoolEngine&)`).
+     *              (`T fct()`) or a reference to the ThreadPool by which it gets
+     *              executed (`T fct(ThreadPool&)`).
      * \param start_time  Earliest time point at which the task is to be started
      * \param name  Optional name for the task (mainly for debugging)
      *
@@ -278,7 +278,7 @@ public:
      *
      * // A task that schedules another task to start two seconds later
      * pool->add_task(
-     *     [](ThreadPoolEngine& pool)
+     *     [](ThreadPool& pool)
      *     {
      *         std::cout << "Task 2\n";
      *         pool.add_task([]() { std::cout << "Task 3\n"; }, 2s);
