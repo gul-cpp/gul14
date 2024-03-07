@@ -558,6 +558,27 @@ TEST_CASE("ThreadPool: Run 100 functions on 4 threads", "[ThreadPool]")
     pool.reset();
 }
 
+TEST_CASE("ThreadPool: Run 100 functions on 4 then 2 threads", "[ThreadPool]")
+{
+    auto pool = make_thread_pool(4);
+
+    for (int i = 1; i <= 100; ++i)
+    {
+        pool->add_task(
+            [i](ThreadPool& tp)
+            {
+                if (i == 50)
+                    tp.set_max_threads(2);
+                gul14::sleep(100us);
+            });
+    }
+
+    REQUIRE(pool->count_threads() == 4);
+    while (not pool->is_idle())
+        gul14::sleep(1ms);
+    REQUIRE(pool->count_threads() == 2);
+}
+
 TEST_CASE("ThreadPool: Capacity limit", "[ThreadPool]")
 {
     std::size_t max_jobs{ 10 };
