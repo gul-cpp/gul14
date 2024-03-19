@@ -57,43 +57,6 @@ Focal install:
                 PLATFORM: focal
 
 ########
-# Xenial (Ubuntu 16.04)
-Xenial build:
-        stage: build
-        extends:
-                - .setup_xenial
-                - .meson_build
-        needs:
-                - job: Focal build
-                  artifacts: false
-
-Xenial test:
-        stage: test
-        extends: .setup_xenial
-        needs:
-                - job: Xenial build
-                  artifacts: true
-        script:
-                - build.release/tests/libgul-test -r junit | tee test.xml
-        artifacts:
-                when: always
-                reports:
-                        junit: test.xml
-
-Xenial install:
-        stage: deploy
-        extends:
-                - .setup_xenial
-                - .deploy_debian
-        needs:
-                - job: Xenial build
-                  artifacts: true
-                - job: Xenial test
-                  artifacts: false
-        variables:
-                PLATFORM: xenial
-
-########
 # Darwin
 Darwin build:
         stage: build
@@ -224,35 +187,6 @@ Windows test:
                 expire_in: 1 week
 
 # Template to set up the individual target machines
-.setup_xenial:
-        image: ubuntu:16.04
-        tags:
-                - ubuntu16
-        before_script:
-                # Install build dependencies
-                - echo "Install the basics (wget and gnupg) for setting up the docker xenial image ..."
-                - (export http_proxy="http://xfelproxy:3128/";
-                   export https_proxy="http://xfelproxy:3128/";
-                   apt update && apt install -y wget gnupg)
-                # Add DOOCS repo with key
-                - echo "Installing MCS DOOCS package repository with key ..."
-                - wget -O - http://doocs.desy.de/pub/doocs/DOOCS-key.gpg.asc | apt-key add -
-                - echo "deb http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                - echo "deb-src http://doocspkgs.desy.de/pub/doocs xenial main" >> /etc/apt/sources.list.d/doocs-desy-intern.list
-                # Add backports for ninja
-                - echo "deb http://xfelubuntu.desy.de/ubuntu xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list
-                # Update APT cache
-                - echo "Updating APT cache and installing basic libraries and header files for compiling DOOCS core libraries"
-                - (export http_proxy="http://xfelproxy:3128/";
-                   export https_proxy="http://xfelproxy:3128/";
-                   apt update)
-                # Install part of the packages required to compile and link DOOCS core libraries on a xenial system
-                - (export http_proxy="http://xfelproxy:3128/";
-                   export https_proxy="http://xfelproxy:3128/";
-                   DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends
-                   git build-essential binutils autotools-dev g++ fakeroot debhelper cmake
-                   ninja-build=1.7.1-1~ubuntu16.04.1 meson=0.52.1-1-xenial1 pkg-config)
-
 .setup_focal:
         image: ubuntu:20.04
         tags:
