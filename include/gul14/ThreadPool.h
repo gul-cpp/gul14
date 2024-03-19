@@ -72,10 +72,11 @@ enum class TaskState
 /**
  * A pool of worker threads with a task queue.
  *
- * A thread pool is created with make_thread_pool(). It immediately starts the desired
- * number of worker threads and keeps them running until the object gets destroyed. Work
- * is given to the pool with the add_task() function in the form of a function object or
- * function pointer. Tasks are stored in a queue and executed in the order they were
+ * A thread pool is created with make_thread_pool(). It starts worker threads as needed
+ * up to the desired number of threads and keeps them running until the thread pool
+ * gets destroyed.
+ * Work is given to the pool with the add_task() function in the form of a function object
+ * or function pointer. Tasks are stored in a queue and executed in the order they were
  * added. This makes a ThreadPool with a single thread effectively a serial task queue.
  *
  * Each task is associated with a TaskHandle. This handle is returned by add_task() and
@@ -332,6 +333,13 @@ public:
 
                 ++next_task_id_;
 
+                const auto num_threads = threads_.size();
+                const auto needed_threads = running_task_ids_.size() + pending_tasks_.size();
+                if (needed_threads > num_threads and num_threads < max_threads_)
+                {
+                    threads_.emplace_back(Thread{ std::thread{ [this]() { perform_work(); } }, true} );
+                }
+
                 return handle;
             }();
 
@@ -443,6 +451,18 @@ public:
     static std::shared_ptr<ThreadPool> make_shared(
         std::size_t num_threads, std::size_t capacity = default_capacity);
 
+    /**
+     * Set a new limit for the number of threads.
+     *
+     * If the new number is bigger the new possible threads will only be utilized
+     * by newly added tasks.
+     * If the number is lower than the currently existing threads unneeded idle threads
+     * will be immediately ended. Running threads will continue their current task but
+     * not take a new task afterwards and end then (if needed).
+     */
+    GUL_EXPORT
+    void set_max_threads(std::size_t new_maximum);
+
 private:
     /**
      * An enum describing the internal state of a task on the ThreadPool.
@@ -502,13 +522,19 @@ private:
         {}
     };
 
+    struct Thread {
+        std::thread t;
+        bool running{ false };
+    };
+
+    std::size_t max_threads_{ 0 };
     std::size_t capacity_{ 0 };
 
     /**
      * The threads in the pool. This variable is only modified in the constructor and not
      * protected by the mutex.
      */
-    std::vector<std::thread> threads_;
+    std::vector<Thread> threads_;
 
     /**
      * A condition variable used together with mutex_ to wake up a worker thread when a
@@ -581,6 +607,7 @@ private:
      * The main loop run in the thread; picks one task off the queue and executes it, then
      * repeats until asked to quit.
      */
+    GUL_EXPORT
     void perform_work();
 };
 
