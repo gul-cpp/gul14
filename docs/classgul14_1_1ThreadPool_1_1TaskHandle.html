@@ -66,13 +66,16 @@ class gul14::ThreadPool::TaskHandle&lt; T &gt;</h3>
 <div class="line">    <a class="code" href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">sleep</a>(0.1);</div>
 <div class="line">}</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Task result: &quot;</span> &lt;&lt; task.get_result() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:587</div></div>
+<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:596</div></div>
 <div class="ttc" id="agroup__time__util__h_html_gaa0abe7bf6452e6882c0e0b0d05897adc"><div class="ttname"><a href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">gul14::sleep</a></div><div class="ttdeci">bool sleep(const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const Trigger &amp;trg)</div><div class="ttdoc">Sleep for at least the given time span, with the option of being woken up from another thread.</div><div class="ttdef"><b>Definition:</b> time_util.h:114</div></div>
 </div><!-- fragment --> </div>
 <p><code>#include &lt;<a class="el" href="ThreadPool_8h_source.html">ThreadPool.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a398fe0d6d681e2589040a75039fdba73"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html#a398fe0d6d681e2589040a75039fdba73">TaskHandle</a> ()</td></tr>
+<tr class="memdesc:a398fe0d6d681e2589040a75039fdba73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default-construct an invalid <a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html" title="A handle for a task that has (or had) been enqueued on a ThreadPool.">TaskHandle</a>.  <a href="classgul14_1_1ThreadPool_1_1TaskHandle.html#a398fe0d6d681e2589040a75039fdba73">More...</a><br /></td></tr>
+<tr class="separator:a398fe0d6d681e2589040a75039fdba73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa17e68a67b7c7f762111b57bf861974a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html#aa17e68a67b7c7f762111b57bf861974a">TaskHandle</a> (<a class="el" href="classgul14_1_1ThreadPool.html#a0d3ecad622a33e862b4696f02bf69e98">TaskId</a> id, std::future&lt; T &gt; future, std::shared_ptr&lt; <a class="el" href="classgul14_1_1ThreadPool.html">ThreadPool</a> &gt; pool)</td></tr>
 <tr class="memdesc:aa17e68a67b7c7f762111b57bf861974a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html" title="A handle for a task that has (or had) been enqueued on a ThreadPool.">TaskHandle</a>.  <a href="classgul14_1_1ThreadPool_1_1TaskHandle.html#aa17e68a67b7c7f762111b57bf861974a">More...</a><br /></td></tr>
 <tr class="separator:aa17e68a67b7c7f762111b57bf861974a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -90,8 +93,38 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9786409079160b8bff3cf6143a9b1c0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a398fe0d6d681e2589040a75039fdba73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a398fe0d6d681e2589040a75039fdba73">&#9670;&nbsp;</a></span>TaskHandle() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html">gul14::ThreadPool::TaskHandle</a>&lt; T &gt;::<a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html">TaskHandle</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default-construct an invalid <a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html" title="A handle for a task that has (or had) been enqueued on a ThreadPool.">TaskHandle</a>. </p>
+<p>This constructor creates an invalid <a class="el" href="classgul14_1_1ThreadPool_1_1TaskHandle.html" title="A handle for a task that has (or had) been enqueued on a ThreadPool.">TaskHandle</a> which has no result and is not associated with a <a class="el" href="classgul14_1_1ThreadPool.html" title="A pool of worker threads with a task queue.">ThreadPool</a>. </p>
+
+</div>
+</div>
 <a id="aa17e68a67b7c7f762111b57bf861974a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa17e68a67b7c7f762111b57bf861974a">&#9670;&nbsp;</a></span>TaskHandle()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa17e68a67b7c7f762111b57bf861974a">&#9670;&nbsp;</a></span>TaskHandle() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
