@@ -36,6 +36,15 @@ using namespace std::literals;
 // TaskHandle class
 //
 
+TEST_CASE("TaskHandle: Default constructor", "[ThreadPool]")
+{
+    ThreadPool::TaskHandle<void> handle;
+
+    REQUIRE_THROWS_AS(handle.get_result(), std::logic_error);
+    REQUIRE(handle.is_complete() == false);
+    REQUIRE_THROWS_AS(handle.get_state(), std::logic_error);
+}
+
 TEST_CASE("TaskHandle: cancel()", "[ThreadPool]")
 {
     auto pool = make_thread_pool(1);

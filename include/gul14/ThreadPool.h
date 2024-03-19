@@ -133,6 +133,15 @@ public:
     {
     public:
         /**
+         * Default-construct an invalid TaskHandle.
+         *
+         * This constructor creates an invalid TaskHandle which has no result and is not
+         * associated with a ThreadPool.
+         */
+        TaskHandle()
+        {}
+
+        /**
          * Construct a TaskHandle.
          *
          * This constructor is not meant to be used directly. Instead, TaskHandles are
@@ -228,7 +237,7 @@ public:
 
     private:
         std::future<T> future_;
-        TaskId id_;
+        TaskId id_{ 0 };
         std::weak_ptr<ThreadPool> pool_;
     };
 
