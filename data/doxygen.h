@@ -144,6 +144,11 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection v2_11_2 Version 2.11.2
+ *
+ * - *Released with DOOCS 24.3.1*
+ * - ThreadPool: Add default constructor for TaskHandle
+ *
  * \subsection v2_11_1 Version 2.11.1
  *
  * - Fix missing ThreadPool symbols in shared library
