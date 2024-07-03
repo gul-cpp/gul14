@@ -488,8 +488,9 @@ inline optional<NumberType> strtold_wrapper(gul14::string_view str) noexcept
  */
 // Overload for unsigned integer types.
 template <typename NumberType,
-          std::enable_if_t<std::is_integral<NumberType>::value &&
-                           std::is_unsigned<NumberType>::value, int> = 0>
+          std::enable_if_t<std::is_integral<NumberType>::value
+                           and std::is_unsigned<NumberType>::value
+                           and not std::is_same<NumberType, bool>::value, int> = 0>
 constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 {
     return detail::to_unsigned_integer<NumberType>(str);
@@ -497,8 +498,9 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 
 // Overload for signed integer types.
 template <typename NumberType,
-          std::enable_if_t<std::is_integral<NumberType>::value &&
-                           std::is_signed<NumberType>::value, int> = 0>
+          std::enable_if_t<std::is_integral<NumberType>::value
+                           and std::is_signed<NumberType>::value
+                           and not std::is_same<NumberType, bool>::value, int> = 0>
 constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 {
     if (str.empty())
@@ -561,6 +563,20 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
     }
 
     return detail::to_unsigned_float<NumberType>(str);
+}
+
+template<typename NumberType, std::enable_if_t<std::is_same<NumberType, bool>::value, int> = 0>
+constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
+{
+    constexpr std::array<gul14::string_view const, 2> yes = { "1", "true" };
+    if (std::find(yes.cbegin(), yes.cend(), gul14::lowercase_ascii(str)) != yes.cend())
+            return { true };
+
+    constexpr std::array<gul14::string_view const, 2> no = { "0", "false" };
+    if (std::find(no.cbegin(), no.cend(), gul14::lowercase_ascii(str)) != no.cend())
+            return { false };
+
+    return {};
 }
 
 /// @}
