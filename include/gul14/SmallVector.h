@@ -1429,7 +1429,7 @@ private:
     /// Determine if this vector is using allocated external storage.
     bool is_storage_allocated() const noexcept
     {
-        return capacity_ > inner_capacity();
+        return data_ptr_ != internal_array_.data();
     }
 
     /**
