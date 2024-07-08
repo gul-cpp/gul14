@@ -150,14 +150,14 @@ TEST_CASE("ThreadPool: Constructor", "[ThreadPool]")
     SECTION("Create a thread pool with 2 threads, default capacity")
     {
         auto pool = make_thread_pool(2);
-        REQUIRE(pool->count_threads() == 0);
+        REQUIRE(pool->count_threads() == 2);
         REQUIRE(pool->capacity() >= 10); // default capacity
     }
 
     SECTION("Create a thread pool with 1 thread, capacity 42")
     {
         auto pool = make_thread_pool(1, 42);
-        REQUIRE(pool->count_threads() == 0);
+        REQUIRE(pool->count_threads() == 1);
         REQUIRE(pool->capacity() == 42);
     }
 
@@ -172,7 +172,7 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
 {
     auto pool = make_thread_pool(1);
 
-    REQUIRE(pool->count_threads() == 0);
+    REQUIRE(pool->count_threads() == 1);
 
     // Without start times
     std::atomic<bool> start{ false };
@@ -382,12 +382,14 @@ TEST_CASE("ThreadPool: count_pending()", "[ThreadPool]")
 
 TEST_CASE("ThreadPool: count_threads()", "[ThreadPool]")
 {
-    for (std::size_t i = 1; i <= 2; ++i)
+    for (std::size_t i = 2; i <= 3; ++i)
     {
         std::atomic<bool> stop{ false };
         // Make sure the pool is removed before the atomic variable goes out of scope by defining it after the atomic
-        auto pool = make_thread_pool(i);
-        REQUIRE(pool->count_threads() == 0);
+        auto pool = make_thread_pool(1);
+        REQUIRE(pool->count_threads() == 1);
+        pool->set_max_threads(i);
+        REQUIRE(pool->count_threads() == 1);
 
         pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "1");
         pool->add_task([&stop]() { while (!stop) gul14::sleep(10us); }, "2");

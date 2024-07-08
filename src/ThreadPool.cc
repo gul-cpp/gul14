@@ -62,6 +62,8 @@ ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
         throw std::invalid_argument(cat("Illegal capacity for thread pool: ", capacity));
 
     threads_.reserve(num_threads);
+    while (threads_.size() < num_threads)
+        threads_.emplace_back(Thread{ std::thread{ [this]() { perform_work(); } }, true } );
 }
 
 ThreadPool::~ThreadPool()
