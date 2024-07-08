@@ -708,7 +708,7 @@ $(function() {
 <div class="line"><a name="l01428"></a><span class="lineno"> 1428</span>&#160; </div>
 <div class="line"><a name="l01430"></a><span class="lineno"> 1430</span>&#160;    <span class="keywordtype">bool</span> is_storage_allocated() const noexcept</div>
 <div class="line"><a name="l01431"></a><span class="lineno"> 1431</span>&#160;    {</div>
-<div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160;        <span class="keywordflow">return</span> capacity_ &gt; <a class="code" href="classgul14_1_1SmallVector.html#aa90eed50ef66c1960f978b240353163c">inner_capacity</a>();</div>
+<div class="line"><a name="l01432"></a><span class="lineno"> 1432</span>&#160;        <span class="keywordflow">return</span> data_ptr_ != internal_array_.data();</div>
 <div class="line"><a name="l01433"></a><span class="lineno"> 1433</span>&#160;    }</div>
 <div class="line"><a name="l01434"></a><span class="lineno"> 1434</span>&#160; </div>
 <div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;    <a class="code" href="classgul14_1_1SmallVector.html#a40b053c83472b979b17dfe047b32fba0">SizeType</a> make_space_at_idx_for_n_elements(<a class="code" href="classgul14_1_1SmallVector.html#a40b053c83472b979b17dfe047b32fba0">SizeType</a> idx, <a class="code" href="classgul14_1_1SmallVector.html#a40b053c83472b979b17dfe047b32fba0">SizeType</a> num_elements)</div>
