@@ -385,7 +385,7 @@ TEST_CASE("ThreadPool: count_threads()", "[ThreadPool]")
     for (std::size_t i = 1; i <= 2; ++i)
     {
         std::atomic<bool> stop{ false };
-        // Make sure the pool is removed before the atomic variable go out of scope by defining it after the atomic
+        // Make sure the pool is removed before the atomic variable goes out of scope by defining it after the atomic
         auto pool = make_thread_pool(i);
         REQUIRE(pool->count_threads() == 0);
 

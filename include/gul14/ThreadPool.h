@@ -244,7 +244,7 @@ public:
     constexpr static std::size_t max_capacity{ 10'000'000 };
 
     /// Maximum possible number of threads
-    constexpr static std::size_t max_threads{ 10'000 };
+    constexpr static std::size_t num_threads_max{ 10'000 };
 
     /**
      * Destruct the ThreadPool and join all threads.
@@ -328,7 +328,7 @@ public:
                 const auto needed_threads = running_task_ids_.size() + pending_tasks_.size();
                 if (needed_threads > num_threads and num_threads < max_threads_)
                 {
-                    threads_.emplace_back(Thread{ std::thread{ [this]() { perform_work(); } }, true} );
+                    threads_.emplace_back(Thread{ std::thread{ [this]() { perform_work(); } }, true } );
                 }
 
                 return handle;
@@ -514,7 +514,7 @@ private:
     };
 
     struct Thread {
-        std::thread t;
+        std::thread thread;
         bool running{ false };
     };
 
@@ -555,7 +555,7 @@ private:
      * \param capacity     Maximum number of pending tasks that can be queued
      *
      * \exception std::invalid_argument is thrown if the desired number of threads is
-     *            zero or greater than max_threads, or if the requested capacity is zero
+     *            zero or greater than num_threads_max, or if the requested capacity is zero
      *            or exceeds max_capacity.
      */
     ThreadPool(std::size_t num_threads, std::size_t capacity);
