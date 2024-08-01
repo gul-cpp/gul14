@@ -244,8 +244,8 @@ split_sv(string_view text, string_view delimiter,
  * \returns all strings glued together with the delimiter glue.
  *
  * \tparam Iterator  A forward iterator type that dereferences to a string type. The
- *                   string type must support concatenation with std::string using
- *                   operator+=.
+ *                   string type must provide a size() member function and must support
+ *                   concatenation with std::string using operator+=.
  *
  * \see
  * join(StringContainer, string_view) is a convenience overload for joining entire
@@ -304,8 +304,9 @@ join(Iterator begin, Iterator end, string_view glue)
  * \tparam StringContainer  A container type that holds strings, e.g.
  *                          std::vector<std::string> or std::list<gul14::string_view>.
  *                          The container must provide an STL-like forward iterator
- *                          interface. The string type must support concatenation with
- *                          std::string using operator+=.
+ *                          interface. The string type must provide a size() member
+ *                          function and must support concatenation with std::string using
+ *                          operator+=.
  *
  * \see
  * join(Iterator, Iterator, string_view) has a two-iterator interface,
