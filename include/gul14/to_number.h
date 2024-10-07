@@ -568,15 +568,28 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 template<typename NumberType, std::enable_if_t<std::is_same<NumberType, bool>::value, int> = 0>
 constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 {
-    constexpr std::array<gul14::string_view const, 2> yes = { "1", "true" };
-    if (std::find(yes.cbegin(), yes.cend(), gul14::lowercase_ascii(str)) != yes.cend())
-            return { true };
+    size_t pos{};
+    bool value{};
 
-    constexpr std::array<gul14::string_view const, 2> no = { "0", "false" };
-    if (std::find(no.cbegin(), no.cend(), gul14::lowercase_ascii(str)) != no.cend())
-            return { false };
+    for (; pos < str.length(); ++pos)
+    {
+        if (not std::isdigit(str[pos]))
+            break;
 
-    return {};
+        if (str[pos] != '0')
+            value = true;
+    }
+
+    if (pos == str.length())
+        return value;
+
+    if (equals_nocase(str, "true"))
+        return true;
+
+    if (equals_nocase(str, "false"))
+        return false;
+
+    return nullopt;
 }
 
 /// @}
