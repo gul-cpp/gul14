@@ -460,8 +460,13 @@ inline optional<NumberType> strtold_wrapper(gul14::string_view str) noexcept
  *   notation using a small or capital "e" ("12e5", "4.2e1", ".2e-4", "2.E5").
  * * Infinity expressions: (optional minus sign) INF or INFINITY ignoring case.
  * * Not-a-number expressions: (optional minus sign) NAN or NAN(char_sequence) ignoring case.
-     The char_sequence can only contain digits, Latin letters, and underscores.
-     The result is a quiet NaN floating-point value.
+ *   The char_sequence can only contain digits, Latin letters, and underscores.
+ *   The result is a quiet NaN floating-point value.
+ *
+ * <h5>Boolean type</h5>
+ * Recognizes only
+ * * "true" or "false" (case insensitive)
+ * * "1" or "0" (no additional leading zeros allowed)
  *
  * The behavior with surrounding whitespace is *undefined*, so
  * it should be removed before passing input to this function.
@@ -485,6 +490,7 @@ inline optional<NumberType> strtold_wrapper(gul14::string_view str) noexcept
  *
  * \since GUL version 1.6
  * \since GUL version 1.7 the NAN and INF floating point conversion
+ * \since GUL version 2.12 bool conversion
  */
 // Overload for unsigned integer types.
 template <typename NumberType>
@@ -566,24 +572,17 @@ to_number(gul14::string_view str) noexcept
     return detail::to_unsigned_float<NumberType>(str);
 }
 
+// Overload for bool
 template<>
 constexpr inline optional<bool> to_number<bool>(gul14::string_view str) noexcept
 {
-    size_t pos{};
-    bool value{};
-
-    for (; pos < str.length(); ++pos)
-    {
-        if (not std::isdigit(str[pos]))
-            break;
-
-        if (str[pos] != '0')
-            value = true;
+    if (str.length() == 1) {
+        if (str[0] == '1')
+            return true;
+        if (str[0] == '0')
+            return false;
+        return nullopt;
     }
-
-    if (pos == str.length())
-        return value;
-
     if (equals_nocase(str, "true"))
         return true;
 
