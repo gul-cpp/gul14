@@ -487,21 +487,21 @@ inline optional<NumberType> strtold_wrapper(gul14::string_view str) noexcept
  * \since GUL version 1.7 the NAN and INF floating point conversion
  */
 // Overload for unsigned integer types.
-template <typename NumberType,
-          std::enable_if_t<std::is_integral<NumberType>::value
-                           and std::is_unsigned<NumberType>::value
-                           and not std::is_same<NumberType, bool>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
+template <typename NumberType>
+constexpr inline std::enable_if_t<std::is_integral<NumberType>::value and
+                                  std::is_unsigned<NumberType>::value,
+                                  optional<NumberType>>
+to_number(gul14::string_view str) noexcept
 {
     return detail::to_unsigned_integer<NumberType>(str);
 }
 
 // Overload for signed integer types.
-template <typename NumberType,
-          std::enable_if_t<std::is_integral<NumberType>::value
-                           and std::is_signed<NumberType>::value
-                           and not std::is_same<NumberType, bool>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
+template <typename NumberType>
+constexpr inline std::enable_if_t<std::is_integral<NumberType>::value and
+                                  std::is_signed<NumberType>::value,
+                                  optional<NumberType>>
+to_number(gul14::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
@@ -530,9 +530,10 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
 }
 
 // Overload for floating-point types.
-template <typename NumberType,
-    std::enable_if_t<std::is_floating_point<NumberType>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
+template <typename NumberType>
+constexpr inline std::enable_if_t<std::is_floating_point<NumberType>::value,
+                                  optional<NumberType>>
+to_number(gul14::string_view str) noexcept
 {
     if (str.empty())
         return nullopt;
@@ -565,8 +566,8 @@ constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
     return detail::to_unsigned_float<NumberType>(str);
 }
 
-template<typename NumberType, std::enable_if_t<std::is_same<NumberType, bool>::value, int> = 0>
-constexpr inline optional<NumberType> to_number(gul14::string_view str) noexcept
+template<>
+constexpr inline optional<bool> to_number<bool>(gul14::string_view str) noexcept
 {
     size_t pos{};
     bool value{};
