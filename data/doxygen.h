@@ -144,6 +144,9 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection V2_12_0 Version 2.12.0
+ * - Add gul14::to_number<bool>
+ *
  * \subsection v2_11_2 Version 2.11.2
  *
  * - *Released with DOOCS 24.3.1*
