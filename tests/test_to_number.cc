@@ -88,10 +88,14 @@ TEMPLATE_TEST_CASE("test details: error_in_ulp()", "[to_number]",
 TEST_CASE("to_number(): Integer types", "[to_number]")
 {
     REQUIRE(to_number<bool>("0").value() == false);
+    REQUIRE(to_number<bool>("000").value() == false);
     REQUIRE(to_number<bool>("1").value() == true);
-    REQUIRE(to_number<bool>("TRUE").value() == true);
-    REQUIRE(to_number<bool>("false").value() == false);
+    REQUIRE(to_number<bool>("0002").value() == true);
+    REQUIRE(to_number<bool>("TruE").value() == true);
+    REQUIRE(to_number<bool>("falSe").value() == false);
+    REQUIRE(to_number<bool>("TrueLies").has_value() == false);
     REQUIRE(to_number<bool>(" 1").has_value() == false);
+    REQUIRE(to_number<bool>("0123h").has_value() == false);
 
     REQUIRE(to_number<char>("0").value() == 0);
     REQUIRE(to_number<signed char>("127").value() == 127);
