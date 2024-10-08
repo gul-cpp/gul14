@@ -49,9 +49,10 @@ std::shared_ptr<ThreadPool> lock_pool_or_throw(std::weak_ptr<ThreadPool> pool)
 //
 
 ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
-    : capacity_(capacity)
+    : max_threads_{ num_threads }
+    , capacity_{ capacity }
 {
-    if (num_threads == 0 || num_threads > max_threads)
+    if (num_threads == 0 || num_threads > num_threads_max)
     {
         throw std::invalid_argument(
             cat("Illegal number of threads for thread pool: ", num_threads));
@@ -62,7 +63,7 @@ ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
 
     threads_.reserve(num_threads);
     while (threads_.size() < num_threads)
-        threads_.emplace_back([this]() { perform_work(); });
+        threads_.emplace_back(Thread{ std::thread{ [this]() { perform_work(); } }, true } );
 }
 
 ThreadPool::~ThreadPool()
@@ -74,8 +75,8 @@ ThreadPool::~ThreadPool()
 
     for (auto& t : threads_)
     {
-        if (t.joinable())
-            t.join();
+        if (t.thread.joinable())
+            t.thread.join();
     }
 }
 
@@ -84,7 +85,7 @@ bool ThreadPool::cancel_pending_task(const TaskId task_id)
     std::lock_guard<std::mutex> lock(mutex_);
 
     auto it = std::find_if(pending_tasks_.begin(), pending_tasks_.end(),
-        [task_id](const Task& t) { return t.id_ == task_id; });
+        [task_id](const Task& task) { return task.id_ == task_id; });
     if (it != pending_tasks_.end())
     {
         pending_tasks_.erase(it);
@@ -112,6 +113,7 @@ std::size_t ThreadPool::count_pending() const
 
 std::size_t ThreadPool::count_threads() const noexcept
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return threads_.size();
 }
 
@@ -123,7 +125,7 @@ std::vector<std::string> ThreadPool::get_pending_task_names() const
     names.resize(pending_tasks_.size());
 
     std::transform(pending_tasks_.begin(), pending_tasks_.end(), names.begin(),
-        [](const Task& t) { return t.named_task_->name_; });
+        [](const Task& task) { return task.named_task_->name_; });
 
     return names;
 }
@@ -162,7 +164,7 @@ ThreadPool::InternalTaskState ThreadPool::get_task_state(const TaskId task_id) c
 
     const auto itp = std::find_if(
         pending_tasks_.begin(), pending_tasks_.end(),
-        [task_id](const Task& t) { return t.id_ == task_id; });
+        [task_id](const Task& task) { return task.id_ == task_id; });
     if (itp != pending_tasks_.end())
         return InternalTaskState::pending;
 
@@ -173,6 +175,17 @@ bool ThreadPool::is_shutdown_requested() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return shutdown_requested_;
+}
+
+void ThreadPool::set_max_threads(std::size_t num_threads)
+{
+    if (num_threads == 0 || num_threads > num_threads_max)
+    {
+        throw std::invalid_argument(
+            cat("Illegal number of threads for thread pool: ", num_threads));
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    max_threads_ = num_threads;
 }
 
 std::shared_ptr<ThreadPool> ThreadPool::make_shared(
@@ -207,6 +220,18 @@ void ThreadPool::perform_work()
 
     while (!shutdown_requested_)
     {
+        if (threads_.size() > max_threads_)
+        {
+            auto const new_end = std::remove_if(threads_.begin(), threads_.end(),
+                [](Thread& t) {
+                    if (not t.running)
+                        t.thread.join();
+                    return not t.running; });
+            threads_.erase(new_end, threads_.end());
+            // Selfdestruct if we are not the survivor
+            if (threads_.size() > max_threads_)
+                break;
+        }
         // mutex is locked
         if (pending_tasks_.empty())
         {
@@ -216,7 +241,7 @@ void ThreadPool::perform_work()
 
         const auto now = std::chrono::system_clock::now();
         auto task_it = std::find_if(pending_tasks_.begin(), pending_tasks_.end(),
-            [now](const Task& t) { return t.start_time_ <= now; });
+            [now](const Task& task) { return task.start_time_ <= now; });
 
         if (task_it == pending_tasks_.end())
         {
@@ -261,6 +286,11 @@ void ThreadPool::perform_work()
             running_task_ids_.erase(it);
             running_task_names_.erase(running_task_names_.begin() + idx);
         }
+    }
+    // Mark ourselves dead before we stop executing
+    for (auto& t : threads_) {
+        if (std::this_thread::get_id() == t.thread.get_id())
+            t.running = false;
     }
 }
 
