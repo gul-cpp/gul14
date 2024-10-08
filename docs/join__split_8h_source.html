@@ -165,19 +165,19 @@ $(function() {
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keywordflow">return</span> result;</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;}</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> StringContainer&gt;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="keyword">inline</span> std::string</div>
-<div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="group__join__split__h.html#ga0b05ef3db1b337691307dada4bb755aa">  320</a></span>&#160;<a class="code" href="group__join__split__h.html#ga00a75d4171ca190a68f266d5a6c364f9">join</a>(<span class="keyword">const</span> StringContainer&amp; parts, <a class="code" href="classgul14_1_1basic__string__view.html">string_view</a> glue)</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;{</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__join__split__h.html#ga00a75d4171ca190a68f266d5a6c364f9">join</a>(parts.begin(), parts.end(), glue);</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;}</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160; </div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;} <span class="comment">// namespace gul14</span></div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment">/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> StringContainer&gt;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="keyword">inline</span> std::string</div>
+<div class="line"><a name="l00321"></a><span class="lineno"><a class="line" href="group__join__split__h.html#ga0b05ef3db1b337691307dada4bb755aa">  321</a></span>&#160;<a class="code" href="group__join__split__h.html#ga00a75d4171ca190a68f266d5a6c364f9">join</a>(<span class="keyword">const</span> StringContainer&amp; parts, <a class="code" href="classgul14_1_1basic__string__view.html">string_view</a> glue)</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;{</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__join__split__h.html#ga00a75d4171ca190a68f266d5a6c364f9">join</a>(parts.begin(), parts.end(), glue);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;}</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;} <span class="comment">// namespace gul14</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160; </div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment">/* vim:set noexpandtab softtabstop=4 tabstop=4 shiftwidth=4 textwidth=90 cindent: */</span></div>
 <div class="ttc" id="aclassgul14_1_1basic__string__view_html"><div class="ttname"><a href="classgul14_1_1basic__string__view.html">gul14::basic_string_view&lt; char &gt;</a></div></div>
 <div class="ttc" id="agroup__join__split__h_html_ga00a75d4171ca190a68f266d5a6c364f9"><div class="ttname"><a href="group__join__split__h.html#ga00a75d4171ca190a68f266d5a6c364f9">gul14::join</a></div><div class="ttdeci">std::string join(Iterator begin, Iterator end, string_view glue)</div><div class="ttdoc">Concatenate all strings in a range, placing a delimiter between them.</div><div class="ttdef"><b>Definition:</b> join_split.h:259</div></div>
 <div class="ttc" id="agroup__join__split__h_html_ga0e6eed5ed768613f3680866905ca82b9"><div class="ttname"><a href="group__join__split__h.html#ga0e6eed5ed768613f3680866905ca82b9">gul14::split</a></div><div class="ttdeci">StringContainer split(string_view text, string_view delimiter, ContainerInsertFct insert_fct=detail::emplace_back&lt; StringContainer &gt;)</div><div class="ttdoc">Separate a string at all occurrences of a delimiter, returning the strings between the delimiters in ...</div><div class="ttdef"><b>Definition:</b> join_split.h:124</div></div>
