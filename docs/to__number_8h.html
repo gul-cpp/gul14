@@ -53,7 +53,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Declaration of <a class="el" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7" title="Convert an ASCII string_view into a number.">to_number()</a>. </p>
+<div class="textblock"><p>Declaration of to_number(). </p>
 <dl class="section author"><dt>Authors</dt><dd><a class="el" href="contributors_and_copyright.html#contributors">General Utility Library Contributors</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on 19 July 2019</dd></dl>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright 2019-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg</dd></dl>
@@ -124,10 +124,22 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="memTemplParams" colspan="2">template&lt;typename NumberType , std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value &amp;&amp;std::is_unsigned&lt; NumberType &gt;::value, int &gt;  = 0&gt; </td></tr>
-<tr class="memitem:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="memTemplItemLeft" align="right" valign="top">constexpr optional&lt; NumberType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">gul14::to_number</a> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
-<tr class="memdesc:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an ASCII string_view into a number.  <a href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">More...</a><br /></td></tr>
-<tr class="separator:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplParams" colspan="2">template&lt;typename NumberType &gt; </td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value and std::is_unsigned&lt; NumberType &gt;::value, optional&lt; NumberType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">gul14::to_number</a> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
+<tr class="memdesc:gacbfbf772e0744b3f49f0aa3f59122820"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an ASCII string_view into a number.  <a href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">More...</a><br /></td></tr>
+<tr class="separator:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplParams" colspan="2"><a id="gacbfbf772e0744b3f49f0aa3f59122820"></a>
+template&lt;typename NumberType &gt; </td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value and std::is_signed&lt; NumberType &gt;::value, optional&lt; NumberType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>gul14::to_number</b> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
+<tr class="separator:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplParams" colspan="2"><a id="gacbfbf772e0744b3f49f0aa3f59122820"></a>
+template&lt;typename NumberType &gt; </td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::enable_if_t&lt; std::is_floating_point&lt; NumberType &gt;::value, optional&lt; NumberType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>gul14::to_number</b> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
+<tr class="separator:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5405973081a628b9d29488a2715d7619"><td class="memItemLeft" align="right" valign="top">
+template&lt;&gt; </td></tr>
+<tr class="memitem:ga5405973081a628b9d29488a2715d7619"><td class="memTemplItemLeft" align="right" valign="top">constexpr optional&lt; bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>gul14::to_number&lt; bool &gt;</b> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
+<tr class="separator:ga5405973081a628b9d29488a2715d7619"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.17-->

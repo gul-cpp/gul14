@@ -52,25 +52,29 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="memTemplParams" colspan="2">template&lt;typename NumberType , std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value &amp;&amp;std::is_unsigned&lt; NumberType &gt;::value, int &gt;  = 0&gt; </td></tr>
-<tr class="memitem:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="memTemplItemLeft" align="right" valign="top">constexpr <a class="el" href="classgul14_1_1optional.html">optional</a>&lt; NumberType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">gul14::to_number</a> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
-<tr class="memdesc:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an ASCII string_view into a number.  <a href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">More...</a><br /></td></tr>
-<tr class="separator:ga1b503aeb7d32d9e9582d4115975c72f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplParams" colspan="2">template&lt;typename NumberType &gt; </td></tr>
+<tr class="memitem:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value and std::is_unsigned&lt; NumberType &gt;::value, <a class="el" href="classgul14_1_1optional.html">optional</a>&lt; NumberType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">gul14::to_number</a> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
+<tr class="memdesc:gacbfbf772e0744b3f49f0aa3f59122820"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an ASCII string_view into a number.  <a href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">More...</a><br /></td></tr>
+<tr class="separator:gacbfbf772e0744b3f49f0aa3f59122820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5405973081a628b9d29488a2715d7619"><td class="memItemLeft" align="right" valign="top"><a id="ga5405973081a628b9d29488a2715d7619"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:ga5405973081a628b9d29488a2715d7619"><td class="memTemplItemLeft" align="right" valign="top">constexpr <a class="el" href="classgul14_1_1optional.html">optional</a>&lt; bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>gul14::to_number&lt; bool &gt;</b> (<a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a> str) noexcept</td></tr>
+<tr class="separator:ga5405973081a628b9d29488a2715d7619"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga1b503aeb7d32d9e9582d4115975c72f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga1b503aeb7d32d9e9582d4115975c72f7">&#9670;&nbsp;</a></span>to_number()</h2>
+<a id="gacbfbf772e0744b3f49f0aa3f59122820"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacbfbf772e0744b3f49f0aa3f59122820">&#9670;&nbsp;</a></span>to_number()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename NumberType , std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value &amp;&amp;std::is_unsigned&lt; NumberType &gt;::value, int &gt;  = 0&gt; </div>
+template&lt;typename NumberType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr <a class="el" href="classgul14_1_1optional.html">optional</a>&lt; NumberType &gt; gul14::to_number </td>
+          <td class="memname">constexpr std::enable_if_t&lt;std::is_integral&lt;NumberType&gt;::value and std::is_unsigned&lt;NumberType&gt;::value, <a class="el" href="classgul14_1_1optional.html">optional</a>&lt;NumberType&gt; &gt; gul14::to_number </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a>&#160;</td>
           <td class="paramname"><em>str</em></td><td>)</td>
@@ -95,12 +99,12 @@ template&lt;typename NumberType , std::enable_if_t&lt; std::is_integral&lt; Numb
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;The answer is &quot;</span> &lt;&lt; *result &lt;&lt; <span class="stringliteral">&quot;.\n&quot;</span>;</div>
 <div class="ttc" id="aclassgul14_1_1optional_html"><div class="ttname"><a href="classgul14_1_1optional.html">gul14::optional</a></div><div class="ttdoc">A class template that can either contain a value of a certain type or not.</div><div class="ttdef"><b>Definition:</b> optional.h:274</div></div>
 </div><!-- fragment --><h4>Design Goals</h4>
-<p><a class="el" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7" title="Convert an ASCII string_view into a number.">to_number()</a> shares many characteristics with std::atoi(), std::stod() and the like, but follows its own set of design goals:</p><ul>
+<p><a class="el" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820" title="Convert an ASCII string_view into a number.">to_number()</a> shares many characteristics with std::atoi(), std::stod() and the like, but follows its own set of design goals:</p><ul>
 <li>Its input type is string_view: No null-termination and no temporary std::string are required for the conversion.</li>
 <li>Conversion errors are reported by returning a <a class="el" href="classgul14_1_1optional.html" title="A class template that can either contain a value of a certain type or not.">gul14::optional</a> without a value.</li>
 <li>The function does not allocate.</li>
 <li>Performance should in most cases be better than and in few cases not much worse than std::sto[ildf].</li>
-<li><a class="el" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7" title="Convert an ASCII string_view into a number.">to_number&lt;&gt;()</a> can be used in a constexpr context <em>if</em> the compiler and standard library support this. Support for floating-point numbers may lack even if integer conversion works.</li>
+<li><a class="el" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820" title="Convert an ASCII string_view into a number.">to_number&lt;&gt;()</a> can be used in a constexpr context <em>if</em> the compiler and standard library support this. Support for floating-point numbers may lack even if integer conversion works.</li>
 </ul>
 <h4>Input Format</h4>
 <p>The allowed number format depends on the chosen numeric output type. </p><h5>Unsigned integral types</h5>
@@ -117,7 +121,12 @@ template&lt;typename NumberType , std::enable_if_t&lt; std::is_integral&lt; Numb
 <li>Infinity expressions: (optional minus sign) INF or INFINITY ignoring case.</li>
 <li>Not-a-number expressions: (optional minus sign) NAN or NAN(char_sequence) ignoring case. The char_sequence can only contain digits, Latin letters, and underscores. The result is a quiet NaN floating-point value.</li>
 </ul>
-<p>The behavior with surrounding whitespace is <em>undefined</em>, so it should be removed before passing input to this function. This means <a class="el" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7" title="Convert an ASCII string_view into a number.">to_number()</a> accepts a subset of C++17's from_chars() input format; where it supports the input format it is modeled close to from_chars().</p>
+<h5>Boolean type</h5>
+<p>Recognizes only</p><ul>
+<li>"true" or "false" (case insensitive)</li>
+<li>"1" or "0" (no additional leading zeros allowed)</li>
+</ul>
+<p>The behavior with surrounding whitespace is <em>undefined</em>, so it should be removed before passing input to this function. This means <a class="el" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820" title="Convert an ASCII string_view into a number.">to_number()</a> accepts a subset of C++17's from_chars() input format; where it supports the input format it is modeled close to from_chars().</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">NumberType</td><td>Destination numeric type </td></tr>
@@ -140,7 +149,9 @@ The floating-point overload allocates an intermediate string if<ul>
 </dd></dl>
 <dl class="section since"><dt>Since</dt><dd>GUL version 1.6 </dd>
 <dd>
-GUL version 1.7 the NAN and INF floating point conversion </dd></dl>
+GUL version 1.7 the NAN and INF floating point conversion </dd>
+<dd>
+GUL version 2.12 bool conversion </dd></dl>
 
 </div>
 </div>

@@ -358,94 +358,118 @@ $(function() {
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;} <span class="comment">// namespace detail</span></div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment"></span> </div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160; </div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;<span class="comment">// Overload for unsigned integer types.</span></div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType,</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;          std::enable_if_t&lt;std::is_integral&lt;NumberType&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;                           std::is_unsigned&lt;NumberType&gt;::value, <span class="keywordtype">int</span>&gt; = 0&gt;</div>
-<div class="line"><a name="l00493"></a><span class="lineno"><a class="line" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">  493</a></span>&#160;constexpr <span class="keyword">inline</span> <a class="code" href="classgul14_1_1optional.html">optional&lt;NumberType&gt;</a> <a class="code" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">to_number</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;{</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    <span class="keywordflow">return</span> detail::to_unsigned_integer&lt;NumberType&gt;(str);</div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;}</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160; </div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment">// Overload for signed integer types.</span></div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType,</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;          std::enable_if_t&lt;std::is_integral&lt;NumberType&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;                           std::is_signed&lt;NumberType&gt;::value, <span class="keywordtype">int</span>&gt; = 0&gt;</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;constexpr <span class="keyword">inline</span> optional&lt;NumberType&gt; <a class="code" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">to_number</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;{</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    <span class="keywordflow">if</span> (str.empty())</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;        <span class="keywordflow">return</span> nullopt;</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160; </div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    <span class="keywordflow">if</span> (str.front() == <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    {</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;        <span class="keyword">using</span> UnsignedT = std::make_unsigned_t&lt;NumberType&gt;;</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;        constexpr <span class="keyword">auto</span> max_abs_negative_value =</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;            <span class="keyword">static_cast&lt;</span>UnsignedT<span class="keyword">&gt;</span>(std::numeric_limits&lt;NumberType&gt;::max()) + 1;</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160; </div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;        str.remove_prefix(1);</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment">// Overload for unsigned integer types.</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType&gt;</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;constexpr <span class="keyword">inline</span> std::enable_if_t&lt;std::is_integral&lt;NumberType&gt;::value and</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;                                  std::is_unsigned&lt;NumberType&gt;::value,</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;                                  optional&lt;NumberType&gt;&gt;</div>
+<div class="line"><a name="l00500"></a><span class="lineno"><a class="line" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">  500</a></span>&#160;<a class="code" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">to_number</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;{</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;    <span class="keywordflow">return</span> detail::to_unsigned_integer&lt;NumberType&gt;(str);</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;}</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160; </div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;<span class="comment">// Overload for signed integer types.</span></div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType&gt;</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;constexpr <span class="keyword">inline</span> std::enable_if_t&lt;std::is_integral&lt;NumberType&gt;::value and</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;                                  std::is_signed&lt;NumberType&gt;::value,</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;                                  optional&lt;NumberType&gt;&gt;</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<a class="code" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">to_number</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;{</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    <span class="keywordflow">if</span> (str.empty())</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;        <span class="keywordflow">return</span> nullopt;</div>
 <div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160; </div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;        <span class="keyword">auto</span> result = detail::to_unsigned_integer&lt;UnsignedT&gt;(str);</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;        <span class="keywordflow">if</span> (!result)</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;            <span class="keywordflow">return</span> nullopt;</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160; </div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;        <span class="keywordflow">if</span> (*result == max_abs_negative_value)</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;            <span class="keywordflow">return</span> std::numeric_limits&lt;NumberType&gt;::lowest();</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (*result &gt; max_abs_negative_value)</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;            <span class="keywordflow">return</span> nullopt;</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160; </div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>NumberType<span class="keyword">&gt;</span>(-<span class="keyword">static_cast&lt;</span>NumberType<span class="keyword">&gt;</span>(*result));</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    }</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    <span class="keywordflow">if</span> (str.front() == <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    {</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;        <span class="keyword">using</span> UnsignedT = std::make_unsigned_t&lt;NumberType&gt;;</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;        constexpr <span class="keyword">auto</span> max_abs_negative_value =</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;            <span class="keyword">static_cast&lt;</span>UnsignedT<span class="keyword">&gt;</span>(std::numeric_limits&lt;NumberType&gt;::max()) + 1;</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160; </div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;        str.remove_prefix(1);</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160; </div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;        <span class="keyword">auto</span> result = detail::to_unsigned_integer&lt;UnsignedT&gt;(str);</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;        <span class="keywordflow">if</span> (!result)</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;            <span class="keywordflow">return</span> nullopt;</div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160; </div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    <span class="keywordflow">return</span> detail::to_unsigned_integer&lt;NumberType&gt;(str);</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;}</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160; </div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="comment">// Overload for floating-point types.</span></div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType,</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    std::enable_if_t&lt;std::is_floating_point&lt;NumberType&gt;::value, <span class="keywordtype">int</span>&gt; = 0&gt;</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;constexpr <span class="keyword">inline</span> optional&lt;NumberType&gt; <a class="code" href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">to_number</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;{</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    <span class="keywordflow">if</span> (str.empty())</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;        <span class="keywordflow">return</span> nullopt;</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;        <span class="keywordflow">if</span> (*result == max_abs_negative_value)</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;            <span class="keywordflow">return</span> std::numeric_limits&lt;NumberType&gt;::lowest();</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (*result &gt; max_abs_negative_value)</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;            <span class="keywordflow">return</span> nullopt;</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160; </div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>NumberType<span class="keyword">&gt;</span>(-<span class="keyword">static_cast&lt;</span>NumberType<span class="keyword">&gt;</span>(*result));</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    }</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160; </div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    <span class="keywordflow">return</span> detail::to_unsigned_integer&lt;NumberType&gt;(str);</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;}</div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160; </div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    <span class="keywordflow">if</span> (</div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;#ifdef _MSC_VER</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;#    pragma warning( push )</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;#    pragma warning( disable: 4127 ) <span class="comment">// conditional expression is constant</span></div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;#endif</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            (std::numeric_limits&lt;detail::FloatConversionIntType&lt;NumberType&gt;&gt;::digits10</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;            &lt;= std::numeric_limits&lt;NumberType&gt;::digits10)) {</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;<span class="preprocessor">#ifdef _MSC_VER</span></div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;<span class="preprocessor">#    pragma warning( pop )</span></div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;        <span class="comment">// Too big for our approach. Resort to non-constexpr functionality.</span></div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;        <span class="comment">// This actually never happenes with the currently supported platforms / compilers.</span></div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;        <span class="comment">// (Except long double on Darwin)</span></div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;        <span class="keywordflow">return</span> detail::strtold_wrapper&lt;NumberType&gt;(str);</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;    }</div>
-<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160; </div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;    <span class="keywordflow">if</span> (str.front() == <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    {</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;        str.remove_prefix(1);</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;        <span class="keyword">auto</span> result = detail::to_unsigned_float&lt;NumberType&gt;(str);</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;        <span class="keywordflow">if</span> (!result)</div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;            <span class="keywordflow">return</span> nullopt;</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;        <span class="keywordflow">return</span> -*result;</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;<span class="comment">// Overload for floating-point types.</span></div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType&gt;</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;constexpr <span class="keyword">inline</span> std::enable_if_t&lt;std::is_floating_point&lt;NumberType&gt;::value,</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;                                  optional&lt;NumberType&gt;&gt;</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;<a class="code" href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">to_number</a>(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;{</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="keywordflow">if</span> (str.empty())</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;        <span class="keywordflow">return</span> nullopt;</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160; </div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    <span class="keywordflow">if</span> (</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;#ifdef _MSC_VER</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;#    pragma warning( push )</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;#    pragma warning( disable: 4127 ) <span class="comment">// conditional expression is constant</span></div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;#endif</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;            (std::numeric_limits&lt;detail::FloatConversionIntType&lt;NumberType&gt;&gt;::digits10</div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;            &lt;= std::numeric_limits&lt;NumberType&gt;::digits10)) {</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;<span class="preprocessor">#ifdef _MSC_VER</span></div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;<span class="preprocessor">#    pragma warning( pop )</span></div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;        <span class="comment">// Too big for our approach. Resort to non-constexpr functionality.</span></div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;        <span class="comment">// This actually never happenes with the currently supported platforms / compilers.</span></div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;        <span class="comment">// (Except long double on Darwin)</span></div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;        <span class="keywordflow">return</span> detail::strtold_wrapper&lt;NumberType&gt;(str);</div>
 <div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    }</div>
 <div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160; </div>
-<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;    <span class="keywordflow">return</span> detail::to_unsigned_float&lt;NumberType&gt;(str);</div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;}</div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160; </div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160; </div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;} <span class="comment">// namespace gul14</span></div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160; </div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;    <span class="keywordflow">if</span> (str.front() == <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;    {</div>
+<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;        str.remove_prefix(1);</div>
+<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;        <span class="keyword">auto</span> result = detail::to_unsigned_float&lt;NumberType&gt;(str);</div>
+<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        <span class="keywordflow">if</span> (!result)</div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;            <span class="keywordflow">return</span> nullopt;</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        <span class="keywordflow">return</span> -*result;</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;    }</div>
 <div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160; </div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;<span class="comment">// vi:ts=4:sw=4:et:sts=4</span></div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;    <span class="keywordflow">return</span> detail::to_unsigned_float&lt;NumberType&gt;(str);</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;}</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160; </div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;<span class="comment">// Overload for bool</span></div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;<span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;constexpr <span class="keyword">inline</span> optional&lt;bool&gt; to_number&lt;bool&gt;(<a class="code" href="classgul14_1_1basic__string__view.html">gul14::string_view</a> str) noexcept</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;{</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;    <span class="keywordflow">if</span> (str.length() == 1) {</div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        <span class="keywordflow">if</span> (str[0] == <span class="charliteral">&#39;1&#39;</span>)</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        <span class="keywordflow">if</span> (str[0] == <span class="charliteral">&#39;0&#39;</span>)</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;        <span class="keywordflow">return</span> nullopt;</div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;    }</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="group__substring__checks__h.html#ga05127f08f53568d1b4bd199137b76ab8">equals_nocase</a>(str, <span class="stringliteral">&quot;true&quot;</span>))</div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160; </div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="group__substring__checks__h.html#ga05127f08f53568d1b4bd199137b76ab8">equals_nocase</a>(str, <span class="stringliteral">&quot;false&quot;</span>))</div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160; </div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    <span class="keywordflow">return</span> nullopt;</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;}</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160; </div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160; </div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;} <span class="comment">// namespace gul14</span></div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160; </div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160; </div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;<span class="comment">// vi:ts=4:sw=4:et:sts=4</span></div>
 <div class="ttc" id="aclassgul14_1_1basic__string__view_html"><div class="ttname"><a href="classgul14_1_1basic__string__view.html">gul14::basic_string_view&lt; char &gt;</a></div></div>
 <div class="ttc" id="aclassgul14_1_1optional_html"><div class="ttname"><a href="classgul14_1_1optional.html">gul14::optional</a></div><div class="ttdoc">A class template that can either contain a value of a certain type or not.</div><div class="ttdef"><b>Definition:</b> optional.h:274</div></div>
 <div class="ttc" id="agroup__string__view__h_html_ga6ebb24dac7ab090d9145ff49abab9013"><div class="ttname"><a href="group__string__view__h.html#ga6ebb24dac7ab090d9145ff49abab9013">gul14::string_view</a></div><div class="ttdeci">basic_string_view&lt; char &gt; string_view</div><div class="ttdoc">A view to a contiguous sequence of chars.</div><div class="ttdef"><b>Definition:</b> string_view.h:624</div></div>
+<div class="ttc" id="agroup__substring__checks__h_html_ga05127f08f53568d1b4bd199137b76ab8"><div class="ttname"><a href="group__substring__checks__h.html#ga05127f08f53568d1b4bd199137b76ab8">gul14::equals_nocase</a></div><div class="ttdeci">constexpr bool equals_nocase(string_view str1, string_view str2) noexcept</div><div class="ttdoc">Determine whether a string is equal to another one, making no distinction between upper and lower cas...</div><div class="ttdef"><b>Definition:</b> substring_checks.h:165</div></div>
 <div class="ttc" id="agroup__substring__checks__h_html_ga9b555f8e8d57d41abbc5f3b1d5480c19"><div class="ttname"><a href="group__substring__checks__h.html#ga9b555f8e8d57d41abbc5f3b1d5480c19">gul14::starts_with_nocase</a></div><div class="ttdeci">constexpr bool starts_with_nocase(string_view str, string_view prefix) noexcept</div><div class="ttdoc">Determine whether a string starts with another string.</div><div class="ttdef"><b>Definition:</b> substring_checks.h:313</div></div>
-<div class="ttc" id="agroup__to__number__h_html_ga1b503aeb7d32d9e9582d4115975c72f7"><div class="ttname"><a href="group__to__number__h.html#ga1b503aeb7d32d9e9582d4115975c72f7">gul14::to_number</a></div><div class="ttdeci">constexpr optional&lt; NumberType &gt; to_number(gul14::string_view str) noexcept</div><div class="ttdoc">Convert an ASCII string_view into a number.</div><div class="ttdef"><b>Definition:</b> to_number.h:493</div></div>
+<div class="ttc" id="agroup__to__number__h_html_gacbfbf772e0744b3f49f0aa3f59122820"><div class="ttname"><a href="group__to__number__h.html#gacbfbf772e0744b3f49f0aa3f59122820">gul14::to_number</a></div><div class="ttdeci">constexpr std::enable_if_t&lt; std::is_integral&lt; NumberType &gt;::value and std::is_unsigned&lt; NumberType &gt;::value, optional&lt; NumberType &gt; &gt; to_number(gul14::string_view str) noexcept</div><div class="ttdoc">Convert an ASCII string_view into a number.</div><div class="ttdef"><b>Definition:</b> to_number.h:500</div></div>
 <div class="ttc" id="ainternal_8h_html"><div class="ttname"><a href="internal_8h.html">internal.h</a></div><div class="ttdoc">Definition of macros used internally by GUL.</div></div>
 <div class="ttc" id="anamespacegul14_html"><div class="ttname"><a href="namespacegul14.html">gul14</a></div><div class="ttdoc">Namespace gul14 contains all functions and classes of the General Utility Library.</div><div class="ttdef"><b>Definition:</b> doxygen.h:26</div></div>
 <div class="ttc" id="aoptional_8h_html"><div class="ttname"><a href="optional_8h.html">optional.h</a></div><div class="ttdoc">Implementation of gul14::optional.</div></div>
