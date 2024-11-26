@@ -274,7 +274,7 @@ public:
     /// \copydoc ValueType
     using value_type = ValueType;
     /// Unsigned integer type for indexing, number of elements, capacity
-    using SizeType = uint32_t;
+    using SizeType = size_t;
     /// \copydoc SizeType
     using size_type = SizeType;
     /// Signed integer type for the difference of two iterators

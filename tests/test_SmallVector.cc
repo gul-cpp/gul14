@@ -1299,7 +1299,7 @@ TEST_CASE("SmallVector: insert(ConstIterator, std::initializer_list)", "[SmallVe
 TEMPLATE_TEST_CASE("SmallVector: max_size()", "[SmallVector]", int, double, std::string)
 {
     SmallVector<TestType, 1> vec;
-    REQUIRE(vec.max_size() == std::numeric_limits<uint32_t>::max());
+    REQUIRE(vec.max_size() == std::numeric_limits<size_t>::max());
     REQUIRE(vec.capacity() <= vec.max_size());
     REQUIRE(vec.size() <= vec.max_size());
 }
