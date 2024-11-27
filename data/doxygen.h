@@ -155,7 +155,7 @@ namespace gul14 {
  *
  * \subsection v2_11_2 Version 2.11.2
  *
- * - *Released with DOOCS 24.3.1*
+ * - *Released with DOOCS 24.3.1 – 24.8.0*
  * - ThreadPool: Add default constructor for TaskHandle
  *
  * \subsection v2_11_1 Version 2.11.1
@@ -236,7 +236,7 @@ namespace gul14 {
  *
  * \subsection v2_1 Version 2.1
  *
- * - *Released with DOOCS 20.2.0 and DOOCS 20.3.0*
+ * - *Released with DOOCS 20.2.0 – 20.3.0*
  * - Add equals_nocase()
  *
  * \subsection v2_0 Version 2.0
