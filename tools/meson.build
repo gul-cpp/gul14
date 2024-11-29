@@ -5,13 +5,15 @@ changelogger = find_program('changelogger', required : false)
 
 # This is used by the Doxygen generation stuff
 # doxygen is used by doxywrap; if we have both we are ready to rumble
-doxygen = find_program('doxygen', required : false)
-if get_option('docs') and doxygen.found()
-    graphviz = find_program('dot', required : false)
-    if graphviz.found()
-        doxy_run = find_program('doxywrap')
-    else
-        message('Hint: dot is usually a part of the graphviz package')
+if get_option('docs')
+    doxygen = find_program('doxygen', required : false)
+    if doxygen.found()
+        graphviz = find_program('dot', required : false)
+        if graphviz.found()
+            doxy_run = find_program('doxywrap')
+        else
+            message('Hint: dot is usually a part of the graphviz package')
+        endif
     endif
 endif
 
