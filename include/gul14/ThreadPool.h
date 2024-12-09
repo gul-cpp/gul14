@@ -296,6 +296,9 @@ public:
      * // A task with a name
      * pool->add_task([]() { std::cout << "Task 4\n"; }, "Task 4");
      * \endcode
+     *
+     * \since GUL version 2.12.1, add_task() unconditionally accepts mutable function
+     *        objects
      */
     template <typename Function>
     TaskHandle<invoke_result_t<Function, ThreadPool&>>
