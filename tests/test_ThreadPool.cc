@@ -176,8 +176,7 @@ TEST_CASE("ThreadPool: Constructor", "[ThreadPool]")
     }
 }
 
-TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
-    "[ThreadPool]")
+TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&", "[ThreadPool]")
 {
     auto pool = make_thread_pool(1);
 
@@ -205,8 +204,11 @@ TEST_CASE("ThreadPool: add_task() for functions without ThreadPool&",
     std::atomic<int> last_job{ 0 };
 
     const auto now = std::chrono::system_clock::now();
+
+    // We make one lambda mutable here to ensure that we can actually enqueue mutable
+    // function objects.
     auto task1 = pool->add_task(
-        [&last_job]() { last_job = 1; }, now + 120s);
+        [&last_job]() mutable { last_job = 1; }, now + 120s);
     pool->add_task(
         [&last_job]() { last_job = 2; }, now + 2ms,
         "task 2 (usually runs second)");
@@ -280,8 +282,11 @@ TEST_CASE("ThreadPool: add_task(f(ThreadPool&, ...))", "[ThreadPool]")
     std::atomic<int> last_job{ 0 };
 
     const auto now = std::chrono::system_clock::now();
+
+    // We make one lambda mutable here to ensure that we can actually enqueue mutable
+    // function objects.
     auto task1 = pool->add_task(
-        [&last_job](ThreadPool&) { last_job = 1; }, now + 120s);
+        [&last_job](ThreadPool&) mutable { last_job = 1; }, now + 120s);
     pool->add_task(
         [&last_job](ThreadPool&) { last_job = 2; }, now + 2ms,
         "task 2 (usually runs second)");
