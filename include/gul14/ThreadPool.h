@@ -346,7 +346,7 @@ public:
     add_task(Function fct, TimePoint start_time = {}, std::string name = {})
     {
         return add_task(
-            [f = std::move(fct)](ThreadPool&) { return f(); },
+            [f = std::move(fct)](ThreadPool&) mutable { return f(); },
             start_time, std::move(name));
     }
 
