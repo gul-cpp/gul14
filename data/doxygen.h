@@ -150,7 +150,7 @@ namespace gul14 {
  *
  * \subsection V2_12_0 Version 2.12.0
  *
- * - *Released with DOOCS 24.10.0–24.12.1*
+ * - *Released with DOOCS 24.10.0 – 24.12.1*
  * - Add gul14::to_number<bool>
  *
  * \subsection v2_11_2 Version 2.11.2
@@ -172,7 +172,7 @@ namespace gul14 {
  *
  * \subsection v2_10_0 Version 2.10.0
  *
- * - *Released with DOOCS 24.1.0-24.1.0*
+ * - *Released with DOOCS 24.1.0*
  * - Add gul14::endian, a backport of std::endian from C++20
  * - Add gul14::is_little_endian() and gul14::is_big_endian()
  *
@@ -198,7 +198,7 @@ namespace gul14 {
  *
  * \subsection v2_7_1 Version 2.7.1
  *
- * - *Released with DOOCS 22.10.0-23.3.0*
+ * - *Released with DOOCS 22.10.0 – 23.3.0*
  * - within_orders(0.0, 0.0, 10) results now in true
  *
  * \subsection v2_7 Version 2.7
@@ -209,14 +209,14 @@ namespace gul14 {
  *
  * \subsection v2_6 Version 2.6
  *
- * - *Released with DOOCS 21.12.0–22.6.1*
+ * - *Released with DOOCS 21.12.0 – 22.6.1*
  * - Add safe_string()
  * - Add hex_string()
  * - Add IsContainerLike<>
  *
  * \subsection v2_5 Version 2.5
  *
- * - *Released with DOOCS 21.3.0–21.7.1*
+ * - *Released with DOOCS 21.3.0 – 21.7.1*
  * - Add support for more container types as return type of split() and tokenize()
  * - Add \ref gul14::SmallVector "SmallVector"
  *
@@ -226,7 +226,7 @@ namespace gul14 {
  *
  * \subsection v2_3 Version 2.3
  *
- * - *Released with DOOCS 20.6.0–20.10.1*
+ * - *Released with DOOCS 20.6.0 – 20.10.1*
  * - Allow join() to accept arbitrary containers and add a two-iterator interface
  *
  * \subsection v2_2 Version 2.2
