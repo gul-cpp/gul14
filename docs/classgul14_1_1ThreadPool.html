@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="gul14.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">General Utility Library for C++14
-   &#160;<span id="projectnumber">2.11</span>
+   &#160;<span id="projectnumber">2.12</span>
    </div>
   </td>
  </tr>
@@ -68,7 +68,7 @@ $(function() {
 <div class="line">    <a class="code" href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">sleep</a>(0.1);</div>
 <div class="line">}</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Task result: &quot;</span> &lt;&lt; task.get_result() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:596</div></div>
+<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:599</div></div>
 <div class="ttc" id="agroup__time__util__h_html_gaa0abe7bf6452e6882c0e0b0d05897adc"><div class="ttname"><a href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">gul14::sleep</a></div><div class="ttdeci">bool sleep(const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const Trigger &amp;trg)</div><div class="ttdoc">Sleep for at least the given time span, with the option of being woken up from another thread.</div><div class="ttdef"><b>Definition:</b> time_util.h:114</div></div>
 </div><!-- fragment --><p>Tasks can also be scheduled to start after a specific time point or after a certain delay. Each task can also be given a name, which is mainly useful for debugging. See the <a class="el" href="thread_pool_8cc-example.html">example</a> for an introduction.</p>
 <p>All public member functions are thread-safe.</p>
@@ -280,7 +280,8 @@ template&lt;typename Function &gt; </div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// A task with a name</span></div>
 <div class="line">pool-&gt;add_task([]() { std::cout &lt;&lt; <span class="stringliteral">&quot;Task 4\n&quot;</span>; }, <span class="stringliteral">&quot;Task 4&quot;</span>);</div>
-</div><!-- fragment --> 
+</div><!-- fragment --><dl class="section since"><dt>Since</dt><dd>GUL version 2.12.1, <a class="el" href="classgul14_1_1ThreadPool.html#ab72ed63ab1318cf34c7ed745c1247a54" title="Enqueue a task.">add_task()</a> unconditionally accepts mutable function objects </dd></dl>
+
 </div>
 </div>
 <a id="a2aa91a8df712d9dcfe6c107ff5b8a11d"></a>
