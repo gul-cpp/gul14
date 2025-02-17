@@ -614,14 +614,14 @@ TEST_CASE("ThreadPool: Tasks scheduling their own continuation", "[ThreadPool]")
     std::string str;
 
     pool->add_task(
-        [&mutex, &str](ThreadPool& pool)
+        [&mutex, &str](ThreadPool& p)
         {
             {
                 std::lock_guard<std::mutex> lock(mutex);
                 str += '1';
             }
 
-            pool.add_task(
+            p.add_task(
                 [&mutex, &str]()
                 {
                     {
@@ -630,7 +630,7 @@ TEST_CASE("ThreadPool: Tasks scheduling their own continuation", "[ThreadPool]")
                     }
                 });
 
-            pool.add_task(
+            p.add_task(
                 [&mutex, &str]()
                 {
                     {
