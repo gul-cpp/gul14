@@ -370,7 +370,7 @@ constexpr inline optional<NumberType> to_unsigned_float(gul14::string_view str) 
     if (not norm_val.has_value())
         return nullopt;
 
-    return detail::pow10(exponent) * *norm_val;
+    return static_cast<NumberType>(detail::pow10(exponent) * *norm_val);
 }
 
 /**
