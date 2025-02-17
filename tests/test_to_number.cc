@@ -69,7 +69,7 @@ int error_in_ulp(T value, T reference)
 TEMPLATE_TEST_CASE("test details: error_in_ulp()", "[to_number]",
     float, double, long double)
 {
-    auto ref = TestType{ 1.01L };
+    auto ref = TestType{ 1.01f };
     auto value = ref;
     constexpr auto try_distance{ 10 };
 
