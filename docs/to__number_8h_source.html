@@ -330,7 +330,7 @@ $(function() {
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keywordflow">if</span> (not norm_val.has_value())</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        <span class="keywordflow">return</span> nullopt;</div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keywordflow">return</span> detail::pow10(exponent) * *norm_val;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>NumberType<span class="keyword">&gt;</span>(detail::pow10(exponent) * *norm_val);</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;}</div>
 <div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160; </div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> NumberType&gt;</div>
