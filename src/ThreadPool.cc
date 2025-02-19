@@ -135,6 +135,24 @@ std::vector<std::string> ThreadPool::get_running_task_names() const
     return running_task_names_;
 }
 
+ThreadPool::InternalTaskState ThreadPool::get_task_state(const TaskId task_id) const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    const auto itr = std::find(
+        running_task_ids_.begin(), running_task_ids_.end(), task_id);
+    if (itr != running_task_ids_.end())
+        return InternalTaskState::running;
+
+    const auto itp = std::find_if(
+        pending_tasks_.begin(), pending_tasks_.end(),
+        [task_id](const Task& t) { return t.id_ == task_id; });
+    if (itp != pending_tasks_.end())
+        return InternalTaskState::pending;
+
+    return InternalTaskState::unknown;
+}
+
 std::size_t ThreadPool::get_thread_index() const
 {
     if (thread_index_ == std::numeric_limits<std::size_t>::max())
@@ -158,24 +176,6 @@ bool ThreadPool::is_idle() const
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return pending_tasks_.empty() && running_task_ids_.empty();
-}
-
-ThreadPool::InternalTaskState ThreadPool::get_task_state(const TaskId task_id) const
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-
-    const auto itr = std::find(
-        running_task_ids_.begin(), running_task_ids_.end(), task_id);
-    if (itr != running_task_ids_.end())
-        return InternalTaskState::running;
-
-    const auto itp = std::find_if(
-        pending_tasks_.begin(), pending_tasks_.end(),
-        [task_id](const Task& t) { return t.id_ == task_id; });
-    if (itp != pending_tasks_.end())
-        return InternalTaskState::pending;
-
-    return InternalTaskState::unknown;
 }
 
 bool ThreadPool::is_shutdown_requested() const
