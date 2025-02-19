@@ -4,7 +4,7 @@
  * \date    Created on November 6, 2018
  * \brief   Implementation of the ThreadPool class.
  *
- * \copyright Copyright 2018-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2025 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -21,6 +21,7 @@
  */
 
 #include <algorithm>
+#include <limits>
 
 #include <gul14/cat.h>
 #include <gul14/ThreadPool.h>
@@ -61,8 +62,8 @@ ThreadPool::ThreadPool(std::size_t num_threads, std::size_t capacity)
         throw std::invalid_argument(cat("Illegal capacity for thread pool: ", capacity));
 
     threads_.reserve(num_threads);
-    while (threads_.size() < num_threads)
-        threads_.emplace_back([this]() { perform_work(); });
+    for (std::size_t i = 0; i != num_threads; ++i)
+        threads_.emplace_back([this, i]() { perform_work(i); });
 }
 
 ThreadPool::~ThreadPool()
@@ -134,6 +135,14 @@ std::vector<std::string> ThreadPool::get_running_task_names() const
     return running_task_names_;
 }
 
+std::size_t ThreadPool::get_thread_index() const
+{
+    if (thread_index_ == std::numeric_limits<std::size_t>::max())
+        throw std::runtime_error("This thread is not part of the pool");
+
+    return thread_index_;
+}
+
 bool ThreadPool::is_full() const noexcept
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -182,7 +191,7 @@ std::shared_ptr<ThreadPool> ThreadPool::make_shared(
     return std::shared_ptr<ThreadPool>(new ThreadPool(num_threads, capacity));
 }
 
-void ThreadPool::perform_work()
+void ThreadPool::perform_work(const std::size_t thread_index)
 {
 #if defined(__APPLE__) || defined(__GNUC__)
     // On unixoid systems, we block a number of signals in the worker threads because we
@@ -202,6 +211,9 @@ void ThreadPool::perform_work()
 
     pthread_sigmask(SIG_BLOCK, &mask, 0);
 #endif
+
+    // Assign thread-local thread index
+    thread_index_ = thread_index;
 
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -263,5 +275,8 @@ void ThreadPool::perform_work()
         }
     }
 }
+
+thread_local std::size_t
+ThreadPool::thread_index_{ std::numeric_limits<std::size_t>::max() };
 
 } // namespace gul14
