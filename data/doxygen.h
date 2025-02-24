@@ -144,6 +144,10 @@ namespace gul14 {
  *
  * \section changelog_2_x 2.x Versions
  *
+ * \subsection V2_13_0 Version 2.13.0
+ *
+ * - Add ThreadPool::get_thread_index()
+ *
  * \subsection V2_12_1 Version 2.12.1
  *
  * - Allow mutable function objects in ThreadPool::add_task()

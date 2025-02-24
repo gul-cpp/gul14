@@ -4,7 +4,7 @@
  * \date    Created on March 17, 2023
  * \brief   Declaration of the ThreadPool class.
  *
- * \copyright Copyright 2023-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2023-2025 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -22,12 +22,14 @@
 
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
+#include <array>
 #include <atomic>
 #include <stdexcept>
 
 #include "gul14/catch.h"
 #include "gul14/ThreadPool.h"
 #include "gul14/time_util.h"
+#include "gul14/Trigger.h"
 
 using namespace gul14;
 using namespace std::literals;
@@ -448,6 +450,37 @@ TEST_CASE("ThreadPool: get_running_task_names()", "[ThreadPool]")
 
     // Make sure the pool is removed before any of the atomic variables go out of scope
     pool.reset();
+}
+
+TEST_CASE("ThreadPool: get_thread_index()", "[ThreadPool]")
+{
+    std::array<std::atomic<std::size_t>, 2> indices;
+    Trigger trigger;
+
+    auto pool = make_thread_pool(2);
+
+    pool->add_task(
+        [&](ThreadPool& p) { trigger.wait(); indices[0] = p.get_thread_index(); });
+    pool->add_task(
+        [&](ThreadPool& p) { trigger.wait(); indices[1] = p.get_thread_index(); });
+
+    while (pool->count_pending() > 0)
+        gul14::sleep(1ms);
+
+    trigger = true;
+
+    // From a non-worker thread, the function must throw.
+    REQUIRE_THROWS_AS(pool->get_thread_index(), std::runtime_error);
+
+    pool.reset();
+
+    CAPTURE(indices);
+    REQUIRE(indices[0] <= 1);
+    REQUIRE(indices[1] <= 1);
+    if (indices[0] == 0)
+        REQUIRE(indices[1] == 1);
+    if (indices[0] == 1)
+        REQUIRE(indices[1] == 0);
 }
 
 TEST_CASE("ThreadPool: is_full()", "[ThreadPool]")
