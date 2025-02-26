@@ -28,11 +28,12 @@ namespace gul14 {
 
 std::string replace(string_view haystack, string_view needle, string_view hammer)
 {
-    if (needle.empty())
-        return std::string(haystack);
-
     auto result = ""s;
     result.reserve(haystack.length());
+    if (needle.empty()) {
+        result.assign(haystack.data(), haystack.length());
+        return result;
+    }
 
     std::size_t pos = 0;
     std::size_t last_pos = 0;
