@@ -83,12 +83,13 @@ std::string unescape(string_view in)
     auto rit  = std::regex_iterator<string_view::const_iterator>{ in.cbegin(), in.cend(), re };
     auto const rend = std::regex_iterator<string_view::const_iterator>{ };
     auto last = decltype(*rit){ };
-
-    if (rit == rend)
-        return std::string{ in };
-
     auto unescaped = ""s;
     unescaped.reserve(in.length());
+
+    if (rit == rend) {
+        unescaped.assign(in.data(), in.size());
+        return unescaped;
+    }
 
     for (; rit != rend; ++rit) {
         last = *rit;

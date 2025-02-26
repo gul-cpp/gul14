@@ -99,6 +99,9 @@ endif
 if meson.get_compiler('cpp').has_argument('-Wconversion') # msvc doesnt have
     add_cpp_args += [ '-Wconversion' ]
 endif
+if meson.get_compiler('cpp').has_argument('-Wnrvo') # msvc: included in permissive-
+    add_cpp_args += [ '-Wnrvo' ]
+endif
 
 deps = dependency('threads')
 
