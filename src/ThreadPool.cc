@@ -153,12 +153,12 @@ ThreadPool::InternalTaskState ThreadPool::get_task_state(const TaskId task_id) c
     return InternalTaskState::unknown;
 }
 
-std::size_t ThreadPool::get_thread_index() const
+ThreadPool::ThreadId ThreadPool::get_thread_id() const
 {
-    if (thread_index_ == std::numeric_limits<std::size_t>::max())
+    if (thread_id_ == std::numeric_limits<ThreadId>::max())
         throw std::runtime_error("This thread is not part of the pool");
 
-    return thread_index_;
+    return thread_id_;
 }
 
 bool ThreadPool::is_full() const noexcept
@@ -191,7 +191,7 @@ std::shared_ptr<ThreadPool> ThreadPool::make_shared(
     return std::shared_ptr<ThreadPool>(new ThreadPool(num_threads, capacity));
 }
 
-void ThreadPool::perform_work(const std::size_t thread_index)
+void ThreadPool::perform_work(const ThreadPool::ThreadId thread_id)
 {
 #if defined(__APPLE__) || defined(__GNUC__)
     // On unixoid systems, we block a number of signals in the worker threads because we
@@ -212,8 +212,8 @@ void ThreadPool::perform_work(const std::size_t thread_index)
     pthread_sigmask(SIG_BLOCK, &mask, 0);
 #endif
 
-    // Assign thread-local thread index
-    thread_index_ = thread_index;
+    // Assign thread-local thread ID
+    thread_id_ = thread_id;
 
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -276,7 +276,7 @@ void ThreadPool::perform_work(const std::size_t thread_index)
     }
 }
 
-thread_local std::size_t
-ThreadPool::thread_index_{ std::numeric_limits<std::size_t>::max() };
+thread_local ThreadPool::ThreadId
+ThreadPool::thread_id_{ std::numeric_limits<ThreadPool::ThreadId>::max() };
 
 } // namespace gul14

@@ -113,6 +113,9 @@ public:
     /// A unique identifier for a task.
     using TaskId = std::uint64_t;
 
+    /// A unique identifier for a thread in the pool in the range of [0, count_threads()).
+    using ThreadId = std::vector<std::thread>::size_type;
+
     /**
      * A handle for a task that has (or had) been enqueued on a ThreadPool.
      *
@@ -420,8 +423,9 @@ public:
     std::vector<std::string> get_running_task_names() const;
 
     /**
-     * If called from a worker thread, return the zero-based index of the thread in the
-     * pool (0 for the first thread, 1 for the second, and so on).
+     * Return the thread pool ID of the current thread.
+     *
+     * \returns a thread ID in the range [0, count_threads()).
      *
      * \exception std::runtime_error is thrown if this function is called from a thread
      *            that is not part of the pool.
@@ -429,7 +433,7 @@ public:
      * \since GUL version 2.13
      */
     GUL_EXPORT
-    std::size_t get_thread_index() const;
+    ThreadId get_thread_id() const;
 
     /// Determine whether the queue for pending tasks is full (at capacity).
     GUL_EXPORT
@@ -529,9 +533,9 @@ private:
     /**
      * For worker threads, this is the index of the thread in the threads_ vector.
      * For other threads, the value is meaningless and the variable is initialized to
-     * numeric_limits<size_t>::max().
+     * numeric_limits<ThreadId>::max().
      */
-    thread_local static std::size_t thread_index_;
+    thread_local static ThreadId thread_id_;
 
     /**
      * A condition variable used together with mutex_ to wake up a worker thread when a

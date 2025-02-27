@@ -146,7 +146,7 @@ namespace gul14 {
  *
  * \subsection V2_13_0 Version 2.13.0
  *
- * - Add ThreadPool::get_thread_index()
+ * - Add ThreadPool::get_thread_id()
  *
  * \subsection V2_12_1 Version 2.12.1
  *
@@ -758,7 +758,7 @@ namespace gul14 {
  * tests. It bundles all of its functionality in a single header file. For convenience,
  * the GUL-internal version of this header can be accessed via:
  * \code
- * #include "gul14/catch.h"
+ * #include <catch2/catch_all.hpp>
  * // Your unit tests here
  * \endcode
  * Please refer to https://github.com/catchorg/Catch2/blob/master/docs/tutorial.md

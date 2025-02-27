@@ -452,17 +452,17 @@ TEST_CASE("ThreadPool: get_running_task_names()", "[ThreadPool]")
     pool.reset();
 }
 
-TEST_CASE("ThreadPool: get_thread_index()", "[ThreadPool]")
+TEST_CASE("ThreadPool: get_thread_id()", "[ThreadPool]")
 {
-    std::array<std::atomic<std::size_t>, 2> indices;
+    std::array<std::atomic<ThreadPool::ThreadId>, 2> indices;
     Trigger trigger;
 
     auto pool = make_thread_pool(2);
 
     pool->add_task(
-        [&](ThreadPool& p) { trigger.wait(); indices[0] = p.get_thread_index(); });
+        [&](ThreadPool& p) { trigger.wait(); indices[0] = p.get_thread_id(); });
     pool->add_task(
-        [&](ThreadPool& p) { trigger.wait(); indices[1] = p.get_thread_index(); });
+        [&](ThreadPool& p) { trigger.wait(); indices[1] = p.get_thread_id(); });
 
     while (pool->count_pending() > 0)
         gul14::sleep(1ms);
@@ -470,7 +470,7 @@ TEST_CASE("ThreadPool: get_thread_index()", "[ThreadPool]")
     trigger = true;
 
     // From a non-worker thread, the function must throw.
-    REQUIRE_THROWS_AS(pool->get_thread_index(), std::runtime_error);
+    REQUIRE_THROWS_AS(pool->get_thread_id(), std::runtime_error);
 
     pool.reset();
 
