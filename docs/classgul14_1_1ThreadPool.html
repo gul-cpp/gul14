@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="gul14.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">General Utility Library for C++14
-   &#160;<span id="projectnumber">2.12</span>
+   &#160;<span id="projectnumber">2.13</span>
    </div>
   </td>
  </tr>
@@ -68,7 +68,7 @@ $(function() {
 <div class="line">    <a class="code" href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">sleep</a>(0.1);</div>
 <div class="line">}</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Task result: &quot;</span> &lt;&lt; task.get_result() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:599</div></div>
+<div class="ttc" id="agroup__ThreadPool__h_html_ga166ce288cf81fd766bcd83b148ef0af5"><div class="ttname"><a href="group__ThreadPool__h.html#ga166ce288cf81fd766bcd83b148ef0af5">gul14::make_thread_pool</a></div><div class="ttdeci">std::shared_ptr&lt; ThreadPool &gt; make_thread_pool(std::size_t num_threads, std::size_t capacity=ThreadPool::default_capacity)</div><div class="ttdoc">Create a thread pool with the desired number of threads and the specified capacity for queuing tasks.</div><div class="ttdef"><b>Definition:</b> ThreadPool.h:625</div></div>
 <div class="ttc" id="agroup__time__util__h_html_gaa0abe7bf6452e6882c0e0b0d05897adc"><div class="ttname"><a href="group__time__util__h.html#gaa0abe7bf6452e6882c0e0b0d05897adc">gul14::sleep</a></div><div class="ttdeci">bool sleep(const std::chrono::duration&lt; Rep, Period &gt; &amp;duration, const Trigger &amp;trg)</div><div class="ttdoc">Sleep for at least the given time span, with the option of being woken up from another thread.</div><div class="ttdef"><b>Definition:</b> time_util.h:114</div></div>
 </div><!-- fragment --><p>Tasks can also be scheduled to start after a specific time point or after a certain delay. Each task can also be given a name, which is mainly useful for debugging. See the <a class="el" href="thread_pool_8cc-example.html">example</a> for an introduction.</p>
 <p>All public member functions are thread-safe.</p>
@@ -91,6 +91,10 @@ Public Types</h2></td></tr>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a0d3ecad622a33e862b4696f02bf69e98">TaskId</a> = std::uint64_t</td></tr>
 <tr class="memdesc:a0d3ecad622a33e862b4696f02bf69e98"><td class="mdescLeft">&#160;</td><td class="mdescRight">A unique identifier for a task. <br /></td></tr>
 <tr class="separator:a0d3ecad622a33e862b4696f02bf69e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d915a374b132f0d0d1dd6ef71e8484e"><td class="memItemLeft" align="right" valign="top"><a id="a7d915a374b132f0d0d1dd6ef71e8484e"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a7d915a374b132f0d0d1dd6ef71e8484e">ThreadId</a> = std::vector&lt; std::thread &gt;::size_type</td></tr>
+<tr class="memdesc:a7d915a374b132f0d0d1dd6ef71e8484e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A unique identifier for a thread in the pool in the range of [0, <a class="el" href="classgul14_1_1ThreadPool.html#acceff0c8b0a889bef21208675bd3544e" title="Return the number of threads in the pool.">count_threads()</a>). <br /></td></tr>
+<tr class="separator:a7d915a374b132f0d0d1dd6ef71e8484e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a409cdb10eb74a1f468fbc68d87e59e26"><td class="memItemLeft" align="right" valign="top"><a id="a409cdb10eb74a1f468fbc68d87e59e26"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>TimePoint</b> = std::chrono::time_point&lt; std::chrono::system_clock &gt;</td></tr>
 <tr class="separator:a409cdb10eb74a1f468fbc68d87e59e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,6 +154,9 @@ GUL_EXPORT std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" v
 GUL_EXPORT std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a42b26eea6d7fa877a8e97aa62afc1df6">get_running_task_names</a> () const</td></tr>
 <tr class="memdesc:a42b26eea6d7fa877a8e97aa62afc1df6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a vector with the names of the tasks that are currently running. <br /></td></tr>
 <tr class="separator:a42b26eea6d7fa877a8e97aa62afc1df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45defe1de01618788000931561cce4ad"><td class="memItemLeft" align="right" valign="top">GUL_EXPORT <a class="el" href="classgul14_1_1ThreadPool.html#a7d915a374b132f0d0d1dd6ef71e8484e">ThreadId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#a45defe1de01618788000931561cce4ad">get_thread_id</a> () const</td></tr>
+<tr class="memdesc:a45defe1de01618788000931561cce4ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the thread pool ID of the current thread.  <a href="classgul14_1_1ThreadPool.html#a45defe1de01618788000931561cce4ad">More...</a><br /></td></tr>
+<tr class="separator:a45defe1de01618788000931561cce4ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc0ef21e4c5825b3dfdea5e70d5a22f2"><td class="memItemLeft" align="right" valign="top"><a id="afc0ef21e4c5825b3dfdea5e70d5a22f2"></a>
 GUL_EXPORT bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgul14_1_1ThreadPool.html#afc0ef21e4c5825b3dfdea5e70d5a22f2">is_full</a> () const noexcept</td></tr>
 <tr class="memdesc:afc0ef21e4c5825b3dfdea5e70d5a22f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the queue for pending tasks is full (at capacity). <br /></td></tr>
@@ -302,6 +309,33 @@ template&lt;typename Function &gt; </div>
 <p>Remove all pending tasks from the queue. </p>
 <p>This call removes all tasks that have not yet been started from the queue. It has no impact on tasks that are currently being executed.</p>
 <dl class="section return"><dt>Returns</dt><dd>the number of tasks that were removed. </dd></dl>
+
+</div>
+</div>
+<a id="a45defe1de01618788000931561cce4ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45defe1de01618788000931561cce4ad">&#9670;&nbsp;</a></span>get_thread_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classgul14_1_1ThreadPool.html#a7d915a374b132f0d0d1dd6ef71e8484e">ThreadPool::ThreadId</a> gul14::ThreadPool::get_thread_id </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the thread pool ID of the current thread. </p>
+<dl class="section return"><dt>Returns</dt><dd>a thread ID in the range [0, <a class="el" href="classgul14_1_1ThreadPool.html#acceff0c8b0a889bef21208675bd3544e" title="Return the number of threads in the pool.">count_threads()</a>).</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>is thrown if this function is called from a thread that is not part of the pool.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section since"><dt>Since</dt><dd>GUL version 2.13 </dd></dl>
 
 </div>
 </div>
