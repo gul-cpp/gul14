@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Doxygen input file for the General Utility Library.
  *
- * \copyright Copyright 2018-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2025 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -758,7 +758,7 @@ namespace gul14 {
  * tests. It bundles all of its functionality in a single header file. For convenience,
  * the GUL-internal version of this header can be accessed via:
  * \code
- * #include <catch2/catch_all.hpp>
+ * #include "gul14/catch.h"
  * // Your unit tests here
  * \endcode
  * Please refer to https://github.com/catchorg/Catch2/blob/master/docs/tutorial.md
