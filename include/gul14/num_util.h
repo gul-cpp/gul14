@@ -4,7 +4,7 @@
  * \authors \ref contributors
  * \date    Created on 7 Feb 2019
  *
- * \copyright Copyright 2019-2023 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -29,8 +29,47 @@
 #include <type_traits>
 
 #include "gul14/internal.h"
+#include "gul14/traits.h"
 
 namespace gul14 {
+
+/// \cond HIDE_SYMBOLS
+namespace detail{
+
+template <typename T, typename = void>
+class CanCallStdAbsOn
+    : public std::false_type {};
+
+template <typename T>
+class CanCallStdAbsOn<T, gul14::void_t<decltype(std::abs(std::declval<T>()))>>
+    : public std::true_type {};
+
+// abs() for unsigned integers
+template<typename ValueT>
+constexpr auto abs_impl(ValueT n) noexcept -> std::enable_if_t<
+    std::is_unsigned<ValueT>::value, ValueT>
+{
+    return n;
+}
+
+// abs() for types supported by std::abs()
+template<typename ValueT>
+constexpr auto abs_impl(ValueT n) noexcept -> std::enable_if_t<
+    not std::is_unsigned<ValueT>::value and CanCallStdAbsOn<ValueT>::value, ValueT>
+{
+    return std::abs(n);
+}
+
+// Fallback: Try to find a user-supplied abs() via ADL
+template<typename ValueT>
+constexpr auto abs_impl(ValueT n) noexcept -> std::enable_if_t<
+    not std::is_unsigned<ValueT>::value and not CanCallStdAbsOn<ValueT>::value, ValueT>
+{
+    return abs(n);
+}
+
+} // namespace detail
+/// \endcond
 
 /**
  * \addtogroup num_util_h gul14/num_util.h
@@ -41,27 +80,20 @@ namespace gul14 {
 /**
  * Compute the absolute value of a number.
  *
- * This function is almost equal to std::abs() with the exception of unsigned integral
- * types, which are returned unchanged and in their original type. This is especially
- * useful in templates, where std::abs() cannot be used for all arithmetic types.
+ * This function makes three attempts at compile time to determine the absolute value of
+ * the given number. First, if the value is of an unsigned integer type, it is returned
+ * unmodified. Second, if std::abs() can be called on the value, its result is returned.
+ * In the third and last attempt, abs() is called on the value in the hope that a suitable
+ * user-supplied function can be found via argument-dependent lookup.
  *
  * \param n  The number whose absolute value should be determined.
  *
  * \returns the absolute value of n.
  */
 template<typename ValueT>
-constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<std::is_unsigned<ValueT>::value, ValueT>
+constexpr auto abs(ValueT n) noexcept
 {
-    return n;
-}
-
-/**
- * \overload
- */
-template<typename ValueT>
-constexpr auto abs(ValueT n) noexcept -> std::enable_if_t<not std::is_unsigned<ValueT>::value, ValueT>
-{
-    return std::abs(n);
+    return detail::abs_impl(n);
 }
 
 /**
@@ -114,6 +146,10 @@ bool within_orders(const NumT a, const NumT b, const OrderT orders) noexcept(fal
  * \param tol   The absolute tolerance
  *
  * \returns true if the absolute difference between a and b is smaller than tol.
+ *
+ * \note
+ * This function supports user-defined numeric types as long as they provide an
+ * implementation of abs() that can be found via argument-dependent lookup.
  */
 template<typename NumT>
 bool within_abs(NumT a, NumT b, NumT tol) noexcept {
