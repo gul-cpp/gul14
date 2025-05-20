@@ -82,7 +82,7 @@ inline constexpr typename std::remove_reference<T>::type&& constexpr_move(T&& t)
 #if defined NDEBUG
 #define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) (EXPR)
 #else
-#define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) ((CHECK) ? (EXPR) : ([]{assert(!#CHECK);}(), (EXPR)))
+#define GUL_OPTIONAL_ASSERTED_EXPRESSION(CHECK, EXPR) ((CHECK) ? (EXPR) : ([]{assert((void(#CHECK), false));}(), (EXPR)))
 #endif
 
 
