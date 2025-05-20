@@ -215,7 +215,7 @@ public:
 
     /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
     constexpr span(pointer first_elem, pointer last_elem)
-        : storage_(first_elem, last_elem - first_elem)
+        : storage_(first_elem, static_cast<std::size_t>(last_elem - first_elem))
     {}
 
     /// See [std::span](https://en.cppreference.com/w/cpp/container/span).
