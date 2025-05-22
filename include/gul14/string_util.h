@@ -151,7 +151,7 @@ template <typename Iterator>
 inline std::string
 hex_string(Iterator begin, Iterator end, string_view separator = "")
 {
-    const std::size_t n = std::distance(begin, end);
+    const std::size_t n = static_cast<std::size_t>(std::distance(begin, end));
 
     std::string result;
 
