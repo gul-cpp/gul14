@@ -467,10 +467,10 @@ public:
      */
     auto back() const noexcept -> const_reference
     {
-        if (idx_end_ == 0)
-            return storage_[capacity() - 1];
+        if (idx_end_ == 0u)
+            return storage_[capacity() - 1u];
         else
-            return storage_[idx_end_ - 1];
+            return storage_[idx_end_ - 1u];
     }
 
     /**
@@ -667,7 +667,7 @@ public:
          * \param buff Reference to the SlidingBuffer the iterator points into.
          * \param num  Index of the element the iterator points to.
          */
-        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0) noexcept
+        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0u) noexcept
             : position_{ num }
             , buffer_{ buff }
         {
@@ -746,7 +746,7 @@ public:
         operator-(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
         -> difference_type
         {
-            return lhs.position_ - rhs.position_;
+            return static_cast<difference_type>(lhs.position_ - rhs.position_);
         }
 
         /// Access element pointed to by the iterator
@@ -981,10 +981,10 @@ protected:
 
         //////
         // Vanishing
-        if (new_capacity == 0) {
-            storage_.resize(0);
-            idx_begin_ = 0;
-            idx_end_ = 0;
+        if (new_capacity == 0u) {
+            storage_.resize(0u);
+            idx_begin_ = 0u;
+            idx_end_ = 0u;
             full_ = false;
             return;
         }
@@ -996,7 +996,7 @@ protected:
             // Make SlidingBuffer indices equal to those of the underlying container
             std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
             storage_.resize(new_capacity);
-            idx_begin_ = 0;
+            idx_begin_ = 0u;
             idx_end_ = old_size;
             full_ = false;
             return;
@@ -1008,7 +1008,7 @@ protected:
             // All data fits into new capacity, just move it there
             std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
             storage_.resize(new_capacity);
-            idx_begin_ = 0;
+            idx_begin_ = 0u;
             idx_end_ = old_size;
             full_ = false;
         }
@@ -1020,8 +1020,8 @@ protected:
             std::rotate(storage_.begin(), storage_.begin() + new_front, storage_.end());
             storage_.resize(new_capacity);
             full_ = true;
-            idx_begin_ = 0;
-            idx_end_ = 0;
+            idx_begin_ = 0u;
+            idx_end_ = 0u;
         }
     }
 };
@@ -1120,7 +1120,7 @@ public:
      */
     auto begin() noexcept -> iterator
     {
-        if (not full_ and (idx_end_ == 0 or idx_end_ >= idx_begin_))
+        if (not full_ and (idx_end_ == 0u or idx_end_ >= idx_begin_))
             return storage_.begin() + idx_begin_;
 
         return storage_.begin();
@@ -1140,7 +1140,7 @@ public:
      */
     auto cbegin() const noexcept -> const_iterator
     {
-        if (not full_ and (idx_end_ == 0 or idx_end_ >= idx_begin_))
+        if (not full_ and (idx_end_ == 0u or idx_end_ >= idx_begin_))
             return storage_.cbegin() + idx_begin_;
 
         return storage_.cbegin();
@@ -1165,7 +1165,7 @@ public:
      */
     auto end() noexcept -> iterator
     {
-        if (full_ or idx_begin_ != 0)
+        if (full_ or idx_begin_ != 0u)
             return storage_.end();
 
         return storage_.begin() + idx_end_;
@@ -1185,7 +1185,7 @@ public:
      */
     auto cend() const noexcept -> const_iterator
     {
-        if (full_ or idx_begin_ != 0)
+        if (full_ or idx_begin_ != 0u)
             return storage_.cend();
 
         return storage_.cbegin() + idx_end_;
@@ -1278,8 +1278,8 @@ public:
             and (new_capacity > 0)
             and (new_capacity != old_capacity)
             and (not full_)
-            and (idx_end_ == 0)
-            and (idx_begin_ != 0);
+            and (idx_end_ == 0u)
+            and (idx_begin_ != 0u);
 
         if (not right_align)
             return this->change_capacity(new_capacity, shrink_behavior);
