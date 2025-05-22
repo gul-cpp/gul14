@@ -909,8 +909,8 @@ operator<<(std::basic_ostream<CharT, Traits>& os, const year_month_weekday_last&
 inline namespace literals
 {
 
-constexpr gul14::date::day  operator "" _d(unsigned long long d) noexcept;
-constexpr gul14::date::year operator "" _y(unsigned long long y) noexcept;
+constexpr gul14::date::day  operator ""_d(unsigned long long d) noexcept;
+constexpr gul14::date::year operator ""_y(unsigned long long y) noexcept;
 
 }  // inline namespace literals
 #endif // !defined(_MSC_VER) || (_MSC_VER >= 1900)
@@ -1810,14 +1810,14 @@ inline namespace literals
 
 constexpr inline
 gul14::date::day
-operator "" _d(unsigned long long d) noexcept
+operator ""_d(unsigned long long d) noexcept
 {
     return gul14::date::day{static_cast<unsigned>(d)};
 }
 
 constexpr inline
 gul14::date::year
-operator "" _y(unsigned long long y) noexcept
+operator ""_y(unsigned long long y) noexcept
 {
     return gul14::date::year(static_cast<int>(y));
 }
