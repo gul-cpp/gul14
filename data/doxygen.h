@@ -146,6 +146,7 @@ namespace gul14 {
  *
  * \subsection V2_13_0 Version 2.13.0
  *
+ * - *Released with DOOCS 25.4.0 and later*
  * - Add ThreadPool::get_thread_id()
  *
  * \subsection V2_12_1 Version 2.12.1
