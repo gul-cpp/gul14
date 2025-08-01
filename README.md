@@ -14,7 +14,8 @@ by the library are:
   * Core guideline support library (GSL) excerpts
   * Backports from new standard library extensions
 
-To get started, have a look at the [documentation website](https://gul14.info/)
+To get started, have a look at the
+[documentation website](https://gul-cpp.github.io/gul14/).
 
 Here you find more detailed information on:
 
