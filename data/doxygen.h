@@ -1031,7 +1031,7 @@ namespace gul14 {
  *
  * GUL can be built on Windows with the Meson build system and the Microsoft Visual C++
  * compiler. Please refer to README.md in our
- * [source code repository](https://stash.desy.de/projects/GUL/repos/libgul/browse/) for
+ * [source code repository](https://github.com/gul-cpp/gul14) for
  * details. By default, both a static and a dynamic library (a DLL) are built.
  *
  * Because of the way DLLs work in Windows, the GUL header files must differentiate
