@@ -31,6 +31,7 @@
 #include <string>
 #include <cstring>
 #include <iosfwd>
+#include <ios>
 
 #include "gul14/internal.h"
 
@@ -571,9 +572,9 @@ inline void sv_insert_fill_chars(std::basic_ostream<charT, traits>& os, std::siz
     charT fill_chars[chunk_size];
     std::fill_n(fill_chars, static_cast< std::size_t >(chunk_size), os.fill());
     for (; n >= chunk_size && os.good(); n -= chunk_size)
-        os.write(fill_chars, static_cast< std::size_t >(chunk_size));
+        os.write(fill_chars, static_cast< std::streamsize >(chunk_size));
     if (n > 0 && os.good())
-        os.write(fill_chars, n);
+        os.write(fill_chars, static_cast< std::streamsize >(n));
 }
 
 template<class charT, class traits>
@@ -585,10 +586,10 @@ void sv_insert_aligned(std::basic_ostream<charT, typename char_traits<charT>::ba
     if (!align_left) {
         detail::sv_insert_fill_chars(os, alignment_size);
         if (os.good())
-            os.write(str.data(), size);
+            os.write(str.data(), static_cast< std::streamsize >(size));
     }
     else {
-        os.write(str.data(), size);
+        os.write(str.data(), static_cast< std::streamsize >(size));
         if (os.good())
             detail::sv_insert_fill_chars(os, alignment_size);
     }
@@ -605,7 +606,7 @@ operator<<(std::basic_ostream<charT, typename char_traits<charT>::base_traits>& 
         const std::size_t size = str.size();
         const std::size_t w = static_cast< std::size_t >(os.width());
         if (w <= size)
-            os.write(str.data(), size);
+            os.write(str.data(), static_cast< std::streamsize >(size));
         else
             detail::sv_insert_aligned(os, str);
         os.width(0);

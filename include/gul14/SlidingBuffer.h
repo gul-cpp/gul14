@@ -467,10 +467,10 @@ public:
      */
     auto back() const noexcept -> const_reference
     {
-        if (idx_end_ == 0)
-            return storage_[capacity() - 1];
+        if (idx_end_ == 0u)
+            return storage_[capacity() - 1u];
         else
-            return storage_[idx_end_ - 1];
+            return storage_[idx_end_ - 1u];
     }
 
     /**
@@ -667,7 +667,7 @@ public:
          * \param buff Reference to the SlidingBuffer the iterator points into.
          * \param num  Index of the element the iterator points to.
          */
-        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0) noexcept
+        explicit SlidingBufferIterator(BufferPointer buff, size_type num = 0u) noexcept
             : position_{ num }
             , buffer_{ buff }
         {
@@ -691,7 +691,7 @@ public:
         /// Increase iterator by a given number of positions.
         auto operator+=(difference_type d) noexcept -> SlidingBufferIterator&
         {
-            position_ += d;
+            position_ += static_cast<size_type>(d);
             return *this;
         }
 
@@ -700,7 +700,7 @@ public:
         operator+(const SlidingBufferIterator &it, difference_type d) noexcept
         -> SlidingBufferIterator
         {
-            return SlidingBufferIterator{ it.buffer_, it.position_ + d };
+            return SlidingBufferIterator{ it.buffer_, it.position_ + static_cast<size_type>(d) };
         }
 
         /// Add an integer and an iterator.
@@ -708,7 +708,7 @@ public:
         operator+(difference_type d, const SlidingBufferIterator &it) noexcept
         -> SlidingBufferIterator
         {
-            return SlidingBufferIterator{ it.buffer_, it.position_ + d };
+            return SlidingBufferIterator{ it.buffer_, it.position_ + static_cast<size_type>(d) };
         }
 
         /// Pre-decrement iterator by one position
@@ -729,7 +729,7 @@ public:
         /// Decrease iterator by a given number of positions.
         auto operator-=(difference_type d) noexcept -> SlidingBufferIterator&
         {
-            position_ -= d;
+            position_ -= static_cast<size_type>(d);
             return *this;
         }
 
@@ -738,7 +738,7 @@ public:
         operator-(const SlidingBufferIterator &it, difference_type d) noexcept
         -> SlidingBufferIterator
         {
-            return SlidingBufferIterator{ it.buffer_, it.position_ - d };
+            return SlidingBufferIterator{ it.buffer_, it.position_ - static_cast<size_type>(d) };
         }
 
         /// Subtract two iterators.
@@ -746,7 +746,7 @@ public:
         operator-(const SlidingBufferIterator &lhs, const SlidingBufferIterator &rhs) noexcept
         -> difference_type
         {
-            return lhs.position_ - rhs.position_;
+            return static_cast<difference_type>(lhs.position_ - rhs.position_);
         }
 
         /// Access element pointed to by the iterator
@@ -981,10 +981,10 @@ protected:
 
         //////
         // Vanishing
-        if (new_capacity == 0) {
-            storage_.resize(0);
-            idx_begin_ = 0;
-            idx_end_ = 0;
+        if (new_capacity == 0u) {
+            storage_.resize(0u);
+            idx_begin_ = 0u;
+            idx_end_ = 0u;
             full_ = false;
             return;
         }
@@ -994,9 +994,9 @@ protected:
         // Growing
         if (new_capacity > old_capacity) {
             // Make SlidingBuffer indices equal to those of the underlying container
-            std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+            std::rotate(storage_.begin(), storage_.begin() + static_cast<difference_type>(idx_begin_), storage_.end());
             storage_.resize(new_capacity);
-            idx_begin_ = 0;
+            idx_begin_ = 0u;
             idx_end_ = old_size;
             full_ = false;
             return;
@@ -1006,9 +1006,9 @@ protected:
         // Shrinking
         if (old_size < new_capacity) {
             // All data fits into new capacity, just move it there
-            std::rotate(storage_.begin(), storage_.begin() + idx_begin_, storage_.end());
+            std::rotate(storage_.begin(), storage_.begin() + static_cast<difference_type>(idx_begin_), storage_.end());
             storage_.resize(new_capacity);
-            idx_begin_ = 0;
+            idx_begin_ = 0u;
             idx_end_ = old_size;
             full_ = false;
         }
@@ -1017,11 +1017,11 @@ protected:
             if (shrink_behavior == ShrinkBehavior::keep_back_elements)
                 new_front = (idx_end_ + old_capacity - new_capacity) % old_capacity;
 
-            std::rotate(storage_.begin(), storage_.begin() + new_front, storage_.end());
+            std::rotate(storage_.begin(), storage_.begin() + static_cast<difference_type>(new_front), storage_.end());
             storage_.resize(new_capacity);
             full_ = true;
-            idx_begin_ = 0;
-            idx_end_ = 0;
+            idx_begin_ = 0u;
+            idx_end_ = 0u;
         }
     }
 };
@@ -1120,8 +1120,8 @@ public:
      */
     auto begin() noexcept -> iterator
     {
-        if (not full_ and (idx_end_ == 0 or idx_end_ >= idx_begin_))
-            return storage_.begin() + idx_begin_;
+        if (not full_ and (idx_end_ == 0u or idx_end_ >= idx_begin_))
+            return storage_.begin() + static_cast<difference_type>(idx_begin_);
 
         return storage_.begin();
     }
@@ -1140,8 +1140,8 @@ public:
      */
     auto cbegin() const noexcept -> const_iterator
     {
-        if (not full_ and (idx_end_ == 0 or idx_end_ >= idx_begin_))
-            return storage_.cbegin() + idx_begin_;
+        if (not full_ and (idx_end_ == 0u or idx_end_ >= idx_begin_))
+            return storage_.cbegin() + static_cast<difference_type>(idx_begin_);
 
         return storage_.cbegin();
     }
@@ -1165,10 +1165,10 @@ public:
      */
     auto end() noexcept -> iterator
     {
-        if (full_ or idx_begin_ != 0)
+        if (full_ or idx_begin_ != 0u)
             return storage_.end();
 
-        return storage_.begin() + idx_end_;
+        return storage_.begin() + static_cast<difference_type>(idx_end_);
     }
 
     /// \overload
@@ -1185,10 +1185,10 @@ public:
      */
     auto cend() const noexcept -> const_iterator
     {
-        if (full_ or idx_begin_ != 0)
+        if (full_ or idx_begin_ != 0u)
             return storage_.cend();
 
-        return storage_.cbegin() + idx_end_;
+        return storage_.cbegin() + static_cast<difference_type>(idx_end_);
     }
 
     /**
@@ -1278,8 +1278,8 @@ public:
             and (new_capacity > 0)
             and (new_capacity != old_capacity)
             and (not full_)
-            and (idx_end_ == 0)
-            and (idx_begin_ != 0);
+            and (idx_end_ == 0u)
+            and (idx_begin_ != 0u);
 
         if (not right_align)
             return this->change_capacity(new_capacity, shrink_behavior);
@@ -1288,8 +1288,8 @@ public:
         // Growing
         if (new_capacity > old_capacity) {
             storage_.resize(new_capacity);
-            std::move_backward(storage_.begin() + idx_begin_,
-                               storage_.begin() + old_capacity, storage_.end());
+            std::move_backward(storage_.begin() + static_cast<difference_type>(idx_begin_),
+                               storage_.begin() + static_cast<difference_type>(old_capacity), storage_.end());
             idx_begin_ += new_capacity - old_capacity;
             return;
         }
@@ -1298,7 +1298,7 @@ public:
         // Shrinking
         full_ = (this->size() >= new_capacity);
         auto const required_shift = std::min(old_capacity - new_capacity, idx_begin_);
-        std::rotate(storage_.begin(), storage_.begin() + required_shift, storage_.end());
+        std::rotate(storage_.begin(), storage_.begin() + static_cast<difference_type>(required_shift), storage_.end());
         idx_begin_ -= required_shift;
         storage_.resize(new_capacity);
     }
