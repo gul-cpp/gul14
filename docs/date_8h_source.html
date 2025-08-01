@@ -921,8 +921,8 @@ $(function() {
 <div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;<span class="keyword">inline</span> <span class="keyword">namespace </span>literals</div>
 <div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;{</div>
 <div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160; </div>
-<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;constexpr gul14::date::day  <span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span> _d(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> d) noexcept;</div>
-<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;constexpr gul14::date::year <span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span> _y(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> y) noexcept;</div>
+<div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160;constexpr gul14::date::day  <span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span>_d(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> d) noexcept;</div>
+<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;constexpr gul14::date::year <span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span>_y(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> y) noexcept;</div>
 <div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160; </div>
 <div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;}  <span class="comment">// inline namespace literals</span></div>
 <div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// !defined(_MSC_VER) || (_MSC_VER &gt;= 1900)</span></div>
@@ -1822,14 +1822,14 @@ $(function() {
 <div class="line"><a name="l01810"></a><span class="lineno"> 1810</span>&#160; </div>
 <div class="line"><a name="l01811"></a><span class="lineno"> 1811</span>&#160;constexpr <span class="keyword">inline</span></div>
 <div class="line"><a name="l01812"></a><span class="lineno"> 1812</span>&#160;gul14::date::day</div>
-<div class="line"><a name="l01813"></a><span class="lineno"> 1813</span>&#160;<span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span> _d(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> d) noexcept</div>
+<div class="line"><a name="l01813"></a><span class="lineno"> 1813</span>&#160;<span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span>_d(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> d) noexcept</div>
 <div class="line"><a name="l01814"></a><span class="lineno"> 1814</span>&#160;{</div>
 <div class="line"><a name="l01815"></a><span class="lineno"> 1815</span>&#160;    <span class="keywordflow">return</span> gul14::date::day{<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span><span class="keyword">&gt;</span>(d)};</div>
 <div class="line"><a name="l01816"></a><span class="lineno"> 1816</span>&#160;}</div>
 <div class="line"><a name="l01817"></a><span class="lineno"> 1817</span>&#160; </div>
 <div class="line"><a name="l01818"></a><span class="lineno"> 1818</span>&#160;constexpr <span class="keyword">inline</span></div>
 <div class="line"><a name="l01819"></a><span class="lineno"> 1819</span>&#160;gul14::date::year</div>
-<div class="line"><a name="l01820"></a><span class="lineno"> 1820</span>&#160;<span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span> _y(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> y) noexcept</div>
+<div class="line"><a name="l01820"></a><span class="lineno"> 1820</span>&#160;<span class="keyword">operator</span> <span class="stringliteral">&quot;&quot;</span>_y(<span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> y) noexcept</div>
 <div class="line"><a name="l01821"></a><span class="lineno"> 1821</span>&#160;{</div>
 <div class="line"><a name="l01822"></a><span class="lineno"> 1822</span>&#160;    <span class="keywordflow">return</span> gul14::date::year(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(y));</div>
 <div class="line"><a name="l01823"></a><span class="lineno"> 1823</span>&#160;}</div>

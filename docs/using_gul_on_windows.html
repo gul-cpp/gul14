@@ -46,7 +46,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>GUL can be built on Windows with the Meson build system and the Microsoft Visual C++ compiler.</p>
-<p>Please refer to README.md in our <a href="https://stash.desy.de/projects/GUL/repos/libgul/browse/">source code repository</a> for details. By default, both a static and a dynamic library (a DLL) are built.</p>
+<p>Please refer to README.md in our <a href="https://github.com/gul-cpp/gul14">source code repository</a> for details. By default, both a static and a dynamic library (a DLL) are built.</p>
 <p>Because of the way DLLs work in Windows, the GUL header files must differentiate between a statically and a dynamically linked library. GUL does this by means of a preprocessor macro, <code>GUL_USING_STATIC_LIB_OR_OBJECTS</code>. We assume that most users will prefer the DLL version, therefore we treat this as the default case:</p>
 <ul>
 <li>If you link your code against the DLL, there is no need to take any further action. The header files already provide the necessary import declarations.</li>
