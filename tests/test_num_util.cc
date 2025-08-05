@@ -4,7 +4,7 @@
  * \date   Created on 7 Feb 2019
  * \brief  Unit tests for within_orders(), within_abs(), and within_ulp().
  *
- * \copyright Copyright 2019 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2019-2024 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -24,6 +24,30 @@
 
 #include "gul14/catch.h"
 #include "gul14/num_util.h"
+
+namespace {
+
+// Simple physical unit class for meters
+class Meters {
+    double value_{ 0.0 };
+public:
+    explicit Meters(double value) : value_{ value } {}
+    double value() const { return value_; }
+    bool operator==(const Meters& other) const { return value_ == other.value_; }
+    bool operator!=(const Meters& other) const { return value_ != other.value_; }
+    bool operator<(const Meters& other) const { return value_ < other.value_; }
+    bool operator>(const Meters& other) const { return value_ > other.value_; }
+    bool operator<=(const Meters& other) const { return value_ <= other.value_; }
+    bool operator>=(const Meters& other) const { return value_ >= other.value_; }
+    Meters operator-() const { return Meters{ -value_ }; }
+    Meters operator+(const Meters& other) const { return Meters{ value_ + other.value_ }; }
+    Meters operator-(const Meters& other) const { return Meters{ value_ - other.value_ }; }
+};
+
+// abs() implementation, usable via ADL
+Meters abs(Meters m) { return Meters(std::abs(m.value())); }
+
+} // anonymous namespace
 
 TEST_CASE("test within_orders()", "[num_util]")
 {
@@ -272,6 +296,10 @@ TEST_CASE("test within_abs()", "[num_util]")
     auto i2 = i1 - 1;
     auto i3 = 60;
     REQUIRE(gul14::within_abs(i1, i2, i3) == true);
+
+    // Physical units
+    REQUIRE(gul14::within_abs(Meters{ 1.0 }, Meters{ 1.01 }, Meters{ 0.02 }));
+    REQUIRE(gul14::within_abs(Meters{ 42.0 }, Meters{ 42.5 }, Meters{ 0.4 }) == false);
 }
 
 TEST_CASE("test within_ulp()", "[num_util]")
