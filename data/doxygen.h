@@ -4,7 +4,7 @@
  * \date    Created on August 24, 2018
  * \brief   Doxygen input file for the General Utility Library.
  *
- * \copyright Copyright 2018-2025 Deutsches Elektronen-Synchrotron (DESY), Hamburg
+ * \copyright Copyright 2018-2026 Deutsches Elektronen-Synchrotron (DESY), Hamburg
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -402,7 +402,7 @@ namespace gul14 {
  * The General Utility Library strives for a very high quality level. This is ensured by
  * following a set of best practices:
  * - __Style:__ Code must adhere to the
- *   [MCS style guide for C++](https://confluence.desy.de/pages/viewpage.action?pageId=41648870)
+ *   [DOOCS style guide for C++](https://gitlab.desy.de/doocs/docs/style-guides/)
  *   and it should follow the
  *   [C++ Core Guidelines](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines).
  * - __Documentation:__ Every function, type, or other entity in the API must be fully
