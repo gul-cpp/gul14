@@ -11,9 +11,9 @@ Github sync:
         # Key: GITLAB_ACCESS_TOKEN
         # Value: Access token from above
         # Set Protect variable and Mask variable
-        image: ubuntu:20.04
+        image: ubuntu:latest
         tags:
-                - ubuntu20
+                - docker
         script:
                 - apt update
                 - apt install -y git-core ca-certificates
